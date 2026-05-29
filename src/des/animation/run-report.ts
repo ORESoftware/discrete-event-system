@@ -107,13 +107,32 @@ export interface IndexGroup {
   entries: IndexEntry[];
 }
 
+/** A compact link in the full directory catalog. */
+export interface CatalogEntry {
+  href: string;
+  label: string;
+  size?: string;
+}
+
+export interface CatalogSection {
+  heading: string;
+  blurb: string;
+  entries: CatalogEntry[];
+}
+
 export class SimulationIndexPage {
   private readonly groups: IndexGroup[] = [];
+  private readonly catalogs: CatalogSection[] = [];
 
   constructor(private readonly title: string, private readonly subtitle: string) {}
 
   addGroup(group: IndexGroup): this {
     this.groups.push(group);
+    return this;
+  }
+
+  addCatalog(section: CatalogSection): this {
+    this.catalogs.push(section);
     return this;
   }
 
@@ -132,9 +151,19 @@ export class SimulationIndexPage {
 <div class="grid">${g.entries.map(e => this.renderEntry(e)).join('')}</div></section>`;
   }
 
+  private renderCatalog(c: CatalogSection): string {
+    const esc = RunReportPage.escape;
+    const rows = c.entries.map(e =>
+      `<li><a href="${esc(e.href)}"><span class="path">${esc(e.label)}</span>` +
+      `${e.size ? `<span class="size">${esc(e.size)}</span>` : ''}</a></li>`).join('');
+    return `<section><h2>${esc(c.heading)} <span class="count">${c.entries.length}</span></h2>
+<p class="blurb">${esc(c.blurb)}</p><ul class="catalog">${rows}</ul></section>`;
+  }
+
   toHtml(generatedAt: string): string {
     const esc = RunReportPage.escape;
-    const body = this.groups.map(g => this.renderGroup(g)).join('\n');
+    const body = this.groups.map(g => this.renderGroup(g)).join('\n')
+      + '\n' + this.catalogs.map(c => this.renderCatalog(c)).join('\n');
     return `<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>${esc(this.title)}</title>
@@ -155,6 +184,16 @@ a.card:hover{border-color:#58a6ff;transform:translateY(-2px);}
 background:#58a6ff;border-radius:999px;padding:2px 9px;font-weight:700;}
 .card-title{color:#f0f6fc;font-size:1.05rem;font-weight:600;}
 .card-desc{color:#9aa5b1;font-size:.86rem;line-height:1.4;}
+.count{display:inline-block;font-size:.72rem;color:#0b1021;background:#7d8590;border-radius:999px;
+padding:1px 8px;vertical-align:middle;font-weight:700;}
+ul.catalog{list-style:none;padding:0;margin:0;column-width:330px;column-gap:14px;}
+ul.catalog li{break-inside:avoid;margin:0 0 4px;}
+ul.catalog a{display:flex;justify-content:space-between;gap:10px;align-items:baseline;
+padding:6px 10px;border:1px solid #21262d;border-radius:7px;text-decoration:none;background:#11172b;}
+ul.catalog a:hover{border-color:#58a6ff;background:#161d33;}
+ul.catalog .path{color:#58a6ff;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.8rem;
+overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+ul.catalog .size{color:#586069;font-size:.72rem;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;white-space:nowrap;}
 footer{color:#586069;font-size:.8rem;margin-top:20px;}
 footer code{color:#8b949e;}
 </style></head><body><main>

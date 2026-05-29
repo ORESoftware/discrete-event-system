@@ -13,7 +13,7 @@
 import {execFileSync} from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-import {IndexEntry, SimulationIndexPage} from './animation/run-report';
+import {CatalogEntry, IndexEntry, SimulationIndexPage} from './animation/run-report';
 
 class SimulationSiteBuilder {
   private readonly tsNode = path.join('node_modules', '.bin', 'ts-node');
@@ -24,6 +24,11 @@ class SimulationSiteBuilder {
   }
 
   build(): void {
+    if ((process.env.INDEX_ONLY ?? '') === '1') {
+      process.stderr.write('INDEX_ONLY=1: rebuilding out/index.html only...\n');
+      this.writeIndex();
+      return;
+    }
     process.stderr.write('Regenerating animations...\n');
     this.run('src/des/main-wind-mppt-anim.ts');
     this.run('src/des/main-wind-mppt-anim.ts', {CONTROLLER: 'pi'});
@@ -40,6 +45,36 @@ class SimulationSiteBuilder {
 
   private linkIfExists(entry: IndexEntry): IndexEntry | null {
     return fs.existsSync(path.join('out', entry.href)) ? entry : null;
+  }
+
+  /** Recursively collect every *.html under out/ as forward-slash relative paths. */
+  private scanHtml(dir: string, base: string, acc: string[]): void {
+    for (const name of fs.readdirSync(dir)) {
+      const full = path.join(dir, name);
+      const stat = fs.statSync(full);
+      if (stat.isDirectory()) this.scanHtml(full, base, acc);
+      else if (name.endsWith('.html')) acc.push(path.relative(base, full).split(path.sep).join('/'));
+    }
+  }
+
+  private humanSize(bytes: number): string {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  }
+
+  private catalogEntries(featured: Set<string>): CatalogEntry[] {
+    const outDir = path.resolve('out');
+    const found: string[] = [];
+    this.scanHtml(outDir, outDir, found);
+    return found
+      .filter(rel => rel !== 'index.html' && !featured.has(rel))
+      .sort((a, b) => a.localeCompare(b))
+      .map(rel => ({
+        href: rel,
+        label: rel.replace(/\.html$/, ''),
+        size: this.humanSize(fs.statSync(path.join(outDir, rel)).size),
+      }));
   }
 
   private writeIndex(): void {
@@ -67,15 +102,25 @@ class SimulationSiteBuilder {
       'Control-system animations and numerical / machine-learning runs, generated from the discrete-event-system submodule.',
     );
     const present = (es: IndexEntry[]) => es.map(e => this.linkIfExists(e)).filter((e): e is IndexEntry => e !== null);
+    const featuredAnims = present(animations);
+    const featuredRuns = present(runs);
     page.addGroup({
       heading: 'Control-system animations',
       blurb: 'Interactive HTML players (play / pause / scrub / speed) built on the DES animation engine.',
-      entries: present(animations),
+      entries: featuredAnims,
     });
     page.addGroup({
       heading: 'Numerical & machine-learning runs',
       blurb: 'Reproducible run reports with the full console output of each simulation.',
-      entries: present(runs),
+      entries: featuredRuns,
+    });
+
+    const featuredHrefs = new Set<string>([...featuredAnims, ...featuredRuns].map(e => e.href));
+    page.addCatalog({
+      heading: 'All rendered runs',
+      blurb: 'Every other HTML artifact in out/ — DES models, optimization solvers, signal transforms, ' +
+        'epidemic/traffic/network simulations, and more. Click any to open its rendered page.',
+      entries: this.catalogEntries(featuredHrefs),
     });
 
     const out = path.join('out', 'index.html');
