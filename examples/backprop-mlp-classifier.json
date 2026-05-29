@@ -1,0 +1,22 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "backprop-mlp-classifier",
+  "description": "XOR classifier trained with explicit backprop gradient-step tokens.",
+  "parameters": {
+    "hiddenUnits": 4,
+    "epochs": 800,
+    "batchSize": 4,
+    "learningRate": 0.08,
+    "optimizer": "adam",
+    "seed": 7,
+    "samples": [
+      {"x": [0, 0], "y": 0},
+      {"x": [0, 1], "y": 1},
+      {"x": [1, 0], "y": 1},
+      {"x": [1, 1], "y": 0}
+    ]
+  },
+  "runtime": {
+    "animate": false
+  }
+}

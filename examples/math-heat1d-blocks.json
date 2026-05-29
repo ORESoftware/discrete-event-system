@@ -1,0 +1,28 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "math-heat1d-blocks",
+  "description": "1D heat equation PDE as stationary cell/integrator blocks coupled by Laplacian blocks.",
+  "parameters": {
+    "cells": 31,
+    "length": 1,
+    "alpha": 0.02,
+    "t0": 0,
+    "t1": 0.5,
+    "dt": 0.005,
+    "initialExpression": "sin(pi*x/length)",
+    "leftBoundary": 0,
+    "rightBoundary": 0
+  },
+  "runtime": {
+    "animate": true,
+    "outputs": {
+      "csv": "out/math-heat1d-blocks.csv",
+      "html": "out/math-heat1d-blocks.html",
+      "log": "out/math-heat1d-blocks.jsonl",
+      "summary": "out/math-heat1d-blocks-summary.json"
+    }
+  },
+  "metadata": {
+    "tags": ["math-blocks", "pde", "heat-equation"]
+  }
+}

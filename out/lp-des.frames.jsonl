@@ -1,0 +1,5 @@
+{"kind":"animation-header","width":800,"height":600,"fps":1,"title":"LP-as-DES — pivot walk on the feasible polytope","subtitle":"Each tick = one simplex pivot. EnteringStation picks the steepest improving edge; LeavingStation picks how far to travel; PivotStation updates the tableau.","background":"#ffffff"}
+{"kind":"animation-frame","t":0,"tick":0}
+{"kind":"animation-frame","t":1,"tick":1}
+{"kind":"animation-frame","t":2,"tick":2}
+{"kind":"animation-charts","charts":[{"title":"objective vs pivot count","series":[{"label":"obj","data":[{"x":0,"y":0},{"x":1,"y":13.5},{"x":2,"y":15}],"stroke":"#0a58ca"}]}]}

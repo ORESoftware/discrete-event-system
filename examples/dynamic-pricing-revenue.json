@@ -1,0 +1,8 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "dynamic-pricing-revenue",
+  "description": "Revenue-management dynamic pricing policies using scarcity control and demand smoothing candidate plans.",
+  "parameters": {"capacity": 120},
+  "runtime": {"animate": false, "outputs": {"csv": "out/dynamic-pricing-revenue.csv", "summary": "out/dynamic-pricing-revenue.summary.json"}},
+  "metadata": {"tags": ["revenue-management", "dynamic-pricing", "scarcity-control"]}
+}

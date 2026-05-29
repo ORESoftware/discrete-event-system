@@ -1,0 +1,21 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "neural-xor",
+  "description": "Train a small feed-forward neural network on XOR using DES sample queues.",
+  "parameters": {
+    "epochs": 8000,
+    "learningRate": 0.3,
+    "seed": 7,
+    "hiddenLayers": [4],
+    "samplesPerTick": 1,
+    "shuffleEachEpoch": false
+  },
+  "runtime": {
+    "verbose": true,
+    "outputs": {
+      "html": "out/neural-xor.html",
+      "frames": "out/neural-xor.frames.jsonl",
+      "summary": "out/neural-xor-summary.json"
+    }
+  }
+}

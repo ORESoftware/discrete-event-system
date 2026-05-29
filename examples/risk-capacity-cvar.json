@@ -1,0 +1,38 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "risk-capacity",
+  "description": "Risk-aware capacity planning with a CVaR penalty on unmet demand.",
+  "parameters": {
+    "cost": [10, 12],
+    "price": [25, 28],
+    "demand": {
+      "kind": "uniform",
+      "ranges": [
+        {"low": 50, "high": 100},
+        {"low": 40, "high": 80}
+      ]
+    },
+    "numScenarios": 250,
+    "seed": 5,
+    "xMax": 120,
+    "step": 10,
+    "risk": {
+      "kind": "cvar",
+      "alpha": 0.9,
+      "lambda": 0.2
+    }
+  },
+  "runtime": {
+    "animate": true,
+    "outputs": {
+      "html": "out/risk-capacity-cvar.html",
+      "frames": "out/risk-capacity-cvar.frames.jsonl",
+      "csv": "out/risk-capacity-cvar.csv",
+      "summary": "out/risk-capacity-cvar.summary.json",
+      "log": "out/risk-capacity-cvar.log.jsonl"
+    }
+  },
+  "metadata": {
+    "tags": ["cvar", "chance-constraints", "dro", "risk"]
+  }
+}

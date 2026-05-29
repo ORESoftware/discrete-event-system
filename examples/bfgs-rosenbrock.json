@@ -1,0 +1,13 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "bfgs-rosenbrock",
+  "description": "BFGS quasi-Newton method on Rosenbrock as a DES state-token loop.",
+  "parameters": {
+    "x0": [-1.2, 1],
+    "maxIter": 100,
+    "tol": 1e-6
+  },
+  "runtime": {
+    "animate": false
+  }
+}

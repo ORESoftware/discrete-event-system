@@ -1,0 +1,21 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "neural-ode-decay",
+  "description": "Solve y' = -0.5 y with a one-layer neural vector field and the existing ODE solver.",
+  "parameters": {
+    "rate": 0.5,
+    "y0": 1,
+    "t1": 2,
+    "dt": 0.05,
+    "solver": "rk4"
+  },
+  "runtime": {
+    "verbose": true,
+    "outputs": {
+      "csv": "out/neural-ode-decay.csv",
+      "html": "out/neural-ode-decay.html",
+      "frames": "out/neural-ode-decay.frames.jsonl",
+      "summary": "out/neural-ode-decay-summary.json"
+    }
+  }
+}

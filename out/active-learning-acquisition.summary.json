@@ -1,0 +1,112 @@
+{
+  "modelId": "active-learning-acquisition",
+  "params": {
+    "budget": 9
+  },
+  "runtimeMs": 0,
+  "summaryText": "ACTIVE LEARNING ACQUISITION\n----------------------------------------\n  Category:       Machine learning and statistical learning (novel algorithms and novel use cases)\n  Best plan:      uncertainty-sampling\n  Objective:      56.086656\n  Metrics:        selected=1|5|3|6, cost=9.0000, infoGain=2.2537, expectedErrorReduction=0.5529\n  Candidates:     4\n  Stations:       active-learning-acquisition-scenario-source -> active-learning-acquisition-candidate-generator -> active-learning-acquisition-plan-evaluator -> active-learning-acquisition-result-sink\n  Movables:       DomainScenarioToken, DomainPlanToken, DomainEvaluationToken",
+  "result": {
+    "modelId": "active-learning-acquisition",
+    "category": "Machine learning and statistical learning (novel algorithms and novel use cases)",
+    "best": {
+      "candidateId": "uncertainty-sampling",
+      "plan": {
+        "uncertaintyWeight": 1,
+        "diversityWeight": 0,
+        "costWeight": 0
+      },
+      "objective": 56.0866563960622,
+      "feasible": true,
+      "metrics": {
+        "selected": "1|5|3|6",
+        "cost": 9,
+        "infoGain": 2.253715,
+        "expectedErrorReduction": 0.5528665639606221
+      }
+    },
+    "candidates": [
+      {
+        "candidateId": "uncertainty-sampling",
+        "plan": {
+          "uncertaintyWeight": 1,
+          "diversityWeight": 0,
+          "costWeight": 0
+        },
+        "objective": 56.0866563960622,
+        "feasible": true,
+        "metrics": {
+          "selected": "1|5|3|6",
+          "cost": 9,
+          "infoGain": 2.253715,
+          "expectedErrorReduction": 0.5528665639606221
+        }
+      },
+      {
+        "candidateId": "diversity-regularized-active-learning",
+        "plan": {
+          "uncertaintyWeight": 0.7,
+          "diversityWeight": 0.55,
+          "costWeight": 0.1
+        },
+        "objective": 52.594760666928074,
+        "feasible": true,
+        "metrics": {
+          "selected": "3|1|6|4",
+          "cost": 7,
+          "infoGain": 1.95174,
+          "expectedErrorReduction": 0.5019476066692807
+        }
+      },
+      {
+        "candidateId": "cost-aware-information-gain",
+        "plan": {
+          "uncertaintyWeight": 0.75,
+          "diversityWeight": 0.35,
+          "costWeight": 0.45
+        },
+        "objective": 52.594760666928074,
+        "feasible": true,
+        "metrics": {
+          "selected": "6|1|3|4",
+          "cost": 7,
+          "infoGain": 1.95174,
+          "expectedErrorReduction": 0.5019476066692807
+        }
+      },
+      {
+        "candidateId": "balanced-portfolio-acquisition",
+        "plan": {
+          "uncertaintyWeight": 0.55,
+          "diversityWeight": 0.65,
+          "costWeight": 0.25
+        },
+        "objective": 52.594760666928074,
+        "feasible": true,
+        "metrics": {
+          "selected": "6|3|4|1",
+          "cost": 7,
+          "infoGain": 1.95174,
+          "expectedErrorReduction": 0.5019476066692807
+        }
+      }
+    ],
+    "topology": {
+      "stations": [
+        "active-learning-acquisition-scenario-source",
+        "active-learning-acquisition-candidate-generator",
+        "active-learning-acquisition-plan-evaluator",
+        "active-learning-acquisition-result-sink"
+      ],
+      "movables": [
+        "DomainScenarioToken",
+        "DomainPlanToken",
+        "DomainEvaluationToken"
+      ],
+      "edges": [
+        "active-learning-acquisition-scenario-source:scenario -> active-learning-acquisition-candidate-generator:scenario",
+        "active-learning-acquisition-candidate-generator:candidate-plan -> active-learning-acquisition-plan-evaluator:candidate-plan",
+        "active-learning-acquisition-plan-evaluator:evaluation -> active-learning-acquisition-result-sink:evaluation"
+      ]
+    }
+  }
+}

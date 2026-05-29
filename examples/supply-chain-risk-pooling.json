@@ -1,0 +1,8 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "supply-chain-risk-pooling",
+  "description": "Multi-echelon supply-chain reorder policies with risk pooling, reviewed as candidate plans in a DES validation workflow.",
+  "parameters": {"horizon": 20},
+  "runtime": {"animate": false, "outputs": {"csv": "out/supply-chain-risk-pooling.csv", "summary": "out/supply-chain-risk-pooling.summary.json"}},
+  "metadata": {"tags": ["supply-chain", "inventory", "risk-pooling", "reorder-policy"]}
+}

@@ -1,0 +1,122 @@
+{
+  "modelId": "dynamic-pricing-revenue",
+  "params": {
+    "capacity": 120
+  },
+  "runtimeMs": 0,
+  "summaryText": "DYNAMIC PRICING REVENUE MANAGEMENT\n----------------------------------------\n  Category:       Revenue management (novel dynamic pricing algorithms)\n  Best plan:      sellout-protection-pricing\n  Objective:      15477.655018\n  Metrics:        revenue=15478.9, sold=120.00, inventory=0.00e+0, sellThrough=1.0000\n  Candidates:     4\n  Stations:       dynamic-pricing-revenue-scenario-source -> dynamic-pricing-revenue-candidate-generator -> dynamic-pricing-revenue-plan-evaluator -> dynamic-pricing-revenue-result-sink\n  Movables:       DomainScenarioToken, DomainPlanToken, DomainEvaluationToken",
+  "result": {
+    "modelId": "dynamic-pricing-revenue",
+    "category": "Revenue management (novel dynamic pricing algorithms)",
+    "best": {
+      "candidateId": "sellout-protection-pricing",
+      "plan": {
+        "priceFloor": 90,
+        "priceCeiling": 170,
+        "scarcityGain": 0.7,
+        "smoothing": 0.45
+      },
+      "objective": 15477.655018331034,
+      "feasible": true,
+      "metrics": {
+        "revenue": 15478.905018331034,
+        "sold": 119.99999999999999,
+        "inventory": 0,
+        "sellThrough": 0.9999999999999999,
+        "finalPrice": 167.40843865889235
+      }
+    },
+    "candidates": [
+      {
+        "candidateId": "sellout-protection-pricing",
+        "plan": {
+          "priceFloor": 90,
+          "priceCeiling": 170,
+          "scarcityGain": 0.7,
+          "smoothing": 0.45
+        },
+        "objective": 15477.655018331034,
+        "feasible": true,
+        "metrics": {
+          "revenue": 15478.905018331034,
+          "sold": 119.99999999999999,
+          "inventory": 0,
+          "sellThrough": 0.9999999999999999,
+          "finalPrice": 167.40843865889235
+        }
+      },
+      {
+        "candidateId": "scarcity-surge",
+        "plan": {
+          "priceFloor": 82,
+          "priceCeiling": 150,
+          "scarcityGain": 0.45,
+          "smoothing": 0.55
+        },
+        "objective": 14025.540546440609,
+        "feasible": true,
+        "metrics": {
+          "revenue": 14026.790546440609,
+          "sold": 120.00000000000001,
+          "inventory": 0,
+          "sellThrough": 1.0000000000000002,
+          "finalPrice": 144.23197385687422
+        }
+      },
+      {
+        "candidateId": "bayesian-demand-smoothing",
+        "plan": {
+          "priceFloor": 88,
+          "priceCeiling": 140,
+          "scarcityGain": 0.32,
+          "smoothing": 0.78
+        },
+        "objective": 12964.418003029272,
+        "feasible": true,
+        "metrics": {
+          "revenue": 12965.668003029272,
+          "sold": 120,
+          "inventory": 0,
+          "sellThrough": 1,
+          "finalPrice": 128.5684934170811
+        }
+      },
+      {
+        "candidateId": "fixed-reference-price",
+        "plan": {
+          "priceFloor": 100,
+          "priceCeiling": 100,
+          "scarcityGain": 0,
+          "smoothing": 1
+        },
+        "objective": 11998.750000000002,
+        "feasible": true,
+        "metrics": {
+          "revenue": 12000.000000000002,
+          "sold": 119.99999999999999,
+          "inventory": 0,
+          "sellThrough": 0.9999999999999999,
+          "finalPrice": 100
+        }
+      }
+    ],
+    "topology": {
+      "stations": [
+        "dynamic-pricing-revenue-scenario-source",
+        "dynamic-pricing-revenue-candidate-generator",
+        "dynamic-pricing-revenue-plan-evaluator",
+        "dynamic-pricing-revenue-result-sink"
+      ],
+      "movables": [
+        "DomainScenarioToken",
+        "DomainPlanToken",
+        "DomainEvaluationToken"
+      ],
+      "edges": [
+        "dynamic-pricing-revenue-scenario-source:scenario -> dynamic-pricing-revenue-candidate-generator:scenario",
+        "dynamic-pricing-revenue-candidate-generator:candidate-plan -> dynamic-pricing-revenue-plan-evaluator:candidate-plan",
+        "dynamic-pricing-revenue-plan-evaluator:evaluation -> dynamic-pricing-revenue-result-sink:evaluation"
+      ]
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "internal-solver-network",
+  "description": "Shortest path solved by an internal Dijkstra station using incumbent solution tokens and a wall-clock checker.",
+  "parameters": {
+    "kind": "shortest-path",
+    "timeLimitMs": 180000,
+    "shortestPath": {
+      "algorithm": "dijkstra",
+      "source": 0,
+      "builtin": "small-chain"
+    }
+  },
+  "runtime": {
+    "verbose": true,
+    "outputs": {
+      "csv": "out/internal-solver-shortest-path.csv",
+      "html": "out/internal-solver-shortest-path.html",
+      "log": "out/internal-solver-shortest-path.jsonl",
+      "summary": "out/internal-solver-shortest-path.summary.json"
+    }
+  },
+  "metadata": {
+    "tags": ["internal-solver", "shortest-path", "dijkstra"]
+  }
+}

@@ -1,0 +1,11 @@
+kind,id,from,to,generated,delivered,dropped,throughput_mbps,mean_latency_ms,p95_latency_ms,total_cost,utilization
+flow,a-to-server,client-a,server,650,650,0,6.24,15,15,0.0054600000000000724,
+flow,b-to-server,client-b,server,300,300,0,2.4,16,16,0.002100000000000007,
+link,client-a-edge,client-a,edge-1,650,650,0,6.141732283464567,,,0.0007800000000000024,0.061417322834644614
+link,client-a-edge:rev,edge-1,client-a,0,0,0,0,,,0,0
+link,client-b-edge,client-b,edge-1,300,300,0,2.362204724409449,,,0.0003000000000000008,0.047244094488188663
+link,client-b-edge:rev,edge-1,client-b,0,0,0,0,,,0,0
+link,edge-core,edge-1,core-1,950,950,0,8.503937007874015,,,0.004320000000000037,0.3401574803149582
+link,edge-core:rev,core-1,edge-1,0,0,0,0,,,0,0
+link,core-server,core-1,server,950,950,0,8.503937007874015,,,0.0021600000000000187,0.08503937007873955
+link,core-server:rev,server,core-1,0,0,0,0,,,0,0

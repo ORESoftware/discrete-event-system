@@ -1,0 +1,18 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "actor-critic-grid",
+  "description": "One-step Actor-Critic on the 4×4 GridWorld with two pits.",
+  "parameters": {
+    "numEpisodes": 800,
+    "maxStepsPerEpisode": 100,
+    "alphaV": 0.1,
+    "alphaP": 0.1,
+    "gamma": 0.95,
+    "entropyCoef": 0,
+    "width": 4,
+    "height": 4,
+    "seed": 1
+  },
+  "runtime": {"seed": 1},
+  "metadata": {"tags": ["actor-critic", "policy-gradient", "gridworld"]}
+}

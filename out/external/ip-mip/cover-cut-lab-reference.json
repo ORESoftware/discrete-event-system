@@ -1,0 +1,76 @@
+{
+  "reference": "external-references/ip-mip/ip_mip_reference.py",
+  "requestedSolver": "brute-force",
+  "elapsedMs": 0.095,
+  "problem": {
+    "sense": "max",
+    "c": [
+      10,
+      10,
+      10
+    ],
+    "A": [
+      [
+        2,
+        2,
+        2
+      ]
+    ],
+    "b": [
+      3
+    ],
+    "integerVars": [
+      true,
+      true,
+      true
+    ],
+    "ub": [
+      1,
+      1,
+      1
+    ],
+    "varNames": [
+      "item_0",
+      "item_1",
+      "item_2"
+    ],
+    "conNames": [
+      "capacity"
+    ],
+    "variableNodes": [
+      {
+        "varIndex": 0,
+        "nodeId": "item_0",
+        "label": "item 0"
+      },
+      {
+        "varIndex": 1,
+        "nodeId": "item_1",
+        "label": "item 1"
+      },
+      {
+        "varIndex": 2,
+        "nodeId": "item_2",
+        "label": "item 2"
+      }
+    ],
+    "constraintNodes": [
+      {
+        "rowIndex": 0,
+        "nodeId": "capacity",
+        "label": "capacity anchor"
+      }
+    ]
+  },
+  "result": {
+    "status": "optimal",
+    "solver": "python-bruteforce",
+    "x": [
+      0.0,
+      0.0,
+      1.0
+    ],
+    "objective": 10.0,
+    "enumerated": 8
+  }
+}

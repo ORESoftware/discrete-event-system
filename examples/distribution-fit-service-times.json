@@ -1,0 +1,22 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "distribution-fit",
+  "description": "Fit positive service-time samples with MLE and method-of-moments estimators.",
+  "parameters": {
+    "samples": [8.2, 9.1, 10.4, 7.6, 12.3, 9.9, 11.1, 8.7, 10.8, 9.4],
+    "families": ["normal", "lognormal", "gamma", "exponential"],
+    "methods": ["mle", "moments"]
+  },
+  "runtime": {
+    "animate": true,
+    "outputs": {
+      "html": "out/distribution-fit-service-times.html",
+      "frames": "out/distribution-fit-service-times.frames.jsonl",
+      "csv": "out/distribution-fit-service-times.csv",
+      "summary": "out/distribution-fit-service-times.summary.json"
+    }
+  },
+  "metadata": {
+    "tags": ["statistics", "mle", "method-of-moments", "distribution-fitting"]
+  }
+}

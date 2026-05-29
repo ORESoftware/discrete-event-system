@@ -1,0 +1,2366 @@
+{
+  "modelId": "feasibility-pipeline",
+  "params": {
+    "problem": {
+      "sense": "max",
+      "variables": [
+        {
+          "name": "x0",
+          "type": "binary"
+        },
+        {
+          "name": "x1",
+          "type": "binary"
+        },
+        {
+          "name": "x2",
+          "type": "binary"
+        }
+      ],
+      "objective": {
+        "constant": 0,
+        "coefficients": {
+          "x0": 60,
+          "x1": 100,
+          "x2": 120
+        }
+      },
+      "constraints": [
+        {
+          "name": "capacity",
+          "coefficients": {
+            "x0": 10,
+            "x1": 20,
+            "x2": 30
+          },
+          "sense": "<=",
+          "rhs": 50
+        }
+      ],
+      "tolerance": 1e-8
+    },
+    "candidate": {
+      "id": "user-best",
+      "values": {
+        "x0": 1,
+        "x1": 1,
+        "x2": 0
+      },
+      "vector": []
+    },
+    "improvement": {
+      "enabled": true,
+      "maxIterations": 80,
+      "seed": 4,
+      "continuousStep": 1,
+      "integerStep": 1,
+      "penalty": 1000000,
+      "allowRepair": true
+    },
+    "timeLimitMs": 180000,
+    "checkEveryTicks": 1
+  },
+  "runtimeMs": 2,
+  "summaryText": "FEASIBILITY PIPELINE\n------------------------\n  status=improved trace=81 improvements=14\n  initial feasible=true objective=160.0000 violation=0.0000\n  best    feasible=true objective=220.0000 violation=0.0000 candidate=neighbor-2\n  wall-clock=1.0000 / 180000.0000 ms checks=81\n  network stationary=7 moving=5 edges=7\n  validation: 5/5 checks passed\n  values: x0=0.0000  x1=1.0000  x2=1.0000",
+  "result": {
+    "status": "improved",
+    "initial": {
+      "candidateId": "user-best",
+      "iteration": 0,
+      "origin": "user",
+      "values": {
+        "x0": 1,
+        "x1": 1,
+        "x2": 0
+      },
+      "objectiveValue": 160,
+      "comparableObjective": -160,
+      "totalViolation": 0,
+      "maxViolation": 0,
+      "feasible": true,
+      "domainViolations": [],
+      "constraintViolations": [],
+      "violations": [],
+      "merit": -160
+    },
+    "best": {
+      "candidateId": "neighbor-2",
+      "parentId": "user-best",
+      "iteration": 2,
+      "origin": "neighbor",
+      "values": {
+        "x0": 0,
+        "x1": 1,
+        "x2": 1
+      },
+      "objectiveValue": 220,
+      "comparableObjective": -220,
+      "totalViolation": 0,
+      "maxViolation": 0,
+      "feasible": true,
+      "domainViolations": [],
+      "constraintViolations": [],
+      "violations": [],
+      "merit": -220
+    },
+    "trace": [
+      {
+        "candidateId": "user-best",
+        "iteration": 0,
+        "origin": "user",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-1",
+        "parentId": "user-best",
+        "iteration": 1,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 100,
+        "comparableObjective": -100,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -100
+      },
+      {
+        "candidateId": "neighbor-2",
+        "parentId": "user-best",
+        "iteration": 2,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 1,
+          "x2": 1
+        },
+        "objectiveValue": 220,
+        "comparableObjective": -220,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -220
+      },
+      {
+        "candidateId": "neighbor-3",
+        "parentId": "neighbor-2",
+        "iteration": 3,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 1
+        },
+        "objectiveValue": 280,
+        "comparableObjective": -280,
+        "totalViolation": 9.99999999,
+        "maxViolation": 9.99999999,
+        "feasible": false,
+        "domainViolations": [],
+        "constraintViolations": [
+          {
+            "kind": "constraint",
+            "name": "capacity",
+            "constraint": "capacity",
+            "activity": 60,
+            "rhs": 50,
+            "violation": 9.99999999,
+            "message": "capacity: activity 60 <= 50 violated by 9.99999999"
+          }
+        ],
+        "violations": [
+          {
+            "kind": "constraint",
+            "name": "capacity",
+            "constraint": "capacity",
+            "activity": 60,
+            "rhs": 50,
+            "violation": 9.99999999,
+            "message": "capacity: activity 60 <= 50 violated by 9.99999999"
+          }
+        ],
+        "merit": 9999719.989999998
+      },
+      {
+        "candidateId": "neighbor-4",
+        "parentId": "neighbor-2",
+        "iteration": 4,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 120,
+        "comparableObjective": -120,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -120
+      },
+      {
+        "candidateId": "neighbor-5",
+        "parentId": "neighbor-2",
+        "iteration": 5,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 100,
+        "comparableObjective": -100,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -100
+      },
+      {
+        "candidateId": "neighbor-6",
+        "parentId": "neighbor-2",
+        "iteration": 6,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-7",
+        "parentId": "neighbor-2",
+        "iteration": 7,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 100,
+        "comparableObjective": -100,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -100
+      },
+      {
+        "candidateId": "neighbor-8",
+        "parentId": "neighbor-2",
+        "iteration": 8,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      },
+      {
+        "candidateId": "neighbor-9",
+        "parentId": "neighbor-2",
+        "iteration": 9,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 100,
+        "comparableObjective": -100,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -100
+      },
+      {
+        "candidateId": "neighbor-10",
+        "parentId": "neighbor-2",
+        "iteration": 10,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      },
+      {
+        "candidateId": "neighbor-11",
+        "parentId": "neighbor-2",
+        "iteration": 11,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-12",
+        "parentId": "neighbor-2",
+        "iteration": 12,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      },
+      {
+        "candidateId": "neighbor-13",
+        "parentId": "neighbor-2",
+        "iteration": 13,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-14",
+        "parentId": "neighbor-2",
+        "iteration": 14,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-15",
+        "parentId": "neighbor-2",
+        "iteration": 15,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-16",
+        "parentId": "neighbor-2",
+        "iteration": 16,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 1
+        },
+        "objectiveValue": 280,
+        "comparableObjective": -280,
+        "totalViolation": 9.99999999,
+        "maxViolation": 9.99999999,
+        "feasible": false,
+        "domainViolations": [],
+        "constraintViolations": [
+          {
+            "kind": "constraint",
+            "name": "capacity",
+            "constraint": "capacity",
+            "activity": 60,
+            "rhs": 50,
+            "violation": 9.99999999,
+            "message": "capacity: activity 60 <= 50 violated by 9.99999999"
+          }
+        ],
+        "violations": [
+          {
+            "kind": "constraint",
+            "name": "capacity",
+            "constraint": "capacity",
+            "activity": 60,
+            "rhs": 50,
+            "violation": 9.99999999,
+            "message": "capacity: activity 60 <= 50 violated by 9.99999999"
+          }
+        ],
+        "merit": 9999719.989999998
+      },
+      {
+        "candidateId": "neighbor-17",
+        "parentId": "neighbor-2",
+        "iteration": 17,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 1
+        },
+        "objectiveValue": 280,
+        "comparableObjective": -280,
+        "totalViolation": 9.99999999,
+        "maxViolation": 9.99999999,
+        "feasible": false,
+        "domainViolations": [],
+        "constraintViolations": [
+          {
+            "kind": "constraint",
+            "name": "capacity",
+            "constraint": "capacity",
+            "activity": 60,
+            "rhs": 50,
+            "violation": 9.99999999,
+            "message": "capacity: activity 60 <= 50 violated by 9.99999999"
+          }
+        ],
+        "violations": [
+          {
+            "kind": "constraint",
+            "name": "capacity",
+            "constraint": "capacity",
+            "activity": 60,
+            "rhs": 50,
+            "violation": 9.99999999,
+            "message": "capacity: activity 60 <= 50 violated by 9.99999999"
+          }
+        ],
+        "merit": 9999719.989999998
+      },
+      {
+        "candidateId": "neighbor-18",
+        "parentId": "neighbor-2",
+        "iteration": 18,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 100,
+        "comparableObjective": -100,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -100
+      },
+      {
+        "candidateId": "neighbor-19",
+        "parentId": "neighbor-2",
+        "iteration": 19,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 120,
+        "comparableObjective": -120,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -120
+      },
+      {
+        "candidateId": "neighbor-20",
+        "parentId": "neighbor-2",
+        "iteration": 20,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-21",
+        "parentId": "neighbor-2",
+        "iteration": 21,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-22",
+        "parentId": "neighbor-2",
+        "iteration": 22,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      },
+      {
+        "candidateId": "neighbor-23",
+        "parentId": "neighbor-2",
+        "iteration": 23,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 120,
+        "comparableObjective": -120,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -120
+      },
+      {
+        "candidateId": "neighbor-24",
+        "parentId": "neighbor-2",
+        "iteration": 24,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 1
+        },
+        "objectiveValue": 280,
+        "comparableObjective": -280,
+        "totalViolation": 9.99999999,
+        "maxViolation": 9.99999999,
+        "feasible": false,
+        "domainViolations": [],
+        "constraintViolations": [
+          {
+            "kind": "constraint",
+            "name": "capacity",
+            "constraint": "capacity",
+            "activity": 60,
+            "rhs": 50,
+            "violation": 9.99999999,
+            "message": "capacity: activity 60 <= 50 violated by 9.99999999"
+          }
+        ],
+        "violations": [
+          {
+            "kind": "constraint",
+            "name": "capacity",
+            "constraint": "capacity",
+            "activity": 60,
+            "rhs": 50,
+            "violation": 9.99999999,
+            "message": "capacity: activity 60 <= 50 violated by 9.99999999"
+          }
+        ],
+        "merit": 9999719.989999998
+      },
+      {
+        "candidateId": "neighbor-25",
+        "parentId": "neighbor-2",
+        "iteration": 25,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 120,
+        "comparableObjective": -120,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -120
+      },
+      {
+        "candidateId": "neighbor-26",
+        "parentId": "neighbor-2",
+        "iteration": 26,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-27",
+        "parentId": "neighbor-2",
+        "iteration": 27,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-28",
+        "parentId": "neighbor-2",
+        "iteration": 28,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 1
+        },
+        "objectiveValue": 280,
+        "comparableObjective": -280,
+        "totalViolation": 9.99999999,
+        "maxViolation": 9.99999999,
+        "feasible": false,
+        "domainViolations": [],
+        "constraintViolations": [
+          {
+            "kind": "constraint",
+            "name": "capacity",
+            "constraint": "capacity",
+            "activity": 60,
+            "rhs": 50,
+            "violation": 9.99999999,
+            "message": "capacity: activity 60 <= 50 violated by 9.99999999"
+          }
+        ],
+        "violations": [
+          {
+            "kind": "constraint",
+            "name": "capacity",
+            "constraint": "capacity",
+            "activity": 60,
+            "rhs": 50,
+            "violation": 9.99999999,
+            "message": "capacity: activity 60 <= 50 violated by 9.99999999"
+          }
+        ],
+        "merit": 9999719.989999998
+      },
+      {
+        "candidateId": "neighbor-29",
+        "parentId": "neighbor-2",
+        "iteration": 29,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-30",
+        "parentId": "neighbor-2",
+        "iteration": 30,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 1
+        },
+        "objectiveValue": 280,
+        "comparableObjective": -280,
+        "totalViolation": 9.99999999,
+        "maxViolation": 9.99999999,
+        "feasible": false,
+        "domainViolations": [],
+        "constraintViolations": [
+          {
+            "kind": "constraint",
+            "name": "capacity",
+            "constraint": "capacity",
+            "activity": 60,
+            "rhs": 50,
+            "violation": 9.99999999,
+            "message": "capacity: activity 60 <= 50 violated by 9.99999999"
+          }
+        ],
+        "violations": [
+          {
+            "kind": "constraint",
+            "name": "capacity",
+            "constraint": "capacity",
+            "activity": 60,
+            "rhs": 50,
+            "violation": 9.99999999,
+            "message": "capacity: activity 60 <= 50 violated by 9.99999999"
+          }
+        ],
+        "merit": 9999719.989999998
+      },
+      {
+        "candidateId": "neighbor-31",
+        "parentId": "neighbor-2",
+        "iteration": 31,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 100,
+        "comparableObjective": -100,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -100
+      },
+      {
+        "candidateId": "neighbor-32",
+        "parentId": "neighbor-2",
+        "iteration": 32,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-33",
+        "parentId": "neighbor-2",
+        "iteration": 33,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-34",
+        "parentId": "neighbor-2",
+        "iteration": 34,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 100,
+        "comparableObjective": -100,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -100
+      },
+      {
+        "candidateId": "neighbor-35",
+        "parentId": "neighbor-2",
+        "iteration": 35,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      },
+      {
+        "candidateId": "neighbor-36",
+        "parentId": "neighbor-2",
+        "iteration": 36,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      },
+      {
+        "candidateId": "neighbor-37",
+        "parentId": "neighbor-2",
+        "iteration": 37,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-38",
+        "parentId": "neighbor-2",
+        "iteration": 38,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 120,
+        "comparableObjective": -120,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -120
+      },
+      {
+        "candidateId": "neighbor-39",
+        "parentId": "neighbor-2",
+        "iteration": 39,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-40",
+        "parentId": "neighbor-2",
+        "iteration": 40,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-41",
+        "parentId": "neighbor-2",
+        "iteration": 41,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 100,
+        "comparableObjective": -100,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -100
+      },
+      {
+        "candidateId": "neighbor-42",
+        "parentId": "neighbor-2",
+        "iteration": 42,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 100,
+        "comparableObjective": -100,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -100
+      },
+      {
+        "candidateId": "neighbor-43",
+        "parentId": "neighbor-2",
+        "iteration": 43,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-44",
+        "parentId": "neighbor-2",
+        "iteration": 44,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      },
+      {
+        "candidateId": "neighbor-45",
+        "parentId": "neighbor-2",
+        "iteration": 45,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-46",
+        "parentId": "neighbor-2",
+        "iteration": 46,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-47",
+        "parentId": "neighbor-2",
+        "iteration": 47,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 120,
+        "comparableObjective": -120,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -120
+      },
+      {
+        "candidateId": "neighbor-48",
+        "parentId": "neighbor-2",
+        "iteration": 48,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-49",
+        "parentId": "neighbor-2",
+        "iteration": 49,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 120,
+        "comparableObjective": -120,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -120
+      },
+      {
+        "candidateId": "neighbor-50",
+        "parentId": "neighbor-2",
+        "iteration": 50,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 120,
+        "comparableObjective": -120,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -120
+      },
+      {
+        "candidateId": "neighbor-51",
+        "parentId": "neighbor-2",
+        "iteration": 51,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 120,
+        "comparableObjective": -120,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -120
+      },
+      {
+        "candidateId": "neighbor-52",
+        "parentId": "neighbor-2",
+        "iteration": 52,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-53",
+        "parentId": "neighbor-2",
+        "iteration": 53,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      },
+      {
+        "candidateId": "neighbor-54",
+        "parentId": "neighbor-2",
+        "iteration": 54,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-55",
+        "parentId": "neighbor-2",
+        "iteration": 55,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-56",
+        "parentId": "neighbor-2",
+        "iteration": 56,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 120,
+        "comparableObjective": -120,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -120
+      },
+      {
+        "candidateId": "neighbor-57",
+        "parentId": "neighbor-2",
+        "iteration": 57,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 100,
+        "comparableObjective": -100,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -100
+      },
+      {
+        "candidateId": "neighbor-58",
+        "parentId": "neighbor-2",
+        "iteration": 58,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 100,
+        "comparableObjective": -100,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -100
+      },
+      {
+        "candidateId": "neighbor-59",
+        "parentId": "neighbor-2",
+        "iteration": 59,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      },
+      {
+        "candidateId": "neighbor-60",
+        "parentId": "neighbor-2",
+        "iteration": 60,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 120,
+        "comparableObjective": -120,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -120
+      },
+      {
+        "candidateId": "neighbor-61",
+        "parentId": "neighbor-2",
+        "iteration": 61,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      },
+      {
+        "candidateId": "neighbor-62",
+        "parentId": "neighbor-2",
+        "iteration": 62,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 100,
+        "comparableObjective": -100,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -100
+      },
+      {
+        "candidateId": "neighbor-63",
+        "parentId": "neighbor-2",
+        "iteration": 63,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-64",
+        "parentId": "neighbor-2",
+        "iteration": 64,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 1
+        },
+        "objectiveValue": 280,
+        "comparableObjective": -280,
+        "totalViolation": 9.99999999,
+        "maxViolation": 9.99999999,
+        "feasible": false,
+        "domainViolations": [],
+        "constraintViolations": [
+          {
+            "kind": "constraint",
+            "name": "capacity",
+            "constraint": "capacity",
+            "activity": 60,
+            "rhs": 50,
+            "violation": 9.99999999,
+            "message": "capacity: activity 60 <= 50 violated by 9.99999999"
+          }
+        ],
+        "violations": [
+          {
+            "kind": "constraint",
+            "name": "capacity",
+            "constraint": "capacity",
+            "activity": 60,
+            "rhs": 50,
+            "violation": 9.99999999,
+            "message": "capacity: activity 60 <= 50 violated by 9.99999999"
+          }
+        ],
+        "merit": 9999719.989999998
+      },
+      {
+        "candidateId": "neighbor-65",
+        "parentId": "neighbor-2",
+        "iteration": 65,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-66",
+        "parentId": "neighbor-2",
+        "iteration": 66,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-67",
+        "parentId": "neighbor-2",
+        "iteration": 67,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-68",
+        "parentId": "neighbor-2",
+        "iteration": 68,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 1
+        },
+        "objectiveValue": 280,
+        "comparableObjective": -280,
+        "totalViolation": 9.99999999,
+        "maxViolation": 9.99999999,
+        "feasible": false,
+        "domainViolations": [],
+        "constraintViolations": [
+          {
+            "kind": "constraint",
+            "name": "capacity",
+            "constraint": "capacity",
+            "activity": 60,
+            "rhs": 50,
+            "violation": 9.99999999,
+            "message": "capacity: activity 60 <= 50 violated by 9.99999999"
+          }
+        ],
+        "violations": [
+          {
+            "kind": "constraint",
+            "name": "capacity",
+            "constraint": "capacity",
+            "activity": 60,
+            "rhs": 50,
+            "violation": 9.99999999,
+            "message": "capacity: activity 60 <= 50 violated by 9.99999999"
+          }
+        ],
+        "merit": 9999719.989999998
+      },
+      {
+        "candidateId": "neighbor-69",
+        "parentId": "neighbor-2",
+        "iteration": 69,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-70",
+        "parentId": "neighbor-2",
+        "iteration": 70,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      },
+      {
+        "candidateId": "neighbor-71",
+        "parentId": "neighbor-2",
+        "iteration": 71,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 120,
+        "comparableObjective": -120,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -120
+      },
+      {
+        "candidateId": "neighbor-72",
+        "parentId": "neighbor-2",
+        "iteration": 72,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 160,
+        "comparableObjective": -160,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -160
+      },
+      {
+        "candidateId": "neighbor-73",
+        "parentId": "neighbor-2",
+        "iteration": 73,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 120,
+        "comparableObjective": -120,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -120
+      },
+      {
+        "candidateId": "neighbor-74",
+        "parentId": "neighbor-2",
+        "iteration": 74,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      },
+      {
+        "candidateId": "neighbor-75",
+        "parentId": "neighbor-2",
+        "iteration": 75,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 120,
+        "comparableObjective": -120,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -120
+      },
+      {
+        "candidateId": "neighbor-76",
+        "parentId": "neighbor-2",
+        "iteration": 76,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      },
+      {
+        "candidateId": "neighbor-77",
+        "parentId": "neighbor-2",
+        "iteration": 77,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 100,
+        "comparableObjective": -100,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -100
+      },
+      {
+        "candidateId": "neighbor-78",
+        "parentId": "neighbor-2",
+        "iteration": 78,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 100,
+        "comparableObjective": -100,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -100
+      },
+      {
+        "candidateId": "neighbor-79",
+        "parentId": "neighbor-2",
+        "iteration": 79,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 100,
+        "comparableObjective": -100,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -100
+      },
+      {
+        "candidateId": "neighbor-80",
+        "parentId": "neighbor-2",
+        "iteration": 80,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 1,
+          "x2": 0
+        },
+        "objectiveValue": 100,
+        "comparableObjective": -100,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -100
+      }
+    ],
+    "improvements": [
+      {
+        "candidateId": "neighbor-2",
+        "parentId": "user-best",
+        "iteration": 2,
+        "origin": "neighbor",
+        "values": {
+          "x0": 0,
+          "x1": 1,
+          "x2": 1
+        },
+        "objectiveValue": 220,
+        "comparableObjective": -220,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -220
+      },
+      {
+        "candidateId": "neighbor-8",
+        "parentId": "neighbor-2",
+        "iteration": 8,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      },
+      {
+        "candidateId": "neighbor-10",
+        "parentId": "neighbor-2",
+        "iteration": 10,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      },
+      {
+        "candidateId": "neighbor-12",
+        "parentId": "neighbor-2",
+        "iteration": 12,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      },
+      {
+        "candidateId": "neighbor-22",
+        "parentId": "neighbor-2",
+        "iteration": 22,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      },
+      {
+        "candidateId": "neighbor-35",
+        "parentId": "neighbor-2",
+        "iteration": 35,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      },
+      {
+        "candidateId": "neighbor-36",
+        "parentId": "neighbor-2",
+        "iteration": 36,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      },
+      {
+        "candidateId": "neighbor-44",
+        "parentId": "neighbor-2",
+        "iteration": 44,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      },
+      {
+        "candidateId": "neighbor-53",
+        "parentId": "neighbor-2",
+        "iteration": 53,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      },
+      {
+        "candidateId": "neighbor-59",
+        "parentId": "neighbor-2",
+        "iteration": 59,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      },
+      {
+        "candidateId": "neighbor-61",
+        "parentId": "neighbor-2",
+        "iteration": 61,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      },
+      {
+        "candidateId": "neighbor-70",
+        "parentId": "neighbor-2",
+        "iteration": 70,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      },
+      {
+        "candidateId": "neighbor-74",
+        "parentId": "neighbor-2",
+        "iteration": 74,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      },
+      {
+        "candidateId": "neighbor-76",
+        "parentId": "neighbor-2",
+        "iteration": 76,
+        "origin": "neighbor",
+        "values": {
+          "x0": 1,
+          "x1": 0,
+          "x2": 1
+        },
+        "objectiveValue": 180,
+        "comparableObjective": -180,
+        "totalViolation": 0,
+        "maxViolation": 0,
+        "feasible": true,
+        "domainViolations": [],
+        "constraintViolations": [],
+        "violations": [],
+        "merit": -180
+      }
+    ],
+    "stopSignals": [],
+    "wallClock": {
+      "budgetMs": 180000,
+      "elapsedMs": 1,
+      "checks": 81,
+      "expired": false
+    },
+    "runSummary": {
+      "ticks": 81,
+      "reason": "done",
+      "validation": [
+        {
+          "name": "domain-checker.problem-has-variables",
+          "passed": true,
+          "observed": "3",
+          "expected": "at least one variable",
+          "group": "feasibility-pipeline"
+        },
+        {
+          "name": "objective-evaluator.penalty-positive",
+          "passed": true,
+          "observed": "1000000",
+          "expected": "penalty > 0",
+          "group": "feasibility-pipeline"
+        },
+        {
+          "name": "improvement-station.best-evaluation-exists",
+          "passed": true,
+          "observed": "neighbor-2",
+          "expected": "at least one evaluated candidate",
+          "group": "feasibility-pipeline"
+        },
+        {
+          "name": "wall-clock-checker.budget-nonnegative",
+          "passed": true,
+          "observed": "180000",
+          "expected": "budgetMs >= 0",
+          "group": "wall-clock-checker"
+        },
+        {
+          "name": "feasibility-sink.trace-nonempty",
+          "passed": true,
+          "observed": "81",
+          "expected": "at least one evaluation",
+          "group": "feasibility-pipeline"
+        }
+      ],
+      "validationOk": true
+    },
+    "network": {
+      "stationaryEntities": [
+        {
+          "id": "candidate-source",
+          "kind": "candidate-source",
+          "role": "source"
+        },
+        {
+          "id": "domain-checker",
+          "kind": "domain-checker",
+          "role": "checker"
+        },
+        {
+          "id": "constraint-checker",
+          "kind": "constraint-checker",
+          "role": "checker"
+        },
+        {
+          "id": "objective-evaluator",
+          "kind": "objective-evaluator",
+          "role": "evaluator"
+        },
+        {
+          "id": "improvement-station",
+          "kind": "local-improver",
+          "role": "improver"
+        },
+        {
+          "id": "wall-clock-checker",
+          "kind": "wall-clock-checker",
+          "role": "checker"
+        },
+        {
+          "id": "feasibility-sink",
+          "kind": "feasibility-sink",
+          "role": "sink"
+        }
+      ],
+      "movingEntities": [
+        {
+          "id": "CandidateToken",
+          "kind": "candidate-solution",
+          "tokenType": "CandidateToken"
+        },
+        {
+          "id": "DomainCheckedToken",
+          "kind": "domain-checked-candidate",
+          "tokenType": "DomainCheckedToken"
+        },
+        {
+          "id": "ConstraintCheckedToken",
+          "kind": "constraint-checked-candidate",
+          "tokenType": "ConstraintCheckedToken"
+        },
+        {
+          "id": "FeasibilityEvaluationToken",
+          "kind": "evaluation",
+          "tokenType": "FeasibilityEvaluationToken"
+        },
+        {
+          "id": "StopSignalToken",
+          "kind": "stop-signal",
+          "tokenType": "StopSignalToken"
+        }
+      ],
+      "edges": [
+        {
+          "from": "candidate-source",
+          "to": "domain-checker",
+          "movingEntity": "CandidateToken",
+          "channel": "candidate"
+        },
+        {
+          "from": "improvement-station",
+          "to": "domain-checker",
+          "movingEntity": "CandidateToken",
+          "channel": "candidate"
+        },
+        {
+          "from": "domain-checker",
+          "to": "constraint-checker",
+          "movingEntity": "DomainCheckedToken",
+          "channel": "domain-checked"
+        },
+        {
+          "from": "constraint-checker",
+          "to": "objective-evaluator",
+          "movingEntity": "ConstraintCheckedToken",
+          "channel": "constraint-checked"
+        },
+        {
+          "from": "objective-evaluator",
+          "to": "feasibility-sink",
+          "movingEntity": "FeasibilityEvaluationToken",
+          "channel": "evaluation"
+        },
+        {
+          "from": "objective-evaluator",
+          "to": "improvement-station",
+          "movingEntity": "FeasibilityEvaluationToken",
+          "channel": "evaluation"
+        },
+        {
+          "from": "wall-clock-checker",
+          "to": "feasibility-sink",
+          "movingEntity": "StopSignalToken",
+          "channel": "stop"
+        }
+      ]
+    },
+    "validation": [
+      {
+        "name": "domain-checker.problem-has-variables",
+        "passed": true,
+        "observed": "3",
+        "expected": "at least one variable",
+        "group": "feasibility-pipeline"
+      },
+      {
+        "name": "objective-evaluator.penalty-positive",
+        "passed": true,
+        "observed": "1000000",
+        "expected": "penalty > 0",
+        "group": "feasibility-pipeline"
+      },
+      {
+        "name": "improvement-station.best-evaluation-exists",
+        "passed": true,
+        "observed": "neighbor-2",
+        "expected": "at least one evaluated candidate",
+        "group": "feasibility-pipeline"
+      },
+      {
+        "name": "wall-clock-checker.budget-nonnegative",
+        "passed": true,
+        "observed": "180000",
+        "expected": "budgetMs >= 0",
+        "group": "wall-clock-checker"
+      },
+      {
+        "name": "feasibility-sink.trace-nonempty",
+        "passed": true,
+        "observed": "81",
+        "expected": "at least one evaluation",
+        "group": "feasibility-pipeline"
+      }
+    ]
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "inventory-dp",
+  "description": "5-period stochastic inventory with Poisson(λ=3) demand truncated at 7.",
+  "parameters": {
+    "horizon": 5,
+    "S_max": 10,
+    "demandPmf": [0.0498, 0.1494, 0.2240, 0.2240, 0.1680, 0.1008, 0.0504, 0.0336],
+    "price": 8,
+    "cost": 3,
+    "fixedCost": 4,
+    "holdCost": 1,
+    "stockoutCost": 5,
+    "salvageValue": 1,
+    "discount": 1.0,
+    "initialInventory": 0
+  },
+  "runtime": {
+    "seed": 7
+  },
+  "metadata": {
+    "tags": ["dp", "inventory", "newsvendor", "bellman"]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "traffic-flow",
+  "description": "Continuous-time traffic flow on a five-intersection corridor with three sources, three sinks, signals, and fewer than 300 active cars.",
+  "parameters": {
+    "builtin": "five-intersection",
+    "durationSec": 180,
+    "dtSec": 1,
+    "seed": 19,
+    "maxCars": 250,
+    "spawnRateMultiplier": 1,
+    "carLengthM": 4.8,
+    "carWidthM": 1.8,
+    "laneWidthM": 3.7,
+    "minGapM": 2.5,
+    "maxAccelMps2": 2.2,
+    "maxDecelMps2": 4,
+    "maxJerkMps3": 6,
+    "reactionTimeSec": 0.8,
+    "timeHeadwaySec": 1.1,
+    "gridCellSizeM": 0.3048
+  },
+  "runtime": {
+    "animate": true,
+    "outputs": {
+      "csv": "out/traffic-flow-five-intersection.csv",
+      "html": "out/traffic-flow-five-intersection.html",
+      "log": "out/traffic-flow-five-intersection.log.jsonl",
+      "summary": "out/traffic-flow-five-intersection.summary.json"
+    }
+  }
+}

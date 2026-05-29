@@ -1,0 +1,27 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "milp-bnb",
+  "description": "Generic mixed-integer LP: x_0, x_1 must be integer, x_2 is continuous.",
+  "parameters": {
+    "raw": {
+      "sense": "max",
+      "c":            [3, 5, 7],
+      "A":            [[1, 1, 1], [2, 1, 0], [1, 2, 3]],
+      "b":            [10, 8, 15],
+      "integerVars":  [true, true, false]
+    },
+    "options": {
+      "maxNodes": 200
+    }
+  },
+  "runtime": {
+    "outputs": {
+      "csv": "out/milp-bnb/mixed-trace.csv"
+    },
+    "verbose": true
+  },
+  "metadata": {
+    "tags": ["milp", "mixed-integer"],
+    "notes": "x_0=4, x_1=0, x_2=11/3 (continuous), z = 37.667."
+  }
+}

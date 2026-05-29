@@ -1,0 +1,15 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "vrp-nearest-neighbor",
+  "description": "Capacitated VRP solved with nearest-neighbor route-construction tokens.",
+  "parameters": {
+    "vehicleCapacity": 5
+  },
+  "outputs": {
+    "csv": "outputs/vrp-nearest-neighbor.csv"
+  },
+  "runtime": {
+    "animate": false,
+    "verbose": false
+  }
+}

@@ -1,0 +1,227 @@
+{
+  "$schema": "des/universal-model/v1",
+  "id": "universal-latex-decay-ode",
+  "description": "Universal DES document: original LaTeX, normalized math, and generated stationary/moving block graph for y' = -k y.",
+  "originalInput": {
+    "format": "latex",
+    "contentType": "application/x-latex",
+    "content": "\\frac{dy}{dt} = -k y; y(0)=1"
+  },
+  "math": {
+    "kind": "ode",
+    "independentVariables": [
+      {
+        "id": "t",
+        "role": "independent"
+      }
+    ],
+    "stateVariables": [
+      {
+        "id": "y",
+        "role": "state",
+        "initial": 1
+      }
+    ],
+    "parameters": [
+      {
+        "id": "k",
+        "value": 1
+      }
+    ],
+    "equations": [
+      {
+        "id": "ode:y",
+        "kind": "ode",
+        "lhs": "dy/dt",
+        "rhs": "-k*y",
+        "normalizedExpression": "-k*y",
+        "variables": ["y"]
+      }
+    ],
+    "initialConditions": [
+      {
+        "id": "initial:y",
+        "variable": "y",
+        "at": {
+          "t": 0
+        },
+        "value": 1,
+        "kind": "initial"
+      }
+    ],
+    "numerics": {
+      "time": {
+        "t0": 0,
+        "t1": 1,
+        "dt": 0.01,
+        "steps": 100
+      },
+      "method": "euler"
+    },
+    "normalized": {
+      "targetModel": "math-equation",
+      "parameters": {
+        "format": "latex",
+        "kind": "ode",
+        "equation": "\\frac{dy}{dt} = -k y; y(0)=1",
+        "constants": {
+          "k": 1
+        },
+        "t0": 0,
+        "t1": 1,
+        "dt": 0.01,
+        "method": "euler"
+      }
+    }
+  },
+  "des": {
+    "time": {
+      "t0": 0,
+      "t1": 1,
+      "dt": 0.01,
+      "steps": 100
+    },
+    "stationaryEntities": [
+      {
+        "id": "integrator:y",
+        "kind": "integrator",
+        "role": "integrator",
+        "className": "IntegratorBlock",
+        "parameters": {
+          "initialState": 1,
+          "method": "euler"
+        },
+        "ports": {
+          "inputs": ["in"],
+          "outputs": ["out"]
+        }
+      },
+      {
+        "id": "rhs:y",
+        "kind": "expression",
+        "role": "processor",
+        "className": "ExpressionBlock",
+        "parameters": {
+          "expression": "-k*y"
+        },
+        "ports": {
+          "inputs": ["y"],
+          "outputs": ["out"]
+        }
+      }
+    ],
+    "movingEntities": [
+      {
+        "id": "MathSignal",
+        "kind": "signal-token",
+        "tokenType": "MathSignal",
+        "payloadSchema": {
+          "value": "number",
+          "time": "number",
+          "tick": "integer",
+          "sourceId": "string",
+          "channel": "string"
+        },
+        "semantics": "Scalar value token moving between stationary math blocks."
+      }
+    ],
+    "graph": {
+      "nodes": [
+        {
+          "id": "integrator:y",
+          "kind": "integrator",
+          "role": "integrator",
+          "className": "IntegratorBlock",
+          "parameters": {
+            "initialState": 1,
+            "method": "euler"
+          },
+          "ports": {
+            "inputs": ["in"],
+            "outputs": ["out"]
+          }
+        },
+        {
+          "id": "rhs:y",
+          "kind": "expression",
+          "role": "processor",
+          "className": "ExpressionBlock",
+          "parameters": {
+            "expression": "-k*y"
+          },
+          "ports": {
+            "inputs": ["y"],
+            "outputs": ["out"]
+          }
+        }
+      ],
+      "edges": [
+        {
+          "id": "edge:state-to-rhs",
+          "from": {
+            "entityId": "integrator:y",
+            "port": "out"
+          },
+          "to": {
+            "entityId": "rhs:y",
+            "port": "y"
+          },
+          "movingEntity": "MathSignal"
+        },
+        {
+          "id": "edge:rhs-to-integrator",
+          "from": {
+            "entityId": "rhs:y",
+            "port": "out"
+          },
+          "to": {
+            "entityId": "integrator:y",
+            "port": "in"
+          },
+          "movingEntity": "MathSignal"
+        }
+      ]
+    },
+    "sources": [
+      {
+        "id": "source:initial:y",
+        "entityId": "integrator:y",
+        "port": "out",
+        "role": "initial-condition",
+        "variable": "y",
+        "value": 1
+      }
+    ],
+    "sinks": [
+      {
+        "id": "sink:trace:y",
+        "entityId": "integrator:y",
+        "port": "out",
+        "role": "trace-recorder",
+        "variable": "y",
+        "record": true
+      }
+    ],
+    "observability": {
+      "recordSignals": true,
+      "recordState": true,
+      "recordGraph": true
+    }
+  },
+  "solver": {
+    "targetModel": "math-equation",
+    "method": "euler"
+  },
+  "runtime": {
+    "animate": true,
+    "outputs": {
+      "csv": "out/universal-math-equation-latex-ode.csv",
+      "html": "out/universal-math-equation-latex-ode.html",
+      "log": "out/universal-math-equation-latex-ode.jsonl",
+      "summary": "out/universal-math-equation-latex-ode-summary.json"
+    }
+  },
+  "metadata": {
+    "tags": ["universal-model", "latex", "ode", "stationary-moving-graph"]
+  }
+}

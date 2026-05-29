@@ -1,0 +1,5 @@
+candidate_id,objective,feasible,metrics,plan
+lean-kanban,2160,true,"{""shipped"":144,""service"":1,""backlog"":0,""avgWip"":0,""expedites"":0}","{""releaseLot"":8,""wipCap"":20,""expediteThreshold"":14}"
+bottleneck-buffer-rope,2155.25,true,"{""shipped"":144,""service"":1,""backlog"":0,""avgWip"":19,""expedites"":0}","{""releaseLot"":10,""wipCap"":28,""expediteThreshold"":18}"
+adaptive-expedite-control,2152.9444444444443,true,"{""shipped"":144,""service"":1,""backlog"":0,""avgWip"":28.22222222222222,""expedites"":0}","{""releaseLot"":12,""wipCap"":32,""expediteThreshold"":10}"
+push-large-lots,2148.7638888888887,true,"{""shipped"":144,""service"":1,""backlog"":0,""avgWip"":44.94444444444444,""expedites"":0}","{""releaseLot"":16,""wipCap"":50,""expediteThreshold"":30}"

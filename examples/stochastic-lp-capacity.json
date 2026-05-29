@@ -1,0 +1,26 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "stochastic-lp",
+  "description": "Two-product two-stage stochastic capacity planning solved by monolithic SAA and Benders-as-DES.",
+  "parameters": {
+    "cost": [10, 12],
+    "price": [25, 28],
+    "ranges": [[50, 100], [40, 80]],
+    "numScenarios": 200,
+    "seed": 42,
+    "maxIter": 200,
+    "tol": 1e-7
+  },
+  "runtime": {
+    "animate": true,
+    "outputs": {
+      "html": "out/stochastic-lp-capacity.html",
+      "frames": "out/stochastic-lp-capacity.frames.jsonl",
+      "summary": "out/stochastic-lp-capacity.summary.json",
+      "log": "out/stochastic-lp-capacity.log.jsonl"
+    }
+  },
+  "metadata": {
+    "tags": ["stochastic-lp", "benders", "saa", "capacity-planning"]
+  }
+}

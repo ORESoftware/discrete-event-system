@@ -1,0 +1,25 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "buyer-aware-dynamic-pricing",
+  "description": "Buyer-aware dynamic pricing with inventory, demand signals, privacy, perceived fairness, retention, and sustainability guardrails.",
+  "parameters": {
+    "horizon": 12,
+    "initialInventory": 160,
+    "privacyBudget": 0,
+    "fairnessTolerance": 0.18,
+    "sustainabilityWeight": 120
+  },
+  "runtime": {
+    "animate": true,
+    "outputs": {
+      "html": "out/buyer-aware-dynamic-pricing.html",
+      "frames": "out/buyer-aware-dynamic-pricing.frames.jsonl",
+      "csv": "out/buyer-aware-dynamic-pricing.csv",
+      "summary": "out/buyer-aware-dynamic-pricing.summary.json"
+    }
+  },
+  "metadata": {
+    "tags": ["revenue-management", "dynamic-pricing", "buyer-signals", "privacy", "fairness", "inventory-control"],
+    "notes": "Inspired by inventory-based dynamic pricing research: price-sensitive demand, inventory state, limited price changes, and joint pricing/replenishment effects."
+  }
+}

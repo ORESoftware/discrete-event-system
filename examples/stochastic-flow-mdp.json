@@ -1,0 +1,17 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "stochastic-flow-mdp",
+  "description": "MDP interpretation of max-flow with stochastic edge availability and sequential routing control.",
+  "parameters": {
+    "builtin": "small-stochastic-network",
+    "seed": 7,
+    "maxPolicyRows": 24
+  },
+  "runtime": {
+    "seed": 7,
+    "outputs": {
+      "csv": "out/stochastic-flow-mdp-policy.csv",
+      "summary": "out/stochastic-flow-mdp-summary.json"
+    }
+  }
+}

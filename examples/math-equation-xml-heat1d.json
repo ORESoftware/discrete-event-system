@@ -1,0 +1,22 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "math-equation",
+  "description": "XML heat-equation input normalized into cell and Laplacian block stations.",
+  "parameters": {
+    "format": "xml",
+    "kind": "heat1d",
+    "equation": "<heat1d cells=\"21\" length=\"1\" alpha=\"0.02\" t0=\"0\" t1=\"0.2\" dt=\"0.0025\" leftBoundary=\"0\" rightBoundary=\"0\"><equation>du/dt = alpha*d2u/dx2</equation><initial>sin(pi*x/length)</initial></heat1d>"
+  },
+  "runtime": {
+    "animate": true,
+    "outputs": {
+      "csv": "out/math-equation-xml-heat1d.csv",
+      "html": "out/math-equation-xml-heat1d.html",
+      "log": "out/math-equation-xml-heat1d.jsonl",
+      "summary": "out/math-equation-xml-heat1d-summary.json"
+    }
+  },
+  "metadata": {
+    "tags": ["math-equation", "xml", "pde", "heat-equation"]
+  }
+}

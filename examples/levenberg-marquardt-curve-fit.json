@@ -1,0 +1,14 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "levenberg-marquardt-curve-fit",
+  "description": "Fit y = a exp(bx) with Levenberg-Marquardt damped state tokens.",
+  "parameters": {
+    "initial": [1, -0.2],
+    "lambda": 0.1,
+    "maxIter": 30,
+    "tol": 1e-8
+  },
+  "runtime": {
+    "animate": false
+  }
+}

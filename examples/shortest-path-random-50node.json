@@ -1,0 +1,25 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "shortest-path",
+  "description": "Dijkstra-DES on a 50-node random graph with weights in [1, 10]",
+  "parameters": {
+    "algorithm": "dijkstra",
+    "source": 0,
+    "randomGraph": {
+      "numNodes": 50,
+      "edgeProb": 0.15,
+      "wMin": 1,
+      "wMax": 10,
+      "seed": 1234
+    }
+  },
+  "runtime": {
+    "outputs": {
+      "csv": "out/shortest-path/random-50.csv",
+      "summary": "out/shortest-path/random-50.summary.json"
+    }
+  },
+  "metadata": {
+    "tags": ["shortest-path", "dijkstra", "random"]
+  }
+}

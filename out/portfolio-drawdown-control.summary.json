@@ -1,0 +1,107 @@
+{
+  "modelId": "portfolio-drawdown-control",
+  "params": {
+    "initialWealth": 100
+  },
+  "runtimeMs": 0,
+  "summaryText": "PORTFOLIO DRAWDOWN CONTROL\n----------------------------------------\n  Category:       Financial engineering (applied control theory, novel algorithms)\n  Best plan:      conservative-cppi\n  Objective:      100.673956\n  Metrics:        finalWealth=101.48, maxDrawdown=6.23e-3, turnover=0.3459\n  Candidates:     4\n  Stations:       portfolio-drawdown-control-scenario-source -> portfolio-drawdown-control-candidate-generator -> portfolio-drawdown-control-plan-evaluator -> portfolio-drawdown-control-result-sink\n  Movables:       DomainScenarioToken, DomainPlanToken, DomainEvaluationToken",
+  "result": {
+    "modelId": "portfolio-drawdown-control",
+    "category": "Financial engineering (applied control theory, novel algorithms)",
+    "best": {
+      "candidateId": "conservative-cppi",
+      "plan": {
+        "floorFraction": 0.88,
+        "multiplier": 2.2,
+        "volTarget": 0.7
+      },
+      "objective": 100.67395576670154,
+      "feasible": true,
+      "metrics": {
+        "finalWealth": 101.48010488917696,
+        "maxDrawdown": 0.006228697024674021,
+        "turnover": 0.3458873442226668
+      }
+    },
+    "candidates": [
+      {
+        "candidateId": "conservative-cppi",
+        "plan": {
+          "floorFraction": 0.88,
+          "multiplier": 2.2,
+          "volTarget": 0.7
+        },
+        "objective": 100.67395576670154,
+        "feasible": true,
+        "metrics": {
+          "finalWealth": 101.48010488917696,
+          "maxDrawdown": 0.006228697024674021,
+          "turnover": 0.3458873442226668
+        }
+      },
+      {
+        "candidateId": "adaptive-drawdown-control",
+        "plan": {
+          "floorFraction": 0.9,
+          "multiplier": 3.4,
+          "volTarget": 0.55
+        },
+        "objective": 100.37943157085202,
+        "feasible": true,
+        "metrics": {
+          "finalWealth": 101.51424201595856,
+          "maxDrawdown": 0.008593556481197051,
+          "turnover": 0.5054476802559839
+        }
+      },
+      {
+        "candidateId": "buy-and-hold",
+        "plan": {
+          "floorFraction": 0,
+          "multiplier": 1,
+          "volTarget": 1
+        },
+        "objective": 99.11338560876099,
+        "feasible": true,
+        "metrics": {
+          "finalWealth": 102.309386858761,
+          "maxDrawdown": 0.028188250000000106,
+          "turnover": 1
+        }
+      },
+      {
+        "candidateId": "growth-cppi",
+        "plan": {
+          "floorFraction": 0.82,
+          "multiplier": 4.1,
+          "volTarget": 0.9
+        },
+        "objective": 99.02046876093273,
+        "feasible": true,
+        "metrics": {
+          "finalWealth": 101.78107209601794,
+          "maxDrawdown": 0.021999951257799216,
+          "turnover": 1.113259347715336
+        }
+      }
+    ],
+    "topology": {
+      "stations": [
+        "portfolio-drawdown-control-scenario-source",
+        "portfolio-drawdown-control-candidate-generator",
+        "portfolio-drawdown-control-plan-evaluator",
+        "portfolio-drawdown-control-result-sink"
+      ],
+      "movables": [
+        "DomainScenarioToken",
+        "DomainPlanToken",
+        "DomainEvaluationToken"
+      ],
+      "edges": [
+        "portfolio-drawdown-control-scenario-source:scenario -> portfolio-drawdown-control-candidate-generator:scenario",
+        "portfolio-drawdown-control-candidate-generator:candidate-plan -> portfolio-drawdown-control-plan-evaluator:candidate-plan",
+        "portfolio-drawdown-control-plan-evaluator:evaluation -> portfolio-drawdown-control-result-sink:evaluation"
+      ]
+    }
+  }
+}

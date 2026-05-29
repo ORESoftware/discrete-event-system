@@ -1,0 +1,17 @@
+kind,id,from,to,generated,delivered,dropped,throughput_mbps,goodput_mbps,mean_latency_ms,p95_latency_ms,total_cost,utilization,avg_queue,max_queue,mean_queue_delay_ms
+flow,http-api,web-client,api-server,1764,748,1016,5.20608,3.2912,262.32085561497325,275,0.018687599999999853,,,,
+flow,udp-telemetry,telemetry-client,api-server,1400,63,1337,0.233856,0.2268,93.60317460317461,199,0.0020007680000000043,,,,
+flow,tcp-bulk,web-client,api-server,693,27,666,0.15552,0.1512,123.03703703703704,222,0.0014644800000000078,,,,
+link,web-edge,web-client,edge,2457,2457,0,14.31510778706555,,,,0.004067280000000124,0.14315107787065484,2.161900571931368,3,0.038864957264964986
+link,web-edge:rev,edge,web-client,0,0,0,0,,,,0,0,0,0,0
+link,telemetry-edge,telemetry-client,edge,1400,1400,0,4.572635283765948,,,,0.0012992000000000095,0.045726352837660786,1.2318521777386713,2,0
+link,telemetry-edge:rev,edge,telemetry-client,0,0,0,0,,,,0,0,0,0,0
+link,edge-wan,edge,wan-router,838,838,3019,4.9234104707435105,,,,0.013988640000000227,0.9846820941487214,87.79982402111746,96,209.97987398569066
+link,edge-wan:rev,wan-router,edge,0,0,0,0,,,,0,0,0,0,0
+link,wan-api,wan-router,api-server,838,838,0,4.9234104707435105,,,,0.0027977280000000227,0.04923410470743567,1.8433787945446547,4,0
+link,wan-api:rev,api-server,wan-router,0,0,0,0,,,,0,0,0,0,0
+node,web-client,,,2457,2457,0,,,,,,,0,2,0
+node,telemetry-client,,,1400,1400,0,,,,,,,0,1,0
+node,edge,,,3857,838,3019,,,,,,,0,3,0
+node,wan-router,,,838,838,0,,,,,,,0,1,0
+node,api-server,,,838,838,0,,,,,,,0,1,0

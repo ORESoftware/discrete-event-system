@@ -1,0 +1,19 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "shortest-path",
+  "description": "Bellman-Ford-DES on the canonical 5-node textbook chain",
+  "parameters": {
+    "algorithm": "bellman-ford",
+    "source": 0,
+    "builtin": "small-chain"
+  },
+  "runtime": {
+    "outputs": {
+      "csv": "out/shortest-path/small-chain.csv",
+      "summary": "out/shortest-path/small-chain.summary.json"
+    }
+  },
+  "metadata": {
+    "tags": ["shortest-path", "demo", "textbook"]
+  }
+}

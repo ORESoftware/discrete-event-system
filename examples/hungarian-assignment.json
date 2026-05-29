@@ -1,0 +1,15 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "hungarian-assignment",
+  "description": "3x3 assignment through row reduction, column reduction, and assignment-builder stations.",
+  "parameters": {
+    "cost": [
+      [9, 2, 7],
+      [6, 4, 3],
+      [5, 8, 1]
+    ]
+  },
+  "runtime": {
+    "animate": false
+  }
+}

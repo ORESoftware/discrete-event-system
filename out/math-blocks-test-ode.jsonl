@@ -1,0 +1,10 @@
+{"level":"info","kind":"math-ode-run-start","states":["y"],"dt":0.05}
+{"level":"info","kind":"math-ode-start","states":["y"],"steps":4,"dt":0.05}
+{"level":"info","kind":"math-block-run-start","blocks":2,"maxTicks":6}
+{"level":"info","kind":"math-block-run-finish","ticks":5,"reason":"done","outputs":10}
+{"level":"debug","kind":"math-ode-tick","tick":0,"time":0,"state":{"y":1},"derivatives":{"y":-1}}
+{"level":"debug","kind":"math-ode-tick","tick":1,"time":0.05,"state":{"y":0.95},"derivatives":{"y":-0.95}}
+{"level":"debug","kind":"math-ode-tick","tick":2,"time":0.1,"state":{"y":0.9025},"derivatives":{"y":-0.9025}}
+{"level":"debug","kind":"math-ode-tick","tick":3,"time":0.15000000000000002,"state":{"y":0.857375},"derivatives":{"y":-0.857375}}
+{"level":"debug","kind":"math-ode-tick","tick":4,"time":0.2,"state":{"y":0.81450625},"derivatives":{"y":-0.81450625}}
+{"level":"info","kind":"math-ode-run-finish","finalState":{"y":0.81450625},"steps":4}

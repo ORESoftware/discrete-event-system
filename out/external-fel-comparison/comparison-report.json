@@ -1,0 +1,811 @@
+{
+  "generatedAt": "2026-05-27T16:59:19.547Z",
+  "sharedInputContract": "Internal and external runs read the same JSON scenario files from out/external-fel-comparison.",
+  "reports": [
+    {
+      "domain": "traffic",
+      "scenario": "five-intersection-scheduled-trips",
+      "engine": "source/sink input",
+      "status": "passed",
+      "inputPath": "/Users/maca5/codes/ores/des/uta-phd/courses/hdm-fall-2022/des/out/external-fel-comparison/traffic-shared-input.json",
+      "checks": [
+        {
+          "name": "has source entities",
+          "passed": true,
+          "detail": "sources=3"
+        },
+        {
+          "name": "has sink entities",
+          "passed": true,
+          "detail": "sinks=3"
+        },
+        {
+          "name": "has scheduled source trips",
+          "passed": true,
+          "detail": "trips=21"
+        },
+        {
+          "name": "trip-1: source exists",
+          "passed": true,
+          "detail": "west@W"
+        },
+        {
+          "name": "trip-1: sink exists",
+          "passed": true,
+          "detail": "south4@S4"
+        },
+        {
+          "name": "trip-1: sink allowed by source",
+          "passed": true,
+          "detail": "west->south4"
+        },
+        {
+          "name": "trip-1: route connects source to sink",
+          "passed": true,
+          "detail": "W-I0->I0-I1->I1-I2->I2-I3->I3-I4->I4-S4"
+        },
+        {
+          "name": "trip-1: departSec is in horizon",
+          "passed": true,
+          "detail": "depart=9.5"
+        },
+        {
+          "name": "trip-2: source exists",
+          "passed": true,
+          "detail": "west@W"
+        },
+        {
+          "name": "trip-2: sink exists",
+          "passed": true,
+          "detail": "north1@N1"
+        },
+        {
+          "name": "trip-2: sink allowed by source",
+          "passed": true,
+          "detail": "west->north1"
+        },
+        {
+          "name": "trip-2: route connects source to sink",
+          "passed": true,
+          "detail": "W-I0->I0-I1->I1-N1"
+        },
+        {
+          "name": "trip-2: departSec is in horizon",
+          "passed": true,
+          "detail": "depart=19"
+        },
+        {
+          "name": "trip-3: source exists",
+          "passed": true,
+          "detail": "north2@N2"
+        },
+        {
+          "name": "trip-3: sink exists",
+          "passed": true,
+          "detail": "south4@S4"
+        },
+        {
+          "name": "trip-3: sink allowed by source",
+          "passed": true,
+          "detail": "north2->south4"
+        },
+        {
+          "name": "trip-3: route connects source to sink",
+          "passed": true,
+          "detail": "N2-I2->I2-I3->I3-I4->I4-S4"
+        },
+        {
+          "name": "trip-3: departSec is in horizon",
+          "passed": true,
+          "detail": "depart=21.4"
+        },
+        {
+          "name": "trip-4: source exists",
+          "passed": true,
+          "detail": "south0@S0"
+        },
+        {
+          "name": "trip-4: sink exists",
+          "passed": true,
+          "detail": "north1@N1"
+        },
+        {
+          "name": "trip-4: sink allowed by source",
+          "passed": true,
+          "detail": "south0->north1"
+        },
+        {
+          "name": "trip-4: route connects source to sink",
+          "passed": true,
+          "detail": "S0-I0->I0-I1->I1-N1"
+        },
+        {
+          "name": "trip-4: departSec is in horizon",
+          "passed": true,
+          "detail": "depart=24.4"
+        },
+        {
+          "name": "trip-5: source exists",
+          "passed": true,
+          "detail": "west@W"
+        },
+        {
+          "name": "trip-5: sink exists",
+          "passed": true,
+          "detail": "east@E"
+        },
+        {
+          "name": "trip-5: sink allowed by source",
+          "passed": true,
+          "detail": "west->east"
+        },
+        {
+          "name": "trip-5: route connects source to sink",
+          "passed": true,
+          "detail": "W-I0->I0-I1->I1-I2->I2-I3->I3-I4->I4-E"
+        },
+        {
+          "name": "trip-5: departSec is in horizon",
+          "passed": true,
+          "detail": "depart=28.5"
+        },
+        {
+          "name": "trip-6: source exists",
+          "passed": true,
+          "detail": "west@W"
+        },
+        {
+          "name": "trip-6: sink exists",
+          "passed": true,
+          "detail": "north1@N1"
+        },
+        {
+          "name": "trip-6: sink allowed by source",
+          "passed": true,
+          "detail": "west->north1"
+        },
+        {
+          "name": "trip-6: route connects source to sink",
+          "passed": true,
+          "detail": "W-I0->I0-I1->I1-N1"
+        },
+        {
+          "name": "trip-6: departSec is in horizon",
+          "passed": true,
+          "detail": "depart=38"
+        },
+        {
+          "name": "trip-7: source exists",
+          "passed": true,
+          "detail": "north2@N2"
+        },
+        {
+          "name": "trip-7: sink exists",
+          "passed": true,
+          "detail": "south4@S4"
+        },
+        {
+          "name": "trip-7: sink allowed by source",
+          "passed": true,
+          "detail": "north2->south4"
+        },
+        {
+          "name": "trip-7: route connects source to sink",
+          "passed": true,
+          "detail": "N2-I2->I2-I3->I3-I4->I4-S4"
+        },
+        {
+          "name": "trip-7: departSec is in horizon",
+          "passed": true,
+          "detail": "depart=42.8"
+        },
+        {
+          "name": "trip-8: source exists",
+          "passed": true,
+          "detail": "west@W"
+        },
+        {
+          "name": "trip-8: sink exists",
+          "passed": true,
+          "detail": "south4@S4"
+        },
+        {
+          "name": "trip-8: sink allowed by source",
+          "passed": true,
+          "detail": "west->south4"
+        },
+        {
+          "name": "trip-8: route connects source to sink",
+          "passed": true,
+          "detail": "W-I0->I0-I1->I1-I2->I2-I3->I3-I4->I4-S4"
+        },
+        {
+          "name": "trip-8: departSec is in horizon",
+          "passed": true,
+          "detail": "depart=47.6"
+        },
+        {
+          "name": "trip-9: source exists",
+          "passed": true,
+          "detail": "south0@S0"
+        },
+        {
+          "name": "trip-9: sink exists",
+          "passed": true,
+          "detail": "north1@N1"
+        },
+        {
+          "name": "trip-9: sink allowed by source",
+          "passed": true,
+          "detail": "south0->north1"
+        },
+        {
+          "name": "trip-9: route connects source to sink",
+          "passed": true,
+          "detail": "S0-I0->I0-I1->I1-N1"
+        },
+        {
+          "name": "trip-9: departSec is in horizon",
+          "passed": true,
+          "detail": "depart=48.9"
+        },
+        {
+          "name": "trip-10: source exists",
+          "passed": true,
+          "detail": "west@W"
+        },
+        {
+          "name": "trip-10: sink exists",
+          "passed": true,
+          "detail": "north1@N1"
+        },
+        {
+          "name": "trip-10: sink allowed by source",
+          "passed": true,
+          "detail": "west->north1"
+        },
+        {
+          "name": "trip-10: route connects source to sink",
+          "passed": true,
+          "detail": "W-I0->I0-I1->I1-N1"
+        },
+        {
+          "name": "trip-10: departSec is in horizon",
+          "passed": true,
+          "detail": "depart=57.1"
+        },
+        {
+          "name": "trip-11: source exists",
+          "passed": true,
+          "detail": "north2@N2"
+        },
+        {
+          "name": "trip-11: sink exists",
+          "passed": true,
+          "detail": "south4@S4"
+        },
+        {
+          "name": "trip-11: sink allowed by source",
+          "passed": true,
+          "detail": "north2->south4"
+        },
+        {
+          "name": "trip-11: route connects source to sink",
+          "passed": true,
+          "detail": "N2-I2->I2-I3->I3-I4->I4-S4"
+        },
+        {
+          "name": "trip-11: departSec is in horizon",
+          "passed": true,
+          "detail": "depart=64.2"
+        },
+        {
+          "name": "trip-12: source exists",
+          "passed": true,
+          "detail": "west@W"
+        },
+        {
+          "name": "trip-12: sink exists",
+          "passed": true,
+          "detail": "south4@S4"
+        },
+        {
+          "name": "trip-12: sink allowed by source",
+          "passed": true,
+          "detail": "west->south4"
+        },
+        {
+          "name": "trip-12: route connects source to sink",
+          "passed": true,
+          "detail": "W-I0->I0-I1->I1-I2->I2-I3->I3-I4->I4-S4"
+        },
+        {
+          "name": "trip-12: departSec is in horizon",
+          "passed": true,
+          "detail": "depart=66.6"
+        },
+        {
+          "name": "trip-13: source exists",
+          "passed": true,
+          "detail": "south0@S0"
+        },
+        {
+          "name": "trip-13: sink exists",
+          "passed": true,
+          "detail": "east@E"
+        },
+        {
+          "name": "trip-13: sink allowed by source",
+          "passed": true,
+          "detail": "south0->east"
+        },
+        {
+          "name": "trip-13: route connects source to sink",
+          "passed": true,
+          "detail": "S0-I0->I0-I1->I1-I2->I2-I3->I3-I4->I4-E"
+        },
+        {
+          "name": "trip-13: departSec is in horizon",
+          "passed": true,
+          "detail": "depart=73.4"
+        },
+        {
+          "name": "trip-14: source exists",
+          "passed": true,
+          "detail": "west@W"
+        },
+        {
+          "name": "trip-14: sink exists",
+          "passed": true,
+          "detail": "south4@S4"
+        },
+        {
+          "name": "trip-14: sink allowed by source",
+          "passed": true,
+          "detail": "west->south4"
+        },
+        {
+          "name": "trip-14: route connects source to sink",
+          "passed": true,
+          "detail": "W-I0->I0-I1->I1-I2->I2-I3->I3-I4->I4-S4"
+        },
+        {
+          "name": "trip-14: departSec is in horizon",
+          "passed": true,
+          "detail": "depart=76.1"
+        },
+        {
+          "name": "trip-15: source exists",
+          "passed": true,
+          "detail": "west@W"
+        },
+        {
+          "name": "trip-15: sink exists",
+          "passed": true,
+          "detail": "east@E"
+        },
+        {
+          "name": "trip-15: sink allowed by source",
+          "passed": true,
+          "detail": "west->east"
+        },
+        {
+          "name": "trip-15: route connects source to sink",
+          "passed": true,
+          "detail": "W-I0->I0-I1->I1-I2->I2-I3->I3-I4->I4-E"
+        },
+        {
+          "name": "trip-15: departSec is in horizon",
+          "passed": true,
+          "detail": "depart=85.7"
+        },
+        {
+          "name": "trip-16: source exists",
+          "passed": true,
+          "detail": "north2@N2"
+        },
+        {
+          "name": "trip-16: sink exists",
+          "passed": true,
+          "detail": "south4@S4"
+        },
+        {
+          "name": "trip-16: sink allowed by source",
+          "passed": true,
+          "detail": "north2->south4"
+        },
+        {
+          "name": "trip-16: route connects source to sink",
+          "passed": true,
+          "detail": "N2-I2->I2-I3->I3-I4->I4-S4"
+        },
+        {
+          "name": "trip-16: departSec is in horizon",
+          "passed": true,
+          "detail": "depart=85.7"
+        },
+        {
+          "name": "trip-17: source exists",
+          "passed": true,
+          "detail": "west@W"
+        },
+        {
+          "name": "trip-17: sink exists",
+          "passed": true,
+          "detail": "north1@N1"
+        },
+        {
+          "name": "trip-17: sink allowed by source",
+          "passed": true,
+          "detail": "west->north1"
+        },
+        {
+          "name": "trip-17: route connects source to sink",
+          "passed": true,
+          "detail": "W-I0->I0-I1->I1-N1"
+        },
+        {
+          "name": "trip-17: departSec is in horizon",
+          "passed": true,
+          "detail": "depart=95.2"
+        },
+        {
+          "name": "trip-18: source exists",
+          "passed": true,
+          "detail": "south0@S0"
+        },
+        {
+          "name": "trip-18: sink exists",
+          "passed": true,
+          "detail": "south4@S4"
+        },
+        {
+          "name": "trip-18: sink allowed by source",
+          "passed": true,
+          "detail": "south0->south4"
+        },
+        {
+          "name": "trip-18: route connects source to sink",
+          "passed": true,
+          "detail": "S0-I0->I0-I1->I1-I2->I2-I3->I3-I4->I4-S4"
+        },
+        {
+          "name": "trip-18: departSec is in horizon",
+          "passed": true,
+          "detail": "depart=97.9"
+        },
+        {
+          "name": "trip-19: source exists",
+          "passed": true,
+          "detail": "west@W"
+        },
+        {
+          "name": "trip-19: sink exists",
+          "passed": true,
+          "detail": "east@E"
+        },
+        {
+          "name": "trip-19: sink allowed by source",
+          "passed": true,
+          "detail": "west->east"
+        },
+        {
+          "name": "trip-19: route connects source to sink",
+          "passed": true,
+          "detail": "W-I0->I0-I1->I1-I2->I2-I3->I3-I4->I4-E"
+        },
+        {
+          "name": "trip-19: departSec is in horizon",
+          "passed": true,
+          "detail": "depart=104.7"
+        },
+        {
+          "name": "trip-20: source exists",
+          "passed": true,
+          "detail": "north2@N2"
+        },
+        {
+          "name": "trip-20: sink exists",
+          "passed": true,
+          "detail": "east@E"
+        },
+        {
+          "name": "trip-20: sink allowed by source",
+          "passed": true,
+          "detail": "north2->east"
+        },
+        {
+          "name": "trip-20: route connects source to sink",
+          "passed": true,
+          "detail": "N2-I2->I2-I3->I3-I4->I4-E"
+        },
+        {
+          "name": "trip-20: departSec is in horizon",
+          "passed": true,
+          "detail": "depart=107.1"
+        },
+        {
+          "name": "trip-21: source exists",
+          "passed": true,
+          "detail": "west@W"
+        },
+        {
+          "name": "trip-21: sink exists",
+          "passed": true,
+          "detail": "north1@N1"
+        },
+        {
+          "name": "trip-21: sink allowed by source",
+          "passed": true,
+          "detail": "west->north1"
+        },
+        {
+          "name": "trip-21: route connects source to sink",
+          "passed": true,
+          "detail": "W-I0->I0-I1->I1-N1"
+        },
+        {
+          "name": "trip-21: departSec is in horizon",
+          "passed": true,
+          "detail": "depart=114.2"
+        }
+      ],
+      "notes": [
+        "internal DES entered=21 exited=21 dropped=0"
+      ]
+    },
+    {
+      "domain": "traffic",
+      "scenario": "five-intersection-scheduled-trips",
+      "engine": "Python traffic FEL",
+      "status": "passed",
+      "inputPath": "/Users/maca5/codes/ores/des/uta-phd/courses/hdm-fall-2022/des/out/external-fel-comparison/traffic-shared-input.json",
+      "outputPath": "/Users/maca5/codes/ores/des/uta-phd/courses/hdm-fall-2022/des/out/external-fel-comparison/python-traffic-fel.json",
+      "checks": [
+        {
+          "name": "generated demand matches internal scheduled input",
+          "passed": true,
+          "detail": "actual=21 expected=21"
+        },
+        {
+          "name": "departures align with internal entered count",
+          "passed": true,
+          "detail": "actual=21 expected=21 rel=0.000 tol=0.2"
+        },
+        {
+          "name": "arrivals align with internal exited count",
+          "passed": true,
+          "detail": "actual=21 expected=21 rel=0.000 tol=0.45"
+        },
+        {
+          "name": "active-at-end aligns with internal final cars",
+          "passed": true,
+          "detail": "actual=0 expected=0 diff=0.000e+0 tol=2"
+        },
+        {
+          "name": "external mean travel time is finite",
+          "passed": true,
+          "detail": "actual=41.828042"
+        },
+        {
+          "name": "external mean speed is finite",
+          "passed": true,
+          "detail": "actual=11.447094"
+        },
+        {
+          "name": "mean travel time same order of magnitude",
+          "passed": true,
+          "detail": "actual=41.828042 expected=54.3 ratio=0.770"
+        }
+      ],
+      "notes": [
+        "future-event-list traffic baseline",
+        "scheduled departures originate from traffic source entities and terminate at sink entities"
+      ]
+    },
+    {
+      "domain": "traffic",
+      "scenario": "five-intersection-scheduled-trips",
+      "engine": "SUMO",
+      "status": "passed",
+      "inputPath": "/Users/maca5/codes/ores/des/uta-phd/courses/hdm-fall-2022/des/out/external-fel-comparison/traffic-shared-input.json",
+      "outputPath": "/Users/maca5/codes/ores/des/uta-phd/courses/hdm-fall-2022/des/out/external-fel-comparison/sumo.json",
+      "checks": [
+        {
+          "name": "generated demand matches internal scheduled input",
+          "passed": true,
+          "detail": "actual=21 expected=21"
+        },
+        {
+          "name": "departures align with internal entered count",
+          "passed": true,
+          "detail": "actual=21 expected=21 rel=0.000 tol=0.2"
+        },
+        {
+          "name": "arrivals align with internal exited count",
+          "passed": true,
+          "detail": "actual=19 expected=21 rel=0.095 tol=0.45"
+        },
+        {
+          "name": "active-at-end aligns with internal final cars",
+          "passed": true,
+          "detail": "actual=2 expected=0 diff=2.000e+0 tol=2"
+        },
+        {
+          "name": "external mean travel time is finite",
+          "passed": true,
+          "detail": "actual=61.5"
+        },
+        {
+          "name": "external mean speed is finite",
+          "passed": true,
+          "detail": "actual=8.334545"
+        },
+        {
+          "name": "mean travel time same order of magnitude",
+          "passed": true,
+          "detail": "actual=61.5 expected=54.3 ratio=1.133"
+        }
+      ],
+      "notes": [
+        "external command status=0"
+      ]
+    },
+    {
+      "domain": "computer-network",
+      "scenario": "small-enterprise",
+      "engine": "Python computer-network FEL",
+      "status": "passed",
+      "inputPath": "/Users/maca5/codes/ores/des/uta-phd/courses/hdm-fall-2022/des/out/external-fel-comparison/computer-network-small-enterprise.json",
+      "outputPath": "/Users/maca5/codes/ores/des/uta-phd/courses/hdm-fall-2022/des/out/external-fel-comparison/computer-network-small-enterprise-python-fel-reference.json",
+      "checks": [
+        {
+          "name": "generated packets",
+          "passed": true,
+          "detail": "actual=918 expected=918"
+        },
+        {
+          "name": "delivered packets",
+          "passed": true,
+          "detail": "actual=918 expected=918"
+        },
+        {
+          "name": "dropped packets",
+          "passed": true,
+          "detail": "actual=0 expected=0"
+        },
+        {
+          "name": "active packets",
+          "passed": true,
+          "detail": "actual=0 expected=0"
+        },
+        {
+          "name": "max active packets",
+          "passed": true,
+          "detail": "actual=15 expected=15"
+        },
+        {
+          "name": "delivery ratio",
+          "passed": true,
+          "detail": "actual=1 expected=1 diff=0.000e+0 tol=1e-9"
+        },
+        {
+          "name": "offered load Mbps",
+          "passed": true,
+          "detail": "actual=11.63136 expected=11.63136 diff=0.000e+0 tol=1e-9"
+        },
+        {
+          "name": "wire throughput Mbps",
+          "passed": true,
+          "detail": "actual=11.63136 expected=11.63136 diff=0.000e+0 tol=1e-9"
+        },
+        {
+          "name": "goodput Mbps",
+          "passed": true,
+          "detail": "actual=8.3424 expected=8.3424 diff=0.000e+0 tol=1e-9"
+        },
+        {
+          "name": "mean latency ms",
+          "passed": true,
+          "detail": "actual=15.320261 expected=15.320261 diff=0.000e+0 tol=1e-9"
+        },
+        {
+          "name": "p95 latency ms",
+          "passed": true,
+          "detail": "actual=16 expected=16 diff=0.000e+0 tol=1e-9"
+        },
+        {
+          "name": "total cost",
+          "passed": true,
+          "detail": "actual=0.010177 expected=0.010177 diff=0.000e+0 tol=1e-9"
+        },
+        {
+          "name": "top bottleneck agrees",
+          "passed": true,
+          "detail": "internal=link:edge-core:queue buildup external=link:edge-core:queue buildup"
+        }
+      ],
+      "notes": [
+        "external command status=0"
+      ]
+    },
+    {
+      "domain": "computer-network",
+      "scenario": "bottleneck-lab",
+      "engine": "Python computer-network FEL",
+      "status": "passed",
+      "inputPath": "/Users/maca5/codes/ores/des/uta-phd/courses/hdm-fall-2022/des/out/external-fel-comparison/computer-network-bottleneck-lab.json",
+      "outputPath": "/Users/maca5/codes/ores/des/uta-phd/courses/hdm-fall-2022/des/out/external-fel-comparison/computer-network-bottleneck-lab-python-fel-reference.json",
+      "checks": [
+        {
+          "name": "generated packets",
+          "passed": true,
+          "detail": "actual=3857 expected=3857"
+        },
+        {
+          "name": "delivered packets",
+          "passed": true,
+          "detail": "actual=838 expected=838"
+        },
+        {
+          "name": "dropped packets",
+          "passed": true,
+          "detail": "actual=3019 expected=3019"
+        },
+        {
+          "name": "active packets",
+          "passed": true,
+          "detail": "actual=0 expected=0"
+        },
+        {
+          "name": "max active packets",
+          "passed": true,
+          "detail": "actual=104 expected=104"
+        },
+        {
+          "name": "delivery ratio",
+          "passed": true,
+          "detail": "actual=0.217267 expected=0.217267 diff=0.000e+0 tol=1e-9"
+        },
+        {
+          "name": "offered load Mbps",
+          "passed": true,
+          "detail": "actual=21.46592 expected=21.46592 diff=0.000e+0 tol=1e-9"
+        },
+        {
+          "name": "wire throughput Mbps",
+          "passed": true,
+          "detail": "actual=5.595456 expected=5.595456 diff=0.000e+0 tol=1e-9"
+        },
+        {
+          "name": "goodput Mbps",
+          "passed": true,
+          "detail": "actual=3.6692 expected=3.6692 diff=0.000e+0 tol=1e-9"
+        },
+        {
+          "name": "mean latency ms",
+          "passed": true,
+          "detail": "actual=245.149165 expected=245.149165 diff=0.000e+0 tol=1e-9"
+        },
+        {
+          "name": "p95 latency ms",
+          "passed": true,
+          "detail": "actual=275 expected=275 diff=0.000e+0 tol=1e-9"
+        },
+        {
+          "name": "total cost",
+          "passed": true,
+          "detail": "actual=0.022153 expected=0.022153 diff=0.000e+0 tol=1e-9"
+        },
+        {
+          "name": "top bottleneck agrees",
+          "passed": true,
+          "detail": "internal=link:edge-wan:drops observed external=link:edge-wan:drops observed"
+        }
+      ],
+      "notes": [
+        "external command status=0"
+      ]
+    }
+  ]
+}

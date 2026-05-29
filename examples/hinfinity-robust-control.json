@@ -1,0 +1,20 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "hinfinity-robust-control",
+  "description": "H-infinity-style bounded-disturbance robust control as plant, controller, and adversary stations.",
+  "parameters": {
+    "x0": 2,
+    "gain": 3.2,
+    "disturbanceMax": 0.45,
+    "gamma": 2.5,
+    "dt": 0.03,
+    "numSteps": 260
+  },
+  "runtime": {
+    "animate": false,
+    "outputs": {
+      "csv": "out/hinfinity-robust-control.csv",
+      "summary": "out/hinfinity-robust-control.summary.json"
+    }
+  }
+}

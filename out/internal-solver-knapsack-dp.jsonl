@@ -1,0 +1,7 @@
+{"level":"info","kind":"internal-solver-start","solverKind":"knapsack-dp","timeLimitMs":180000}
+{"level":"debug","kind":"internal-solver-trace","solverKind":"knapsack-dp","iteration":1,"objective":-20,"feasible":true,"done":false}
+{"level":"debug","kind":"internal-solver-trace","solverKind":"knapsack-dp","iteration":2,"objective":-50,"feasible":true,"done":false}
+{"level":"debug","kind":"internal-solver-trace","solverKind":"knapsack-dp","iteration":3,"objective":-55,"feasible":true,"done":false}
+{"level":"debug","kind":"internal-solver-trace","solverKind":"knapsack-dp","iteration":4,"objective":-62,"feasible":true,"done":false}
+{"level":"debug","kind":"internal-solver-trace","solverKind":"knapsack-dp","iteration":5,"objective":-62,"feasible":true,"done":true}
+{"level":"info","kind":"internal-solver-finish","solverKind":"knapsack-dp","status":"complete","objective":-62,"iterations":5,"validationOk":true}

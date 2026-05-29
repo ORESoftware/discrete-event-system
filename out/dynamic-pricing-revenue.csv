@@ -1,0 +1,5 @@
+candidate_id,objective,feasible,metrics,plan
+sellout-protection-pricing,15477.655018331034,true,"{""revenue"":15478.905018331034,""sold"":119.99999999999999,""inventory"":0,""sellThrough"":0.9999999999999999,""finalPrice"":167.40843865889235}","{""priceFloor"":90,""priceCeiling"":170,""scarcityGain"":0.7,""smoothing"":0.45}"
+scarcity-surge,14025.540546440609,true,"{""revenue"":14026.790546440609,""sold"":120.00000000000001,""inventory"":0,""sellThrough"":1.0000000000000002,""finalPrice"":144.23197385687422}","{""priceFloor"":82,""priceCeiling"":150,""scarcityGain"":0.45,""smoothing"":0.55}"
+bayesian-demand-smoothing,12964.418003029272,true,"{""revenue"":12965.668003029272,""sold"":120,""inventory"":0,""sellThrough"":1,""finalPrice"":128.5684934170811}","{""priceFloor"":88,""priceCeiling"":140,""scarcityGain"":0.32,""smoothing"":0.78}"
+fixed-reference-price,11998.750000000002,true,"{""revenue"":12000.000000000002,""sold"":119.99999999999999,""inventory"":0,""sellThrough"":0.9999999999999999,""finalPrice"":100}","{""priceFloor"":100,""priceCeiling"":100,""scarcityGain"":0,""smoothing"":1}"

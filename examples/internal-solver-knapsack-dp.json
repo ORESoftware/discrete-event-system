@@ -1,0 +1,27 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "internal-solver-network",
+  "description": "0/1 knapsack solved by an internal dynamic-programming station network with wall-clock checking.",
+  "parameters": {
+    "kind": "knapsack-dp",
+    "timeLimitMs": 180000,
+    "checkEveryTicks": 1,
+    "knapsack": {
+      "values": [20, 30, 35, 12, 3],
+      "weights": [2, 5, 7, 3, 1],
+      "capacity": 10
+    }
+  },
+  "runtime": {
+    "verbose": true,
+    "outputs": {
+      "csv": "out/internal-solver-knapsack-dp.csv",
+      "html": "out/internal-solver-knapsack-dp.html",
+      "log": "out/internal-solver-knapsack-dp.jsonl",
+      "summary": "out/internal-solver-knapsack-dp.summary.json"
+    }
+  },
+  "metadata": {
+    "tags": ["internal-solver", "knapsack", "dynamic-programming"]
+  }
+}

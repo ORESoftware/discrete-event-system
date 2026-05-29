@@ -1,0 +1,241 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "smart-traffic-flow",
+  "description": "External FEL validation: scheduled cars through a signalized corridor",
+  "parameters": {
+    "network": {
+      "nodes": [
+        {
+          "id": "W",
+          "kind": "source",
+          "x": 0,
+          "y": 1
+        },
+        {
+          "id": "S",
+          "kind": "source",
+          "x": 1,
+          "y": 2
+        },
+        {
+          "id": "I",
+          "kind": "intersection",
+          "x": 1,
+          "y": 1
+        },
+        {
+          "id": "E",
+          "kind": "sink",
+          "x": 2,
+          "y": 1
+        },
+        {
+          "id": "N",
+          "kind": "sink",
+          "x": 1,
+          "y": 0
+        }
+      ],
+      "lanes": [
+        {
+          "id": "W-I",
+          "from": "W",
+          "to": "I",
+          "lengthM": 80,
+          "speedLimitMps": 12,
+          "capacity": 8
+        },
+        {
+          "id": "I-E",
+          "from": "I",
+          "to": "E",
+          "lengthM": 90,
+          "speedLimitMps": 12,
+          "capacity": 9
+        },
+        {
+          "id": "S-I",
+          "from": "S",
+          "to": "I",
+          "lengthM": 70,
+          "speedLimitMps": 10,
+          "capacity": 7
+        },
+        {
+          "id": "I-N",
+          "from": "I",
+          "to": "N",
+          "lengthM": 70,
+          "speedLimitMps": 10,
+          "capacity": 7
+        }
+      ],
+      "signals": [
+        {
+          "nodeId": "I",
+          "phases": [
+            {
+              "name": "main",
+              "greenLanes": [
+                "W-I"
+              ],
+              "durationSec": 18
+            },
+            {
+              "name": "side",
+              "greenLanes": [
+                "S-I"
+              ],
+              "durationSec": 12
+            }
+          ]
+        }
+      ],
+      "sources": [
+        {
+          "id": "west",
+          "nodeId": "W",
+          "ratePerMin": 0,
+          "destinationSinkIds": [
+            "east"
+          ]
+        },
+        {
+          "id": "south",
+          "nodeId": "S",
+          "ratePerMin": 0,
+          "destinationSinkIds": [
+            "north"
+          ]
+        }
+      ],
+      "sinks": [
+        {
+          "id": "east",
+          "nodeId": "E"
+        },
+        {
+          "id": "north",
+          "nodeId": "N"
+        }
+      ]
+    },
+    "durationSec": 210,
+    "dtSec": 1,
+    "seed": 19,
+    "actorShuffleSeed": 2026,
+    "maxCars": 80,
+    "smartCarPoolSize": 100,
+    "spawnRateMultiplier": 0,
+    "scheduledTrips": [
+      {
+        "departSec": 0,
+        "sourceId": "west",
+        "destinationSinkId": "east"
+      },
+      {
+        "departSec": 6,
+        "sourceId": "south",
+        "destinationSinkId": "north"
+      },
+      {
+        "departSec": 12,
+        "sourceId": "west",
+        "destinationSinkId": "east"
+      },
+      {
+        "departSec": 24,
+        "sourceId": "west",
+        "destinationSinkId": "east"
+      },
+      {
+        "departSec": 30,
+        "sourceId": "south",
+        "destinationSinkId": "north"
+      },
+      {
+        "departSec": 36,
+        "sourceId": "west",
+        "destinationSinkId": "east"
+      },
+      {
+        "departSec": 48,
+        "sourceId": "west",
+        "destinationSinkId": "east"
+      },
+      {
+        "departSec": 54,
+        "sourceId": "south",
+        "destinationSinkId": "north"
+      },
+      {
+        "departSec": 60,
+        "sourceId": "west",
+        "destinationSinkId": "east"
+      },
+      {
+        "departSec": 72,
+        "sourceId": "west",
+        "destinationSinkId": "east"
+      },
+      {
+        "departSec": 78,
+        "sourceId": "south",
+        "destinationSinkId": "north"
+      },
+      {
+        "departSec": 84,
+        "sourceId": "west",
+        "destinationSinkId": "east"
+      },
+      {
+        "departSec": 96,
+        "sourceId": "west",
+        "destinationSinkId": "east"
+      },
+      {
+        "departSec": 102,
+        "sourceId": "south",
+        "destinationSinkId": "north"
+      },
+      {
+        "departSec": 108,
+        "sourceId": "west",
+        "destinationSinkId": "east"
+      },
+      {
+        "departSec": 120,
+        "sourceId": "west",
+        "destinationSinkId": "east"
+      },
+      {
+        "departSec": 126,
+        "sourceId": "south",
+        "destinationSinkId": "north"
+      },
+      {
+        "departSec": 132,
+        "sourceId": "west",
+        "destinationSinkId": "east"
+      }
+    ],
+    "carLengthM": 4.8,
+    "carWidthM": 1.8,
+    "laneWidthM": 3.7,
+    "minGapM": 2.5,
+    "maxAccelMps2": 2.2,
+    "maxDecelMps2": 4,
+    "maxJerkMps3": 6,
+    "reactionTimeSec": 0.6,
+    "timeHeadwaySec": 1,
+    "gridCellSizeM": 0.3048,
+    "accidentRiskScale": 0,
+    "accidentProbability": 0,
+    "distancePreferenceSpread": 0,
+    "startPreferenceSpread": 0
+  },
+  "runtime": {
+    "animate": false,
+    "verbose": false
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "temp-control",
+  "description": "Stress test: tight ±1°F band, harsher weather, MDP-MPC controller",
+  "parameters": {
+    "T_target": 70,
+    "band": 1,
+    "duration_h": 24,
+    "dt_min": 1,
+    "cost_per_kWh": 0.15,
+    "comfort_penalty": 2.0,
+    "controller": {
+      "kind": "mdp-mpc",
+      "horizon_h": 6,
+      "nLevels": 6,
+      "comfort_penalty": 2.0,
+      "cost_per_kWh": 0.15,
+      "trackWeight": 1.0
+    },
+    "outdoor": {
+      "mean": 15,
+      "amp": 20,
+      "phase": 9,
+      "noiseStd": 2.5
+    },
+    "sensorNoiseStd": 0.1,
+    "forecastNoiseStd": 1.0,
+    "forecastHorizon_h": 6
+  },
+  "runtime": {
+    "seed": 11,
+    "outputs": {
+      "csv": "out/temp-control/json-mdp-mpc.csv",
+      "html": "out/temp-control/json-mdp-mpc.html"
+    }
+  },
+  "metadata": {
+    "author": "DES framework demo",
+    "tags": ["temp-control", "mdp-mpc", "stress-test"]
+  }
+}

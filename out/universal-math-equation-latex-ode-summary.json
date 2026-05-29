@@ -1,0 +1,1237 @@
+{
+  "modelId": "math-equation",
+  "params": {
+    "format": "latex",
+    "kind": "ode",
+    "equation": "\\frac{dy}{dt} = -k y; y(0)=1",
+    "states": [],
+    "constants": {
+      "k": 1
+    },
+    "t0": 0,
+    "t1": 1,
+    "dt": 0.01,
+    "method": "euler",
+    "initialValues": []
+  },
+  "runtimeMs": 2,
+  "summaryText": "MATH EQUATION INPUT\n------------------------\n  format=latex kind=ode\n  generated network: nodes=2 edges=2\n  ODE final state: y=0.366032\n  validation: 5/5 checks passed",
+  "result": {
+    "inputFormat": "latex",
+    "kind": "ode",
+    "equation": "\\frac{dy}{dt} = -k y; y(0)=1",
+    "normalized": {
+      "states": [
+        {
+          "name": "y",
+          "initial": 1,
+          "derivative": "-k*y"
+        }
+      ],
+      "constants": {
+        "pi": 3.141592653589793,
+        "e": 2.718281828459045,
+        "k": 1
+      },
+      "t0": 0,
+      "t1": 1,
+      "dt": 0.01,
+      "method": "euler"
+    },
+    "network": {
+      "nodes": [
+        {
+          "id": "integrator:y",
+          "kind": "integrator",
+          "inputs": [
+            "in"
+          ],
+          "output": "out"
+        },
+        {
+          "id": "rhs:y",
+          "kind": "expression",
+          "expression": "-k*y",
+          "inputs": {
+            "y": "y"
+          },
+          "output": "out"
+        }
+      ],
+      "edges": [
+        {
+          "from": "integrator:y",
+          "to": "rhs:y",
+          "fromChannel": "out",
+          "toChannel": "y",
+          "signal": "MathSignal"
+        },
+        {
+          "from": "rhs:y",
+          "to": "integrator:y",
+          "fromChannel": "out",
+          "toChannel": "in",
+          "signal": "MathSignal"
+        }
+      ]
+    },
+    "ode": {
+      "params": {
+        "states": [
+          {
+            "name": "y",
+            "initial": 1,
+            "derivative": "-k*y"
+          }
+        ],
+        "constants": {
+          "pi": 3.141592653589793,
+          "e": 2.718281828459045,
+          "k": 1
+        },
+        "t0": 0,
+        "t1": 1,
+        "dt": 0.01,
+        "method": "euler"
+      },
+      "steps": 100,
+      "trace": [
+        {
+          "tick": 0,
+          "time": 0,
+          "state": {
+            "y": 1
+          },
+          "derivatives": {
+            "y": -1
+          }
+        },
+        {
+          "tick": 1,
+          "time": 0.01,
+          "state": {
+            "y": 0.99
+          },
+          "derivatives": {
+            "y": -0.99
+          }
+        },
+        {
+          "tick": 2,
+          "time": 0.02,
+          "state": {
+            "y": 0.9801
+          },
+          "derivatives": {
+            "y": -0.9801
+          }
+        },
+        {
+          "tick": 3,
+          "time": 0.03,
+          "state": {
+            "y": 0.970299
+          },
+          "derivatives": {
+            "y": -0.970299
+          }
+        },
+        {
+          "tick": 4,
+          "time": 0.04,
+          "state": {
+            "y": 0.9605960100000001
+          },
+          "derivatives": {
+            "y": -0.9605960100000001
+          }
+        },
+        {
+          "tick": 5,
+          "time": 0.05,
+          "state": {
+            "y": 0.9509900499
+          },
+          "derivatives": {
+            "y": -0.9509900499
+          }
+        },
+        {
+          "tick": 6,
+          "time": 0.06,
+          "state": {
+            "y": 0.941480149401
+          },
+          "derivatives": {
+            "y": -0.941480149401
+          }
+        },
+        {
+          "tick": 7,
+          "time": 0.07,
+          "state": {
+            "y": 0.93206534790699
+          },
+          "derivatives": {
+            "y": -0.93206534790699
+          }
+        },
+        {
+          "tick": 8,
+          "time": 0.08,
+          "state": {
+            "y": 0.9227446944279202
+          },
+          "derivatives": {
+            "y": -0.9227446944279202
+          }
+        },
+        {
+          "tick": 9,
+          "time": 0.09,
+          "state": {
+            "y": 0.9135172474836409
+          },
+          "derivatives": {
+            "y": -0.9135172474836409
+          }
+        },
+        {
+          "tick": 10,
+          "time": 0.1,
+          "state": {
+            "y": 0.9043820750088045
+          },
+          "derivatives": {
+            "y": -0.9043820750088045
+          }
+        },
+        {
+          "tick": 11,
+          "time": 0.11,
+          "state": {
+            "y": 0.8953382542587165
+          },
+          "derivatives": {
+            "y": -0.8953382542587165
+          }
+        },
+        {
+          "tick": 12,
+          "time": 0.12,
+          "state": {
+            "y": 0.8863848717161293
+          },
+          "derivatives": {
+            "y": -0.8863848717161293
+          }
+        },
+        {
+          "tick": 13,
+          "time": 0.13,
+          "state": {
+            "y": 0.8775210229989681
+          },
+          "derivatives": {
+            "y": -0.8775210229989681
+          }
+        },
+        {
+          "tick": 14,
+          "time": 0.14,
+          "state": {
+            "y": 0.8687458127689783
+          },
+          "derivatives": {
+            "y": -0.8687458127689783
+          }
+        },
+        {
+          "tick": 15,
+          "time": 0.15,
+          "state": {
+            "y": 0.8600583546412885
+          },
+          "derivatives": {
+            "y": -0.8600583546412885
+          }
+        },
+        {
+          "tick": 16,
+          "time": 0.16,
+          "state": {
+            "y": 0.8514577710948756
+          },
+          "derivatives": {
+            "y": -0.8514577710948756
+          }
+        },
+        {
+          "tick": 17,
+          "time": 0.17,
+          "state": {
+            "y": 0.8429431933839269
+          },
+          "derivatives": {
+            "y": -0.8429431933839269
+          }
+        },
+        {
+          "tick": 18,
+          "time": 0.18,
+          "state": {
+            "y": 0.8345137614500876
+          },
+          "derivatives": {
+            "y": -0.8345137614500876
+          }
+        },
+        {
+          "tick": 19,
+          "time": 0.19,
+          "state": {
+            "y": 0.8261686238355868
+          },
+          "derivatives": {
+            "y": -0.8261686238355868
+          }
+        },
+        {
+          "tick": 20,
+          "time": 0.2,
+          "state": {
+            "y": 0.8179069375972309
+          },
+          "derivatives": {
+            "y": -0.8179069375972309
+          }
+        },
+        {
+          "tick": 21,
+          "time": 0.21,
+          "state": {
+            "y": 0.8097278682212585
+          },
+          "derivatives": {
+            "y": -0.8097278682212585
+          }
+        },
+        {
+          "tick": 22,
+          "time": 0.22,
+          "state": {
+            "y": 0.801630589539046
+          },
+          "derivatives": {
+            "y": -0.801630589539046
+          }
+        },
+        {
+          "tick": 23,
+          "time": 0.23,
+          "state": {
+            "y": 0.7936142836436555
+          },
+          "derivatives": {
+            "y": -0.7936142836436555
+          }
+        },
+        {
+          "tick": 24,
+          "time": 0.24,
+          "state": {
+            "y": 0.785678140807219
+          },
+          "derivatives": {
+            "y": -0.785678140807219
+          }
+        },
+        {
+          "tick": 25,
+          "time": 0.25,
+          "state": {
+            "y": 0.7778213593991468
+          },
+          "derivatives": {
+            "y": -0.7778213593991468
+          }
+        },
+        {
+          "tick": 26,
+          "time": 0.26,
+          "state": {
+            "y": 0.7700431458051553
+          },
+          "derivatives": {
+            "y": -0.7700431458051553
+          }
+        },
+        {
+          "tick": 27,
+          "time": 0.27,
+          "state": {
+            "y": 0.7623427143471038
+          },
+          "derivatives": {
+            "y": -0.7623427143471038
+          }
+        },
+        {
+          "tick": 28,
+          "time": 0.28,
+          "state": {
+            "y": 0.7547192872036327
+          },
+          "derivatives": {
+            "y": -0.7547192872036327
+          }
+        },
+        {
+          "tick": 29,
+          "time": 0.29,
+          "state": {
+            "y": 0.7471720943315964
+          },
+          "derivatives": {
+            "y": -0.7471720943315964
+          }
+        },
+        {
+          "tick": 30,
+          "time": 0.3,
+          "state": {
+            "y": 0.7397003733882804
+          },
+          "derivatives": {
+            "y": -0.7397003733882804
+          }
+        },
+        {
+          "tick": 31,
+          "time": 0.31,
+          "state": {
+            "y": 0.7323033696543976
+          },
+          "derivatives": {
+            "y": -0.7323033696543976
+          }
+        },
+        {
+          "tick": 32,
+          "time": 0.32,
+          "state": {
+            "y": 0.7249803359578536
+          },
+          "derivatives": {
+            "y": -0.7249803359578536
+          }
+        },
+        {
+          "tick": 33,
+          "time": 0.33,
+          "state": {
+            "y": 0.717730532598275
+          },
+          "derivatives": {
+            "y": -0.717730532598275
+          }
+        },
+        {
+          "tick": 34,
+          "time": 0.34,
+          "state": {
+            "y": 0.7105532272722923
+          },
+          "derivatives": {
+            "y": -0.7105532272722923
+          }
+        },
+        {
+          "tick": 35,
+          "time": 0.35000000000000003,
+          "state": {
+            "y": 0.7034476949995694
+          },
+          "derivatives": {
+            "y": -0.7034476949995694
+          }
+        },
+        {
+          "tick": 36,
+          "time": 0.36,
+          "state": {
+            "y": 0.6964132180495737
+          },
+          "derivatives": {
+            "y": -0.6964132180495737
+          }
+        },
+        {
+          "tick": 37,
+          "time": 0.37,
+          "state": {
+            "y": 0.6894490858690779
+          },
+          "derivatives": {
+            "y": -0.6894490858690779
+          }
+        },
+        {
+          "tick": 38,
+          "time": 0.38,
+          "state": {
+            "y": 0.6825545950103872
+          },
+          "derivatives": {
+            "y": -0.6825545950103872
+          }
+        },
+        {
+          "tick": 39,
+          "time": 0.39,
+          "state": {
+            "y": 0.6757290490602833
+          },
+          "derivatives": {
+            "y": -0.6757290490602833
+          }
+        },
+        {
+          "tick": 40,
+          "time": 0.4,
+          "state": {
+            "y": 0.6689717585696805
+          },
+          "derivatives": {
+            "y": -0.6689717585696805
+          }
+        },
+        {
+          "tick": 41,
+          "time": 0.41000000000000003,
+          "state": {
+            "y": 0.6622820409839837
+          },
+          "derivatives": {
+            "y": -0.6622820409839837
+          }
+        },
+        {
+          "tick": 42,
+          "time": 0.42,
+          "state": {
+            "y": 0.6556592205741438
+          },
+          "derivatives": {
+            "y": -0.6556592205741438
+          }
+        },
+        {
+          "tick": 43,
+          "time": 0.43,
+          "state": {
+            "y": 0.6491026283684024
+          },
+          "derivatives": {
+            "y": -0.6491026283684024
+          }
+        },
+        {
+          "tick": 44,
+          "time": 0.44,
+          "state": {
+            "y": 0.6426116020847183
+          },
+          "derivatives": {
+            "y": -0.6426116020847183
+          }
+        },
+        {
+          "tick": 45,
+          "time": 0.45,
+          "state": {
+            "y": 0.6361854860638712
+          },
+          "derivatives": {
+            "y": -0.6361854860638712
+          }
+        },
+        {
+          "tick": 46,
+          "time": 0.46,
+          "state": {
+            "y": 0.6298236312032325
+          },
+          "derivatives": {
+            "y": -0.6298236312032325
+          }
+        },
+        {
+          "tick": 47,
+          "time": 0.47000000000000003,
+          "state": {
+            "y": 0.6235253948912002
+          },
+          "derivatives": {
+            "y": -0.6235253948912002
+          }
+        },
+        {
+          "tick": 48,
+          "time": 0.48,
+          "state": {
+            "y": 0.6172901409422882
+          },
+          "derivatives": {
+            "y": -0.6172901409422882
+          }
+        },
+        {
+          "tick": 49,
+          "time": 0.49,
+          "state": {
+            "y": 0.6111172395328653
+          },
+          "derivatives": {
+            "y": -0.6111172395328653
+          }
+        },
+        {
+          "tick": 50,
+          "time": 0.5,
+          "state": {
+            "y": 0.6050060671375367
+          },
+          "derivatives": {
+            "y": -0.6050060671375367
+          }
+        },
+        {
+          "tick": 51,
+          "time": 0.51,
+          "state": {
+            "y": 0.5989560064661613
+          },
+          "derivatives": {
+            "y": -0.5989560064661613
+          }
+        },
+        {
+          "tick": 52,
+          "time": 0.52,
+          "state": {
+            "y": 0.5929664464014998
+          },
+          "derivatives": {
+            "y": -0.5929664464014998
+          }
+        },
+        {
+          "tick": 53,
+          "time": 0.53,
+          "state": {
+            "y": 0.5870367819374848
+          },
+          "derivatives": {
+            "y": -0.5870367819374848
+          }
+        },
+        {
+          "tick": 54,
+          "time": 0.54,
+          "state": {
+            "y": 0.5811664141181099
+          },
+          "derivatives": {
+            "y": -0.5811664141181099
+          }
+        },
+        {
+          "tick": 55,
+          "time": 0.55,
+          "state": {
+            "y": 0.5753547499769288
+          },
+          "derivatives": {
+            "y": -0.5753547499769288
+          }
+        },
+        {
+          "tick": 56,
+          "time": 0.56,
+          "state": {
+            "y": 0.5696012024771595
+          },
+          "derivatives": {
+            "y": -0.5696012024771595
+          }
+        },
+        {
+          "tick": 57,
+          "time": 0.5700000000000001,
+          "state": {
+            "y": 0.563905190452388
+          },
+          "derivatives": {
+            "y": -0.563905190452388
+          }
+        },
+        {
+          "tick": 58,
+          "time": 0.58,
+          "state": {
+            "y": 0.5582661385478641
+          },
+          "derivatives": {
+            "y": -0.5582661385478641
+          }
+        },
+        {
+          "tick": 59,
+          "time": 0.59,
+          "state": {
+            "y": 0.5526834771623854
+          },
+          "derivatives": {
+            "y": -0.5526834771623854
+          }
+        },
+        {
+          "tick": 60,
+          "time": 0.6,
+          "state": {
+            "y": 0.5471566423907616
+          },
+          "derivatives": {
+            "y": -0.5471566423907616
+          }
+        },
+        {
+          "tick": 61,
+          "time": 0.61,
+          "state": {
+            "y": 0.5416850759668539
+          },
+          "derivatives": {
+            "y": -0.5416850759668539
+          }
+        },
+        {
+          "tick": 62,
+          "time": 0.62,
+          "state": {
+            "y": 0.5362682252071853
+          },
+          "derivatives": {
+            "y": -0.5362682252071853
+          }
+        },
+        {
+          "tick": 63,
+          "time": 0.63,
+          "state": {
+            "y": 0.5309055429551135
+          },
+          "derivatives": {
+            "y": -0.5309055429551135
+          }
+        },
+        {
+          "tick": 64,
+          "time": 0.64,
+          "state": {
+            "y": 0.5255964875255623
+          },
+          "derivatives": {
+            "y": -0.5255964875255623
+          }
+        },
+        {
+          "tick": 65,
+          "time": 0.65,
+          "state": {
+            "y": 0.5203405226503067
+          },
+          "derivatives": {
+            "y": -0.5203405226503067
+          }
+        },
+        {
+          "tick": 66,
+          "time": 0.66,
+          "state": {
+            "y": 0.5151371174238036
+          },
+          "derivatives": {
+            "y": -0.5151371174238036
+          }
+        },
+        {
+          "tick": 67,
+          "time": 0.67,
+          "state": {
+            "y": 0.5099857462495656
+          },
+          "derivatives": {
+            "y": -0.5099857462495656
+          }
+        },
+        {
+          "tick": 68,
+          "time": 0.68,
+          "state": {
+            "y": 0.50488588878707
+          },
+          "derivatives": {
+            "y": -0.50488588878707
+          }
+        },
+        {
+          "tick": 69,
+          "time": 0.6900000000000001,
+          "state": {
+            "y": 0.49983702989919926
+          },
+          "derivatives": {
+            "y": -0.49983702989919926
+          }
+        },
+        {
+          "tick": 70,
+          "time": 0.7000000000000001,
+          "state": {
+            "y": 0.4948386596002073
+          },
+          "derivatives": {
+            "y": -0.4948386596002073
+          }
+        },
+        {
+          "tick": 71,
+          "time": 0.71,
+          "state": {
+            "y": 0.48989027300420523
+          },
+          "derivatives": {
+            "y": -0.48989027300420523
+          }
+        },
+        {
+          "tick": 72,
+          "time": 0.72,
+          "state": {
+            "y": 0.48499137027416317
+          },
+          "derivatives": {
+            "y": -0.48499137027416317
+          }
+        },
+        {
+          "tick": 73,
+          "time": 0.73,
+          "state": {
+            "y": 0.48014145657142154
+          },
+          "derivatives": {
+            "y": -0.48014145657142154
+          }
+        },
+        {
+          "tick": 74,
+          "time": 0.74,
+          "state": {
+            "y": 0.47534004200570734
+          },
+          "derivatives": {
+            "y": -0.47534004200570734
+          }
+        },
+        {
+          "tick": 75,
+          "time": 0.75,
+          "state": {
+            "y": 0.4705866415856503
+          },
+          "derivatives": {
+            "y": -0.4705866415856503
+          }
+        },
+        {
+          "tick": 76,
+          "time": 0.76,
+          "state": {
+            "y": 0.46588077516979376
+          },
+          "derivatives": {
+            "y": -0.46588077516979376
+          }
+        },
+        {
+          "tick": 77,
+          "time": 0.77,
+          "state": {
+            "y": 0.46122196741809585
+          },
+          "derivatives": {
+            "y": -0.46122196741809585
+          }
+        },
+        {
+          "tick": 78,
+          "time": 0.78,
+          "state": {
+            "y": 0.4566097477439149
+          },
+          "derivatives": {
+            "y": -0.4566097477439149
+          }
+        },
+        {
+          "tick": 79,
+          "time": 0.79,
+          "state": {
+            "y": 0.45204365026647575
+          },
+          "derivatives": {
+            "y": -0.45204365026647575
+          }
+        },
+        {
+          "tick": 80,
+          "time": 0.8,
+          "state": {
+            "y": 0.447523213763811
+          },
+          "derivatives": {
+            "y": -0.447523213763811
+          }
+        },
+        {
+          "tick": 81,
+          "time": 0.81,
+          "state": {
+            "y": 0.44304798162617287
+          },
+          "derivatives": {
+            "y": -0.44304798162617287
+          }
+        },
+        {
+          "tick": 82,
+          "time": 0.8200000000000001,
+          "state": {
+            "y": 0.43861750180991116
+          },
+          "derivatives": {
+            "y": -0.43861750180991116
+          }
+        },
+        {
+          "tick": 83,
+          "time": 0.8300000000000001,
+          "state": {
+            "y": 0.43423132679181203
+          },
+          "derivatives": {
+            "y": -0.43423132679181203
+          }
+        },
+        {
+          "tick": 84,
+          "time": 0.84,
+          "state": {
+            "y": 0.4298890135238939
+          },
+          "derivatives": {
+            "y": -0.4298890135238939
+          }
+        },
+        {
+          "tick": 85,
+          "time": 0.85,
+          "state": {
+            "y": 0.425590123388655
+          },
+          "derivatives": {
+            "y": -0.425590123388655
+          }
+        },
+        {
+          "tick": 86,
+          "time": 0.86,
+          "state": {
+            "y": 0.42133422215476846
+          },
+          "derivatives": {
+            "y": -0.42133422215476846
+          }
+        },
+        {
+          "tick": 87,
+          "time": 0.87,
+          "state": {
+            "y": 0.4171208799332208
+          },
+          "derivatives": {
+            "y": -0.4171208799332208
+          }
+        },
+        {
+          "tick": 88,
+          "time": 0.88,
+          "state": {
+            "y": 0.4129496711338886
+          },
+          "derivatives": {
+            "y": -0.4129496711338886
+          }
+        },
+        {
+          "tick": 89,
+          "time": 0.89,
+          "state": {
+            "y": 0.4088201744225497
+          },
+          "derivatives": {
+            "y": -0.4088201744225497
+          }
+        },
+        {
+          "tick": 90,
+          "time": 0.9,
+          "state": {
+            "y": 0.4047319726783242
+          },
+          "derivatives": {
+            "y": -0.4047319726783242
+          }
+        },
+        {
+          "tick": 91,
+          "time": 0.91,
+          "state": {
+            "y": 0.400684652951541
+          },
+          "derivatives": {
+            "y": -0.400684652951541
+          }
+        },
+        {
+          "tick": 92,
+          "time": 0.92,
+          "state": {
+            "y": 0.3966778064220256
+          },
+          "derivatives": {
+            "y": -0.3966778064220256
+          }
+        },
+        {
+          "tick": 93,
+          "time": 0.93,
+          "state": {
+            "y": 0.39271102835780536
+          },
+          "derivatives": {
+            "y": -0.39271102835780536
+          }
+        },
+        {
+          "tick": 94,
+          "time": 0.9400000000000001,
+          "state": {
+            "y": 0.3887839180742273
+          },
+          "derivatives": {
+            "y": -0.3887839180742273
+          }
+        },
+        {
+          "tick": 95,
+          "time": 0.9500000000000001,
+          "state": {
+            "y": 0.38489607889348504
+          },
+          "derivatives": {
+            "y": -0.38489607889348504
+          }
+        },
+        {
+          "tick": 96,
+          "time": 0.96,
+          "state": {
+            "y": 0.38104711810455016
+          },
+          "derivatives": {
+            "y": -0.38104711810455016
+          }
+        },
+        {
+          "tick": 97,
+          "time": 0.97,
+          "state": {
+            "y": 0.37723664692350467
+          },
+          "derivatives": {
+            "y": -0.37723664692350467
+          }
+        },
+        {
+          "tick": 98,
+          "time": 0.98,
+          "state": {
+            "y": 0.3734642804542696
+          },
+          "derivatives": {
+            "y": -0.3734642804542696
+          }
+        },
+        {
+          "tick": 99,
+          "time": 0.99,
+          "state": {
+            "y": 0.3697296376497269
+          },
+          "derivatives": {
+            "y": -0.3697296376497269
+          }
+        },
+        {
+          "tick": 100,
+          "time": 1,
+          "state": {
+            "y": 0.3660323412732296
+          },
+          "derivatives": {
+            "y": -0.3660323412732296
+          }
+        }
+      ],
+      "finalState": {
+        "y": 0.3660323412732296
+      },
+      "blockGraph": [
+        {
+          "id": "integrator:y",
+          "kind": "integrator",
+          "inputs": [
+            "in"
+          ],
+          "output": "out"
+        },
+        {
+          "id": "rhs:y",
+          "kind": "expression",
+          "expression": "-k*y",
+          "inputs": {
+            "y": "y"
+          },
+          "output": "out"
+        }
+      ],
+      "blockGraphEdges": [
+        {
+          "from": "integrator:y",
+          "to": "rhs:y",
+          "fromChannel": "out",
+          "toChannel": "y",
+          "signal": "MathSignal"
+        },
+        {
+          "from": "rhs:y",
+          "to": "integrator:y",
+          "fromChannel": "out",
+          "toChannel": "in",
+          "signal": "MathSignal"
+        }
+      ],
+      "validation": [
+        {
+          "name": "math-block-finite-output/integrator:y",
+          "passed": true,
+          "expected": "all emitted math samples are finite",
+          "group": "math-blocks"
+        },
+        {
+          "name": "math-block-finite-output/rhs:y",
+          "passed": true,
+          "expected": "all emitted math samples are finite",
+          "group": "math-blocks"
+        },
+        {
+          "name": "ode-trace-length",
+          "passed": true,
+          "observed": "101",
+          "expected": "101",
+          "group": "math-ode"
+        },
+        {
+          "name": "ode-trace-finite",
+          "passed": true,
+          "expected": "all state and derivative values finite",
+          "group": "math-ode"
+        },
+        {
+          "name": "ode-final-time",
+          "passed": true,
+          "observed": "1.00000000000",
+          "expected": "1.00000000000",
+          "group": "math-ode"
+        }
+      ],
+      "runSummary": {
+        "ticks": 101,
+        "reason": "done",
+        "validation": [
+          {
+            "name": "math-block-finite-output/integrator:y",
+            "passed": true,
+            "expected": "all emitted math samples are finite",
+            "group": "math-blocks"
+          },
+          {
+            "name": "math-block-finite-output/rhs:y",
+            "passed": true,
+            "expected": "all emitted math samples are finite",
+            "group": "math-blocks"
+          }
+        ],
+        "validationOk": true
+      }
+    },
+    "validation": [
+      {
+        "name": "math-block-finite-output/integrator:y",
+        "passed": true,
+        "expected": "all emitted math samples are finite",
+        "group": "math-blocks"
+      },
+      {
+        "name": "math-block-finite-output/rhs:y",
+        "passed": true,
+        "expected": "all emitted math samples are finite",
+        "group": "math-blocks"
+      },
+      {
+        "name": "ode-trace-length",
+        "passed": true,
+        "observed": "101",
+        "expected": "101",
+        "group": "math-ode"
+      },
+      {
+        "name": "ode-trace-finite",
+        "passed": true,
+        "expected": "all state and derivative values finite",
+        "group": "math-ode"
+      },
+      {
+        "name": "ode-final-time",
+        "passed": true,
+        "observed": "1.00000000000",
+        "expected": "1.00000000000",
+        "group": "math-ode"
+      }
+    ]
+  }
+}

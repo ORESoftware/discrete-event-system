@@ -1,0 +1,8 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "logistics-routing-heuristics",
+  "description": "Vehicle routing heuristic comparison with nearest-neighbor, sweep, and Clarke-Wright savings candidate plans flowing through the DES pipeline.",
+  "parameters": {"vehicleCapacity": 7},
+  "runtime": {"animate": false, "outputs": {"csv": "out/logistics-routing-heuristics.csv", "summary": "out/logistics-routing-heuristics.summary.json"}},
+  "metadata": {"tags": ["logistics", "transportation", "routing", "heuristics"]}
+}

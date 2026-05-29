@@ -1,0 +1,31 @@
+{
+  "sense": "max",
+  "c": [
+    3,
+    5
+  ],
+  "A": [
+    [
+      2,
+      3
+    ]
+  ],
+  "b": [
+    12
+  ],
+  "integerVars": [
+    true,
+    true
+  ],
+  "ub": [
+    6,
+    6
+  ],
+  "varNames": [
+    "a",
+    "b"
+  ],
+  "conNames": [
+    "resource"
+  ]
+}

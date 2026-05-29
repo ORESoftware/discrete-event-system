@@ -1,0 +1,14 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "max-flow",
+  "description": "Textbook six-node maximum-flow/min-cut example.",
+  "parameters": {
+    "builtin": "textbook"
+  },
+  "runtime": {
+    "outputs": {
+      "csv": "out/max-flow.csv",
+      "summary": "out/max-flow-summary.json"
+    }
+  }
+}

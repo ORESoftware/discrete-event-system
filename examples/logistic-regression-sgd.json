@@ -1,0 +1,22 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "logistic-regression-sgd",
+  "description": "Binary logistic regression trained by sample, mini-batch, and gradient-step tokens.",
+  "parameters": {
+    "epochs": 160,
+    "batchSize": 3,
+    "learningRate": 0.2,
+    "optimizer": "sgd",
+    "samples": [
+      {"x": [-2, -1], "y": 0},
+      {"x": [-1, -1], "y": 0},
+      {"x": [-1, 0], "y": 0},
+      {"x": [0, 1], "y": 1},
+      {"x": [1, 1], "y": 1},
+      {"x": [2, 1], "y": 1}
+    ]
+  },
+  "runtime": {
+    "animate": false
+  }
+}

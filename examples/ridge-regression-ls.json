@@ -1,0 +1,15 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "ridge-regression-ls",
+  "description": "Ridge-regularized least-squares regression through shared DES sample and fit tokens.",
+  "parameters": {
+    "ridge": 0.1
+  },
+  "outputs": {
+    "csv": "outputs/ridge-regression-ls.csv"
+  },
+  "runtime": {
+    "animate": false,
+    "verbose": false
+  }
+}

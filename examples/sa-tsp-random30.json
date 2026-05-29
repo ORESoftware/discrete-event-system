@@ -1,0 +1,26 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "simulated-annealing",
+  "description": "SA on a 30-city random TSP with logarithmic cooling — exhibits slow but theoretically convergent annealing.",
+  "parameters": {
+    "problem": "tsp",
+    "tsp": {
+      "builtin": "random",
+      "n": 30,
+      "seed": 99,
+      "init": "nearest-neighbor",
+      "moves": "mixed"
+    },
+    "cooling": {"kind": "geometric", "T0": 200, "alpha": 0.99995},
+    "options": {"maxIterations": 100000, "seed": 1, "traceStride": 100}
+  },
+  "runtime": {
+    "outputs": {
+      "csv": "out/sa/tsp-random30-trace.csv"
+    },
+    "verbose": true
+  },
+  "metadata": {
+    "tags": ["simulated-annealing", "tsp", "random"]
+  }
+}

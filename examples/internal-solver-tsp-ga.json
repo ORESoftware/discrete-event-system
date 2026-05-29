@@ -1,0 +1,36 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "internal-solver-network",
+  "description": "Traveling salesman problem solved by an internal genetic-algorithm station network.",
+  "parameters": {
+    "kind": "tsp-ga",
+    "timeLimitMs": 180000,
+    "tsp": {
+      "builtin": "pentagon",
+      "n": 8,
+      "seed": 7,
+      "ga": {
+        "popSize": 40,
+        "numGenerations": 80,
+        "tournamentSize": 3,
+        "crossoverProb": 0.95,
+        "mutationProb": 0.25,
+        "elitism": 2,
+        "seed": 11,
+        "init": "nearest-neighbor"
+      }
+    }
+  },
+  "runtime": {
+    "verbose": true,
+    "outputs": {
+      "csv": "out/internal-solver-tsp-ga.csv",
+      "html": "out/internal-solver-tsp-ga.html",
+      "log": "out/internal-solver-tsp-ga.jsonl",
+      "summary": "out/internal-solver-tsp-ga.summary.json"
+    }
+  },
+  "metadata": {
+    "tags": ["internal-solver", "tsp", "genetic-algorithm"]
+  }
+}

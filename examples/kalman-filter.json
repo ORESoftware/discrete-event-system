@@ -1,0 +1,16 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "kalman-filter",
+  "description": "Linear Kalman filter for radar tracking of a constant-velocity target with a noisy position-only sensor. The KF is run as a station block; raw measurements and true states are emitted from a plant block as moving entities.",
+  "parameters": {
+    "x0": [0, 1],
+    "dt": 0.1,
+    "numSteps": 200,
+    "procNoiseStd": 0.1,
+    "measNoiseStd": 1.0,
+    "P0Scale": 10,
+    "seed": 7
+  },
+  "runtime": {"seed": 7},
+  "metadata": {"tags": ["kalman", "state-estimation", "stochastic-control", "radar", "stationary-entity", "moving-entity"]}
+}

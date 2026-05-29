@@ -1,0 +1,19 @@
+# Build output and binaries
+dist/
+node_modules/
+*.tsbuildinfo
+
+# External-reference Python venvs (do NOT commit binaries)
+.venv-external/
+.venv/
+__pycache__/
+*.pyc
+
+# Generated artifacts are committed to this repo so the cluster web server can
+# serve them directly from out/. Only exclude files that exceed GitHub's 100MB
+# per-file hard limit (regenerated locally, never pushed).
+out/smart-traffic-flow-five-intersection.summary.json
+
+# OS / editor cruft
+.DS_Store
+*.swp

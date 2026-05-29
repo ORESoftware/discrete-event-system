@@ -1,0 +1,122 @@
+{
+  "modelId": "adaptive-fuzzy-control",
+  "params": {
+    "steps": 140,
+    "dt": 0.1,
+    "setpoint": 22,
+    "initialTemp": 16,
+    "outsideTemp": 8,
+    "disturbance": 0.15
+  },
+  "runtimeMs": 1,
+  "summaryText": "ADAPTIVE FUZZY CONTROL\n----------------------------------------\n  Category:       Control systems (adaptive; fuzzy; intelligent)\n  Best plan:      aggressive-fuzzy\n  Objective:      -2.797632\n  Metrics:        rmsError=1.6807, energy=39.08, settlingTick=140.00, finalTemp=21.65\n  Candidates:     4\n  Stations:       adaptive-fuzzy-control-scenario-source -> adaptive-fuzzy-control-candidate-generator -> adaptive-fuzzy-control-plan-evaluator -> adaptive-fuzzy-control-result-sink\n  Movables:       DomainScenarioToken, DomainPlanToken, DomainEvaluationToken",
+  "result": {
+    "modelId": "adaptive-fuzzy-control",
+    "category": "Control systems (adaptive; fuzzy; intelligent)",
+    "best": {
+      "candidateId": "aggressive-fuzzy",
+      "plan": {
+        "errorGain": 0.85,
+        "derivativeGain": 0.25,
+        "outputGain": 5.8,
+        "adaptiveBoost": 0.4
+      },
+      "objective": -2.797632491679441,
+      "feasible": true,
+      "metrics": {
+        "rmsError": 1.680683404777885,
+        "energy": 39.07796347606223,
+        "settlingTick": 140,
+        "finalTemp": 21.652039687108214
+      }
+    },
+    "candidates": [
+      {
+        "candidateId": "aggressive-fuzzy",
+        "plan": {
+          "errorGain": 0.85,
+          "derivativeGain": 0.25,
+          "outputGain": 5.8,
+          "adaptiveBoost": 0.4
+        },
+        "objective": -2.797632491679441,
+        "feasible": true,
+        "metrics": {
+          "rmsError": 1.680683404777885,
+          "energy": 39.07796347606223,
+          "settlingTick": 140,
+          "finalTemp": 21.652039687108214
+        }
+      },
+      {
+        "candidateId": "balanced-adaptive-fuzzy",
+        "plan": {
+          "errorGain": 0.55,
+          "derivativeGain": 0.2,
+          "outputGain": 4.2,
+          "adaptiveBoost": 0.8
+        },
+        "objective": -2.917790086879388,
+        "feasible": true,
+        "metrics": {
+          "rmsError": 1.8481970036173427,
+          "energy": 37.18372333048179,
+          "settlingTick": 140,
+          "finalTemp": 21.201225272018306
+        }
+      },
+      {
+        "candidateId": "energy-saver-fuzzy",
+        "plan": {
+          "errorGain": 0.45,
+          "derivativeGain": 0.35,
+          "outputGain": 3.3,
+          "adaptiveBoost": 0.2
+        },
+        "objective": -3.49620978968005,
+        "feasible": true,
+        "metrics": {
+          "rmsError": 2.493764521830208,
+          "energy": 34.49781071399369,
+          "settlingTick": 140,
+          "finalTemp": 20.702015378640372
+        }
+      },
+      {
+        "candidateId": "calm-fuzzy",
+        "plan": {
+          "errorGain": 0.35,
+          "derivativeGain": 0.1,
+          "outputGain": 2.8,
+          "adaptiveBoost": 0
+        },
+        "objective": -4.337582278452287,
+        "feasible": true,
+        "metrics": {
+          "rmsError": 3.434813363129418,
+          "energy": 30.51075661291477,
+          "settlingTick": 140,
+          "finalTemp": 19.937707947400522
+        }
+      }
+    ],
+    "topology": {
+      "stations": [
+        "adaptive-fuzzy-control-scenario-source",
+        "adaptive-fuzzy-control-candidate-generator",
+        "adaptive-fuzzy-control-plan-evaluator",
+        "adaptive-fuzzy-control-result-sink"
+      ],
+      "movables": [
+        "DomainScenarioToken",
+        "DomainPlanToken",
+        "DomainEvaluationToken"
+      ],
+      "edges": [
+        "adaptive-fuzzy-control-scenario-source:scenario -> adaptive-fuzzy-control-candidate-generator:scenario",
+        "adaptive-fuzzy-control-candidate-generator:candidate-plan -> adaptive-fuzzy-control-plan-evaluator:candidate-plan",
+        "adaptive-fuzzy-control-plan-evaluator:evaluation -> adaptive-fuzzy-control-result-sink:evaluation"
+      ]
+    }
+  }
+}

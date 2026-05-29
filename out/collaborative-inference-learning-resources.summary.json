@@ -1,0 +1,419 @@
+{
+  "modelId": "collaborative-inference",
+  "params": {
+    "scenario": "learning-resources",
+    "items": [],
+    "responses": [],
+    "respondentCount": 1200,
+    "minItemsPerRespondent": 3,
+    "maxItemsPerRespondent": 4,
+    "respondentsPerTick": 100,
+    "seed": 5,
+    "ratingWeight": 0.6,
+    "rankingWeight": 0.4,
+    "shrinkage": 8,
+    "topK": 8,
+    "credibilityWeighting": true,
+    "credibilityPasses": 2,
+    "minCredibleAge": 15,
+    "referenceAge": 50,
+    "referenceExperienceYears": 15,
+    "ageWeightStrength": 0.35,
+    "experienceWeightStrength": 0.6,
+    "highRatedBreadthStrength": 0.4,
+    "highRatedScoreThreshold": 0.72,
+    "minHighRatedItems": 2,
+    "maxCredibilityMultiplier": 3
+  },
+  "runtimeMs": 22,
+  "summaryText": "COLLABORATIVE INFERENCE (sparse preference learning DES)\n-------------------------------------------------------\n  Scenario:       Learning resources ranked from sparse student feedback\n  Respondents:    1,200\n  Ratings:        4,245\n  Comparisons:    5,535\n  Coverage:       ratings 10/10, comparisons 10/10\n  Credibility:    2 pass(es), mean weight=1.462, max=2.160, capped claims=0, breadth bonuses=427\n  Validation:     8/8 checks passed\n\n  Top inferred items:\n    1. Worked examples          score=0.835 confidence=0.998 ratings=533\n    2. Interactive notebooks    score=0.793 confidence=0.998 ratings=478\n    3. Small project builds     score=0.766 confidence=0.997 ratings=439\n    4. Office hours             score=0.692 confidence=0.996 ratings=352\n    5. Visual simulations       score=0.651 confidence=0.996 ratings=321\n    6. Short videos             score=0.590 confidence=0.998 ratings=574\n    7. Textbook chapters        score=0.494 confidence=0.997 ratings=474\n    8. Flashcards               score=0.399 confidence=0.996 ratings=334\n\n  Sources:        respondent-source\n  Stations:       survey-encoder -> evidence-aggregator -> ranking-inference\n  Sinks:          inference-result-sink\n  Movables:       RespondentToken, RatingEvidenceToken, PairwisePreferenceToken, EvidenceSnapshotToken, RankingToken",
+  "result": {
+    "scenario": "learning-resources",
+    "scenarioLabel": "Learning resources ranked from sparse student feedback",
+    "synthetic": true,
+    "respondentCount": 1200,
+    "respondentsProcessed": 1200,
+    "ratingEvidenceCount": 4245,
+    "pairwiseEvidenceCount": 5535,
+    "invalidEvidence": [],
+    "credibility": {
+      "enabled": true,
+      "passes": 2,
+      "minCredibleAge": 15,
+      "highRatedScoreThreshold": 0.72,
+      "minHighRatedItems": 2,
+      "meanRespondentWeight": 1.4617400464058015,
+      "maxRespondentWeight": 2.16,
+      "cappedExperienceClaims": 0,
+      "highRatedBonusRespondents": 427
+    },
+    "coverage": {
+      "items": 10,
+      "itemsWithRatings": 10,
+      "itemsWithComparisons": 10,
+      "minRatingsPerItem": 288,
+      "meanRatingsPerItem": 424.5,
+      "maxRatingsPerItem": 574,
+      "minComparisonsPerItem": 1540.4910876546328,
+      "meanComparisonsPerItem": 2405.578228640993,
+      "maxComparisonsPerItem": 3292.594682466378
+    },
+    "rankings": [
+      {
+        "rank": 1,
+        "itemId": "worked-examples",
+        "label": "Worked examples",
+        "group": "practice",
+        "score": 0.8354961126077718,
+        "confidence": 0.997913185753155,
+        "uncertainty": 0.005987660975721418,
+        "ratingMean": 4.310951709970574,
+        "ratingCount": 533,
+        "comparisonCount": 3292.594682466378,
+        "pairwiseWinRate": 0.8495773819772134,
+        "support": 3825.594682466378
+      },
+      {
+        "rank": 2,
+        "itemId": "interactive-notebooks",
+        "label": "Interactive notebooks",
+        "group": "practice",
+        "score": 0.793238676181263,
+        "confidence": 0.9976660250729195,
+        "uncertainty": 0.006917349073730295,
+        "ratingMean": 4.205733052844446,
+        "ratingCount": 478,
+        "comparisonCount": 2941.628937731065,
+        "pairwiseWinRate": 0.7835862427817737,
+        "support": 3419.628937731065
+      },
+      {
+        "rank": 3,
+        "itemId": "project-builds",
+        "label": "Small project builds",
+        "group": "practice",
+        "score": 0.7660660675509572,
+        "confidence": 0.9974936410350174,
+        "uncertainty": 0.007493010927124059,
+        "ratingMean": 4.164544357404519,
+        "ratingCount": 439,
+        "comparisonCount": 2744.8811757499343,
+        "pairwiseWinRate": 0.7313549997819447,
+        "support": 3183.8811757499343
+      },
+      {
+        "rank": 4,
+        "itemId": "office-hours",
+        "label": "Office hours",
+        "group": "support",
+        "score": 0.6918303831490087,
+        "confidence": 0.99641306956115,
+        "uncertainty": 0.009777125919051747,
+        "ratingMean": 3.9908968663913167,
+        "ratingCount": 352,
+        "comparisonCount": 1870.3192482776485,
+        "pairwiseWinRate": 0.6116855085768275,
+        "support": 2222.3192482776485
+      },
+      {
+        "rank": 5,
+        "itemId": "visual-simulations",
+        "label": "Visual simulations",
+        "group": "exploration",
+        "score": 0.6510423550842797,
+        "confidence": 0.9960819593080146,
+        "uncertainty": 0.010548251061008889,
+        "ratingMean": 3.916874592010366,
+        "ratingCount": 321,
+        "comparisonCount": 1712.8368845337798,
+        "pairwiseWinRate": 0.5377380780063055,
+        "support": 2033.8368845337798
+      },
+      {
+        "rank": 6,
+        "itemId": "short-videos",
+        "label": "Short videos",
+        "group": "content",
+        "score": 0.5904290490409065,
+        "confidence": 0.9978503849211179,
+        "uncertainty": 0.008060904722966836,
+        "ratingMean": 3.7532650236686314,
+        "ratingCount": 574,
+        "comparisonCount": 3139.5965214387925,
+        "pairwiseWinRate": 0.44559298682887505,
+        "support": 3713.5965214387925
+      },
+      {
+        "rank": 7,
+        "itemId": "textbook-chapters",
+        "label": "Textbook chapters",
+        "group": "content",
+        "score": 0.49406839602343994,
+        "confidence": 0.9973744238374459,
+        "uncertainty": 0.009057466964898397,
+        "ratingMean": 3.490184215348407,
+        "ratingCount": 474,
+        "comparisonCount": 2564.9502709903636,
+        "pairwiseWinRate": 0.30330913734828174,
+        "support": 3038.9502709903636
+      },
+      {
+        "rank": 8,
+        "itemId": "flashcards",
+        "label": "Flashcards",
+        "group": "review",
+        "score": 0.39887198541561436,
+        "confidence": 0.996283993123591,
+        "uncertainty": 0.010553427050239147,
+        "ratingMean": 3.170140627762155,
+        "ratingCount": 334,
+        "comparisonCount": 1810.8485457838574,
+        "pairwiseWinRate": 0.18517136429941755,
+        "support": 2144.8485457838574
+      },
+      {
+        "rank": 9,
+        "itemId": "long-lectures",
+        "label": "Long lectures",
+        "group": "content",
+        "score": 0.33974916211311906,
+        "confidence": 0.9972391277064444,
+        "uncertainty": 0.008798564932147462,
+        "ratingMean": 3.002506603579201,
+        "ratingCount": 452,
+        "comparisonCount": 2437.6349317834747,
+        "pairwiseWinRate": 0.09944154265009783,
+        "support": 2889.6349317834747
+      },
+      {
+        "rank": 10,
+        "itemId": "discussion-board",
+        "label": "Discussion board",
+        "group": "support",
+        "score": 0.2987746023087963,
+        "confidence": 0.9956438666902453,
+        "uncertainty": 0.010680860543518618,
+        "ratingMean": 2.8236880678481984,
+        "ratingCount": 288,
+        "comparisonCount": 1540.4910876546328,
+        "pairwiseWinRate": 0.06380778247610054,
+        "support": 1828.4910876546328
+      }
+    ],
+    "top": [
+      {
+        "rank": 1,
+        "itemId": "worked-examples",
+        "label": "Worked examples",
+        "group": "practice",
+        "score": 0.8354961126077718,
+        "confidence": 0.997913185753155,
+        "uncertainty": 0.005987660975721418,
+        "ratingMean": 4.310951709970574,
+        "ratingCount": 533,
+        "comparisonCount": 3292.594682466378,
+        "pairwiseWinRate": 0.8495773819772134,
+        "support": 3825.594682466378
+      },
+      {
+        "rank": 2,
+        "itemId": "interactive-notebooks",
+        "label": "Interactive notebooks",
+        "group": "practice",
+        "score": 0.793238676181263,
+        "confidence": 0.9976660250729195,
+        "uncertainty": 0.006917349073730295,
+        "ratingMean": 4.205733052844446,
+        "ratingCount": 478,
+        "comparisonCount": 2941.628937731065,
+        "pairwiseWinRate": 0.7835862427817737,
+        "support": 3419.628937731065
+      },
+      {
+        "rank": 3,
+        "itemId": "project-builds",
+        "label": "Small project builds",
+        "group": "practice",
+        "score": 0.7660660675509572,
+        "confidence": 0.9974936410350174,
+        "uncertainty": 0.007493010927124059,
+        "ratingMean": 4.164544357404519,
+        "ratingCount": 439,
+        "comparisonCount": 2744.8811757499343,
+        "pairwiseWinRate": 0.7313549997819447,
+        "support": 3183.8811757499343
+      },
+      {
+        "rank": 4,
+        "itemId": "office-hours",
+        "label": "Office hours",
+        "group": "support",
+        "score": 0.6918303831490087,
+        "confidence": 0.99641306956115,
+        "uncertainty": 0.009777125919051747,
+        "ratingMean": 3.9908968663913167,
+        "ratingCount": 352,
+        "comparisonCount": 1870.3192482776485,
+        "pairwiseWinRate": 0.6116855085768275,
+        "support": 2222.3192482776485
+      },
+      {
+        "rank": 5,
+        "itemId": "visual-simulations",
+        "label": "Visual simulations",
+        "group": "exploration",
+        "score": 0.6510423550842797,
+        "confidence": 0.9960819593080146,
+        "uncertainty": 0.010548251061008889,
+        "ratingMean": 3.916874592010366,
+        "ratingCount": 321,
+        "comparisonCount": 1712.8368845337798,
+        "pairwiseWinRate": 0.5377380780063055,
+        "support": 2033.8368845337798
+      },
+      {
+        "rank": 6,
+        "itemId": "short-videos",
+        "label": "Short videos",
+        "group": "content",
+        "score": 0.5904290490409065,
+        "confidence": 0.9978503849211179,
+        "uncertainty": 0.008060904722966836,
+        "ratingMean": 3.7532650236686314,
+        "ratingCount": 574,
+        "comparisonCount": 3139.5965214387925,
+        "pairwiseWinRate": 0.44559298682887505,
+        "support": 3713.5965214387925
+      },
+      {
+        "rank": 7,
+        "itemId": "textbook-chapters",
+        "label": "Textbook chapters",
+        "group": "content",
+        "score": 0.49406839602343994,
+        "confidence": 0.9973744238374459,
+        "uncertainty": 0.009057466964898397,
+        "ratingMean": 3.490184215348407,
+        "ratingCount": 474,
+        "comparisonCount": 2564.9502709903636,
+        "pairwiseWinRate": 0.30330913734828174,
+        "support": 3038.9502709903636
+      },
+      {
+        "rank": 8,
+        "itemId": "flashcards",
+        "label": "Flashcards",
+        "group": "review",
+        "score": 0.39887198541561436,
+        "confidence": 0.996283993123591,
+        "uncertainty": 0.010553427050239147,
+        "ratingMean": 3.170140627762155,
+        "ratingCount": 334,
+        "comparisonCount": 1810.8485457838574,
+        "pairwiseWinRate": 0.18517136429941755,
+        "support": 2144.8485457838574
+      }
+    ],
+    "validation": [
+      {
+        "name": "respondent conservation",
+        "group": "collaborative inference",
+        "passed": true,
+        "observed": "1200",
+        "expected": "1200"
+      },
+      {
+        "name": "rating evidence conservation",
+        "group": "collaborative inference",
+        "passed": true,
+        "observed": "4245",
+        "expected": "4245"
+      },
+      {
+        "name": "pairwise evidence conservation",
+        "group": "collaborative inference",
+        "passed": true,
+        "observed": "5535",
+        "expected": "5535"
+      },
+      {
+        "name": "all items ranked",
+        "group": "collaborative inference",
+        "passed": true,
+        "observed": "10",
+        "expected": "10"
+      },
+      {
+        "name": "scores are finite probabilities",
+        "group": "collaborative inference",
+        "passed": true,
+        "expected": "score in [0, 1] for every item"
+      },
+      {
+        "name": "coverage reaches every item",
+        "group": "collaborative inference",
+        "passed": true,
+        "observed": "10/10 rated, 10/10 compared",
+        "expected": "each item has rating and comparison evidence"
+      },
+      {
+        "name": "no invalid evidence",
+        "group": "collaborative inference",
+        "passed": true,
+        "observed": "0",
+        "expected": "0",
+        "details": ""
+      },
+      {
+        "name": "credibility weights are finite",
+        "group": "collaborative inference",
+        "passed": true,
+        "observed": "mean=1.4617400464058015, max=2.16",
+        "expected": "finite respondent weights"
+      }
+    ],
+    "topology": {
+      "stations": [
+        "respondent-source",
+        "survey-encoder",
+        "evidence-aggregator",
+        "ranking-inference",
+        "inference-result-sink"
+      ],
+      "movables": [
+        "RespondentToken",
+        "RatingEvidenceToken",
+        "PairwisePreferenceToken",
+        "EvidenceSnapshotToken",
+        "RankingToken"
+      ],
+      "edges": [
+        "respondent-source:respondent -> survey-encoder:respondent",
+        "survey-encoder:rating-evidence -> evidence-aggregator:rating-evidence",
+        "survey-encoder:pairwise-evidence -> evidence-aggregator:pairwise-evidence",
+        "evidence-aggregator:evidence-snapshot -> ranking-inference:evidence-snapshot",
+        "ranking-inference:ranking -> inference-result-sink:ranking"
+      ]
+    },
+    "stationRoles": {
+      "sources": [
+        "respondent-source"
+      ],
+      "stations": [
+        "survey-encoder",
+        "evidence-aggregator",
+        "ranking-inference"
+      ],
+      "sinks": [
+        "inference-result-sink"
+      ],
+      "movables": [
+        "RespondentToken",
+        "RatingEvidenceToken",
+        "PairwisePreferenceToken",
+        "EvidenceSnapshotToken",
+        "RankingToken"
+      ]
+    }
+  }
+}

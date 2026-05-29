@@ -1,0 +1,5 @@
+{"level":"info","kind":"max-flow-start","nodes":6,"edges":10}
+{"level":"info","kind":"max-flow-augment","iter":1,"pathNodes":[0,1,3,5],"pathEdges":[0,4,8],"bottleneck":12,"value":12}
+{"level":"info","kind":"max-flow-augment","iter":2,"pathNodes":[0,2,4,5],"pathEdges":[1,6,9],"bottleneck":4,"value":16}
+{"level":"info","kind":"max-flow-augment","iter":3,"pathNodes":[0,2,4,3,5],"pathEdges":[1,6,7,8],"bottleneck":7,"value":23}
+{"level":"info","kind":"max-flow-finish","maxFlow":23,"augmentations":3}

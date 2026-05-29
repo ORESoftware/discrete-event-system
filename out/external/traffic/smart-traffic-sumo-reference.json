@@ -1,0 +1,63 @@
+{
+  "commands": [
+    {
+      "args": [
+        "/Users/maca5/Library/Python/3.9/bin/netconvert",
+        "--node-files",
+        "/var/folders/qr/l0klf0r566z1qdsfgcg9j7s00000gn/T/des-sumo-traffic-wciu5uru/des.nodes.nod.xml",
+        "--edge-files",
+        "/var/folders/qr/l0klf0r566z1qdsfgcg9j7s00000gn/T/des-sumo-traffic-wciu5uru/des.edges.edg.xml",
+        "--output-file",
+        "/var/folders/qr/l0klf0r566z1qdsfgcg9j7s00000gn/T/des-sumo-traffic-wciu5uru/des.net.xml",
+        "--no-turnarounds",
+        "true",
+        "--junctions.join",
+        "false"
+      ],
+      "status": 0,
+      "stderr": "",
+      "stdout": "Success.\n"
+    },
+    {
+      "args": [
+        "/Users/maca5/Library/Python/3.9/bin/sumo",
+        "-c",
+        "/var/folders/qr/l0klf0r566z1qdsfgcg9j7s00000gn/T/des-sumo-traffic-wciu5uru/des.sumocfg",
+        "--no-step-log",
+        "true",
+        "--duration-log.disable",
+        "true"
+      ],
+      "status": 0,
+      "stderr": "",
+      "stdout": ""
+    }
+  ],
+  "message": "SUMO simulation completed.",
+  "module": "traffic-sumo-reference",
+  "result": {
+    "activeAtEnd": 23,
+    "arrived": 37,
+    "collisionCount": 0,
+    "departed": 60,
+    "generatedDemand": 60,
+    "meanSpeedMps": 7.638088882364274,
+    "meanTravelTimeSec": 71.13783783783784,
+    "meanWaitingTimeSec": 17.148648648648653,
+    "summary": {
+      "arrived": 37,
+      "collisions": 0,
+      "ended": 37,
+      "inserted": 60,
+      "loaded": 60,
+      "running": 31,
+      "waiting": 5
+    }
+  },
+  "simulator": {
+    "netconvert": "/Users/maca5/Library/Python/3.9/bin/netconvert",
+    "sumo": "/Users/maca5/Library/Python/3.9/bin/sumo"
+  },
+  "status": "ok",
+  "workdir": "/var/folders/qr/l0klf0r566z1qdsfgcg9j7s00000gn/T/des-sumo-traffic-wciu5uru"
+}

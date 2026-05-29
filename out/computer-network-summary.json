@@ -1,0 +1,3762 @@
+{
+  "modelId": "computer-network",
+  "params": {
+    "builtin": "small-enterprise",
+    "problem": {
+      "nodes": [
+        {
+          "id": "client-a",
+          "kind": "host",
+          "forwardingRatePps": 2000,
+          "queueLimitPackets": 256
+        },
+        {
+          "id": "client-b",
+          "kind": "host",
+          "forwardingRatePps": 2000,
+          "queueLimitPackets": 256
+        },
+        {
+          "id": "edge-1",
+          "kind": "router",
+          "forwardingRatePps": 6000,
+          "queueLimitPackets": 512
+        },
+        {
+          "id": "core-1",
+          "kind": "router",
+          "forwardingRatePps": 8000,
+          "queueLimitPackets": 512
+        },
+        {
+          "id": "server",
+          "kind": "host",
+          "forwardingRatePps": 4000,
+          "queueLimitPackets": 512
+        }
+      ],
+      "links": [
+        {
+          "id": "client-a-edge",
+          "from": "client-a",
+          "to": "edge-1",
+          "bandwidthMbps": 100,
+          "latencyMs": 1,
+          "costPerMb": 0.001,
+          "queueLimitPackets": 128,
+          "bidirectional": true
+        },
+        {
+          "id": "client-b-edge",
+          "from": "client-b",
+          "to": "edge-1",
+          "bandwidthMbps": 50,
+          "latencyMs": 2,
+          "costPerMb": 0.001,
+          "queueLimitPackets": 128,
+          "bidirectional": true
+        },
+        {
+          "id": "edge-core",
+          "from": "edge-1",
+          "to": "core-1",
+          "bandwidthMbps": 25,
+          "latencyMs": 8,
+          "costPerMb": 0.004,
+          "queueLimitPackets": 96,
+          "bidirectional": true
+        },
+        {
+          "id": "core-server",
+          "from": "core-1",
+          "to": "server",
+          "bandwidthMbps": 100,
+          "latencyMs": 3,
+          "costPerMb": 0.002,
+          "queueLimitPackets": 128,
+          "bidirectional": true
+        }
+      ],
+      "flows": [
+        {
+          "id": "a-to-server",
+          "source": "client-a",
+          "destination": "server",
+          "ratePps": 650,
+          "packetSizeBytes": 1200,
+          "maxPackets": 650
+        },
+        {
+          "id": "b-to-server",
+          "source": "client-b",
+          "destination": "server",
+          "ratePps": 300,
+          "packetSizeBytes": 1000,
+          "maxPackets": 300
+        }
+      ],
+      "durationMs": 1000,
+      "dtMs": 1,
+      "routingMetric": "latency",
+      "drainAfterSourcesMs": 1500,
+      "maxPacketsInSystem": 5000
+    }
+  },
+  "runtimeMs": 15,
+  "summaryText": "COMPUTER-NETWORK DES\n--------------------\n  Routing metric:   latency\n  Generated:        950\n  Delivered:        950\n  Dropped:          0\n  Active at stop:   0\n  Delivery ratio:   1.0000\n  Offered load:     8.6400 Mbps\n  Throughput:       8.6400 Mbps\n  Mean latency:     15.316 ms\n  P95 latency:      16.000 ms\n  Total cost:       0.007560\n  Invariants:       ok",
+  "result": {
+    "generatedPackets": 950,
+    "deliveredPackets": 950,
+    "droppedPackets": 0,
+    "activePackets": 0,
+    "deliveryRatio": 1,
+    "offeredLoadMbps": 8.64,
+    "throughputMbps": 8.64,
+    "meanLatencyMs": 15.31578947368421,
+    "p95LatencyMs": 16,
+    "totalCost": 0.007560000000000144,
+    "totalSimulatedMs": 1016,
+    "routingMetric": "latency",
+    "flowStats": [
+      {
+        "id": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "generatedPackets": 650,
+        "deliveredPackets": 650,
+        "droppedPackets": 0,
+        "deliveryRatio": 1,
+        "generatedBytes": 780000,
+        "deliveredBytes": 780000,
+        "throughputMbps": 6.24,
+        "meanLatencyMs": 15,
+        "p95LatencyMs": 15,
+        "totalCost": 0.0054600000000000724,
+        "meanCostPerDeliveredPacket": 0.000008400000000000111
+      },
+      {
+        "id": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "generatedPackets": 300,
+        "deliveredPackets": 300,
+        "droppedPackets": 0,
+        "deliveryRatio": 1,
+        "generatedBytes": 300000,
+        "deliveredBytes": 300000,
+        "throughputMbps": 2.4,
+        "meanLatencyMs": 16,
+        "p95LatencyMs": 16,
+        "totalCost": 0.002100000000000007,
+        "meanCostPerDeliveredPacket": 0.000007000000000000023
+      }
+    ],
+    "nodeStats": [
+      {
+        "id": "client-a",
+        "kind": "host",
+        "receivedPackets": 650,
+        "forwardedPackets": 650,
+        "deliveredPackets": 0,
+        "droppedPackets": 0,
+        "finalQueue": 0,
+        "maxQueue": 1,
+        "avgQueue": 0
+      },
+      {
+        "id": "client-b",
+        "kind": "host",
+        "receivedPackets": 300,
+        "forwardedPackets": 300,
+        "deliveredPackets": 0,
+        "droppedPackets": 0,
+        "finalQueue": 0,
+        "maxQueue": 1,
+        "avgQueue": 0
+      },
+      {
+        "id": "edge-1",
+        "kind": "router",
+        "receivedPackets": 950,
+        "forwardedPackets": 950,
+        "deliveredPackets": 0,
+        "droppedPackets": 0,
+        "finalQueue": 0,
+        "maxQueue": 2,
+        "avgQueue": 0
+      },
+      {
+        "id": "core-1",
+        "kind": "router",
+        "receivedPackets": 950,
+        "forwardedPackets": 950,
+        "deliveredPackets": 0,
+        "droppedPackets": 0,
+        "finalQueue": 0,
+        "maxQueue": 2,
+        "avgQueue": 0
+      },
+      {
+        "id": "server",
+        "kind": "host",
+        "receivedPackets": 950,
+        "forwardedPackets": 0,
+        "deliveredPackets": 950,
+        "droppedPackets": 0,
+        "finalQueue": 0,
+        "maxQueue": 2,
+        "avgQueue": 0
+      }
+    ],
+    "linkStats": [
+      {
+        "id": "client-a-edge",
+        "from": "client-a",
+        "to": "edge-1",
+        "bandwidthMbps": 100,
+        "latencyMs": 1,
+        "costPerMb": 0.001,
+        "enqueuedPackets": 650,
+        "deliveredPackets": 650,
+        "droppedPackets": 0,
+        "transmittedBytes": 780000,
+        "throughputMbps": 6.141732283464567,
+        "utilization": 0.061417322834644614,
+        "finalInFlight": 0,
+        "maxInFlight": 2,
+        "avgInFlight": 1.279527559055118,
+        "totalCost": 0.0007800000000000024
+      },
+      {
+        "id": "client-a-edge:rev",
+        "from": "edge-1",
+        "to": "client-a",
+        "bandwidthMbps": 100,
+        "latencyMs": 1,
+        "costPerMb": 0.001,
+        "enqueuedPackets": 0,
+        "deliveredPackets": 0,
+        "droppedPackets": 0,
+        "transmittedBytes": 0,
+        "throughputMbps": 0,
+        "utilization": 0,
+        "finalInFlight": 0,
+        "maxInFlight": 0,
+        "avgInFlight": 0,
+        "totalCost": 0
+      },
+      {
+        "id": "client-b-edge",
+        "from": "client-b",
+        "to": "edge-1",
+        "bandwidthMbps": 50,
+        "latencyMs": 2,
+        "costPerMb": 0.001,
+        "enqueuedPackets": 300,
+        "deliveredPackets": 300,
+        "droppedPackets": 0,
+        "transmittedBytes": 300000,
+        "throughputMbps": 2.362204724409449,
+        "utilization": 0.047244094488188663,
+        "finalInFlight": 0,
+        "maxInFlight": 1,
+        "avgInFlight": 0.8858267716535433,
+        "totalCost": 0.0003000000000000008
+      },
+      {
+        "id": "client-b-edge:rev",
+        "from": "edge-1",
+        "to": "client-b",
+        "bandwidthMbps": 50,
+        "latencyMs": 2,
+        "costPerMb": 0.001,
+        "enqueuedPackets": 0,
+        "deliveredPackets": 0,
+        "droppedPackets": 0,
+        "transmittedBytes": 0,
+        "throughputMbps": 0,
+        "utilization": 0,
+        "finalInFlight": 0,
+        "maxInFlight": 0,
+        "avgInFlight": 0,
+        "totalCost": 0
+      },
+      {
+        "id": "edge-core",
+        "from": "edge-1",
+        "to": "core-1",
+        "bandwidthMbps": 25,
+        "latencyMs": 8,
+        "costPerMb": 0.004,
+        "enqueuedPackets": 950,
+        "deliveredPackets": 950,
+        "droppedPackets": 0,
+        "transmittedBytes": 1080000,
+        "throughputMbps": 8.503937007874015,
+        "utilization": 0.3401574803149582,
+        "finalInFlight": 0,
+        "maxInFlight": 9,
+        "avgInFlight": 8.415354330708661,
+        "totalCost": 0.004320000000000037
+      },
+      {
+        "id": "edge-core:rev",
+        "from": "core-1",
+        "to": "edge-1",
+        "bandwidthMbps": 25,
+        "latencyMs": 8,
+        "costPerMb": 0.004,
+        "enqueuedPackets": 0,
+        "deliveredPackets": 0,
+        "droppedPackets": 0,
+        "transmittedBytes": 0,
+        "throughputMbps": 0,
+        "utilization": 0,
+        "finalInFlight": 0,
+        "maxInFlight": 0,
+        "avgInFlight": 0,
+        "totalCost": 0
+      },
+      {
+        "id": "core-server",
+        "from": "core-1",
+        "to": "server",
+        "bandwidthMbps": 100,
+        "latencyMs": 3,
+        "costPerMb": 0.002,
+        "enqueuedPackets": 950,
+        "deliveredPackets": 950,
+        "droppedPackets": 0,
+        "transmittedBytes": 1080000,
+        "throughputMbps": 8.503937007874015,
+        "utilization": 0.08503937007873955,
+        "finalInFlight": 0,
+        "maxInFlight": 5,
+        "avgInFlight": 3.7401574803149606,
+        "totalCost": 0.0021600000000000187
+      },
+      {
+        "id": "core-server:rev",
+        "from": "server",
+        "to": "core-1",
+        "bandwidthMbps": 100,
+        "latencyMs": 3,
+        "costPerMb": 0.002,
+        "enqueuedPackets": 0,
+        "deliveredPackets": 0,
+        "droppedPackets": 0,
+        "transmittedBytes": 0,
+        "throughputMbps": 0,
+        "utilization": 0,
+        "finalInFlight": 0,
+        "maxInFlight": 0,
+        "avgInFlight": 0,
+        "totalCost": 0
+      }
+    ],
+    "deliveredPacketsTrace": [
+      {
+        "packetId": 1,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 1,
+        "deliveredAtMs": 16,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 2,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 3,
+        "deliveredAtMs": 18,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 4,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 4,
+        "deliveredAtMs": 19,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 3,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 3,
+        "deliveredAtMs": 19,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 5,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 6,
+        "deliveredAtMs": 21,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 7,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 7,
+        "deliveredAtMs": 22,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 6,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 6,
+        "deliveredAtMs": 22,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 8,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 9,
+        "deliveredAtMs": 24,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 10,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 10,
+        "deliveredAtMs": 25,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 9,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 9,
+        "deliveredAtMs": 25,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 11,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 12,
+        "deliveredAtMs": 27,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 12,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 13,
+        "deliveredAtMs": 28,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 13,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 13,
+        "deliveredAtMs": 29,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 14,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 15,
+        "deliveredAtMs": 30,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 15,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 16,
+        "deliveredAtMs": 31,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 16,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 16,
+        "deliveredAtMs": 32,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 17,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 18,
+        "deliveredAtMs": 33,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 18,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 19,
+        "deliveredAtMs": 34,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 19,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 19,
+        "deliveredAtMs": 35,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 20,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 21,
+        "deliveredAtMs": 36,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 21,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 23,
+        "deliveredAtMs": 38,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 23,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 24,
+        "deliveredAtMs": 39,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 22,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 23,
+        "deliveredAtMs": 39,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 24,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 26,
+        "deliveredAtMs": 41,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 26,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 27,
+        "deliveredAtMs": 42,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 25,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 26,
+        "deliveredAtMs": 42,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 27,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 29,
+        "deliveredAtMs": 44,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 29,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 30,
+        "deliveredAtMs": 45,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 28,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 29,
+        "deliveredAtMs": 45,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 30,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 32,
+        "deliveredAtMs": 47,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 31,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 33,
+        "deliveredAtMs": 48,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 32,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 33,
+        "deliveredAtMs": 49,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 33,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 35,
+        "deliveredAtMs": 50,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 34,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 36,
+        "deliveredAtMs": 51,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 35,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 36,
+        "deliveredAtMs": 52,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 36,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 38,
+        "deliveredAtMs": 53,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 37,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 39,
+        "deliveredAtMs": 54,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 38,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 39,
+        "deliveredAtMs": 55,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 39,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 41,
+        "deliveredAtMs": 56,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 40,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 43,
+        "deliveredAtMs": 58,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 42,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 44,
+        "deliveredAtMs": 59,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 41,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 43,
+        "deliveredAtMs": 59,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 43,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 46,
+        "deliveredAtMs": 61,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 45,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 47,
+        "deliveredAtMs": 62,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 44,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 46,
+        "deliveredAtMs": 62,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 46,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 49,
+        "deliveredAtMs": 64,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 48,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 50,
+        "deliveredAtMs": 65,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 47,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 49,
+        "deliveredAtMs": 65,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 49,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 52,
+        "deliveredAtMs": 67,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 50,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 53,
+        "deliveredAtMs": 68,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 51,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 53,
+        "deliveredAtMs": 69,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 52,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 55,
+        "deliveredAtMs": 70,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 53,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 56,
+        "deliveredAtMs": 71,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 54,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 56,
+        "deliveredAtMs": 72,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 55,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 58,
+        "deliveredAtMs": 73,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 56,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 59,
+        "deliveredAtMs": 74,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 57,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 59,
+        "deliveredAtMs": 75,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 58,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 61,
+        "deliveredAtMs": 76,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 59,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 63,
+        "deliveredAtMs": 78,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 61,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 64,
+        "deliveredAtMs": 79,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 60,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 63,
+        "deliveredAtMs": 79,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 62,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 66,
+        "deliveredAtMs": 81,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 64,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 67,
+        "deliveredAtMs": 82,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 63,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 66,
+        "deliveredAtMs": 82,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 65,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 69,
+        "deliveredAtMs": 84,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 67,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 70,
+        "deliveredAtMs": 85,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 66,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 69,
+        "deliveredAtMs": 85,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 68,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 72,
+        "deliveredAtMs": 87,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 69,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 73,
+        "deliveredAtMs": 88,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 70,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 73,
+        "deliveredAtMs": 89,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 71,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 75,
+        "deliveredAtMs": 90,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 72,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 76,
+        "deliveredAtMs": 91,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 73,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 76,
+        "deliveredAtMs": 92,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 74,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 78,
+        "deliveredAtMs": 93,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 75,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 79,
+        "deliveredAtMs": 94,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 76,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 79,
+        "deliveredAtMs": 95,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 77,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 81,
+        "deliveredAtMs": 96,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 78,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 83,
+        "deliveredAtMs": 98,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 80,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 84,
+        "deliveredAtMs": 99,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 79,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 83,
+        "deliveredAtMs": 99,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 81,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 86,
+        "deliveredAtMs": 101,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 83,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 87,
+        "deliveredAtMs": 102,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 82,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 86,
+        "deliveredAtMs": 102,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 84,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 89,
+        "deliveredAtMs": 104,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 86,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 90,
+        "deliveredAtMs": 105,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 85,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 89,
+        "deliveredAtMs": 105,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 87,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 92,
+        "deliveredAtMs": 107,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 88,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 93,
+        "deliveredAtMs": 108,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 89,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 93,
+        "deliveredAtMs": 109,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 90,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 95,
+        "deliveredAtMs": 110,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 91,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 96,
+        "deliveredAtMs": 111,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 92,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 96,
+        "deliveredAtMs": 112,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 93,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 98,
+        "deliveredAtMs": 113,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 94,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 99,
+        "deliveredAtMs": 114,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 95,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 99,
+        "deliveredAtMs": 115,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 96,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 101,
+        "deliveredAtMs": 116,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 97,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 103,
+        "deliveredAtMs": 118,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 99,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 104,
+        "deliveredAtMs": 119,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 98,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 103,
+        "deliveredAtMs": 119,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 100,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 106,
+        "deliveredAtMs": 121,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 102,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 107,
+        "deliveredAtMs": 122,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 101,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 106,
+        "deliveredAtMs": 122,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 103,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 109,
+        "deliveredAtMs": 124,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 105,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 110,
+        "deliveredAtMs": 125,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 104,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 109,
+        "deliveredAtMs": 125,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 106,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 112,
+        "deliveredAtMs": 127,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 107,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 113,
+        "deliveredAtMs": 128,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 108,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 113,
+        "deliveredAtMs": 129,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 109,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 115,
+        "deliveredAtMs": 130,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 110,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 116,
+        "deliveredAtMs": 131,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 111,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 116,
+        "deliveredAtMs": 132,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 112,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 118,
+        "deliveredAtMs": 133,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 113,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 119,
+        "deliveredAtMs": 134,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 114,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 119,
+        "deliveredAtMs": 135,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 115,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 121,
+        "deliveredAtMs": 136,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 116,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 123,
+        "deliveredAtMs": 138,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 118,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 124,
+        "deliveredAtMs": 139,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 117,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 123,
+        "deliveredAtMs": 139,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 119,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 126,
+        "deliveredAtMs": 141,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 121,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 127,
+        "deliveredAtMs": 142,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 120,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 126,
+        "deliveredAtMs": 142,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 122,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 129,
+        "deliveredAtMs": 144,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 124,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 130,
+        "deliveredAtMs": 145,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 123,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 129,
+        "deliveredAtMs": 145,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 125,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 132,
+        "deliveredAtMs": 147,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 126,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 133,
+        "deliveredAtMs": 148,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 127,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 133,
+        "deliveredAtMs": 149,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 128,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 135,
+        "deliveredAtMs": 150,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 129,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 136,
+        "deliveredAtMs": 151,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 130,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 136,
+        "deliveredAtMs": 152,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 131,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 138,
+        "deliveredAtMs": 153,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 132,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 139,
+        "deliveredAtMs": 154,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 133,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 139,
+        "deliveredAtMs": 155,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 134,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 141,
+        "deliveredAtMs": 156,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 135,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 143,
+        "deliveredAtMs": 158,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 137,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 144,
+        "deliveredAtMs": 159,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 136,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 143,
+        "deliveredAtMs": 159,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 138,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 146,
+        "deliveredAtMs": 161,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 140,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 147,
+        "deliveredAtMs": 162,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 139,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 146,
+        "deliveredAtMs": 162,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 141,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 149,
+        "deliveredAtMs": 164,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 143,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 150,
+        "deliveredAtMs": 165,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 142,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 149,
+        "deliveredAtMs": 165,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 144,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 152,
+        "deliveredAtMs": 167,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 145,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 153,
+        "deliveredAtMs": 168,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 146,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 153,
+        "deliveredAtMs": 169,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 147,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 155,
+        "deliveredAtMs": 170,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 148,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 156,
+        "deliveredAtMs": 171,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 149,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 156,
+        "deliveredAtMs": 172,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 150,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 158,
+        "deliveredAtMs": 173,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 151,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 159,
+        "deliveredAtMs": 174,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 152,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 159,
+        "deliveredAtMs": 175,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 153,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 161,
+        "deliveredAtMs": 176,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 154,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 163,
+        "deliveredAtMs": 178,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 156,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 164,
+        "deliveredAtMs": 179,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 155,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 163,
+        "deliveredAtMs": 179,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 157,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 166,
+        "deliveredAtMs": 181,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 159,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 167,
+        "deliveredAtMs": 182,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 158,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 166,
+        "deliveredAtMs": 182,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 160,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 169,
+        "deliveredAtMs": 184,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 162,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 170,
+        "deliveredAtMs": 185,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 161,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 169,
+        "deliveredAtMs": 185,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 163,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 172,
+        "deliveredAtMs": 187,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 164,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 173,
+        "deliveredAtMs": 188,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 165,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 173,
+        "deliveredAtMs": 189,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 166,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 175,
+        "deliveredAtMs": 190,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 167,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 176,
+        "deliveredAtMs": 191,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 168,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 176,
+        "deliveredAtMs": 192,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 169,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 178,
+        "deliveredAtMs": 193,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 170,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 179,
+        "deliveredAtMs": 194,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 171,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 179,
+        "deliveredAtMs": 195,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 172,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 181,
+        "deliveredAtMs": 196,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 173,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 183,
+        "deliveredAtMs": 198,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 175,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 184,
+        "deliveredAtMs": 199,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 174,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 183,
+        "deliveredAtMs": 199,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 176,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 186,
+        "deliveredAtMs": 201,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 178,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 187,
+        "deliveredAtMs": 202,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 177,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 186,
+        "deliveredAtMs": 202,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 179,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 189,
+        "deliveredAtMs": 204,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 181,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 190,
+        "deliveredAtMs": 205,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 180,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 189,
+        "deliveredAtMs": 205,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 182,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 192,
+        "deliveredAtMs": 207,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 183,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 193,
+        "deliveredAtMs": 208,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 184,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 193,
+        "deliveredAtMs": 209,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 185,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 195,
+        "deliveredAtMs": 210,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 186,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 196,
+        "deliveredAtMs": 211,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 187,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 196,
+        "deliveredAtMs": 212,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 188,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 198,
+        "deliveredAtMs": 213,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 189,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 199,
+        "deliveredAtMs": 214,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 190,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 199,
+        "deliveredAtMs": 215,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 191,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 201,
+        "deliveredAtMs": 216,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 192,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 203,
+        "deliveredAtMs": 218,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 194,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 204,
+        "deliveredAtMs": 219,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 193,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 203,
+        "deliveredAtMs": 219,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 195,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 206,
+        "deliveredAtMs": 221,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 197,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 207,
+        "deliveredAtMs": 222,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 196,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 206,
+        "deliveredAtMs": 222,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      },
+      {
+        "packetId": 198,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 209,
+        "deliveredAtMs": 224,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 200,
+        "flowId": "a-to-server",
+        "source": "client-a",
+        "destination": "server",
+        "sizeBytes": 1200,
+        "createdAtMs": 210,
+        "deliveredAtMs": 225,
+        "currentNodeId": "server",
+        "hops": [
+          "client-a",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000008400000000000001
+      },
+      {
+        "packetId": 199,
+        "flowId": "b-to-server",
+        "source": "client-b",
+        "destination": "server",
+        "sizeBytes": 1000,
+        "createdAtMs": 209,
+        "deliveredAtMs": 225,
+        "currentNodeId": "server",
+        "hops": [
+          "client-b",
+          "edge-1",
+          "core-1",
+          "server"
+        ],
+        "cost": 0.000006999999999999999
+      }
+    ],
+    "droppedPacketsTrace": [],
+    "invariantViolations": []
+  }
+}

@@ -1,0 +1,2 @@
+{"level":"info","kind":"risk-capacity-start","risk":"expectation","scenarios":4}
+{"level":"info","kind":"risk-capacity-finish","best":{"x":[2,0],"meanProfit":1.6392309112707153,"sdProfit":0.9446593304864717,"cvarLoss":0.962360835634172,"serviceLevel":0,"robustObjective":1.6392309112707153,"feasible":true}}

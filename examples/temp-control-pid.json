@@ -1,0 +1,48 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "temp-control",
+  "description": "24-hour winter day, classical PID controller",
+  "parameters": {
+    "T_target": 70,
+    "band": 2,
+    "duration_h": 24,
+    "dt_min": 1,
+    "cost_per_kWh": 0.15,
+    "comfort_penalty": 0.5,
+    "controller": {
+      "kind": "pid",
+      "Kp": 3,
+      "Ki": 0.5,
+      "Kd": 0.5
+    },
+    "house": {
+      "tau": 12,
+      "G": 1.0,
+      "Q_max": 5.0,
+      "T_init": 70
+    },
+    "outdoor": {
+      "mean": 25,
+      "amp": 15,
+      "phase": 9,
+      "noiseStd": 1.5
+    },
+    "sensorNoiseStd": 0.2,
+    "forecastNoiseStd": 1.5,
+    "forecastHorizon_h": 6
+  },
+  "runtime": {
+    "seed": 42,
+    "outputs": {
+      "csv": "out/temp-control/json-pid.csv",
+      "html": "out/temp-control/json-pid.html",
+      "summary": "out/temp-control/json-pid.summary.json"
+    }
+  },
+  "metadata": {
+    "author": "DES framework demo",
+    "createdAt": "2026-05-25T20:30:00Z",
+    "tags": ["temp-control", "pid", "winter"],
+    "notes": "Re-running this JSON exactly reproduces the same outputs."
+  }
+}

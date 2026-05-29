@@ -1,0 +1,39 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "adaptive-simopt",
+  "description": "Adaptive simulation optimization across candidate capacity policies.",
+  "parameters": {
+    "cost": [10, 12],
+    "price": [25, 28],
+    "demand": {
+      "kind": "uniform",
+      "ranges": [
+        {"low": 50, "high": 100},
+        {"low": 40, "high": 80}
+      ]
+    },
+    "alternatives": [
+      {"name": "lean", "x": [60, 50]},
+      {"name": "balanced", "x": [80, 65]},
+      {"name": "buffered", "x": [100, 80]}
+    ],
+    "seed": 11,
+    "initialSamples": 5,
+    "budget": 120,
+    "batchSize": 5,
+    "exploration": 1.5
+  },
+  "runtime": {
+    "animate": true,
+    "outputs": {
+      "html": "out/adaptive-simopt-capacity.html",
+      "frames": "out/adaptive-simopt-capacity.frames.jsonl",
+      "csv": "out/adaptive-simopt-capacity.csv",
+      "summary": "out/adaptive-simopt-capacity.summary.json",
+      "log": "out/adaptive-simopt-capacity.log.jsonl"
+    }
+  },
+  "metadata": {
+    "tags": ["simulation-optimization", "adaptive-sampling", "ranking-selection"]
+  }
+}

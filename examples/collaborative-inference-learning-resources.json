@@ -1,0 +1,30 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "collaborative-inference",
+  "description": "Collaborative inference over learning resources from sparse student ratings/rankings.",
+  "parameters": {
+    "scenario": "learning-resources",
+    "respondentCount": 1200,
+    "minItemsPerRespondent": 3,
+    "maxItemsPerRespondent": 4,
+    "respondentsPerTick": 100,
+    "ratingWeight": 0.6,
+    "rankingWeight": 0.4,
+    "shrinkage": 8,
+    "credibilityWeighting": true,
+    "credibilityPasses": 2,
+    "minCredibleAge": 15,
+    "highRatedScoreThreshold": 0.72,
+    "minHighRatedItems": 2,
+    "seed": 5,
+    "topK": 8
+  },
+  "runtime": {
+    "animate": true,
+    "outputs": {
+      "csv": "out/collaborative-inference-learning-resources.csv",
+      "html": "out/collaborative-inference-learning-resources.html",
+      "summary": "out/collaborative-inference-learning-resources.summary.json"
+    }
+  }
+}

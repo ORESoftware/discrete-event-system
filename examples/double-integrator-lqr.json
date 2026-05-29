@@ -1,0 +1,19 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "double-integrator-lqr",
+  "description": "Discrete-time LQR control of a 1-D point mass under direct force.",
+  "parameters": {
+    "dt": 0.1,
+    "qPos": 1,
+    "qVel": 0.1,
+    "rU": 0.01,
+    "noiseStd": 0.05,
+    "x0": [3, 0],
+    "numSteps": 100,
+    "uSat": 5,
+    "gamma": 1,
+    "seed": 1
+  },
+  "runtime": {"seed": 1},
+  "metadata": {"tags": ["lqr", "stochastic-control", "riccati", "double-integrator"]}
+}

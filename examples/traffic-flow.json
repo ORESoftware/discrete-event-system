@@ -1,0 +1,15 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "traffic-flow",
+  "description": "Five-intersection traffic-flow scenario with stationary grid/link/intersection entities and moving cars.",
+  "parameters": {
+    "builtin": "five-intersection"
+  },
+  "runtime": {
+    "seed": 7,
+    "outputs": {
+      "csv": "out/traffic-flow-links.csv",
+      "summary": "out/traffic-flow-summary.json"
+    }
+  }
+}

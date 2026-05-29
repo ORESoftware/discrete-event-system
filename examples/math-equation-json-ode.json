@@ -1,0 +1,39 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "math-equation",
+  "description": "Structured JSON ODE input normalized into the same stationary block network.",
+  "parameters": {
+    "format": "json",
+    "kind": "ode",
+    "ode": {
+      "states": [
+        {
+          "name": "x",
+          "initial": 1,
+          "derivative": "v"
+        },
+        {
+          "name": "v",
+          "initial": 0,
+          "derivative": "-x"
+        }
+      ],
+      "t0": 0,
+      "t1": 1,
+      "dt": 0.01,
+      "method": "euler"
+    }
+  },
+  "runtime": {
+    "animate": true,
+    "outputs": {
+      "csv": "out/math-equation-json-ode.csv",
+      "html": "out/math-equation-json-ode.html",
+      "log": "out/math-equation-json-ode.jsonl",
+      "summary": "out/math-equation-json-ode-summary.json"
+    }
+  },
+  "metadata": {
+    "tags": ["math-equation", "json", "ode"]
+  }
+}

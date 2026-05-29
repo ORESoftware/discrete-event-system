@@ -1,0 +1,12 @@
+var_index,value
+0,0
+1,1
+2,0
+3,1
+
+node_id,parent_id,depth,branch_var,branch_type,branch_value,lp_status,lp_z,fractional_count,pruned,pruned_reason,incumbent_updated
+0,,0,,,,optimal,105,1,false,,false
+1,0,1,2,le,0,optimal,96,1,false,,false
+3,1,2,0,le,0,optimal,90,0,true,integer-feasible,true
+4,1,2,0,ge,1,optimal,80,0,true,bound,false
+2,0,1,2,ge,1,optimal,90.00000000000001,0,true,bound,false

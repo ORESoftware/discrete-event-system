@@ -1,0 +1,25 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "nonlinear-mdp-pomdp-forecast",
+  "description": "Nonlinear forecasting with POMDP latent-regime beliefs, MDP variable discovery, equation fine-tuning, and projection.",
+  "parameters": {
+    "trainingPeriods": 42,
+    "forecastHorizon": 8,
+    "mdpBudget": 6,
+    "ridge": 0.03,
+    "fineTuneIterations": 18,
+    "validationShare": 0.25
+  },
+  "runtime": {
+    "animate": true,
+    "outputs": {
+      "html": "out/nonlinear-mdp-pomdp-forecast.html",
+      "frames": "out/nonlinear-mdp-pomdp-forecast.frames.jsonl",
+      "csv": "out/nonlinear-mdp-pomdp-forecast.csv",
+      "summary": "out/nonlinear-mdp-pomdp-forecast.summary.json"
+    }
+  },
+  "metadata": {
+    "tags": ["nonlinear-modeling", "forecasting", "MDP", "POMDP", "variable-discovery", "projection"]
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "laplace-transform",
+  "description": "Laplace transform of exp(-a t) over a finite integration window.",
+  "parameters": {
+    "expression": "exp(-a*t)",
+    "constants": {"a": 2},
+    "t0": 0,
+    "t1": 8,
+    "dt": 0.01,
+    "quadrature": "trapezoid",
+    "sValues": [
+      {"label": "s=1", "re": 1},
+      {"label": "s=0.5+i", "re": 0.5, "im": 1}
+    ]
+  },
+  "runtime": {
+    "outputs": {
+      "csv": "out/laplace-transform-exponential.csv",
+      "html": "out/laplace-transform-exponential.html",
+      "frames": "out/laplace-transform-exponential.frames.jsonl",
+      "summary": "out/laplace-transform-exponential.summary.json"
+    }
+  }
+}

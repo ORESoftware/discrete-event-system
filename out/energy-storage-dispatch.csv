@@ -1,0 +1,5 @@
+candidate_id,objective,feasible,metrics,plan
+reliability-reserve-dispatch,-19898.387442328923,true,"{""cost"":19521.814920589793,""curtailment"":0,""unserved"":0,""emissions"":188.2862608695652,""finalSoc"":22}","{""chargeBelow"":34,""dischargeAbove"":48,""reserve"":22}"
+price-arbitrage-dispatch,-19987.16422424197,true,"{""cost"":19607.279702502838,""curtailment"":0,""unserved"":0,""emissions"":189.94226086956522,""finalSoc"":26}","{""chargeBelow"":30,""dischargeAbove"":55,""reserve"":8}"
+renewable-first-dispatch,-20854.861766775048,true,"{""cost"":20463.238114601136,""curtailment"":0,""unserved"":0,""emissions"":195.8118260869565,""finalSoc"":38}","{""chargeBelow"":42,""dischargeAbove"":62,""reserve"":15}"
+no-storage-reference,-20909.66,true,"{""cost"":20534.36,""curtailment"":0,""unserved"":0,""emissions"":187.65,""finalSoc"":25}","{""chargeBelow"":null,""dischargeAbove"":null,""reserve"":0}"

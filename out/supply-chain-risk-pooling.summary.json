@@ -1,0 +1,112 @@
+{
+  "modelId": "supply-chain-risk-pooling",
+  "params": {
+    "horizon": 20
+  },
+  "runtimeMs": 1,
+  "summaryText": "SUPPLY CHAIN RISK POOLING\n----------------------------------------\n  Category:       Supply chain management (novel algorithms)\n  Best plan:      local-minmax\n  Objective:      806.432934\n  Metrics:        fillRate=0.9764, holding=604.42, stockout=12.24, served=507.18\n  Candidates:     4\n  Stations:       supply-chain-risk-pooling-scenario-source -> supply-chain-risk-pooling-candidate-generator -> supply-chain-risk-pooling-plan-evaluator -> supply-chain-risk-pooling-result-sink\n  Movables:       DomainScenarioToken, DomainPlanToken, DomainEvaluationToken",
+  "result": {
+    "modelId": "supply-chain-risk-pooling",
+    "category": "Supply chain management (novel algorithms)",
+    "best": {
+      "candidateId": "local-minmax",
+      "plan": {
+        "baseStock": 28,
+        "reviewPeriod": 1,
+        "riskPooling": 0
+      },
+      "objective": 806.432933755037,
+      "feasible": true,
+      "metrics": {
+        "fillRate": 0.9764334059076473,
+        "holding": 604.4216645520487,
+        "stockout": 12.240914506648297,
+        "served": 507.1771422001747
+      }
+    },
+    "candidates": [
+      {
+        "candidateId": "local-minmax",
+        "plan": {
+          "baseStock": 28,
+          "reviewPeriod": 1,
+          "riskPooling": 0
+        },
+        "objective": 806.432933755037,
+        "feasible": true,
+        "metrics": {
+          "fillRate": 0.9764334059076473,
+          "holding": 604.4216645520487,
+          "stockout": 12.240914506648297,
+          "served": 507.1771422001747
+        }
+      },
+      {
+        "candidateId": "service-first-pooling",
+        "plan": {
+          "baseStock": 44,
+          "reviewPeriod": 1,
+          "riskPooling": 0.7
+        },
+        "objective": 778.5998710940916,
+        "feasible": true,
+        "metrics": {
+          "fillRate": 1,
+          "holding": 1230.000716143936,
+          "stockout": 0,
+          "served": 519.4180567068231
+        }
+      },
+      {
+        "candidateId": "pooled-safety-stock",
+        "plan": {
+          "baseStock": 36,
+          "reviewPeriod": 2,
+          "riskPooling": 0.45
+        },
+        "objective": 547.6029946298088,
+        "feasible": true,
+        "metrics": {
+          "fillRate": 0.8919232245486195,
+          "holding": 353.52825843518235,
+          "stockout": 56.13702868009558,
+          "served": 463.28102802672737
+        }
+      },
+      {
+        "candidateId": "inventory-lean-pooling",
+        "plan": {
+          "baseStock": 32,
+          "reviewPeriod": 3,
+          "riskPooling": 0.55
+        },
+        "objective": 7.265631371145673,
+        "feasible": true,
+        "metrics": {
+          "fillRate": 0.7370051571408396,
+          "holding": 259.54541533659875,
+          "stockout": 136.60427020182124,
+          "served": 382.8137865050017
+        }
+      }
+    ],
+    "topology": {
+      "stations": [
+        "supply-chain-risk-pooling-scenario-source",
+        "supply-chain-risk-pooling-candidate-generator",
+        "supply-chain-risk-pooling-plan-evaluator",
+        "supply-chain-risk-pooling-result-sink"
+      ],
+      "movables": [
+        "DomainScenarioToken",
+        "DomainPlanToken",
+        "DomainEvaluationToken"
+      ],
+      "edges": [
+        "supply-chain-risk-pooling-scenario-source:scenario -> supply-chain-risk-pooling-candidate-generator:scenario",
+        "supply-chain-risk-pooling-candidate-generator:candidate-plan -> supply-chain-risk-pooling-plan-evaluator:candidate-plan",
+        "supply-chain-risk-pooling-plan-evaluator:evaluation -> supply-chain-risk-pooling-result-sink:evaluation"
+      ]
+    }
+  }
+}

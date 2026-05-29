@@ -1,0 +1,5 @@
+candidate_id,objective,feasible,metrics,plan
+local-minmax,806.432933755037,true,"{""fillRate"":0.9764334059076473,""holding"":604.4216645520487,""stockout"":12.240914506648297,""served"":507.1771422001747}","{""baseStock"":28,""reviewPeriod"":1,""riskPooling"":0}"
+service-first-pooling,778.5998710940916,true,"{""fillRate"":1,""holding"":1230.000716143936,""stockout"":0,""served"":519.4180567068231}","{""baseStock"":44,""reviewPeriod"":1,""riskPooling"":0.7}"
+pooled-safety-stock,547.6029946298088,true,"{""fillRate"":0.8919232245486195,""holding"":353.52825843518235,""stockout"":56.13702868009558,""served"":463.28102802672737}","{""baseStock"":36,""reviewPeriod"":2,""riskPooling"":0.45}"
+inventory-lean-pooling,7.265631371145673,true,"{""fillRate"":0.7370051571408396,""holding"":259.54541533659875,""stockout"":136.60427020182124,""served"":382.8137865050017}","{""baseStock"":32,""reviewPeriod"":3,""riskPooling"":0.55}"

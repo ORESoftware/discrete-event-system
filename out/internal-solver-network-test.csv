@@ -1,0 +1,4 @@
+tick,iteration,solver_kind,objective,feasible,done,best_state,metadata
+1,1,knapsack-dp,-60,true,false,"{""selected"":[1,0,0],""value"":60,""weight"":10,""capacity"":50}","{""itemsProcessed"":1,""capacity"":50}"
+2,2,knapsack-dp,-160,true,false,"{""selected"":[1,1,0],""value"":160,""weight"":30,""capacity"":50}","{""itemsProcessed"":2,""capacity"":50}"
+3,3,knapsack-dp,-220,true,true,"{""selected"":[0,1,1],""value"":220,""weight"":50,""capacity"":50}","{""itemsProcessed"":3,""capacity"":50}"

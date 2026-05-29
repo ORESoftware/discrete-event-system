@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <link rel="stylesheet" href="style.css"/>
+    <title>Dragging Nodes and Alpha Values</title>
+</head>
+
+<style>
+    .svg-container {
+        display: inline-block;
+        position: relative;
+        width: 100%;
+        padding-bottom: 100%;
+        vertical-align: top;
+        overflow: hidden;
+    }
+
+    .svg-content {
+        display: inline-block;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+</style>
+
+<body>
+
+<div id="container" class="svg-container">
+    <svg
+            version="1.1"
+            baseProfile="full"
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="xMidYMid meet"
+    ></svg>
+</div>
+
+
+<script src="https://d3js.org/d3.v4.js"></script>
+<!--<script src="app.js"></script>-->
+
+<script>
+
+    const jsonFormation = '{{∆∆∆}}';  // gets rendered to
+
+    const colors = [
+        'red',
+        'blue',
+        'indigo',
+        'violet',
+        'purple',
+        'orange',
+        'pink',
+        'yellow',
+        'maroon',
+        'black'
+    ];
+
+    const deJSON = (fn) => {
+        return (z) => {
+
+            console.log('this is me:', String(z.data))
+            try {
+                var val = JSON.parse(z.data);
+            } catch (err) {
+                console.error('Could not parse:', z);
+                console.error('Could not parse:', String(z));
+                console.error(err);
+                return fn(z);
+            }
+            return fn(val);
+        };
+    };
+
+    console.log('websocket')
+
+    // Create WebSocket connection.
+    const socket = new WebSocket('ws://localhost:6969');
+
+    const sendJSON = (v) => {
+        return socket.send(JSON.stringify(v));
+    };
+
+    // Connection opened
+    socket.addEventListener('open', (event) => {
+        // socket.send('Hello Server!');
+        console.log('made connection to ws server.');
+    });
+
+    let flip = false;
+
+    const nodes = [];
+    const links = [];
+
+    // Listen for messages
+    socket.addEventListener('message', deJSON((data) => {
+
+        if (true || !flip) {
+            console.log('Message from server ', data);
+        }
+
+        if (data.formation) {
+            for (const z of data.formation) {
+                const node = {color: colors.shift(), size: 20, label: z.label, name: z.name, id: z.id};
+                console.log({node});
+                nodes.push(node);
+                for (const connId of z.connectionsOut) {
+                    const link = {source: node.id, target: connId};
+                    console.log({link});
+                    links.push(link);
+                }
+            }
+
+            for (const v of nodes) {
+                console.log(v);
+            }
+
+            for (const v of links) {
+                console.log(v);
+            }
+
+            run(nodes, links);
+        }
+
+        if (flip) {
+            return;
+        }
+
+        flip = true;
+
+        setTimeout(() => {
+            sendJSON({start: true});
+
+            setTimeout(() => {
+                sendJSON({runRun: true});
+
+                // setTimeout(() => {
+                //   sendJSON({stop: true});
+                // }, 1000);
+
+            }, 100);
+        }, 10);
+
+
+    }));
+
+    // TODO: https://chartio.com/resources/tutorials/how-to-resize-an-svg-when-the-window-is-resized-in-d3-js/
+
+    const run = (nodes, links) => {
+
+        var width = 1900;
+        var height = 500;
+
+        var svg = d3
+            .select("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+// append a path marker to svg defs
+        svg.append("defs").selectAll("marker")
+            .data(["dominating"])
+            .enter().append("marker")
+            .attr("id", d => d)
+            .attr("viewBox", "0 -5 10 10")
+            .attr("refX", 0)
+            .attr("refY", 0)
+            .attr("markerWidth", 12)
+            .attr("markerHeight", 12)
+            .attr("orient", "auto")
+            .append("path")
+            .attr("d", "M0,-5L10,0L0,5");
+//
+
+        var linkSelection = svg
+            .selectAll("line")
+            .data(links)
+            .enter()
+            .append("line")
+            .attr("stroke", "black")
+            .attr("stroke-width", 1)
+            // add marker to line
+            .attr("marker-end", d => "url(#dominating)");
+        //
+
+        var nodeSelection = svg
+            .selectAll("circle")
+            .data(nodes)
+            .enter()
+            .append("circle")
+            .attr("r", d => d.size)
+            .attr("fill", d => d.color)
+            .attr("img", d => d.icon)
+            .call(
+                d3
+                    .drag()
+                    .on("start", dragStart)
+                    .on("drag", drag)
+                    .on("end", dragEnd)
+            )
+
+
+        var simulation = d3.forceSimulation(nodes);
+
+        simulation
+            .force("center", d3.forceCenter(width / 2, height / 2))
+            .force("nodes", d3.forceManyBody())
+            .force(
+                "links",
+                d3
+                    .forceLink(links)
+                    .id(d => d.id)
+                    .distance(d => 5 * (d.source.size + d.target.size))
+            )
+            .on("tick", ticked);
+
+        function ticked() {
+            // console.log(simulation.alpha());
+
+            nodeSelection.attr("cx", d => d.x).attr("cy", d => d.y);
+
+            linkSelection
+                .attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+
+
+            // recalculate and back off the distance
+            linkSelection.each(function (d, i, n) {
+                // current path length
+                const pl = this.getTotalLength();
+                // radius of marker head plus def constant
+                const mrs = (d.source.size);
+                const mrt = (d.target.size) + 12;
+                // get new start and end points
+                const m1 = this.getPointAtLength(mrs);
+                const m2 = this.getPointAtLength(pl - mrt);
+                // new line start and end
+                d3.select(n[i])
+                    .attr("x1", m1.x)
+                    .attr("y1", m1.y)
+                    .attr("x2", m2.x)
+                    .attr("y2", m2.y);
+            });
+        }
+
+        function dragStart(d) {
+            // console.log('drag start');
+            simulation.alphaTarget(0.5).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+
+        function drag(d) {
+            // console.log('dragging');
+            // simulation.alpha(0.5).restart()
+            d.fx = d3.event.x;
+            d.fy = d3.event.y;
+        }
+
+        function dragEnd(d) {
+            // console.log('drag end');
+            simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+    }
+
+    const runOld = (nodes, links) => {
+
+        var width = 900;
+        var height = 900;
+
+        var svg = d3
+            .select("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+        // var svg = d3.select("div#container")
+        //         .append("svg")
+        //         .attr("preserveAspectRatio", "xMinYMin meet")
+        //         .attr("viewBox", "0 0 300 300")
+        //         .classed("svg-content", true);
+
+        var linkSelection = svg
+            .selectAll("line")
+            .data(links)
+            .enter()
+            .append("line")
+            .attr("stroke", "black")
+            .attr("stroke-width", 1);
+
+// build the arrow.
+        svg.append("svg:defs").selectAll("marker")
+            .data(["end"])      // Different link/path types can be defined here
+            .enter().append("svg:marker")    // This section adds in the arrows
+            .attr("id", String)
+            .attr("viewBox", "0 -5 10 10")
+            .attr("refX", 15)
+            .attr("refY", -1.5)
+            .attr("markerWidth", 6)
+            .attr("markerHeight", 6)
+            .attr("orient", "auto")
+            .append("svg:path")
+            .attr("d", "M0,-5L10,0L0,5");
+
+        var elemEnter = svg
+            .selectAll("circle")
+            .data(nodes)
+            .enter()
+
+        var nodeSelection =  elemEnter.append("circle")
+            .attr("r", d => d.size)
+            .attr("fill", d => d.color)
+            .call(
+                d3
+                    .drag()
+                    .on("start", dragStart)
+                    .on("drag", drag)
+                    .on("end", dragEnd)
+            );
+
+        elemEnter.append("text")
+            .attr("dx", function(d){return 0})
+            .text(d => d.label);
+
+        var simulation = d3.forceSimulation(nodes);
+
+        simulation
+            .force("center", d3.forceCenter(width / 2, height / 2))
+            .force("nodes", d3.forceManyBody())
+            .force(
+                "links",
+                d3
+                    .forceLink(links)
+                    .id(d => d.id)
+                    .distance(d => 5 * (d.source.size + d.target.size))
+            )
+            .on("tick", ticked);
+
+        function ticked() {
+            // console.log(simulation.alpha());
+
+            nodeSelection.attr("cx", d => d.x).attr("cy", d => d.y);
+
+            linkSelection
+                .attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+        }
+
+        function dragStart(d) {
+            // console.log('drag start');
+            simulation.alphaTarget(0.5).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+
+        function drag(d) {
+            // console.log('dragging');
+            // simulation.alpha(0.5).restart()
+            d.fx = d3.event.x;
+            d.fy = d3.event.y;
+        }
+
+        function dragEnd(d) {
+            // console.log('drag end');
+            simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+    }
+
+
+</script>
+</body>
+</html>
+

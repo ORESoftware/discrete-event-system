@@ -1,0 +1,102 @@
+{
+  "nodes": [
+    {
+      "id": "client-a",
+      "kind": "host",
+      "forwardingRatePps": 2000,
+      "queueLimitPackets": 256
+    },
+    {
+      "id": "client-b",
+      "kind": "host",
+      "forwardingRatePps": 2000,
+      "queueLimitPackets": 256
+    },
+    {
+      "id": "edge-1",
+      "kind": "router",
+      "forwardingRatePps": 6000,
+      "queueLimitPackets": 512
+    },
+    {
+      "id": "core-1",
+      "kind": "router",
+      "forwardingRatePps": 8000,
+      "queueLimitPackets": 512
+    },
+    {
+      "id": "server",
+      "kind": "host",
+      "forwardingRatePps": 4000,
+      "queueLimitPackets": 512
+    }
+  ],
+  "links": [
+    {
+      "id": "client-a-edge",
+      "from": "client-a",
+      "to": "edge-1",
+      "bandwidthMbps": 100,
+      "latencyMs": 1,
+      "costPerMb": 0.001,
+      "queueLimitPackets": 128,
+      "bidirectional": true
+    },
+    {
+      "id": "client-b-edge",
+      "from": "client-b",
+      "to": "edge-1",
+      "bandwidthMbps": 50,
+      "latencyMs": 2,
+      "costPerMb": 0.001,
+      "queueLimitPackets": 128,
+      "bidirectional": true
+    },
+    {
+      "id": "edge-core",
+      "from": "edge-1",
+      "to": "core-1",
+      "bandwidthMbps": 25,
+      "latencyMs": 8,
+      "costPerMb": 0.004,
+      "queueLimitPackets": 96,
+      "bidirectional": true
+    },
+    {
+      "id": "core-server",
+      "from": "core-1",
+      "to": "server",
+      "bandwidthMbps": 100,
+      "latencyMs": 3,
+      "costPerMb": 0.002,
+      "queueLimitPackets": 128,
+      "bidirectional": true
+    }
+  ],
+  "flows": [
+    {
+      "id": "a-to-server",
+      "source": "client-a",
+      "destination": "server",
+      "protocol": "http",
+      "ratePps": 650,
+      "packetSizeBytes": 1200,
+      "maxPackets": 650
+    },
+    {
+      "id": "b-to-server",
+      "source": "client-b",
+      "destination": "server",
+      "protocol": "tcp",
+      "ratePps": 300,
+      "packetSizeBytes": 1000,
+      "maxPackets": 300
+    }
+  ],
+  "durationMs": 1000,
+  "dtMs": 1,
+  "routingMetric": "latency",
+  "drainAfterSourcesMs": 1500,
+  "maxPacketsInSystem": 5000,
+  "sampleEveryMs": 100
+}

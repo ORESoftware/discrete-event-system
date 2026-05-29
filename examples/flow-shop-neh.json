@@ -1,0 +1,13 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "flow-shop-neh",
+  "description": "Flow-shop schedule built with NEH sequence and schedule tokens.",
+  "parameters": {},
+  "outputs": {
+    "csv": "outputs/flow-shop-neh.csv"
+  },
+  "runtime": {
+    "animate": false,
+    "verbose": false
+  }
+}

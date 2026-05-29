@@ -1,0 +1,5 @@
+candidate_id,objective,feasible,metrics,plan
+clarke-wright-savings,-28.964877852092158,true,"{""routeDistance"":28.56487785209216,""vehicles"":2,""capacityViolation"":0}","{""heuristic"":""savings"",""routes"":[[1,2,7,6],[3,4,5]]}"
+balanced-savings,-28.964877852092158,true,"{""routeDistance"":28.56487785209216,""vehicles"":2,""capacityViolation"":0}","{""heuristic"":""balanced-savings"",""routes"":[[1,2,7,6],[3,4,5]]}"
+polar-sweep,-32.03477125629141,true,"{""routeDistance"":31.63477125629141,""vehicles"":2,""capacityViolation"":0}","{""heuristic"":""sweep"",""routes"":[[5,6,7,1],[2,3,4]]}"
+nearest-neighbor,-34.295189115505636,true,"{""routeDistance"":33.89518911550564,""vehicles"":2,""capacityViolation"":0}","{""heuristic"":""nearest-neighbor"",""routes"":[[1,7,2,3],[5,4,6]]}"

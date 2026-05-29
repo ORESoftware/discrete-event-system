@@ -1,0 +1,447 @@
+{
+  "modelId": "collaborative-inference",
+  "params": {
+    "scenario": "model-validation",
+    "items": [],
+    "responses": [],
+    "respondentCount": 800,
+    "minItemsPerRespondent": 3,
+    "maxItemsPerRespondent": 5,
+    "respondentsPerTick": 100,
+    "seed": 11,
+    "ratingWeight": 0.5,
+    "rankingWeight": 0.5,
+    "shrinkage": 8,
+    "topK": 8,
+    "credibilityWeighting": true,
+    "credibilityPasses": 2,
+    "minCredibleAge": 15,
+    "referenceAge": 50,
+    "referenceExperienceYears": 15,
+    "ageWeightStrength": 0.35,
+    "experienceWeightStrength": 0.6,
+    "highRatedBreadthStrength": 0.4,
+    "highRatedScoreThreshold": 0.72,
+    "minHighRatedItems": 2,
+    "maxCredibilityMultiplier": 3
+  },
+  "runtimeMs": 20,
+  "summaryText": "COLLABORATIVE INFERENCE (sparse preference learning DES)\n-------------------------------------------------------\n  Scenario:       Model validation workflows ranked by external reviewers\n  Respondents:    800\n  Ratings:        3,215\n  Comparisons:    5,128\n  Coverage:       ratings 12/12, comparisons 12/12\n  Credibility:    2 pass(es), mean weight=1.478, max=2.160, capped claims=0, breadth bonuses=298\n  Validation:     8/8 checks passed\n\n  Top inferred items:\n    1. DES station graph        score=0.881 confidence=0.998 ratings=379\n    2. Future-event-list reference score=0.761 confidence=0.997 ratings=319\n    3. Monte Carlo replication  score=0.722 confidence=0.997 ratings=325\n    4. Analytical baseline      score=0.687 confidence=0.996 ratings=258\n    5. SimPy reference model    score=0.642 confidence=0.996 ratings=238\n    6. Ciw queueing reference   score=0.613 confidence=0.995 ratings=194\n    7. Agent-based model        score=0.562 confidence=0.996 ratings=287\n    8. Hybrid digital twin      score=0.527 confidence=0.994 ratings=175\n\n  Sources:        respondent-source\n  Stations:       survey-encoder -> evidence-aggregator -> ranking-inference\n  Sinks:          inference-result-sink\n  Movables:       RespondentToken, RatingEvidenceToken, PairwisePreferenceToken, EvidenceSnapshotToken, RankingToken",
+  "result": {
+    "scenario": "model-validation",
+    "scenarioLabel": "Model validation workflows ranked by external reviewers",
+    "synthetic": true,
+    "respondentCount": 800,
+    "respondentsProcessed": 800,
+    "ratingEvidenceCount": 3215,
+    "pairwiseEvidenceCount": 5128,
+    "invalidEvidence": [],
+    "credibility": {
+      "enabled": true,
+      "passes": 2,
+      "minCredibleAge": 15,
+      "highRatedScoreThreshold": 0.72,
+      "minHighRatedItems": 2,
+      "meanRespondentWeight": 1.478264073761748,
+      "maxRespondentWeight": 2.16,
+      "cappedExperienceClaims": 0,
+      "highRatedBonusRespondents": 298
+    },
+    "coverage": {
+      "items": 12,
+      "itemsWithRatings": 12,
+      "itemsWithComparisons": 12,
+      "minRatingsPerItem": 175,
+      "meanRatingsPerItem": 267.9166666666667,
+      "maxRatingsPerItem": 379,
+      "minComparisonsPerItem": 1176.130423003192,
+      "meanComparisonsPerItem": 1891.0393798266903,
+      "maxComparisonsPerItem": 2888.301031036203
+    },
+    "rankings": [
+      {
+        "rank": 1,
+        "itemId": "des-station-graph",
+        "label": "DES station graph",
+        "group": "execution",
+        "score": 0.8806249576969114,
+        "confidence": 0.9975574764199707,
+        "uncertainty": 0.005665348796598219,
+        "ratingMean": 6.1829482319311655,
+        "ratingCount": 379,
+        "comparisonCount": 2888.301031036203,
+        "pairwiseWinRate": 0.9000757422579753,
+        "support": 3267.301031036203
+      },
+      {
+        "rank": 2,
+        "itemId": "fel-reference",
+        "label": "Future-event-list reference",
+        "group": "validation",
+        "score": 0.7606082667415703,
+        "confidence": 0.9970689224623844,
+        "uncertainty": 0.008167774806863688,
+        "ratingMean": 5.6875498975442245,
+        "ratingCount": 319,
+        "comparisonCount": 2402.3716721352916,
+        "pairwiseWinRate": 0.7427178754247468,
+        "support": 2721.3716721352916
+      },
+      {
+        "rank": 3,
+        "itemId": "monte-carlo",
+        "label": "Monte Carlo replication",
+        "group": "validation",
+        "score": 0.7219154486898428,
+        "confidence": 0.9971704467706286,
+        "uncertainty": 0.008426467300998473,
+        "ratingMean": 5.543551593557145,
+        "ratingCount": 325,
+        "comparisonCount": 2494.301468287698,
+        "pairwiseWinRate": 0.6891617606873324,
+        "support": 2819.301468287698
+      },
+      {
+        "rank": 4,
+        "itemId": "analytical-baseline",
+        "label": "Analytical baseline",
+        "group": "validation",
+        "score": 0.6873166462747966,
+        "confidence": 0.9960451982495891,
+        "uncertainty": 0.010307377385109222,
+        "ratingMean": 5.417398167763656,
+        "ratingCount": 258,
+        "comparisonCount": 1756.8574034511275,
+        "pairwiseWinRate": 0.6417664071154784,
+        "support": 2014.8574034511275
+      },
+      {
+        "rank": 5,
+        "itemId": "simpy-reference",
+        "label": "SimPy reference model",
+        "group": "external",
+        "score": 0.6417029727046428,
+        "confidence": 0.995775238588889,
+        "uncertainty": 0.011019064580756112,
+        "ratingMean": 5.256631078165674,
+        "ratingCount": 238,
+        "comparisonCount": 1647.5980571494883,
+        "pairwiseWinRate": 0.5774117523350214,
+        "support": 1885.5980571494883
+      },
+      {
+        "rank": 6,
+        "itemId": "ciw-reference",
+        "label": "Ciw queueing reference",
+        "group": "external",
+        "score": 0.6126133106966087,
+        "confidence": 0.9946677417258415,
+        "uncertainty": 0.01257697380566653,
+        "ratingMean": 5.175435967982506,
+        "ratingCount": 194,
+        "comparisonCount": 1298.3024213530753,
+        "pairwiseWinRate": 0.5335187752206583,
+        "support": 1492.3024213530753
+      },
+      {
+        "rank": 7,
+        "itemId": "agent-based",
+        "label": "Agent-based model",
+        "group": "execution",
+        "score": 0.5622516629469062,
+        "confidence": 0.9964691606498393,
+        "uncertainty": 0.010422493004057915,
+        "ratingMean": 4.946469286081544,
+        "ratingCount": 287,
+        "comparisonCount": 1970.7502102540625,
+        "pairwiseWinRate": 0.46928282172166125,
+        "support": 2257.7502102540625
+      },
+      {
+        "rank": 8,
+        "itemId": "digital-twin",
+        "label": "Hybrid digital twin",
+        "group": "execution",
+        "score": 0.527318369619256,
+        "confidence": 0.9941138835062474,
+        "uncertainty": 0.01354223187858096,
+        "ratingMean": 4.813102702508921,
+        "ratingCount": 175,
+        "comparisonCount": 1176.130423003192,
+        "pairwiseWinRate": 0.4229427145001951,
+        "support": 1351.130423003192
+      },
+      {
+        "rank": 9,
+        "itemId": "neural-surrogate",
+        "label": "Neural surrogate",
+        "group": "approximation",
+        "score": 0.47626036385877446,
+        "confidence": 0.9941793883244688,
+        "uncertainty": 0.013471602516377947,
+        "ratingMean": 4.581959612075128,
+        "ratingCount": 176,
+        "comparisonCount": 1190.4259960908616,
+        "pairwiseWinRate": 0.35878513717937704,
+        "support": 1366.4259960908616
+      },
+      {
+        "rank": 10,
+        "itemId": "spreadsheet",
+        "label": "Spreadsheet prototype",
+        "group": "baseline",
+        "score": 0.33809656297275065,
+        "confidence": 0.9966207513120348,
+        "uncertainty": 0.009722608076358146,
+        "ratingMean": 3.8819444952144733,
+        "ratingCount": 311,
+        "comparisonCount": 2048.3901327508265,
+        "pairwiseWinRate": 0.19662786807932756,
+        "support": 2359.3901327508265
+      },
+      {
+        "rank": 11,
+        "itemId": "ad-hoc-script",
+        "label": "Ad-hoc script",
+        "group": "baseline",
+        "score": 0.22866791710727327,
+        "confidence": 0.9970892717618227,
+        "uncertainty": 0.008010860184439736,
+        "ratingMean": 3.3148443068844164,
+        "ratingCount": 348,
+        "comparisonCount": 2392.453083002202,
+        "pairwiseWinRate": 0.07154918273891785,
+        "support": 2740.453083002202
+      },
+      {
+        "rank": 12,
+        "itemId": "manual-review",
+        "label": "Manual review only",
+        "group": "baseline",
+        "score": 0.17018711108000376,
+        "confidence": 0.9951207333646942,
+        "uncertainty": 0.009280806189501082,
+        "ratingMean": 2.829790144623994,
+        "ratingCount": 205,
+        "comparisonCount": 1426.590659406253,
+        "pairwiseWinRate": 0.03396274222509789,
+        "support": 1631.590659406253
+      }
+    ],
+    "top": [
+      {
+        "rank": 1,
+        "itemId": "des-station-graph",
+        "label": "DES station graph",
+        "group": "execution",
+        "score": 0.8806249576969114,
+        "confidence": 0.9975574764199707,
+        "uncertainty": 0.005665348796598219,
+        "ratingMean": 6.1829482319311655,
+        "ratingCount": 379,
+        "comparisonCount": 2888.301031036203,
+        "pairwiseWinRate": 0.9000757422579753,
+        "support": 3267.301031036203
+      },
+      {
+        "rank": 2,
+        "itemId": "fel-reference",
+        "label": "Future-event-list reference",
+        "group": "validation",
+        "score": 0.7606082667415703,
+        "confidence": 0.9970689224623844,
+        "uncertainty": 0.008167774806863688,
+        "ratingMean": 5.6875498975442245,
+        "ratingCount": 319,
+        "comparisonCount": 2402.3716721352916,
+        "pairwiseWinRate": 0.7427178754247468,
+        "support": 2721.3716721352916
+      },
+      {
+        "rank": 3,
+        "itemId": "monte-carlo",
+        "label": "Monte Carlo replication",
+        "group": "validation",
+        "score": 0.7219154486898428,
+        "confidence": 0.9971704467706286,
+        "uncertainty": 0.008426467300998473,
+        "ratingMean": 5.543551593557145,
+        "ratingCount": 325,
+        "comparisonCount": 2494.301468287698,
+        "pairwiseWinRate": 0.6891617606873324,
+        "support": 2819.301468287698
+      },
+      {
+        "rank": 4,
+        "itemId": "analytical-baseline",
+        "label": "Analytical baseline",
+        "group": "validation",
+        "score": 0.6873166462747966,
+        "confidence": 0.9960451982495891,
+        "uncertainty": 0.010307377385109222,
+        "ratingMean": 5.417398167763656,
+        "ratingCount": 258,
+        "comparisonCount": 1756.8574034511275,
+        "pairwiseWinRate": 0.6417664071154784,
+        "support": 2014.8574034511275
+      },
+      {
+        "rank": 5,
+        "itemId": "simpy-reference",
+        "label": "SimPy reference model",
+        "group": "external",
+        "score": 0.6417029727046428,
+        "confidence": 0.995775238588889,
+        "uncertainty": 0.011019064580756112,
+        "ratingMean": 5.256631078165674,
+        "ratingCount": 238,
+        "comparisonCount": 1647.5980571494883,
+        "pairwiseWinRate": 0.5774117523350214,
+        "support": 1885.5980571494883
+      },
+      {
+        "rank": 6,
+        "itemId": "ciw-reference",
+        "label": "Ciw queueing reference",
+        "group": "external",
+        "score": 0.6126133106966087,
+        "confidence": 0.9946677417258415,
+        "uncertainty": 0.01257697380566653,
+        "ratingMean": 5.175435967982506,
+        "ratingCount": 194,
+        "comparisonCount": 1298.3024213530753,
+        "pairwiseWinRate": 0.5335187752206583,
+        "support": 1492.3024213530753
+      },
+      {
+        "rank": 7,
+        "itemId": "agent-based",
+        "label": "Agent-based model",
+        "group": "execution",
+        "score": 0.5622516629469062,
+        "confidence": 0.9964691606498393,
+        "uncertainty": 0.010422493004057915,
+        "ratingMean": 4.946469286081544,
+        "ratingCount": 287,
+        "comparisonCount": 1970.7502102540625,
+        "pairwiseWinRate": 0.46928282172166125,
+        "support": 2257.7502102540625
+      },
+      {
+        "rank": 8,
+        "itemId": "digital-twin",
+        "label": "Hybrid digital twin",
+        "group": "execution",
+        "score": 0.527318369619256,
+        "confidence": 0.9941138835062474,
+        "uncertainty": 0.01354223187858096,
+        "ratingMean": 4.813102702508921,
+        "ratingCount": 175,
+        "comparisonCount": 1176.130423003192,
+        "pairwiseWinRate": 0.4229427145001951,
+        "support": 1351.130423003192
+      }
+    ],
+    "validation": [
+      {
+        "name": "respondent conservation",
+        "group": "collaborative inference",
+        "passed": true,
+        "observed": "800",
+        "expected": "800"
+      },
+      {
+        "name": "rating evidence conservation",
+        "group": "collaborative inference",
+        "passed": true,
+        "observed": "3215",
+        "expected": "3215"
+      },
+      {
+        "name": "pairwise evidence conservation",
+        "group": "collaborative inference",
+        "passed": true,
+        "observed": "5128",
+        "expected": "5128"
+      },
+      {
+        "name": "all items ranked",
+        "group": "collaborative inference",
+        "passed": true,
+        "observed": "12",
+        "expected": "12"
+      },
+      {
+        "name": "scores are finite probabilities",
+        "group": "collaborative inference",
+        "passed": true,
+        "expected": "score in [0, 1] for every item"
+      },
+      {
+        "name": "coverage reaches every item",
+        "group": "collaborative inference",
+        "passed": true,
+        "observed": "12/12 rated, 12/12 compared",
+        "expected": "each item has rating and comparison evidence"
+      },
+      {
+        "name": "no invalid evidence",
+        "group": "collaborative inference",
+        "passed": true,
+        "observed": "0",
+        "expected": "0",
+        "details": ""
+      },
+      {
+        "name": "credibility weights are finite",
+        "group": "collaborative inference",
+        "passed": true,
+        "observed": "mean=1.478264073761748, max=2.16",
+        "expected": "finite respondent weights"
+      }
+    ],
+    "topology": {
+      "stations": [
+        "respondent-source",
+        "survey-encoder",
+        "evidence-aggregator",
+        "ranking-inference",
+        "inference-result-sink"
+      ],
+      "movables": [
+        "RespondentToken",
+        "RatingEvidenceToken",
+        "PairwisePreferenceToken",
+        "EvidenceSnapshotToken",
+        "RankingToken"
+      ],
+      "edges": [
+        "respondent-source:respondent -> survey-encoder:respondent",
+        "survey-encoder:rating-evidence -> evidence-aggregator:rating-evidence",
+        "survey-encoder:pairwise-evidence -> evidence-aggregator:pairwise-evidence",
+        "evidence-aggregator:evidence-snapshot -> ranking-inference:evidence-snapshot",
+        "ranking-inference:ranking -> inference-result-sink:ranking"
+      ]
+    },
+    "stationRoles": {
+      "sources": [
+        "respondent-source"
+      ],
+      "stations": [
+        "survey-encoder",
+        "evidence-aggregator",
+        "ranking-inference"
+      ],
+      "sinks": [
+        "inference-result-sink"
+      ],
+      "movables": [
+        "RespondentToken",
+        "RatingEvidenceToken",
+        "PairwisePreferenceToken",
+        "EvidenceSnapshotToken",
+        "RankingToken"
+      ]
+    }
+  }
+}

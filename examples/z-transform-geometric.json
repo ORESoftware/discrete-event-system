@@ -1,0 +1,22 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "z-transform",
+  "description": "Finite geometric sequence evaluated at several z-plane points.",
+  "parameters": {
+    "sequence": [1, 0.5, 0.25, 0.125, 0.0625, 0.03125],
+    "startIndex": 0,
+    "zValues": [
+      {"label": "z=2", "re": 2},
+      {"label": "z=1", "re": 1},
+      {"label": "z=-1", "re": -1}
+    ]
+  },
+  "runtime": {
+    "outputs": {
+      "csv": "out/z-transform-geometric.csv",
+      "html": "out/z-transform-geometric.html",
+      "frames": "out/z-transform-geometric.frames.jsonl",
+      "summary": "out/z-transform-geometric.summary.json"
+    }
+  }
+}

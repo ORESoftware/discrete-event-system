@@ -1,0 +1,571 @@
+{
+  "modelId": "traffic-flow",
+  "params": {
+    "builtin": "five-intersection"
+  },
+  "runtimeMs": 14,
+  "summaryText": "TRAFFIC-FLOW DES\n----------------\n  Generated:       240\n  Completed:       240\n  Active at stop:  0\n  Max active:      49\n  Blocked tries:   271\n  Mean travel:     98.438 sec\n  P95 travel:      202.000 sec\n  Throughput:      1440.000 cars/hour\n  Max-flow bound:  32.000 cars/min\n  Throughput/bnd:  0.750\n  Invariants:      ok",
+  "result": {
+    "generatedCars": 240,
+    "completedCars": 240,
+    "activeCars": 0,
+    "maxActiveCars": 49,
+    "blockedSourceAttempts": 271,
+    "meanTravelTimeSec": 98.4375,
+    "p95TravelTimeSec": 202,
+    "meanSpeedMps": 3.705020312165835,
+    "throughputPerHour": 1440,
+    "maxFlowUpperBoundPerMin": 32,
+    "throughputVsMaxFlow": 0.75,
+    "totalSimulatedSec": 757,
+    "linkStats": [
+      {
+        "id": "W-C",
+        "from": 0,
+        "to": 1,
+        "capacity": 24,
+        "entered": 90,
+        "exited": 90,
+        "finalOccupancy": 0,
+        "maxOccupancy": 24,
+        "avgOccupancy": 16.892998678996037
+      },
+      {
+        "id": "C-W",
+        "from": 1,
+        "to": 0,
+        "capacity": 24,
+        "entered": 30,
+        "exited": 30,
+        "finalOccupancy": 0,
+        "maxOccupancy": 4,
+        "avgOccupancy": 0.5310435931307794
+      },
+      {
+        "id": "C-E",
+        "from": 1,
+        "to": 2,
+        "capacity": 24,
+        "entered": 140,
+        "exited": 140,
+        "finalOccupancy": 0,
+        "maxOccupancy": 6,
+        "avgOccupancy": 2.561426684280053
+      },
+      {
+        "id": "E-C",
+        "from": 2,
+        "to": 1,
+        "capacity": 24,
+        "entered": 30,
+        "exited": 30,
+        "finalOccupancy": 0,
+        "maxOccupancy": 4,
+        "avgOccupancy": 0.9431968295904888
+      },
+      {
+        "id": "N-C",
+        "from": 3,
+        "to": 1,
+        "capacity": 24,
+        "entered": 70,
+        "exited": 70,
+        "finalOccupancy": 0,
+        "maxOccupancy": 16,
+        "avgOccupancy": 6.6499339498018495
+      },
+      {
+        "id": "C-N",
+        "from": 1,
+        "to": 3,
+        "capacity": 24,
+        "entered": 0,
+        "exited": 0,
+        "finalOccupancy": 0,
+        "maxOccupancy": 0,
+        "avgOccupancy": 0
+      },
+      {
+        "id": "S-C",
+        "from": 4,
+        "to": 1,
+        "capacity": 24,
+        "entered": 50,
+        "exited": 50,
+        "finalOccupancy": 0,
+        "maxOccupancy": 5,
+        "avgOccupancy": 1.7001321003963012
+      },
+      {
+        "id": "C-S",
+        "from": 1,
+        "to": 4,
+        "capacity": 24,
+        "entered": 70,
+        "exited": 70,
+        "finalOccupancy": 0,
+        "maxOccupancy": 4,
+        "avgOccupancy": 1.295904887714663
+      }
+    ],
+    "timeSeries": [
+      {
+        "t": 0,
+        "activeCars": 0,
+        "completedCars": 0,
+        "generatedCars": 0
+      },
+      {
+        "t": 10,
+        "activeCars": 4,
+        "completedCars": 0,
+        "generatedCars": 4
+      },
+      {
+        "t": 20,
+        "activeCars": 10,
+        "completedCars": 0,
+        "generatedCars": 10
+      },
+      {
+        "t": 30,
+        "activeCars": 15,
+        "completedCars": 0,
+        "generatedCars": 15
+      },
+      {
+        "t": 40,
+        "activeCars": 19,
+        "completedCars": 2,
+        "generatedCars": 21
+      },
+      {
+        "t": 50,
+        "activeCars": 20,
+        "completedCars": 6,
+        "generatedCars": 26
+      },
+      {
+        "t": 60,
+        "activeCars": 22,
+        "completedCars": 10,
+        "generatedCars": 32
+      },
+      {
+        "t": 70,
+        "activeCars": 23,
+        "completedCars": 13,
+        "generatedCars": 36
+      },
+      {
+        "t": 80,
+        "activeCars": 25,
+        "completedCars": 17,
+        "generatedCars": 42
+      },
+      {
+        "t": 90,
+        "activeCars": 26,
+        "completedCars": 21,
+        "generatedCars": 47
+      },
+      {
+        "t": 100,
+        "activeCars": 30,
+        "completedCars": 23,
+        "generatedCars": 53
+      },
+      {
+        "t": 110,
+        "activeCars": 29,
+        "completedCars": 29,
+        "generatedCars": 58
+      },
+      {
+        "t": 120,
+        "activeCars": 30,
+        "completedCars": 34,
+        "generatedCars": 64
+      },
+      {
+        "t": 130,
+        "activeCars": 31,
+        "completedCars": 37,
+        "generatedCars": 68
+      },
+      {
+        "t": 140,
+        "activeCars": 31,
+        "completedCars": 43,
+        "generatedCars": 74
+      },
+      {
+        "t": 150,
+        "activeCars": 33,
+        "completedCars": 46,
+        "generatedCars": 79
+      },
+      {
+        "t": 160,
+        "activeCars": 36,
+        "completedCars": 49,
+        "generatedCars": 85
+      },
+      {
+        "t": 170,
+        "activeCars": 34,
+        "completedCars": 56,
+        "generatedCars": 90
+      },
+      {
+        "t": 180,
+        "activeCars": 36,
+        "completedCars": 60,
+        "generatedCars": 96
+      },
+      {
+        "t": 190,
+        "activeCars": 36,
+        "completedCars": 64,
+        "generatedCars": 100
+      },
+      {
+        "t": 200,
+        "activeCars": 37,
+        "completedCars": 69,
+        "generatedCars": 106
+      },
+      {
+        "t": 210,
+        "activeCars": 38,
+        "completedCars": 73,
+        "generatedCars": 111
+      },
+      {
+        "t": 220,
+        "activeCars": 42,
+        "completedCars": 75,
+        "generatedCars": 117
+      },
+      {
+        "t": 230,
+        "activeCars": 41,
+        "completedCars": 81,
+        "generatedCars": 122
+      },
+      {
+        "t": 240,
+        "activeCars": 42,
+        "completedCars": 86,
+        "generatedCars": 128
+      },
+      {
+        "t": 250,
+        "activeCars": 43,
+        "completedCars": 89,
+        "generatedCars": 132
+      },
+      {
+        "t": 260,
+        "activeCars": 43,
+        "completedCars": 95,
+        "generatedCars": 138
+      },
+      {
+        "t": 270,
+        "activeCars": 45,
+        "completedCars": 98,
+        "generatedCars": 143
+      },
+      {
+        "t": 280,
+        "activeCars": 48,
+        "completedCars": 101,
+        "generatedCars": 149
+      },
+      {
+        "t": 290,
+        "activeCars": 44,
+        "completedCars": 108,
+        "generatedCars": 152
+      },
+      {
+        "t": 300,
+        "activeCars": 44,
+        "completedCars": 112,
+        "generatedCars": 156
+      },
+      {
+        "t": 310,
+        "activeCars": 44,
+        "completedCars": 116,
+        "generatedCars": 160
+      },
+      {
+        "t": 320,
+        "activeCars": 46,
+        "completedCars": 121,
+        "generatedCars": 167
+      },
+      {
+        "t": 330,
+        "activeCars": 47,
+        "completedCars": 125,
+        "generatedCars": 172
+      },
+      {
+        "t": 340,
+        "activeCars": 49,
+        "completedCars": 127,
+        "generatedCars": 176
+      },
+      {
+        "t": 350,
+        "activeCars": 46,
+        "completedCars": 133,
+        "generatedCars": 179
+      },
+      {
+        "t": 360,
+        "activeCars": 45,
+        "completedCars": 138,
+        "generatedCars": 183
+      },
+      {
+        "t": 370,
+        "activeCars": 47,
+        "completedCars": 141,
+        "generatedCars": 188
+      },
+      {
+        "t": 380,
+        "activeCars": 46,
+        "completedCars": 147,
+        "generatedCars": 193
+      },
+      {
+        "t": 390,
+        "activeCars": 48,
+        "completedCars": 150,
+        "generatedCars": 198
+      },
+      {
+        "t": 400,
+        "activeCars": 48,
+        "completedCars": 153,
+        "generatedCars": 201
+      },
+      {
+        "t": 410,
+        "activeCars": 44,
+        "completedCars": 159,
+        "generatedCars": 203
+      },
+      {
+        "t": 420,
+        "activeCars": 43,
+        "completedCars": 163,
+        "generatedCars": 206
+      },
+      {
+        "t": 430,
+        "activeCars": 43,
+        "completedCars": 167,
+        "generatedCars": 210
+      },
+      {
+        "t": 440,
+        "activeCars": 47,
+        "completedCars": 169,
+        "generatedCars": 216
+      },
+      {
+        "t": 450,
+        "activeCars": 48,
+        "completedCars": 172,
+        "generatedCars": 220
+      },
+      {
+        "t": 460,
+        "activeCars": 49,
+        "completedCars": 174,
+        "generatedCars": 223
+      },
+      {
+        "t": 470,
+        "activeCars": 46,
+        "completedCars": 179,
+        "generatedCars": 225
+      },
+      {
+        "t": 480,
+        "activeCars": 42,
+        "completedCars": 184,
+        "generatedCars": 226
+      },
+      {
+        "t": 490,
+        "activeCars": 43,
+        "completedCars": 187,
+        "generatedCars": 230
+      },
+      {
+        "t": 500,
+        "activeCars": 43,
+        "completedCars": 190,
+        "generatedCars": 233
+      },
+      {
+        "t": 510,
+        "activeCars": 44,
+        "completedCars": 192,
+        "generatedCars": 236
+      },
+      {
+        "t": 520,
+        "activeCars": 41,
+        "completedCars": 195,
+        "generatedCars": 236
+      },
+      {
+        "t": 530,
+        "activeCars": 35,
+        "completedCars": 201,
+        "generatedCars": 236
+      },
+      {
+        "t": 540,
+        "activeCars": 32,
+        "completedCars": 204,
+        "generatedCars": 236
+      },
+      {
+        "t": 550,
+        "activeCars": 31,
+        "completedCars": 207,
+        "generatedCars": 238
+      },
+      {
+        "t": 560,
+        "activeCars": 31,
+        "completedCars": 209,
+        "generatedCars": 240
+      },
+      {
+        "t": 570,
+        "activeCars": 28,
+        "completedCars": 212,
+        "generatedCars": 240
+      },
+      {
+        "t": 580,
+        "activeCars": 26,
+        "completedCars": 214,
+        "generatedCars": 240
+      },
+      {
+        "t": 590,
+        "activeCars": 24,
+        "completedCars": 216,
+        "generatedCars": 240
+      },
+      {
+        "t": 600,
+        "activeCars": 21,
+        "completedCars": 219,
+        "generatedCars": 240
+      },
+      {
+        "t": 610,
+        "activeCars": 21,
+        "completedCars": 219,
+        "generatedCars": 240
+      },
+      {
+        "t": 620,
+        "activeCars": 19,
+        "completedCars": 221,
+        "generatedCars": 240
+      },
+      {
+        "t": 630,
+        "activeCars": 17,
+        "completedCars": 223,
+        "generatedCars": 240
+      },
+      {
+        "t": 640,
+        "activeCars": 14,
+        "completedCars": 226,
+        "generatedCars": 240
+      },
+      {
+        "t": 650,
+        "activeCars": 13,
+        "completedCars": 227,
+        "generatedCars": 240
+      },
+      {
+        "t": 660,
+        "activeCars": 13,
+        "completedCars": 227,
+        "generatedCars": 240
+      },
+      {
+        "t": 670,
+        "activeCars": 13,
+        "completedCars": 227,
+        "generatedCars": 240
+      },
+      {
+        "t": 680,
+        "activeCars": 12,
+        "completedCars": 228,
+        "generatedCars": 240
+      },
+      {
+        "t": 690,
+        "activeCars": 9,
+        "completedCars": 231,
+        "generatedCars": 240
+      },
+      {
+        "t": 700,
+        "activeCars": 7,
+        "completedCars": 233,
+        "generatedCars": 240
+      },
+      {
+        "t": 710,
+        "activeCars": 6,
+        "completedCars": 234,
+        "generatedCars": 240
+      },
+      {
+        "t": 720,
+        "activeCars": 6,
+        "completedCars": 234,
+        "generatedCars": 240
+      },
+      {
+        "t": 730,
+        "activeCars": 6,
+        "completedCars": 234,
+        "generatedCars": 240
+      },
+      {
+        "t": 740,
+        "activeCars": 4,
+        "completedCars": 236,
+        "generatedCars": 240
+      },
+      {
+        "t": 750,
+        "activeCars": 2,
+        "completedCars": 238,
+        "generatedCars": 240
+      }
+    ],
+    "invariantViolations": []
+  }
+}

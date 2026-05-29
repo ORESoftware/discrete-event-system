@@ -1,0 +1,8 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "adaptive-fuzzy-control",
+  "description": "Adaptive fuzzy controller tuning over a first-order thermal plant, represented as scenario, candidate controller plan, evaluation, and result sink movables.",
+  "parameters": {},
+  "runtime": {"animate": false, "outputs": {"csv": "out/adaptive-fuzzy-control.csv", "summary": "out/adaptive-fuzzy-control.summary.json"}},
+  "metadata": {"tags": ["control", "adaptive", "fuzzy", "intelligent-control"]}
+}

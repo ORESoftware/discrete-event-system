@@ -1,0 +1,830 @@
+{
+  "elapsedMs": 0.7839202880859375,
+  "input": {
+    "lanes": 10,
+    "nodes": 11,
+    "scheduledTrips": 21,
+    "signals": 5
+  },
+  "kernel": "python-traffic-fel-reference",
+  "model": "smart-traffic-flow",
+  "result": {
+    "activeAtEnd": 0,
+    "arrived": 21,
+    "collisionCount": 0,
+    "completionRatio": 1.0,
+    "departed": 21,
+    "dropped": 0,
+    "entered": 21,
+    "eventCount": 127,
+    "exited": 21,
+    "generatedDemand": 21,
+    "laneStats": [
+      {
+        "avgOccupancy": 0.6662962962962964,
+        "capacity": 12,
+        "finalOccupancy": 0,
+        "from": "W",
+        "id": "W-I0",
+        "maxOccupancy": 3,
+        "to": "I0"
+      },
+      {
+        "avgOccupancy": 0.29884773662551434,
+        "capacity": 11,
+        "finalOccupancy": 0,
+        "from": "S0",
+        "id": "S0-I0",
+        "maxOccupancy": 1,
+        "to": "I0"
+      },
+      {
+        "avgOccupancy": 0.7901234567901233,
+        "capacity": 16,
+        "finalOccupancy": 0,
+        "from": "I0",
+        "id": "I0-I1",
+        "maxOccupancy": 3,
+        "to": "I1"
+      },
+      {
+        "avgOccupancy": 0.627037037037037,
+        "capacity": 16,
+        "finalOccupancy": 0,
+        "from": "I1",
+        "id": "I1-I2",
+        "maxOccupancy": 3,
+        "to": "I2"
+      },
+      {
+        "avgOccupancy": 0.363888888888889,
+        "capacity": 12,
+        "finalOccupancy": 0,
+        "from": "N2",
+        "id": "N2-I2",
+        "maxOccupancy": 2,
+        "to": "I2"
+      },
+      {
+        "avgOccupancy": 0.6913580246913578,
+        "capacity": 16,
+        "finalOccupancy": 0,
+        "from": "I2",
+        "id": "I2-I3",
+        "maxOccupancy": 4,
+        "to": "I3"
+      },
+      {
+        "avgOccupancy": 0.6913580246913579,
+        "capacity": 16,
+        "finalOccupancy": 0,
+        "from": "I3",
+        "id": "I3-I4",
+        "maxOccupancy": 4,
+        "to": "I4"
+      },
+      {
+        "avgOccupancy": 0.20576131687242816,
+        "capacity": 13,
+        "finalOccupancy": 0,
+        "from": "I4",
+        "id": "I4-E",
+        "maxOccupancy": 2,
+        "to": "E"
+      },
+      {
+        "avgOccupancy": 0.23045267489711926,
+        "capacity": 10,
+        "finalOccupancy": 0,
+        "from": "I1",
+        "id": "I1-N1",
+        "maxOccupancy": 2,
+        "to": "N1"
+      },
+      {
+        "avgOccupancy": 0.31481481481481494,
+        "capacity": 11,
+        "finalOccupancy": 0,
+        "from": "I4",
+        "id": "I4-S4",
+        "maxOccupancy": 3,
+        "to": "S4"
+      }
+    ],
+    "maxActiveCars": 10,
+    "meanSpeedMps": 11.447093795458859,
+    "meanTravelTimeSec": 41.82804232804232,
+    "meanWaitingTimeSec": 0.0,
+    "notes": [
+      "future-event-list traffic baseline",
+      "scheduled departures originate from traffic source entities and terminate at sink entities"
+    ],
+    "p95TravelTimeSec": 63.25185185185185,
+    "timeSeries": [
+      {
+        "active": 0,
+        "dropped": 0,
+        "entered": 0,
+        "exited": 0,
+        "laneOccupancy": {
+          "I0-I1": 0,
+          "I1-I2": 0,
+          "I1-N1": 0,
+          "I2-I3": 0,
+          "I3-I4": 0,
+          "I4-E": 0,
+          "I4-S4": 0,
+          "N2-I2": 0,
+          "S0-I0": 0,
+          "W-I0": 0
+        },
+        "timeSec": 0.0
+      },
+      {
+        "active": 0,
+        "dropped": 0,
+        "entered": 0,
+        "exited": 0,
+        "laneOccupancy": {
+          "I0-I1": 0,
+          "I1-I2": 0,
+          "I1-N1": 0,
+          "I2-I3": 0,
+          "I3-I4": 0,
+          "I4-E": 0,
+          "I4-S4": 0,
+          "N2-I2": 0,
+          "S0-I0": 0,
+          "W-I0": 0
+        },
+        "timeSec": 5.0
+      },
+      {
+        "active": 1,
+        "dropped": 0,
+        "entered": 1,
+        "exited": 0,
+        "laneOccupancy": {
+          "I0-I1": 0,
+          "I1-I2": 0,
+          "I1-N1": 0,
+          "I2-I3": 0,
+          "I3-I4": 0,
+          "I4-E": 0,
+          "I4-S4": 0,
+          "N2-I2": 0,
+          "S0-I0": 0,
+          "W-I0": 1
+        },
+        "timeSec": 10.0
+      },
+      {
+        "active": 1,
+        "dropped": 0,
+        "entered": 1,
+        "exited": 0,
+        "laneOccupancy": {
+          "I0-I1": 0,
+          "I1-I2": 0,
+          "I1-N1": 0,
+          "I2-I3": 0,
+          "I3-I4": 0,
+          "I4-E": 0,
+          "I4-S4": 0,
+          "N2-I2": 0,
+          "S0-I0": 0,
+          "W-I0": 1
+        },
+        "timeSec": 15.0
+      },
+      {
+        "active": 2,
+        "dropped": 0,
+        "entered": 2,
+        "exited": 0,
+        "laneOccupancy": {
+          "I0-I1": 1,
+          "I1-I2": 0,
+          "I1-N1": 0,
+          "I2-I3": 0,
+          "I3-I4": 0,
+          "I4-E": 0,
+          "I4-S4": 0,
+          "N2-I2": 0,
+          "S0-I0": 0,
+          "W-I0": 1
+        },
+        "timeSec": 20.0
+      },
+      {
+        "active": 4,
+        "dropped": 0,
+        "entered": 4,
+        "exited": 0,
+        "laneOccupancy": {
+          "I0-I1": 1,
+          "I1-I2": 0,
+          "I1-N1": 0,
+          "I2-I3": 0,
+          "I3-I4": 0,
+          "I4-E": 0,
+          "I4-S4": 0,
+          "N2-I2": 1,
+          "S0-I0": 1,
+          "W-I0": 1
+        },
+        "timeSec": 25.0
+      },
+      {
+        "active": 5,
+        "dropped": 0,
+        "entered": 5,
+        "exited": 0,
+        "laneOccupancy": {
+          "I0-I1": 1,
+          "I1-I2": 1,
+          "I1-N1": 0,
+          "I2-I3": 1,
+          "I3-I4": 0,
+          "I4-E": 0,
+          "I4-S4": 0,
+          "N2-I2": 0,
+          "S0-I0": 1,
+          "W-I0": 1
+        },
+        "timeSec": 30.0
+      },
+      {
+        "active": 5,
+        "dropped": 0,
+        "entered": 5,
+        "exited": 0,
+        "laneOccupancy": {
+          "I0-I1": 1,
+          "I1-I2": 1,
+          "I1-N1": 1,
+          "I2-I3": 1,
+          "I3-I4": 0,
+          "I4-E": 0,
+          "I4-S4": 0,
+          "N2-I2": 0,
+          "S0-I0": 0,
+          "W-I0": 1
+        },
+        "timeSec": 35.0
+      },
+      {
+        "active": 6,
+        "dropped": 0,
+        "entered": 6,
+        "exited": 0,
+        "laneOccupancy": {
+          "I0-I1": 0,
+          "I1-I2": 0,
+          "I1-N1": 2,
+          "I2-I3": 1,
+          "I3-I4": 1,
+          "I4-E": 0,
+          "I4-S4": 0,
+          "N2-I2": 0,
+          "S0-I0": 0,
+          "W-I0": 2
+        },
+        "timeSec": 40.0
+      },
+      {
+        "active": 6,
+        "dropped": 0,
+        "entered": 7,
+        "exited": 1,
+        "laneOccupancy": {
+          "I0-I1": 2,
+          "I1-I2": 0,
+          "I1-N1": 1,
+          "I2-I3": 1,
+          "I3-I4": 1,
+          "I4-E": 0,
+          "I4-S4": 0,
+          "N2-I2": 1,
+          "S0-I0": 0,
+          "W-I0": 0
+        },
+        "timeSec": 45.0
+      },
+      {
+        "active": 7,
+        "dropped": 0,
+        "entered": 9,
+        "exited": 2,
+        "laneOccupancy": {
+          "I0-I1": 2,
+          "I1-I2": 0,
+          "I1-N1": 0,
+          "I2-I3": 0,
+          "I3-I4": 1,
+          "I4-E": 0,
+          "I4-S4": 1,
+          "N2-I2": 1,
+          "S0-I0": 1,
+          "W-I0": 1
+        },
+        "timeSec": 50.0
+      },
+      {
+        "active": 6,
+        "dropped": 0,
+        "entered": 9,
+        "exited": 3,
+        "laneOccupancy": {
+          "I0-I1": 1,
+          "I1-I2": 1,
+          "I1-N1": 1,
+          "I2-I3": 0,
+          "I3-I4": 1,
+          "I4-E": 0,
+          "I4-S4": 0,
+          "N2-I2": 1,
+          "S0-I0": 1,
+          "W-I0": 0
+        },
+        "timeSec": 55.0
+      },
+      {
+        "active": 6,
+        "dropped": 0,
+        "entered": 10,
+        "exited": 4,
+        "laneOccupancy": {
+          "I0-I1": 1,
+          "I1-I2": 1,
+          "I1-N1": 0,
+          "I2-I3": 0,
+          "I3-I4": 0,
+          "I4-E": 0,
+          "I4-S4": 1,
+          "N2-I2": 1,
+          "S0-I0": 1,
+          "W-I0": 1
+        },
+        "timeSec": 60.0
+      },
+      {
+        "active": 6,
+        "dropped": 0,
+        "entered": 11,
+        "exited": 5,
+        "laneOccupancy": {
+          "I0-I1": 1,
+          "I1-I2": 1,
+          "I1-N1": 0,
+          "I2-I3": 1,
+          "I3-I4": 0,
+          "I4-E": 0,
+          "I4-S4": 0,
+          "N2-I2": 2,
+          "S0-I0": 1,
+          "W-I0": 0
+        },
+        "timeSec": 65.0
+      },
+      {
+        "active": 7,
+        "dropped": 0,
+        "entered": 12,
+        "exited": 5,
+        "laneOccupancy": {
+          "I0-I1": 1,
+          "I1-I2": 1,
+          "I1-N1": 0,
+          "I2-I3": 2,
+          "I3-I4": 0,
+          "I4-E": 0,
+          "I4-S4": 0,
+          "N2-I2": 1,
+          "S0-I0": 1,
+          "W-I0": 1
+        },
+        "timeSec": 70.0
+      },
+      {
+        "active": 8,
+        "dropped": 0,
+        "entered": 13,
+        "exited": 5,
+        "laneOccupancy": {
+          "I0-I1": 1,
+          "I1-I2": 1,
+          "I1-N1": 1,
+          "I2-I3": 1,
+          "I3-I4": 2,
+          "I4-E": 0,
+          "I4-S4": 0,
+          "N2-I2": 0,
+          "S0-I0": 1,
+          "W-I0": 1
+        },
+        "timeSec": 75.0
+      },
+      {
+        "active": 8,
+        "dropped": 0,
+        "entered": 14,
+        "exited": 6,
+        "laneOccupancy": {
+          "I0-I1": 2,
+          "I1-I2": 1,
+          "I1-N1": 0,
+          "I2-I3": 0,
+          "I3-I4": 2,
+          "I4-E": 1,
+          "I4-S4": 0,
+          "N2-I2": 0,
+          "S0-I0": 0,
+          "W-I0": 2
+        },
+        "timeSec": 80.0
+      },
+      {
+        "active": 8,
+        "dropped": 0,
+        "entered": 14,
+        "exited": 6,
+        "laneOccupancy": {
+          "I0-I1": 1,
+          "I1-I2": 0,
+          "I1-N1": 1,
+          "I2-I3": 1,
+          "I3-I4": 1,
+          "I4-E": 1,
+          "I4-S4": 1,
+          "N2-I2": 0,
+          "S0-I0": 0,
+          "W-I0": 2
+        },
+        "timeSec": 85.0
+      },
+      {
+        "active": 7,
+        "dropped": 0,
+        "entered": 16,
+        "exited": 9,
+        "laneOccupancy": {
+          "I0-I1": 2,
+          "I1-I2": 1,
+          "I1-N1": 0,
+          "I2-I3": 1,
+          "I3-I4": 0,
+          "I4-E": 0,
+          "I4-S4": 1,
+          "N2-I2": 1,
+          "S0-I0": 0,
+          "W-I0": 1
+        },
+        "timeSec": 90.0
+      },
+      {
+        "active": 6,
+        "dropped": 0,
+        "entered": 16,
+        "exited": 10,
+        "laneOccupancy": {
+          "I0-I1": 3,
+          "I1-I2": 1,
+          "I1-N1": 0,
+          "I2-I3": 0,
+          "I3-I4": 1,
+          "I4-E": 0,
+          "I4-S4": 0,
+          "N2-I2": 1,
+          "S0-I0": 0,
+          "W-I0": 0
+        },
+        "timeSec": 95.0
+      },
+      {
+        "active": 8,
+        "dropped": 0,
+        "entered": 18,
+        "exited": 10,
+        "laneOccupancy": {
+          "I0-I1": 1,
+          "I1-I2": 2,
+          "I1-N1": 0,
+          "I2-I3": 1,
+          "I3-I4": 1,
+          "I4-E": 0,
+          "I4-S4": 0,
+          "N2-I2": 1,
+          "S0-I0": 1,
+          "W-I0": 1
+        },
+        "timeSec": 100.0
+      },
+      {
+        "active": 9,
+        "dropped": 0,
+        "entered": 19,
+        "exited": 10,
+        "laneOccupancy": {
+          "I0-I1": 1,
+          "I1-I2": 3,
+          "I1-N1": 0,
+          "I2-I3": 1,
+          "I3-I4": 0,
+          "I4-E": 0,
+          "I4-S4": 1,
+          "N2-I2": 1,
+          "S0-I0": 1,
+          "W-I0": 1
+        },
+        "timeSec": 105.0
+      },
+      {
+        "active": 9,
+        "dropped": 0,
+        "entered": 20,
+        "exited": 11,
+        "laneOccupancy": {
+          "I0-I1": 1,
+          "I1-I2": 1,
+          "I1-N1": 0,
+          "I2-I3": 3,
+          "I3-I4": 1,
+          "I4-E": 0,
+          "I4-S4": 0,
+          "N2-I2": 1,
+          "S0-I0": 1,
+          "W-I0": 1
+        },
+        "timeSec": 110.0
+      },
+      {
+        "active": 10,
+        "dropped": 0,
+        "entered": 21,
+        "exited": 11,
+        "laneOccupancy": {
+          "I0-I1": 1,
+          "I1-I2": 1,
+          "I1-N1": 1,
+          "I2-I3": 2,
+          "I3-I4": 3,
+          "I4-E": 0,
+          "I4-S4": 0,
+          "N2-I2": 0,
+          "S0-I0": 1,
+          "W-I0": 1
+        },
+        "timeSec": 115.0
+      },
+      {
+        "active": 9,
+        "dropped": 0,
+        "entered": 21,
+        "exited": 12,
+        "laneOccupancy": {
+          "I0-I1": 2,
+          "I1-I2": 1,
+          "I1-N1": 0,
+          "I2-I3": 1,
+          "I3-I4": 3,
+          "I4-E": 1,
+          "I4-S4": 0,
+          "N2-I2": 0,
+          "S0-I0": 0,
+          "W-I0": 1
+        },
+        "timeSec": 120.0
+      },
+      {
+        "active": 8,
+        "dropped": 0,
+        "entered": 21,
+        "exited": 13,
+        "laneOccupancy": {
+          "I0-I1": 0,
+          "I1-I2": 3,
+          "I1-N1": 0,
+          "I2-I3": 0,
+          "I3-I4": 2,
+          "I4-E": 0,
+          "I4-S4": 2,
+          "N2-I2": 0,
+          "S0-I0": 0,
+          "W-I0": 1
+        },
+        "timeSec": 125.0
+      },
+      {
+        "active": 6,
+        "dropped": 0,
+        "entered": 21,
+        "exited": 15,
+        "laneOccupancy": {
+          "I0-I1": 0,
+          "I1-I2": 1,
+          "I1-N1": 0,
+          "I2-I3": 2,
+          "I3-I4": 1,
+          "I4-E": 0,
+          "I4-S4": 1,
+          "N2-I2": 0,
+          "S0-I0": 0,
+          "W-I0": 1
+        },
+        "timeSec": 130.0
+      },
+      {
+        "active": 5,
+        "dropped": 0,
+        "entered": 21,
+        "exited": 16,
+        "laneOccupancy": {
+          "I0-I1": 1,
+          "I1-I2": 0,
+          "I1-N1": 0,
+          "I2-I3": 3,
+          "I3-I4": 0,
+          "I4-E": 1,
+          "I4-S4": 0,
+          "N2-I2": 0,
+          "S0-I0": 0,
+          "W-I0": 0
+        },
+        "timeSec": 135.0
+      },
+      {
+        "active": 4,
+        "dropped": 0,
+        "entered": 21,
+        "exited": 17,
+        "laneOccupancy": {
+          "I0-I1": 1,
+          "I1-I2": 0,
+          "I1-N1": 0,
+          "I2-I3": 1,
+          "I3-I4": 2,
+          "I4-E": 0,
+          "I4-S4": 0,
+          "N2-I2": 0,
+          "S0-I0": 0,
+          "W-I0": 0
+        },
+        "timeSec": 140.0
+      },
+      {
+        "active": 4,
+        "dropped": 0,
+        "entered": 21,
+        "exited": 17,
+        "laneOccupancy": {
+          "I0-I1": 0,
+          "I1-I2": 0,
+          "I1-N1": 1,
+          "I2-I3": 0,
+          "I3-I4": 2,
+          "I4-E": 1,
+          "I4-S4": 0,
+          "N2-I2": 0,
+          "S0-I0": 0,
+          "W-I0": 0
+        },
+        "timeSec": 145.0
+      },
+      {
+        "active": 3,
+        "dropped": 0,
+        "entered": 21,
+        "exited": 18,
+        "laneOccupancy": {
+          "I0-I1": 0,
+          "I1-I2": 0,
+          "I1-N1": 0,
+          "I2-I3": 0,
+          "I3-I4": 1,
+          "I4-E": 2,
+          "I4-S4": 0,
+          "N2-I2": 0,
+          "S0-I0": 0,
+          "W-I0": 0
+        },
+        "timeSec": 150.0
+      },
+      {
+        "active": 1,
+        "dropped": 0,
+        "entered": 21,
+        "exited": 20,
+        "laneOccupancy": {
+          "I0-I1": 0,
+          "I1-I2": 0,
+          "I1-N1": 0,
+          "I2-I3": 0,
+          "I3-I4": 0,
+          "I4-E": 0,
+          "I4-S4": 1,
+          "N2-I2": 0,
+          "S0-I0": 0,
+          "W-I0": 0
+        },
+        "timeSec": 155.0
+      },
+      {
+        "active": 0,
+        "dropped": 0,
+        "entered": 21,
+        "exited": 21,
+        "laneOccupancy": {
+          "I0-I1": 0,
+          "I1-I2": 0,
+          "I1-N1": 0,
+          "I2-I3": 0,
+          "I3-I4": 0,
+          "I4-E": 0,
+          "I4-S4": 0,
+          "N2-I2": 0,
+          "S0-I0": 0,
+          "W-I0": 0
+        },
+        "timeSec": 160.0
+      },
+      {
+        "active": 0,
+        "dropped": 0,
+        "entered": 21,
+        "exited": 21,
+        "laneOccupancy": {
+          "I0-I1": 0,
+          "I1-I2": 0,
+          "I1-N1": 0,
+          "I2-I3": 0,
+          "I3-I4": 0,
+          "I4-E": 0,
+          "I4-S4": 0,
+          "N2-I2": 0,
+          "S0-I0": 0,
+          "W-I0": 0
+        },
+        "timeSec": 165.0
+      },
+      {
+        "active": 0,
+        "dropped": 0,
+        "entered": 21,
+        "exited": 21,
+        "laneOccupancy": {
+          "I0-I1": 0,
+          "I1-I2": 0,
+          "I1-N1": 0,
+          "I2-I3": 0,
+          "I3-I4": 0,
+          "I4-E": 0,
+          "I4-S4": 0,
+          "N2-I2": 0,
+          "S0-I0": 0,
+          "W-I0": 0
+        },
+        "timeSec": 170.0
+      },
+      {
+        "active": 0,
+        "dropped": 0,
+        "entered": 21,
+        "exited": 21,
+        "laneOccupancy": {
+          "I0-I1": 0,
+          "I1-I2": 0,
+          "I1-N1": 0,
+          "I2-I3": 0,
+          "I3-I4": 0,
+          "I4-E": 0,
+          "I4-S4": 0,
+          "N2-I2": 0,
+          "S0-I0": 0,
+          "W-I0": 0
+        },
+        "timeSec": 175.0
+      },
+      {
+        "active": 0,
+        "dropped": 0,
+        "entered": 21,
+        "exited": 21,
+        "laneOccupancy": {
+          "I0-I1": 0,
+          "I1-I2": 0,
+          "I1-N1": 0,
+          "I2-I3": 0,
+          "I3-I4": 0,
+          "I4-E": 0,
+          "I4-S4": 0,
+          "N2-I2": 0,
+          "S0-I0": 0,
+          "W-I0": 0
+        },
+        "timeSec": 180.0
+      }
+    ]
+  },
+  "status": "ok"
+}

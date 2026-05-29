@@ -1,0 +1,8 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "workforce-service-operations",
+  "description": "Operations-management roster policy comparison using service-risk, flex-pool, and overtime-aware candidate plans.",
+  "parameters": {"overtimeCost": 18},
+  "runtime": {"animate": false, "outputs": {"csv": "out/workforce-service-operations.csv", "summary": "out/workforce-service-operations.summary.json"}},
+  "metadata": {"tags": ["operations-management", "workforce", "service-level", "rostering"]}
+}

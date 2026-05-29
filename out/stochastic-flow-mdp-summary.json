@@ -1,0 +1,926 @@
+{
+  "modelId": "stochastic-flow-mdp",
+  "params": {
+    "builtin": "small-stochastic-network",
+    "seed": 7,
+    "maxPolicyRows": 24
+  },
+  "runtimeMs": 21,
+  "summaryText": "STOCHASTIC FLOW-CONTROL MDP\n---------------------------\n  Horizon:         8\n  States:          1620\n  E[reward]*:      2.910049\n  Static max-flow: 4.000000  (deterministic upper bound)\n  First policy:    t0:s-a -> t1:a-t -> t2:s-a -> t3:a-t -> t4:s-b\n  Sim delivered:   3\n  Sim reward:      2.890000",
+  "result": {
+    "status": "optimal",
+    "horizon": 8,
+    "numStates": 1620,
+    "initialStateIndex": 1615,
+    "expectedReward": 2.9100492952000008,
+    "deterministicMaxFlow": 4,
+    "policy": [
+      {
+        "stage": 0,
+        "stateIndex": 22,
+        "state": {
+          "node": 2,
+          "capacities": [
+            0,
+            0,
+            0,
+            1,
+            0,
+            0
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 3,
+          "label": "b-t"
+        },
+        "value": 0.918421052592578
+      },
+      {
+        "stage": 0,
+        "stateIndex": 27,
+        "state": {
+          "node": 2,
+          "capacities": [
+            0,
+            0,
+            0,
+            1,
+            0,
+            1
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 3,
+          "label": "b-t"
+        },
+        "value": 0.918421052592578
+      },
+      {
+        "stage": 0,
+        "stateIndex": 31,
+        "state": {
+          "node": 1,
+          "capacities": [
+            0,
+            0,
+            0,
+            1,
+            1,
+            0
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 4,
+          "label": "a-b"
+        },
+        "value": 0.9083492983222656
+      },
+      {
+        "stage": 0,
+        "stateIndex": 32,
+        "state": {
+          "node": 2,
+          "capacities": [
+            0,
+            0,
+            0,
+            1,
+            1,
+            0
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 3,
+          "label": "b-t"
+        },
+        "value": 0.918421052592578
+      },
+      {
+        "stage": 0,
+        "stateIndex": 36,
+        "state": {
+          "node": 1,
+          "capacities": [
+            0,
+            0,
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 4,
+          "label": "a-b"
+        },
+        "value": 0.9083492983222656
+      },
+      {
+        "stage": 0,
+        "stateIndex": 37,
+        "state": {
+          "node": 2,
+          "capacities": [
+            0,
+            0,
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 3,
+          "label": "b-t"
+        },
+        "value": 0.918421052592578
+      },
+      {
+        "stage": 0,
+        "stateIndex": 42,
+        "state": {
+          "node": 2,
+          "capacities": [
+            0,
+            0,
+            0,
+            2,
+            0,
+            0
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 3,
+          "label": "b-t"
+        },
+        "value": 0.918421052592578
+      },
+      {
+        "stage": 0,
+        "stateIndex": 47,
+        "state": {
+          "node": 2,
+          "capacities": [
+            0,
+            0,
+            0,
+            2,
+            0,
+            1
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 3,
+          "label": "b-t"
+        },
+        "value": 0.918421052592578
+      },
+      {
+        "stage": 0,
+        "stateIndex": 51,
+        "state": {
+          "node": 1,
+          "capacities": [
+            0,
+            0,
+            0,
+            2,
+            1,
+            0
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 4,
+          "label": "a-b"
+        },
+        "value": 0.9083492983222656
+      },
+      {
+        "stage": 0,
+        "stateIndex": 52,
+        "state": {
+          "node": 2,
+          "capacities": [
+            0,
+            0,
+            0,
+            2,
+            1,
+            0
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 3,
+          "label": "b-t"
+        },
+        "value": 0.918421052592578
+      },
+      {
+        "stage": 0,
+        "stateIndex": 56,
+        "state": {
+          "node": 1,
+          "capacities": [
+            0,
+            0,
+            0,
+            2,
+            1,
+            1
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 4,
+          "label": "a-b"
+        },
+        "value": 0.9083492983222656
+      },
+      {
+        "stage": 0,
+        "stateIndex": 57,
+        "state": {
+          "node": 2,
+          "capacities": [
+            0,
+            0,
+            0,
+            2,
+            1,
+            1
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 3,
+          "label": "b-t"
+        },
+        "value": 0.918421052592578
+      },
+      {
+        "stage": 0,
+        "stateIndex": 80,
+        "state": {
+          "node": 0,
+          "capacities": [
+            0,
+            0,
+            1,
+            1,
+            0,
+            0
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 2,
+          "label": "s-b"
+        },
+        "value": 0.9015656318972656
+      },
+      {
+        "stage": 0,
+        "stateIndex": 82,
+        "state": {
+          "node": 2,
+          "capacities": [
+            0,
+            0,
+            1,
+            1,
+            0,
+            0
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 3,
+          "label": "b-t"
+        },
+        "value": 0.918421052592578
+      },
+      {
+        "stage": 0,
+        "stateIndex": 85,
+        "state": {
+          "node": 0,
+          "capacities": [
+            0,
+            0,
+            1,
+            1,
+            0,
+            1
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 2,
+          "label": "s-b"
+        },
+        "value": 0.9015656318972656
+      },
+      {
+        "stage": 0,
+        "stateIndex": 87,
+        "state": {
+          "node": 2,
+          "capacities": [
+            0,
+            0,
+            1,
+            1,
+            0,
+            1
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 3,
+          "label": "b-t"
+        },
+        "value": 0.918421052592578
+      },
+      {
+        "stage": 0,
+        "stateIndex": 90,
+        "state": {
+          "node": 0,
+          "capacities": [
+            0,
+            0,
+            1,
+            1,
+            1,
+            0
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 2,
+          "label": "s-b"
+        },
+        "value": 0.9015656318972656
+      },
+      {
+        "stage": 0,
+        "stateIndex": 91,
+        "state": {
+          "node": 1,
+          "capacities": [
+            0,
+            0,
+            1,
+            1,
+            1,
+            0
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 4,
+          "label": "a-b"
+        },
+        "value": 0.9083492983222656
+      },
+      {
+        "stage": 0,
+        "stateIndex": 92,
+        "state": {
+          "node": 2,
+          "capacities": [
+            0,
+            0,
+            1,
+            1,
+            1,
+            0
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 3,
+          "label": "b-t"
+        },
+        "value": 0.918421052592578
+      },
+      {
+        "stage": 0,
+        "stateIndex": 95,
+        "state": {
+          "node": 0,
+          "capacities": [
+            0,
+            0,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 2,
+          "label": "s-b"
+        },
+        "value": 0.9015656318972656
+      },
+      {
+        "stage": 0,
+        "stateIndex": 96,
+        "state": {
+          "node": 1,
+          "capacities": [
+            0,
+            0,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 4,
+          "label": "a-b"
+        },
+        "value": 0.9083492983222656
+      },
+      {
+        "stage": 0,
+        "stateIndex": 97,
+        "state": {
+          "node": 2,
+          "capacities": [
+            0,
+            0,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 3,
+          "label": "b-t"
+        },
+        "value": 0.918421052592578
+      },
+      {
+        "stage": 0,
+        "stateIndex": 100,
+        "state": {
+          "node": 0,
+          "capacities": [
+            0,
+            0,
+            1,
+            2,
+            0,
+            0
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 2,
+          "label": "s-b"
+        },
+        "value": 0.9015656318972656
+      },
+      {
+        "stage": 0,
+        "stateIndex": 102,
+        "state": {
+          "node": 2,
+          "capacities": [
+            0,
+            0,
+            1,
+            2,
+            0,
+            0
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 3,
+          "label": "b-t"
+        },
+        "value": 1.8984666191335937
+      }
+    ],
+    "initialPolicy": [
+      {
+        "stage": 0,
+        "stateIndex": 1615,
+        "state": {
+          "node": 0,
+          "capacities": [
+            2,
+            2,
+            2,
+            2,
+            1,
+            1
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 0,
+          "label": "s-a"
+        },
+        "value": 2.9100492952000008
+      },
+      {
+        "stage": 1,
+        "stateIndex": 1076,
+        "state": {
+          "node": 1,
+          "capacities": [
+            1,
+            2,
+            2,
+            2,
+            1,
+            1
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 1,
+          "label": "a-t"
+        },
+        "value": 2.9675063200000005
+      },
+      {
+        "stage": 2,
+        "stateIndex": 895,
+        "state": {
+          "node": 0,
+          "capacities": [
+            1,
+            1,
+            2,
+            2,
+            1,
+            1
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 0,
+          "label": "s-a"
+        },
+        "value": 2.0855412600000003
+      },
+      {
+        "stage": 3,
+        "stateIndex": 356,
+        "state": {
+          "node": 1,
+          "capacities": [
+            0,
+            1,
+            2,
+            2,
+            1,
+            1
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 1,
+          "label": "a-t"
+        },
+        "value": 2.1452080000000002
+      },
+      {
+        "stage": 4,
+        "stateIndex": 175,
+        "state": {
+          "node": 0,
+          "capacities": [
+            0,
+            0,
+            2,
+            2,
+            1,
+            1
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 2,
+          "label": "s-b"
+        },
+        "value": 1.269749
+      },
+      {
+        "stage": 5,
+        "stateIndex": 117,
+        "state": {
+          "node": 2,
+          "capacities": [
+            0,
+            0,
+            1,
+            2,
+            1,
+            1
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 3,
+          "label": "b-t"
+        },
+        "value": 1.54402
+      },
+      {
+        "stage": 6,
+        "stateIndex": 95,
+        "state": {
+          "node": 0,
+          "capacities": [
+            0,
+            0,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 2,
+          "label": "s-b"
+        },
+        "value": 0.586025
+      },
+      {
+        "stage": 7,
+        "stateIndex": 37,
+        "state": {
+          "node": 2,
+          "capacities": [
+            0,
+            0,
+            0,
+            1,
+            1,
+            1
+          ]
+        },
+        "action": {
+          "kind": "edge",
+          "edgeIndex": 3,
+          "label": "b-t"
+        },
+        "value": 0.9385
+      }
+    ],
+    "stageHistory": [
+      {
+        "stage": 8,
+        "maxV": 0,
+        "minV": 0
+      },
+      {
+        "stage": 7,
+        "maxV": 0.9385,
+        "minV": -0.01
+      },
+      {
+        "stage": 6,
+        "maxV": 0.9759249999999999,
+        "minV": -0.02
+      },
+      {
+        "stage": 5,
+        "maxV": 1.64431625,
+        "minV": -0.03
+      },
+      {
+        "stage": 4,
+        "maxV": 1.8716118124999999,
+        "minV": -0.04
+      },
+      {
+        "stage": 3,
+        "maxV": 2.4077033906249996,
+        "minV": -0.05
+      },
+      {
+        "stage": 2,
+        "maxV": 2.7276392095312496,
+        "minV": -0.060000000000000005
+      },
+      {
+        "stage": 1,
+        "maxV": 3.1468905564765626,
+        "minV": -0.07
+      },
+      {
+        "stage": 0,
+        "maxV": 3.4926337962238283,
+        "minV": -0.08
+      }
+    ],
+    "simulation": {
+      "seed": 7,
+      "delivered": 3,
+      "totalReward": 2.89,
+      "finalState": {
+        "node": 0,
+        "capacities": [
+          0,
+          0,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "steps": [
+        {
+          "stage": 0,
+          "nodeBefore": 0,
+          "action": {
+            "kind": "edge",
+            "edgeIndex": 0,
+            "label": "s-a"
+          },
+          "success": true,
+          "nodeAfter": 1,
+          "reward": -0.01,
+          "deliveredSoFar": 0,
+          "capacitiesAfter": [
+            1,
+            2,
+            2,
+            2,
+            1,
+            1
+          ]
+        },
+        {
+          "stage": 1,
+          "nodeBefore": 1,
+          "action": {
+            "kind": "edge",
+            "edgeIndex": 1,
+            "label": "a-t"
+          },
+          "success": true,
+          "nodeAfter": 0,
+          "reward": 0.99,
+          "deliveredSoFar": 1,
+          "capacitiesAfter": [
+            1,
+            1,
+            2,
+            2,
+            1,
+            1
+          ]
+        },
+        {
+          "stage": 2,
+          "nodeBefore": 0,
+          "action": {
+            "kind": "edge",
+            "edgeIndex": 0,
+            "label": "s-a"
+          },
+          "success": false,
+          "nodeAfter": 0,
+          "reward": -0.04,
+          "deliveredSoFar": 1,
+          "capacitiesAfter": [
+            1,
+            1,
+            2,
+            2,
+            1,
+            1
+          ]
+        },
+        {
+          "stage": 3,
+          "nodeBefore": 0,
+          "action": {
+            "kind": "edge",
+            "edgeIndex": 0,
+            "label": "s-a"
+          },
+          "success": true,
+          "nodeAfter": 1,
+          "reward": -0.01,
+          "deliveredSoFar": 1,
+          "capacitiesAfter": [
+            0,
+            1,
+            2,
+            2,
+            1,
+            1
+          ]
+        },
+        {
+          "stage": 4,
+          "nodeBefore": 1,
+          "action": {
+            "kind": "edge",
+            "edgeIndex": 1,
+            "label": "a-t"
+          },
+          "success": true,
+          "nodeAfter": 0,
+          "reward": 0.99,
+          "deliveredSoFar": 2,
+          "capacitiesAfter": [
+            0,
+            0,
+            2,
+            2,
+            1,
+            1
+          ]
+        },
+        {
+          "stage": 5,
+          "nodeBefore": 0,
+          "action": {
+            "kind": "edge",
+            "edgeIndex": 2,
+            "label": "s-b"
+          },
+          "success": true,
+          "nodeAfter": 2,
+          "reward": -0.01,
+          "deliveredSoFar": 2,
+          "capacitiesAfter": [
+            0,
+            0,
+            1,
+            2,
+            1,
+            1
+          ]
+        },
+        {
+          "stage": 6,
+          "nodeBefore": 2,
+          "action": {
+            "kind": "edge",
+            "edgeIndex": 3,
+            "label": "b-t"
+          },
+          "success": true,
+          "nodeAfter": 0,
+          "reward": 0.99,
+          "deliveredSoFar": 3,
+          "capacitiesAfter": [
+            0,
+            0,
+            1,
+            1,
+            1,
+            1
+          ]
+        },
+        {
+          "stage": 7,
+          "nodeBefore": 0,
+          "action": {
+            "kind": "wait",
+            "label": "wait"
+          },
+          "success": false,
+          "nodeAfter": 0,
+          "reward": -0.01,
+          "deliveredSoFar": 3,
+          "capacitiesAfter": [
+            0,
+            0,
+            1,
+            1,
+            1,
+            1
+          ]
+        }
+      ]
+    }
+  }
+}

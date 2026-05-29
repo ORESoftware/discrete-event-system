@@ -1,0 +1,604 @@
+{
+  "schema": "des/shared-traffic-source-sink/v1",
+  "model": "smart-traffic-flow",
+  "params": {
+    "durationSec": 180,
+    "dtSec": 0.1,
+    "seed": 19,
+    "actorShuffleSeed": 2026,
+    "maxCars": 180,
+    "smartCarPoolSize": 260,
+    "spawnRateMultiplier": 0.35,
+    "carLengthM": 4.8,
+    "carWidthM": 1.8,
+    "laneWidthM": 3.7,
+    "minGapM": 2.5,
+    "maxAccelMps2": 2.2,
+    "maxDecelMps2": 4,
+    "maxJerkMps3": 6,
+    "reactionTimeSec": 0.8,
+    "timeHeadwaySec": 1.1,
+    "gridCellSizeM": 0.3048,
+    "accidentRiskScale": 0,
+    "accidentProbability": 0,
+    "distancePreferenceSpread": 0,
+    "startPreferenceSpread": 0
+  },
+  "network": {
+    "nodes": [
+      {
+        "id": "W",
+        "kind": "source",
+        "x": 0,
+        "y": 1
+      },
+      {
+        "id": "S0",
+        "kind": "source",
+        "x": 1,
+        "y": 2
+      },
+      {
+        "id": "N2",
+        "kind": "source",
+        "x": 3,
+        "y": 0
+      },
+      {
+        "id": "I0",
+        "kind": "intersection",
+        "x": 1,
+        "y": 1
+      },
+      {
+        "id": "I1",
+        "kind": "intersection",
+        "x": 2,
+        "y": 1
+      },
+      {
+        "id": "I2",
+        "kind": "intersection",
+        "x": 3,
+        "y": 1
+      },
+      {
+        "id": "I3",
+        "kind": "intersection",
+        "x": 4,
+        "y": 1
+      },
+      {
+        "id": "I4",
+        "kind": "intersection",
+        "x": 5,
+        "y": 1
+      },
+      {
+        "id": "E",
+        "kind": "sink",
+        "x": 6,
+        "y": 1
+      },
+      {
+        "id": "N1",
+        "kind": "sink",
+        "x": 2,
+        "y": 0
+      },
+      {
+        "id": "S4",
+        "kind": "sink",
+        "x": 5,
+        "y": 2
+      }
+    ],
+    "lanes": [
+      {
+        "id": "W-I0",
+        "from": "W",
+        "to": "I0",
+        "lengthM": 90,
+        "speedLimitMps": 13.5
+      },
+      {
+        "id": "S0-I0",
+        "from": "S0",
+        "to": "I0",
+        "lengthM": 85,
+        "speedLimitMps": 13.5
+      },
+      {
+        "id": "I0-I1",
+        "from": "I0",
+        "to": "I1",
+        "lengthM": 120,
+        "speedLimitMps": 13.5
+      },
+      {
+        "id": "I1-I2",
+        "from": "I1",
+        "to": "I2",
+        "lengthM": 120,
+        "speedLimitMps": 13.5
+      },
+      {
+        "id": "N2-I2",
+        "from": "N2",
+        "to": "I2",
+        "lengthM": 90,
+        "speedLimitMps": 13.5
+      },
+      {
+        "id": "I2-I3",
+        "from": "I2",
+        "to": "I3",
+        "lengthM": 120,
+        "speedLimitMps": 13.5
+      },
+      {
+        "id": "I3-I4",
+        "from": "I3",
+        "to": "I4",
+        "lengthM": 120,
+        "speedLimitMps": 13.5
+      },
+      {
+        "id": "I4-E",
+        "from": "I4",
+        "to": "E",
+        "lengthM": 100,
+        "speedLimitMps": 13.5
+      },
+      {
+        "id": "I1-N1",
+        "from": "I1",
+        "to": "N1",
+        "lengthM": 80,
+        "speedLimitMps": 13.5
+      },
+      {
+        "id": "I4-S4",
+        "from": "I4",
+        "to": "S4",
+        "lengthM": 85,
+        "speedLimitMps": 13.5
+      }
+    ],
+    "signals": [
+      {
+        "nodeId": "I0",
+        "phases": [
+          {
+            "name": "main",
+            "greenLanes": [
+              "W-I0"
+            ],
+            "durationSec": 28
+          },
+          {
+            "name": "side",
+            "greenLanes": [
+              "S0-I0"
+            ],
+            "durationSec": 16
+          }
+        ]
+      },
+      {
+        "nodeId": "I1",
+        "phases": [
+          {
+            "name": "main",
+            "greenLanes": [
+              "I0-I1"
+            ],
+            "durationSec": 30
+          }
+        ]
+      },
+      {
+        "nodeId": "I2",
+        "phases": [
+          {
+            "name": "main",
+            "greenLanes": [
+              "I1-I2"
+            ],
+            "durationSec": 26
+          },
+          {
+            "name": "side",
+            "greenLanes": [
+              "N2-I2"
+            ],
+            "durationSec": 18
+          }
+        ],
+        "offsetSec": 5
+      },
+      {
+        "nodeId": "I3",
+        "phases": [
+          {
+            "name": "main",
+            "greenLanes": [
+              "I2-I3"
+            ],
+            "durationSec": 30
+          }
+        ]
+      },
+      {
+        "nodeId": "I4",
+        "phases": [
+          {
+            "name": "main",
+            "greenLanes": [
+              "I3-I4"
+            ],
+            "durationSec": 26
+          }
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "id": "west",
+        "nodeId": "W",
+        "ratePerMin": 18,
+        "destinationSinkIds": [
+          "east",
+          "north1",
+          "south4"
+        ]
+      },
+      {
+        "id": "south0",
+        "nodeId": "S0",
+        "ratePerMin": 7,
+        "destinationSinkIds": [
+          "east",
+          "north1",
+          "south4"
+        ]
+      },
+      {
+        "id": "north2",
+        "nodeId": "N2",
+        "ratePerMin": 8,
+        "destinationSinkIds": [
+          "east",
+          "south4"
+        ]
+      }
+    ],
+    "sinks": [
+      {
+        "id": "east",
+        "nodeId": "E"
+      },
+      {
+        "id": "north1",
+        "nodeId": "N1"
+      },
+      {
+        "id": "south4",
+        "nodeId": "S4"
+      }
+    ]
+  },
+  "trips": [
+    {
+      "id": "trip-1",
+      "departSec": 9.5,
+      "sourceId": "west",
+      "destinationSinkId": "south4",
+      "route": [
+        "W-I0",
+        "I0-I1",
+        "I1-I2",
+        "I2-I3",
+        "I3-I4",
+        "I4-S4"
+      ],
+      "sourceNodeId": "W",
+      "sinkNodeId": "S4"
+    },
+    {
+      "id": "trip-2",
+      "departSec": 19,
+      "sourceId": "west",
+      "destinationSinkId": "north1",
+      "route": [
+        "W-I0",
+        "I0-I1",
+        "I1-N1"
+      ],
+      "sourceNodeId": "W",
+      "sinkNodeId": "N1"
+    },
+    {
+      "id": "trip-3",
+      "departSec": 21.4,
+      "sourceId": "north2",
+      "destinationSinkId": "south4",
+      "route": [
+        "N2-I2",
+        "I2-I3",
+        "I3-I4",
+        "I4-S4"
+      ],
+      "sourceNodeId": "N2",
+      "sinkNodeId": "S4"
+    },
+    {
+      "id": "trip-4",
+      "departSec": 24.4,
+      "sourceId": "south0",
+      "destinationSinkId": "north1",
+      "route": [
+        "S0-I0",
+        "I0-I1",
+        "I1-N1"
+      ],
+      "sourceNodeId": "S0",
+      "sinkNodeId": "N1"
+    },
+    {
+      "id": "trip-5",
+      "departSec": 28.5,
+      "sourceId": "west",
+      "destinationSinkId": "east",
+      "route": [
+        "W-I0",
+        "I0-I1",
+        "I1-I2",
+        "I2-I3",
+        "I3-I4",
+        "I4-E"
+      ],
+      "sourceNodeId": "W",
+      "sinkNodeId": "E"
+    },
+    {
+      "id": "trip-6",
+      "departSec": 38,
+      "sourceId": "west",
+      "destinationSinkId": "north1",
+      "route": [
+        "W-I0",
+        "I0-I1",
+        "I1-N1"
+      ],
+      "sourceNodeId": "W",
+      "sinkNodeId": "N1"
+    },
+    {
+      "id": "trip-7",
+      "departSec": 42.8,
+      "sourceId": "north2",
+      "destinationSinkId": "south4",
+      "route": [
+        "N2-I2",
+        "I2-I3",
+        "I3-I4",
+        "I4-S4"
+      ],
+      "sourceNodeId": "N2",
+      "sinkNodeId": "S4"
+    },
+    {
+      "id": "trip-8",
+      "departSec": 47.6,
+      "sourceId": "west",
+      "destinationSinkId": "south4",
+      "route": [
+        "W-I0",
+        "I0-I1",
+        "I1-I2",
+        "I2-I3",
+        "I3-I4",
+        "I4-S4"
+      ],
+      "sourceNodeId": "W",
+      "sinkNodeId": "S4"
+    },
+    {
+      "id": "trip-9",
+      "departSec": 48.9,
+      "sourceId": "south0",
+      "destinationSinkId": "north1",
+      "route": [
+        "S0-I0",
+        "I0-I1",
+        "I1-N1"
+      ],
+      "sourceNodeId": "S0",
+      "sinkNodeId": "N1"
+    },
+    {
+      "id": "trip-10",
+      "departSec": 57.1,
+      "sourceId": "west",
+      "destinationSinkId": "north1",
+      "route": [
+        "W-I0",
+        "I0-I1",
+        "I1-N1"
+      ],
+      "sourceNodeId": "W",
+      "sinkNodeId": "N1"
+    },
+    {
+      "id": "trip-11",
+      "departSec": 64.2,
+      "sourceId": "north2",
+      "destinationSinkId": "south4",
+      "route": [
+        "N2-I2",
+        "I2-I3",
+        "I3-I4",
+        "I4-S4"
+      ],
+      "sourceNodeId": "N2",
+      "sinkNodeId": "S4"
+    },
+    {
+      "id": "trip-12",
+      "departSec": 66.6,
+      "sourceId": "west",
+      "destinationSinkId": "south4",
+      "route": [
+        "W-I0",
+        "I0-I1",
+        "I1-I2",
+        "I2-I3",
+        "I3-I4",
+        "I4-S4"
+      ],
+      "sourceNodeId": "W",
+      "sinkNodeId": "S4"
+    },
+    {
+      "id": "trip-13",
+      "departSec": 73.4,
+      "sourceId": "south0",
+      "destinationSinkId": "east",
+      "route": [
+        "S0-I0",
+        "I0-I1",
+        "I1-I2",
+        "I2-I3",
+        "I3-I4",
+        "I4-E"
+      ],
+      "sourceNodeId": "S0",
+      "sinkNodeId": "E"
+    },
+    {
+      "id": "trip-14",
+      "departSec": 76.1,
+      "sourceId": "west",
+      "destinationSinkId": "south4",
+      "route": [
+        "W-I0",
+        "I0-I1",
+        "I1-I2",
+        "I2-I3",
+        "I3-I4",
+        "I4-S4"
+      ],
+      "sourceNodeId": "W",
+      "sinkNodeId": "S4"
+    },
+    {
+      "id": "trip-15",
+      "departSec": 85.7,
+      "sourceId": "west",
+      "destinationSinkId": "east",
+      "route": [
+        "W-I0",
+        "I0-I1",
+        "I1-I2",
+        "I2-I3",
+        "I3-I4",
+        "I4-E"
+      ],
+      "sourceNodeId": "W",
+      "sinkNodeId": "E"
+    },
+    {
+      "id": "trip-16",
+      "departSec": 85.7,
+      "sourceId": "north2",
+      "destinationSinkId": "south4",
+      "route": [
+        "N2-I2",
+        "I2-I3",
+        "I3-I4",
+        "I4-S4"
+      ],
+      "sourceNodeId": "N2",
+      "sinkNodeId": "S4"
+    },
+    {
+      "id": "trip-17",
+      "departSec": 95.2,
+      "sourceId": "west",
+      "destinationSinkId": "north1",
+      "route": [
+        "W-I0",
+        "I0-I1",
+        "I1-N1"
+      ],
+      "sourceNodeId": "W",
+      "sinkNodeId": "N1"
+    },
+    {
+      "id": "trip-18",
+      "departSec": 97.9,
+      "sourceId": "south0",
+      "destinationSinkId": "south4",
+      "route": [
+        "S0-I0",
+        "I0-I1",
+        "I1-I2",
+        "I2-I3",
+        "I3-I4",
+        "I4-S4"
+      ],
+      "sourceNodeId": "S0",
+      "sinkNodeId": "S4"
+    },
+    {
+      "id": "trip-19",
+      "departSec": 104.7,
+      "sourceId": "west",
+      "destinationSinkId": "east",
+      "route": [
+        "W-I0",
+        "I0-I1",
+        "I1-I2",
+        "I2-I3",
+        "I3-I4",
+        "I4-E"
+      ],
+      "sourceNodeId": "W",
+      "sinkNodeId": "E"
+    },
+    {
+      "id": "trip-20",
+      "departSec": 107.1,
+      "sourceId": "north2",
+      "destinationSinkId": "east",
+      "route": [
+        "N2-I2",
+        "I2-I3",
+        "I3-I4",
+        "I4-E"
+      ],
+      "sourceNodeId": "N2",
+      "sinkNodeId": "E"
+    },
+    {
+      "id": "trip-21",
+      "departSec": 114.2,
+      "sourceId": "west",
+      "destinationSinkId": "north1",
+      "route": [
+        "W-I0",
+        "I0-I1",
+        "I1-N1"
+      ],
+      "sourceNodeId": "W",
+      "sinkNodeId": "N1"
+    }
+  ],
+  "sourceInitialConditions": {
+    "sourceCount": 3,
+    "sinkCount": 3,
+    "scheduledTrips": 21,
+    "demandEndSec": 120
+  }
+}

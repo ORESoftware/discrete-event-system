@@ -1,0 +1,162 @@
+{
+  "modelId": "logistics-routing-heuristics",
+  "params": {
+    "vehicleCapacity": 7
+  },
+  "runtimeMs": 1,
+  "summaryText": "LOGISTICS ROUTING HEURISTICS\n----------------------------------------\n  Category:       Logistics/transportation (optimal routing, heuristics, scheduling)\n  Best plan:      clarke-wright-savings\n  Objective:      -28.964878\n  Metrics:        routeDistance=28.56, vehicles=2.0000, capacityViolation=0.00e+0\n  Candidates:     4\n  Stations:       logistics-routing-heuristics-scenario-source -> logistics-routing-heuristics-candidate-generator -> logistics-routing-heuristics-plan-evaluator -> logistics-routing-heuristics-result-sink\n  Movables:       DomainScenarioToken, DomainPlanToken, DomainEvaluationToken",
+  "result": {
+    "modelId": "logistics-routing-heuristics",
+    "category": "Logistics/transportation (optimal routing, heuristics, scheduling)",
+    "best": {
+      "candidateId": "clarke-wright-savings",
+      "plan": {
+        "heuristic": "savings",
+        "routes": [
+          [
+            1,
+            2,
+            7,
+            6
+          ],
+          [
+            3,
+            4,
+            5
+          ]
+        ]
+      },
+      "objective": -28.964877852092158,
+      "feasible": true,
+      "metrics": {
+        "routeDistance": 28.56487785209216,
+        "vehicles": 2,
+        "capacityViolation": 0
+      }
+    },
+    "candidates": [
+      {
+        "candidateId": "clarke-wright-savings",
+        "plan": {
+          "heuristic": "savings",
+          "routes": [
+            [
+              1,
+              2,
+              7,
+              6
+            ],
+            [
+              3,
+              4,
+              5
+            ]
+          ]
+        },
+        "objective": -28.964877852092158,
+        "feasible": true,
+        "metrics": {
+          "routeDistance": 28.56487785209216,
+          "vehicles": 2,
+          "capacityViolation": 0
+        }
+      },
+      {
+        "candidateId": "balanced-savings",
+        "plan": {
+          "heuristic": "balanced-savings",
+          "routes": [
+            [
+              1,
+              2,
+              7,
+              6
+            ],
+            [
+              3,
+              4,
+              5
+            ]
+          ]
+        },
+        "objective": -28.964877852092158,
+        "feasible": true,
+        "metrics": {
+          "routeDistance": 28.56487785209216,
+          "vehicles": 2,
+          "capacityViolation": 0
+        }
+      },
+      {
+        "candidateId": "polar-sweep",
+        "plan": {
+          "heuristic": "sweep",
+          "routes": [
+            [
+              5,
+              6,
+              7,
+              1
+            ],
+            [
+              2,
+              3,
+              4
+            ]
+          ]
+        },
+        "objective": -32.03477125629141,
+        "feasible": true,
+        "metrics": {
+          "routeDistance": 31.63477125629141,
+          "vehicles": 2,
+          "capacityViolation": 0
+        }
+      },
+      {
+        "candidateId": "nearest-neighbor",
+        "plan": {
+          "heuristic": "nearest-neighbor",
+          "routes": [
+            [
+              1,
+              7,
+              2,
+              3
+            ],
+            [
+              5,
+              4,
+              6
+            ]
+          ]
+        },
+        "objective": -34.295189115505636,
+        "feasible": true,
+        "metrics": {
+          "routeDistance": 33.89518911550564,
+          "vehicles": 2,
+          "capacityViolation": 0
+        }
+      }
+    ],
+    "topology": {
+      "stations": [
+        "logistics-routing-heuristics-scenario-source",
+        "logistics-routing-heuristics-candidate-generator",
+        "logistics-routing-heuristics-plan-evaluator",
+        "logistics-routing-heuristics-result-sink"
+      ],
+      "movables": [
+        "DomainScenarioToken",
+        "DomainPlanToken",
+        "DomainEvaluationToken"
+      ],
+      "edges": [
+        "logistics-routing-heuristics-scenario-source:scenario -> logistics-routing-heuristics-candidate-generator:scenario",
+        "logistics-routing-heuristics-candidate-generator:candidate-plan -> logistics-routing-heuristics-plan-evaluator:candidate-plan",
+        "logistics-routing-heuristics-plan-evaluator:evaluation -> logistics-routing-heuristics-result-sink:evaluation"
+      ]
+    }
+  }
+}

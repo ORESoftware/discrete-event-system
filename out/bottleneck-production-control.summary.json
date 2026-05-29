@@ -1,0 +1,118 @@
+{
+  "modelId": "bottleneck-production-control",
+  "params": {
+    "horizon": 18,
+    "dailyDemand": 8
+  },
+  "runtimeMs": 0,
+  "summaryText": "BOTTLENECK PRODUCTION CONTROL\n----------------------------------------\n  Category:       Manufacturing (production planning and control, novel algorithms)\n  Best plan:      lean-kanban\n  Objective:      2160.000000\n  Metrics:        shipped=144.00, service=1.0000, backlog=0.00e+0, avgWip=0.00e+0\n  Candidates:     4\n  Stations:       bottleneck-production-control-scenario-source -> bottleneck-production-control-candidate-generator -> bottleneck-production-control-plan-evaluator -> bottleneck-production-control-result-sink\n  Movables:       DomainScenarioToken, DomainPlanToken, DomainEvaluationToken",
+  "result": {
+    "modelId": "bottleneck-production-control",
+    "category": "Manufacturing (production planning and control, novel algorithms)",
+    "best": {
+      "candidateId": "lean-kanban",
+      "plan": {
+        "releaseLot": 8,
+        "wipCap": 20,
+        "expediteThreshold": 14
+      },
+      "objective": 2160,
+      "feasible": true,
+      "metrics": {
+        "shipped": 144,
+        "service": 1,
+        "backlog": 0,
+        "avgWip": 0,
+        "expedites": 0
+      }
+    },
+    "candidates": [
+      {
+        "candidateId": "lean-kanban",
+        "plan": {
+          "releaseLot": 8,
+          "wipCap": 20,
+          "expediteThreshold": 14
+        },
+        "objective": 2160,
+        "feasible": true,
+        "metrics": {
+          "shipped": 144,
+          "service": 1,
+          "backlog": 0,
+          "avgWip": 0,
+          "expedites": 0
+        }
+      },
+      {
+        "candidateId": "bottleneck-buffer-rope",
+        "plan": {
+          "releaseLot": 10,
+          "wipCap": 28,
+          "expediteThreshold": 18
+        },
+        "objective": 2155.25,
+        "feasible": true,
+        "metrics": {
+          "shipped": 144,
+          "service": 1,
+          "backlog": 0,
+          "avgWip": 19,
+          "expedites": 0
+        }
+      },
+      {
+        "candidateId": "adaptive-expedite-control",
+        "plan": {
+          "releaseLot": 12,
+          "wipCap": 32,
+          "expediteThreshold": 10
+        },
+        "objective": 2152.9444444444443,
+        "feasible": true,
+        "metrics": {
+          "shipped": 144,
+          "service": 1,
+          "backlog": 0,
+          "avgWip": 28.22222222222222,
+          "expedites": 0
+        }
+      },
+      {
+        "candidateId": "push-large-lots",
+        "plan": {
+          "releaseLot": 16,
+          "wipCap": 50,
+          "expediteThreshold": 30
+        },
+        "objective": 2148.7638888888887,
+        "feasible": true,
+        "metrics": {
+          "shipped": 144,
+          "service": 1,
+          "backlog": 0,
+          "avgWip": 44.94444444444444,
+          "expedites": 0
+        }
+      }
+    ],
+    "topology": {
+      "stations": [
+        "bottleneck-production-control-scenario-source",
+        "bottleneck-production-control-candidate-generator",
+        "bottleneck-production-control-plan-evaluator",
+        "bottleneck-production-control-result-sink"
+      ],
+      "movables": [
+        "DomainScenarioToken",
+        "DomainPlanToken",
+        "DomainEvaluationToken"
+      ],
+      "edges": [
+        "bottleneck-production-control-scenario-source:scenario -> bottleneck-production-control-candidate-generator:scenario",
+        "bottleneck-production-control-candidate-generator:candidate-plan -> bottleneck-production-control-plan-evaluator:candidate-plan",
+        "bottleneck-production-control-plan-evaluator:evaluation -> bottleneck-production-control-result-sink:evaluation"
+      ]
+    }
+  }
+}

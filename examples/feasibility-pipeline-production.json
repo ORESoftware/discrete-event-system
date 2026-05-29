@@ -1,0 +1,47 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "feasibility-pipeline",
+  "description": "Check and locally improve a small continuous production-planning candidate.",
+  "parameters": {
+    "problem": {
+      "sense": "min",
+      "variables": [
+        {"name": "regular", "type": "continuous", "lb": 0, "ub": 100, "step": 5},
+        {"name": "overtime", "type": "continuous", "lb": 0, "ub": 50, "step": 5}
+      ],
+      "objective": {
+        "coefficients": {"regular": 4, "overtime": 7}
+      },
+      "constraints": [
+        {"name": "demand", "coefficients": {"regular": 1, "overtime": 1}, "sense": ">=", "rhs": 80},
+        {"name": "regular-cap", "coefficients": {"regular": 1}, "sense": "<=", "rhs": 60}
+      ],
+      "tolerance": 1e-8
+    },
+    "candidate": {
+      "id": "planner-candidate",
+      "values": {"regular": 50, "overtime": 40}
+    },
+    "improvement": {
+      "enabled": true,
+      "maxIterations": 60,
+      "seed": 9,
+      "continuousStep": 5,
+      "penalty": 1000000,
+      "allowRepair": true
+    },
+    "timeLimitMs": 180000
+  },
+  "runtime": {
+    "verbose": true,
+    "outputs": {
+      "csv": "out/feasibility-pipeline-production.csv",
+      "html": "out/feasibility-pipeline-production.html",
+      "log": "out/feasibility-pipeline-production.jsonl",
+      "summary": "out/feasibility-pipeline-production.summary.json"
+    }
+  },
+  "metadata": {
+    "tags": ["feasibility", "continuous", "production"]
+  }
+}

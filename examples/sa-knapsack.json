@@ -1,0 +1,24 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "simulated-annealing",
+  "description": "SA on a small 0/1 knapsack — compare with the milp-bnb adapter for the same instance.",
+  "parameters": {
+    "problem": "knapsack",
+    "knapsack": {
+      "values":   [60, 100, 120, 80, 200, 140],
+      "weights":  [10,  20,  30, 25,  50,  40],
+      "capacity": 80
+    },
+    "cooling": {"kind": "geometric", "T0": 50, "alpha": 0.999},
+    "options": {"maxIterations": 5000, "seed": 7}
+  },
+  "runtime": {
+    "outputs": {
+      "csv": "out/sa/knapsack-trace.csv"
+    },
+    "verbose": true
+  },
+  "metadata": {
+    "tags": ["simulated-annealing", "knapsack"]
+  }
+}

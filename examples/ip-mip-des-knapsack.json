@@ -1,0 +1,24 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "ip-mip-des",
+  "description": "4-item knapsack solved by the explicit IP/MIP DES station graph.",
+  "parameters": {
+    "knapsack": {
+      "values": [10, 40, 30, 50],
+      "weights": [5, 4, 6, 3],
+      "capacity": 10
+    },
+    "options": {
+      "lpAlgorithm": "auto",
+      "nodeSelection": "dfs",
+      "maxCutRounds": 1,
+      "maxNodes": 200
+    }
+  },
+  "runtime": {
+    "outputs": {
+      "csv": "out/ip-mip-des-trace.csv",
+      "summary": "out/ip-mip-des-summary.json"
+    }
+  }
+}

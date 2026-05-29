@@ -1,0 +1,20 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "feedback-linearization",
+  "description": "Feedback linearization (computed-torque control, Khalil 2002) on a single-link pendulum. The controller exactly cancels the nonlinear gravity and damping terms via tau = (1/b)(v - a(theta, theta_dot)) and applies a critically damped PD on the resulting linear system theta_ddot = v.",
+  "parameters": {
+    "m": 1,
+    "l": 1,
+    "g": 9.81,
+    "c": 0.1,
+    "theta0": 3.141592653589793,
+    "thetaDot0": 0,
+    "kp": 25,
+    "kv": 10,
+    "uBound": 100,
+    "dt": 0.01,
+    "numSteps": 1000
+  },
+  "runtime": {"seed": 1},
+  "metadata": {"tags": ["nonlinear-control", "feedback-linearization", "computed-torque", "pendulum"]}
+}

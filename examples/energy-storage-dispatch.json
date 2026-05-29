@@ -1,0 +1,8 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "energy-storage-dispatch",
+  "description": "Power-system energy storage dispatch policies for renewable integration, reliability reserve, and price arbitrage.",
+  "parameters": {"batteryCapacity": 50},
+  "runtime": {"animate": false, "outputs": {"csv": "out/energy-storage-dispatch.csv", "summary": "out/energy-storage-dispatch.summary.json"}},
+  "metadata": {"tags": ["energy", "power-systems", "storage", "optimization"]}
+}

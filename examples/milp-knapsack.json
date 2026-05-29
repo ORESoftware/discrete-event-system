@@ -1,0 +1,26 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "milp-bnb",
+  "description": "Textbook 4-item 0/1 knapsack solved exactly by branch-and-bound (LP relaxation + IncrementalLP warm-start at each node).",
+  "parameters": {
+    "knapsack": {
+      "values":   [10, 40, 30, 50],
+      "weights":  [ 5,  4,  6,  3],
+      "capacity": 10
+    },
+    "options": {
+      "maxNodes": 1000,
+      "branchRule": "most-fractional"
+    }
+  },
+  "runtime": {
+    "outputs": {
+      "csv": "out/milp-bnb/knapsack-trace.csv"
+    },
+    "verbose": true
+  },
+  "metadata": {
+    "tags": ["milp", "knapsack", "branch-and-bound"],
+    "notes": "Optimum is 90 with x = (0, 1, 0, 1)."
+  }
+}

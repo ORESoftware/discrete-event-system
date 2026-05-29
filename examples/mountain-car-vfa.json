@@ -1,0 +1,17 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "mountain-car-vfa",
+  "description": "Mountain Car solved by linear function approximation with 8×(8×8) tile coding.",
+  "parameters": {
+    "numEpisodes": 500,
+    "maxStepsPerEpisode": 1000,
+    "alpha": 0.5,
+    "gamma": 1.0,
+    "epsilon": 0,
+    "numTilings": 8,
+    "numTilesPerDim": 8,
+    "seed": 1
+  },
+  "runtime": {"seed": 1},
+  "metadata": {"tags": ["adp", "linear-vfa", "mountain-car"]}
+}

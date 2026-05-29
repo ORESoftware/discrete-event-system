@@ -1,0 +1,287 @@
+{
+  "modelId": "internal-solver-network",
+  "params": {
+    "kind": "knapsack-dp",
+    "timeLimitMs": 180000,
+    "checkEveryTicks": 1,
+    "knapsack": {
+      "values": [
+        20,
+        30,
+        35,
+        12,
+        3
+      ],
+      "weights": [
+        2,
+        5,
+        7,
+        3,
+        1
+      ],
+      "capacity": 10,
+      "seed": 1,
+      "maxIterations": 5000,
+      "stallLimit": 0,
+      "penalty": 1000000
+    }
+  },
+  "runtimeMs": 1,
+  "summaryText": "INTERNAL SOLVER NETWORK\n------------------------\n  kind=knapsack-dp status=complete\n  iterations=5 ticks=5 reason=done\n  objective=-62.0000 feasible=true done=true\n  wall-clock=1.0000 / 180000.0000 ms checks=5\n  network stationary=4 moving=2 edges=3\n  validation: 2/2 checks passed\n  best: value=62.0000 weight=10.0000/10.0000",
+  "result": {
+    "kind": "knapsack-dp",
+    "status": "complete",
+    "runSummary": {
+      "ticks": 5,
+      "reason": "done",
+      "validation": [
+        {
+          "name": "knapsack-dp-capacity-feasible",
+          "passed": true,
+          "observed": "10/10",
+          "expected": "selected weight <= capacity",
+          "group": "internal-solver-knapsack"
+        },
+        {
+          "name": "wall-clock-checker.budget-nonnegative",
+          "passed": true,
+          "observed": "180000",
+          "expected": "budgetMs >= 0",
+          "group": "wall-clock-checker"
+        }
+      ],
+      "validationOk": true
+    },
+    "best": {
+      "solverId": "knapsack-dp-solver",
+      "solverKind": "knapsack-dp",
+      "tick": 5,
+      "iteration": 5,
+      "objective": -62,
+      "bestState": {
+        "selected": [
+          1,
+          1,
+          0,
+          1,
+          0
+        ],
+        "value": 62,
+        "weight": 10,
+        "capacity": 10
+      },
+      "feasible": true,
+      "done": true,
+      "metadata": {
+        "itemsProcessed": 5,
+        "capacity": 10
+      }
+    },
+    "trace": [
+      {
+        "solverId": "knapsack-dp-solver",
+        "solverKind": "knapsack-dp",
+        "tick": 1,
+        "iteration": 1,
+        "objective": -20,
+        "bestState": {
+          "selected": [
+            1,
+            0,
+            0,
+            0,
+            0
+          ],
+          "value": 20,
+          "weight": 2,
+          "capacity": 10
+        },
+        "feasible": true,
+        "done": false,
+        "metadata": {
+          "itemsProcessed": 1,
+          "capacity": 10
+        }
+      },
+      {
+        "solverId": "knapsack-dp-solver",
+        "solverKind": "knapsack-dp",
+        "tick": 2,
+        "iteration": 2,
+        "objective": -50,
+        "bestState": {
+          "selected": [
+            1,
+            1,
+            0,
+            0,
+            0
+          ],
+          "value": 50,
+          "weight": 7,
+          "capacity": 10
+        },
+        "feasible": true,
+        "done": false,
+        "metadata": {
+          "itemsProcessed": 2,
+          "capacity": 10
+        }
+      },
+      {
+        "solverId": "knapsack-dp-solver",
+        "solverKind": "knapsack-dp",
+        "tick": 3,
+        "iteration": 3,
+        "objective": -55,
+        "bestState": {
+          "selected": [
+            1,
+            0,
+            1,
+            0,
+            0
+          ],
+          "value": 55,
+          "weight": 9,
+          "capacity": 10
+        },
+        "feasible": true,
+        "done": false,
+        "metadata": {
+          "itemsProcessed": 3,
+          "capacity": 10
+        }
+      },
+      {
+        "solverId": "knapsack-dp-solver",
+        "solverKind": "knapsack-dp",
+        "tick": 4,
+        "iteration": 4,
+        "objective": -62,
+        "bestState": {
+          "selected": [
+            1,
+            1,
+            0,
+            1,
+            0
+          ],
+          "value": 62,
+          "weight": 10,
+          "capacity": 10
+        },
+        "feasible": true,
+        "done": false,
+        "metadata": {
+          "itemsProcessed": 4,
+          "capacity": 10
+        }
+      },
+      {
+        "solverId": "knapsack-dp-solver",
+        "solverKind": "knapsack-dp",
+        "tick": 5,
+        "iteration": 5,
+        "objective": -62,
+        "bestState": {
+          "selected": [
+            1,
+            1,
+            0,
+            1,
+            0
+          ],
+          "value": 62,
+          "weight": 10,
+          "capacity": 10
+        },
+        "feasible": true,
+        "done": true,
+        "metadata": {
+          "itemsProcessed": 5,
+          "capacity": 10
+        }
+      }
+    ],
+    "stopSignals": [],
+    "wallClock": {
+      "budgetMs": 180000,
+      "elapsedMs": 1,
+      "checks": 5,
+      "expired": false
+    },
+    "network": {
+      "stationaryEntities": [
+        {
+          "id": "initial-source",
+          "kind": "knapsack-dp-initial-source",
+          "role": "source"
+        },
+        {
+          "id": "knapsack-dp-solver",
+          "kind": "knapsack-dp",
+          "role": "solver"
+        },
+        {
+          "id": "wall-clock-checker",
+          "kind": "wall-clock-checker",
+          "role": "checker"
+        },
+        {
+          "id": "solution-sink",
+          "kind": "solution-sink",
+          "role": "sink"
+        }
+      ],
+      "movingEntities": [
+        {
+          "id": "SolverSolutionToken",
+          "kind": "incumbent-solution",
+          "tokenType": "SolverSolutionToken"
+        },
+        {
+          "id": "StopSignalToken",
+          "kind": "stop-signal",
+          "tokenType": "StopSignalToken"
+        }
+      ],
+      "edges": [
+        {
+          "from": "initial-source",
+          "to": "knapsack-dp-solver",
+          "movingEntity": "initial-conditions",
+          "channel": "constructor"
+        },
+        {
+          "from": "knapsack-dp-solver",
+          "to": "solution-sink",
+          "movingEntity": "SolverSolutionToken",
+          "channel": "solution"
+        },
+        {
+          "from": "wall-clock-checker",
+          "to": "solution-sink",
+          "movingEntity": "StopSignalToken",
+          "channel": "stop"
+        }
+      ]
+    },
+    "validation": [
+      {
+        "name": "knapsack-dp-capacity-feasible",
+        "passed": true,
+        "observed": "10/10",
+        "expected": "selected weight <= capacity",
+        "group": "internal-solver-knapsack"
+      },
+      {
+        "name": "wall-clock-checker.budget-nonnegative",
+        "passed": true,
+        "observed": "180000",
+        "expected": "budgetMs >= 0",
+        "group": "wall-clock-checker"
+      }
+    ]
+  }
+}

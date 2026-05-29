@@ -1,0 +1,31 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "collaborative-inference",
+  "description": "Collaborative inference over 50 programming languages: 10,000 developers each rate/rank 4-5 languages they have tried.",
+  "parameters": {
+    "scenario": "programming-languages",
+    "respondentCount": 10000,
+    "minItemsPerRespondent": 4,
+    "maxItemsPerRespondent": 5,
+    "respondentsPerTick": 200,
+    "ratingWeight": 0.55,
+    "rankingWeight": 0.45,
+    "shrinkage": 12,
+    "credibilityWeighting": true,
+    "credibilityPasses": 2,
+    "minCredibleAge": 15,
+    "referenceExperienceYears": 15,
+    "highRatedScoreThreshold": 0.72,
+    "minHighRatedItems": 2,
+    "seed": 7,
+    "topK": 12
+  },
+  "runtime": {
+    "animate": true,
+    "outputs": {
+      "csv": "out/collaborative-inference-programming-languages.csv",
+      "html": "out/collaborative-inference-programming-languages.html",
+      "summary": "out/collaborative-inference-programming-languages.summary.json"
+    }
+  }
+}

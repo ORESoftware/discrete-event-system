@@ -1,0 +1,13 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "gauss-newton-curve-fit",
+  "description": "Fit y = a exp(bx) with Gauss-Newton state tokens.",
+  "parameters": {
+    "initial": [1, -0.2],
+    "maxIter": 20,
+    "tol": 1e-8
+  },
+  "runtime": {
+    "animate": false
+  }
+}

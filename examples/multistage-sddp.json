@@ -1,0 +1,37 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "multistage-sddp",
+  "description": "Four-stage stochastic inventory/storage model solved with SDDP",
+  "parameters": {
+    "problem": {
+      "horizon": 4,
+      "initialInventory": 4,
+      "capacity": 10,
+      "maxOrder": [5, 5, 5, 5],
+      "price": [9, 9, 10, 10],
+      "orderCost": [3, 3, 4, 4],
+      "holdCost": [0.25, 0.25, 0.35, 0.35],
+      "stockoutCost": [7, 7, 8, 8],
+      "salvageValue": 1.5,
+      "demands": [
+        [{"demand": 2, "prob": 0.45}, {"demand": 6, "prob": 0.55}],
+        [{"demand": 1, "prob": 0.35}, {"demand": 5, "prob": 0.65}],
+        [{"demand": 3, "prob": 0.5}, {"demand": 7, "prob": 0.5}],
+        [{"demand": 2, "prob": 0.6}, {"demand": 6, "prob": 0.4}]
+      ]
+    },
+    "options": {
+      "maxIter": 80,
+      "tol": 0.0001,
+      "seed": 3,
+      "evaluatePolicyEvery": 20,
+      "cutGridSize": 21
+    }
+  },
+  "runtime": {
+    "outputs": {
+      "csv": "out/multistage-sddp-trace.csv",
+      "summary": "out/multistage-sddp.summary.json"
+    }
+  }
+}

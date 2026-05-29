@@ -1,0 +1,17 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "blackjack-mc",
+  "description": "Sutton & Barto §5.1 Blackjack with first-visit Monte Carlo control over 200k episodes.",
+  "parameters": {
+    "numEpisodes": 200000,
+    "epsilon": 0.1,
+    "epsilonDecay": 1,
+    "epsilonMin": 0.05,
+    "firstVisit": true,
+    "gamma": 1.0,
+    "evalEpisodes": 5000,
+    "seed": 1
+  },
+  "runtime": {"seed": 1},
+  "metadata": {"tags": ["monte-carlo", "blackjack", "model-free-control"]}
+}

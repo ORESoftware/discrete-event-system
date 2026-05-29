@@ -1,0 +1,111 @@
+{
+  "nodes": [
+    {
+      "id": "web-client",
+      "kind": "host",
+      "forwardingRatePps": 6000,
+      "queueLimitPackets": 512
+    },
+    {
+      "id": "telemetry-client",
+      "kind": "host",
+      "forwardingRatePps": 6000,
+      "queueLimitPackets": 512
+    },
+    {
+      "id": "edge",
+      "kind": "switch",
+      "forwardingRatePps": 12000,
+      "queueLimitPackets": 1024
+    },
+    {
+      "id": "wan-router",
+      "kind": "router",
+      "forwardingRatePps": 9000,
+      "queueLimitPackets": 1024
+    },
+    {
+      "id": "api-server",
+      "kind": "host",
+      "forwardingRatePps": 9000,
+      "queueLimitPackets": 1024
+    }
+  ],
+  "links": [
+    {
+      "id": "web-edge",
+      "from": "web-client",
+      "to": "edge",
+      "bandwidthMbps": 100,
+      "latencyMs": 1,
+      "costPerMb": 0.001,
+      "queueLimitPackets": 256,
+      "bidirectional": true
+    },
+    {
+      "id": "telemetry-edge",
+      "from": "telemetry-client",
+      "to": "edge",
+      "bandwidthMbps": 100,
+      "latencyMs": 1,
+      "costPerMb": 0.001,
+      "queueLimitPackets": 256,
+      "bidirectional": true
+    },
+    {
+      "id": "edge-wan",
+      "from": "edge",
+      "to": "wan-router",
+      "bandwidthMbps": 5,
+      "latencyMs": 25,
+      "costPerMb": 0.01,
+      "queueLimitPackets": 96,
+      "bidirectional": true
+    },
+    {
+      "id": "wan-api",
+      "from": "wan-router",
+      "to": "api-server",
+      "bandwidthMbps": 100,
+      "latencyMs": 4,
+      "costPerMb": 0.002,
+      "queueLimitPackets": 256,
+      "bidirectional": true
+    }
+  ],
+  "flows": [
+    {
+      "id": "http-api",
+      "source": "web-client",
+      "destination": "api-server",
+      "protocol": "http",
+      "ratePps": 900,
+      "packetSizeBytes": 1100,
+      "maxPackets": 1800
+    },
+    {
+      "id": "udp-telemetry",
+      "source": "telemetry-client",
+      "destination": "api-server",
+      "protocol": "udp",
+      "ratePps": 700,
+      "packetSizeBytes": 900,
+      "maxPackets": 1400
+    },
+    {
+      "id": "tcp-bulk",
+      "source": "web-client",
+      "destination": "api-server",
+      "protocol": "tcp",
+      "ratePps": 350,
+      "packetSizeBytes": 1400,
+      "maxPackets": 700
+    }
+  ],
+  "durationMs": 2000,
+  "dtMs": 1,
+  "routingMetric": "latency",
+  "drainAfterSourcesMs": 4000,
+  "maxPacketsInSystem": 10000,
+  "sampleEveryMs": 100
+}

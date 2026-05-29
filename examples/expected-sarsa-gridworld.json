@@ -1,0 +1,18 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "expected-sarsa-gridworld",
+  "description": "Expected SARSA on GridWorld using DES state/action/transition movables.",
+  "parameters": {
+    "numEpisodes": 900,
+    "maxStepsPerEpisode": 80,
+    "alpha": 0.2,
+    "gamma": 0.95,
+    "epsilon": 0.35,
+    "epsilonDecay": 0.995,
+    "epsilonMin": 0.02,
+    "seed": 1
+  },
+  "runtime": {
+    "animate": false
+  }
+}

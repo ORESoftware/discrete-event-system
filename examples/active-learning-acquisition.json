@@ -1,0 +1,8 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "active-learning-acquisition",
+  "description": "Machine/statistical learning model comparing active-learning acquisition policies over unlabeled pool movables.",
+  "parameters": {"budget": 9},
+  "runtime": {"animate": false, "outputs": {"csv": "out/active-learning-acquisition.csv", "summary": "out/active-learning-acquisition.summary.json"}},
+  "metadata": {"tags": ["machine-learning", "statistical-learning", "active-learning", "acquisition"]}
+}

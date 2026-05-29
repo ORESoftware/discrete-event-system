@@ -1,0 +1,20 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "stochastic-lp",
+  "description": "Two-stage stochastic capacity planning via SAA and Benders",
+  "parameters": {
+    "c": [10, 12],
+    "p": [25, 28],
+    "ranges": [[50, 100], [40, 80]],
+    "N": 200,
+    "seed": 42,
+    "tol": 1e-7,
+    "maxIter": 200,
+    "oosN": 2000
+  },
+  "runtime": {
+    "outputs": {
+      "summary": "out/stochastic-lp.summary.json"
+    }
+  }
+}

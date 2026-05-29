@@ -1,0 +1,19 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "vrp-savings",
+  "description": "Small capacitated VRP using Clarke-Wright savings and route-merge tokens.",
+  "parameters": {
+    "depot": {"x": 0, "y": 0},
+    "vehicleCapacity": 5,
+    "customers": [
+      {"id": "A", "x": 1, "y": 2, "demand": 2},
+      {"id": "B", "x": 2, "y": 1, "demand": 2},
+      {"id": "C", "x": 4, "y": 1, "demand": 2},
+      {"id": "D", "x": 5, "y": 2, "demand": 1},
+      {"id": "E", "x": 3, "y": 4, "demand": 2}
+    ]
+  },
+  "runtime": {
+    "animate": false
+  }
+}

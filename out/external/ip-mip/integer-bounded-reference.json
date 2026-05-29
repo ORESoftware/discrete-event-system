@@ -1,0 +1,46 @@
+{
+  "reference": "external-references/ip-mip/ip_mip_reference.py",
+  "requestedSolver": "brute-force",
+  "elapsedMs": 0.155,
+  "problem": {
+    "sense": "max",
+    "c": [
+      3,
+      5
+    ],
+    "A": [
+      [
+        2,
+        3
+      ]
+    ],
+    "b": [
+      12
+    ],
+    "integerVars": [
+      true,
+      true
+    ],
+    "ub": [
+      6,
+      6
+    ],
+    "varNames": [
+      "a",
+      "b"
+    ],
+    "conNames": [
+      "resource"
+    ]
+  },
+  "result": {
+    "status": "optimal",
+    "solver": "python-bruteforce",
+    "x": [
+      0.0,
+      4.0
+    ],
+    "objective": 20.0,
+    "enumerated": 49
+  }
+}

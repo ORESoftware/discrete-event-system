@@ -1,0 +1,30 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "collaborative-inference",
+  "description": "Collaborative inference over model execution and validation workflows from sparse external reviewer feedback.",
+  "parameters": {
+    "scenario": "model-validation",
+    "respondentCount": 800,
+    "minItemsPerRespondent": 3,
+    "maxItemsPerRespondent": 5,
+    "respondentsPerTick": 100,
+    "ratingWeight": 0.5,
+    "rankingWeight": 0.5,
+    "shrinkage": 8,
+    "credibilityWeighting": true,
+    "credibilityPasses": 2,
+    "minCredibleAge": 15,
+    "highRatedScoreThreshold": 0.72,
+    "minHighRatedItems": 2,
+    "seed": 11,
+    "topK": 8
+  },
+  "runtime": {
+    "animate": true,
+    "outputs": {
+      "csv": "out/collaborative-inference-model-validation.csv",
+      "html": "out/collaborative-inference-model-validation.html",
+      "summary": "out/collaborative-inference-model-validation.summary.json"
+    }
+  }
+}

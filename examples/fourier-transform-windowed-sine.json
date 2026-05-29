@@ -1,0 +1,22 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "fourier-transform",
+  "description": "Fourier transform of sin(2t) on one period with angular frequency probes.",
+  "parameters": {
+    "expression": "sin(omega0*t)",
+    "constants": {"omega0": 2},
+    "t0": 0,
+    "t1": 6.283185307179586,
+    "dt": 0.0031415926535897933,
+    "quadrature": "trapezoid",
+    "omegaValues": [0, 1, 2, 3, -2]
+  },
+  "runtime": {
+    "outputs": {
+      "csv": "out/fourier-transform-windowed-sine.csv",
+      "html": "out/fourier-transform-windowed-sine.html",
+      "frames": "out/fourier-transform-windowed-sine.frames.jsonl",
+      "summary": "out/fourier-transform-windowed-sine.summary.json"
+    }
+  }
+}

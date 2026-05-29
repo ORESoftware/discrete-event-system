@@ -1,0 +1,18 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "mrac",
+  "description": "Model-Reference Adaptive Control on a first-order plant x_dot = a x + b u with unknown a and b > 0. Lyapunov-based gradient law adapts theta_x, theta_r so the plant tracks the reference model x_m_dot = a_m x_m + b_m r. Convergence does not require knowledge of (a, b), only sign(b).",
+  "parameters": {
+    "a": 1,
+    "b": 2,
+    "am": -2,
+    "bm": 2,
+    "x0": 0,
+    "xm0": 0,
+    "gamma": 5,
+    "dt": 0.01,
+    "numSteps": 4000
+  },
+  "runtime": {"seed": 1},
+  "metadata": {"tags": ["adaptive-control", "mrac", "lyapunov", "narendra-annaswamy"]}
+}

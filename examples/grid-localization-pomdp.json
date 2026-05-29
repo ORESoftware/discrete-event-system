@@ -1,0 +1,26 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "grid-localization-pomdp",
+  "description": "2D hidden-target POMDP using row/column scans and belief lookahead.",
+  "parameters": {
+    "width": 3,
+    "height": 3,
+    "horizon": 3,
+    "numSteps": 8,
+    "seed": 7,
+    "hiddenTarget": [2, 1],
+    "scanAccuracy": 1,
+    "inspectAccuracy": 1,
+    "scanCost": -0.2,
+    "inspectCorrectReward": 20,
+    "inspectWrongPenalty": -12,
+    "discount": 0.95
+  },
+  "runtime": {
+    "animate": false,
+    "outputs": {
+      "csv": "out/grid-localization-pomdp.csv",
+      "summary": "out/grid-localization-pomdp.summary.json"
+    }
+  }
+}

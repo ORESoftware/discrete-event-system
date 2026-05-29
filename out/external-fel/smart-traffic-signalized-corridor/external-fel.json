@@ -1,0 +1,632 @@
+{
+  "elapsedMs": 0.3921985626220703,
+  "input": {
+    "lanes": 4,
+    "nodes": 5,
+    "scheduledTrips": 18,
+    "signals": 1
+  },
+  "kernel": "python-traffic-fel-reference",
+  "model": "smart-traffic-flow",
+  "result": {
+    "activeAtEnd": 0,
+    "arrived": 18,
+    "collisionCount": 0,
+    "completionRatio": 1.0,
+    "departed": 18,
+    "dropped": 0,
+    "entered": 18,
+    "eventCount": 63,
+    "exited": 18,
+    "generatedDemand": 18,
+    "laneStats": [
+      {
+        "avgOccupancy": 0.5936507936507938,
+        "capacity": 8,
+        "finalOccupancy": 0,
+        "from": "W",
+        "id": "W-I",
+        "maxOccupancy": 2,
+        "to": "I"
+      },
+      {
+        "avgOccupancy": 0.42857142857142866,
+        "capacity": 9,
+        "finalOccupancy": 0,
+        "from": "I",
+        "id": "I-E",
+        "maxOccupancy": 2,
+        "to": "E"
+      },
+      {
+        "avgOccupancy": 0.38095238095238093,
+        "capacity": 7,
+        "finalOccupancy": 0,
+        "from": "S",
+        "id": "S-I",
+        "maxOccupancy": 2,
+        "to": "I"
+      },
+      {
+        "avgOccupancy": 0.2,
+        "capacity": 7,
+        "finalOccupancy": 0,
+        "from": "I",
+        "id": "I-N",
+        "maxOccupancy": 2,
+        "to": "N"
+      }
+    ],
+    "maxActiveCars": 4,
+    "meanSpeedMps": 8.554455445544553,
+    "meanTravelTimeSec": 18.703703703703706,
+    "meanWaitingTimeSec": 0.0,
+    "notes": [
+      "future-event-list traffic baseline",
+      "scheduled departures originate from traffic source entities and terminate at sink entities"
+    ],
+    "p95TravelTimeSec": 25.5,
+    "timeSeries": [
+      {
+        "active": 0,
+        "dropped": 0,
+        "entered": 0,
+        "exited": 0,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 0,
+          "S-I": 0,
+          "W-I": 0
+        },
+        "timeSec": 0.0
+      },
+      {
+        "active": 1,
+        "dropped": 0,
+        "entered": 1,
+        "exited": 0,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 0,
+          "S-I": 0,
+          "W-I": 1
+        },
+        "timeSec": 5.0
+      },
+      {
+        "active": 2,
+        "dropped": 0,
+        "entered": 2,
+        "exited": 0,
+        "laneOccupancy": {
+          "I-E": 1,
+          "I-N": 0,
+          "S-I": 1,
+          "W-I": 0
+        },
+        "timeSec": 10.0
+      },
+      {
+        "active": 2,
+        "dropped": 0,
+        "entered": 3,
+        "exited": 1,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 0,
+          "S-I": 1,
+          "W-I": 1
+        },
+        "timeSec": 15.0
+      },
+      {
+        "active": 2,
+        "dropped": 0,
+        "entered": 3,
+        "exited": 1,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 1,
+          "S-I": 0,
+          "W-I": 1
+        },
+        "timeSec": 20.0
+      },
+      {
+        "active": 3,
+        "dropped": 0,
+        "entered": 4,
+        "exited": 1,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 1,
+          "S-I": 0,
+          "W-I": 2
+        },
+        "timeSec": 25.0
+      },
+      {
+        "active": 2,
+        "dropped": 0,
+        "entered": 4,
+        "exited": 2,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 0,
+          "S-I": 0,
+          "W-I": 2
+        },
+        "timeSec": 30.0
+      },
+      {
+        "active": 3,
+        "dropped": 0,
+        "entered": 5,
+        "exited": 2,
+        "laneOccupancy": {
+          "I-E": 2,
+          "I-N": 0,
+          "S-I": 1,
+          "W-I": 0
+        },
+        "timeSec": 35.0
+      },
+      {
+        "active": 2,
+        "dropped": 0,
+        "entered": 6,
+        "exited": 4,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 0,
+          "S-I": 1,
+          "W-I": 1
+        },
+        "timeSec": 40.0
+      },
+      {
+        "active": 2,
+        "dropped": 0,
+        "entered": 6,
+        "exited": 4,
+        "laneOccupancy": {
+          "I-E": 1,
+          "I-N": 0,
+          "S-I": 1,
+          "W-I": 0
+        },
+        "timeSec": 45.0
+      },
+      {
+        "active": 3,
+        "dropped": 0,
+        "entered": 7,
+        "exited": 4,
+        "laneOccupancy": {
+          "I-E": 1,
+          "I-N": 1,
+          "S-I": 0,
+          "W-I": 1
+        },
+        "timeSec": 50.0
+      },
+      {
+        "active": 3,
+        "dropped": 0,
+        "entered": 8,
+        "exited": 5,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 1,
+          "S-I": 1,
+          "W-I": 1
+        },
+        "timeSec": 55.0
+      },
+      {
+        "active": 2,
+        "dropped": 0,
+        "entered": 8,
+        "exited": 6,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 0,
+          "S-I": 1,
+          "W-I": 1
+        },
+        "timeSec": 60.0
+      },
+      {
+        "active": 3,
+        "dropped": 0,
+        "entered": 9,
+        "exited": 6,
+        "laneOccupancy": {
+          "I-E": 1,
+          "I-N": 0,
+          "S-I": 1,
+          "W-I": 1
+        },
+        "timeSec": 65.0
+      },
+      {
+        "active": 2,
+        "dropped": 0,
+        "entered": 9,
+        "exited": 7,
+        "laneOccupancy": {
+          "I-E": 1,
+          "I-N": 0,
+          "S-I": 1,
+          "W-I": 0
+        },
+        "timeSec": 70.0
+      },
+      {
+        "active": 2,
+        "dropped": 0,
+        "entered": 10,
+        "exited": 8,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 0,
+          "S-I": 1,
+          "W-I": 1
+        },
+        "timeSec": 75.0
+      },
+      {
+        "active": 3,
+        "dropped": 0,
+        "entered": 11,
+        "exited": 8,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 1,
+          "S-I": 1,
+          "W-I": 1
+        },
+        "timeSec": 80.0
+      },
+      {
+        "active": 4,
+        "dropped": 0,
+        "entered": 12,
+        "exited": 8,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 1,
+          "S-I": 1,
+          "W-I": 2
+        },
+        "timeSec": 85.0
+      },
+      {
+        "active": 3,
+        "dropped": 0,
+        "entered": 12,
+        "exited": 9,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 1,
+          "S-I": 0,
+          "W-I": 2
+        },
+        "timeSec": 90.0
+      },
+      {
+        "active": 2,
+        "dropped": 0,
+        "entered": 12,
+        "exited": 10,
+        "laneOccupancy": {
+          "I-E": 2,
+          "I-N": 0,
+          "S-I": 0,
+          "W-I": 0
+        },
+        "timeSec": 95.0
+      },
+      {
+        "active": 1,
+        "dropped": 0,
+        "entered": 13,
+        "exited": 12,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 0,
+          "S-I": 0,
+          "W-I": 1
+        },
+        "timeSec": 100.0
+      },
+      {
+        "active": 2,
+        "dropped": 0,
+        "entered": 14,
+        "exited": 12,
+        "laneOccupancy": {
+          "I-E": 1,
+          "I-N": 0,
+          "S-I": 1,
+          "W-I": 0
+        },
+        "timeSec": 105.0
+      },
+      {
+        "active": 3,
+        "dropped": 0,
+        "entered": 15,
+        "exited": 12,
+        "laneOccupancy": {
+          "I-E": 1,
+          "I-N": 1,
+          "S-I": 0,
+          "W-I": 1
+        },
+        "timeSec": 110.0
+      },
+      {
+        "active": 2,
+        "dropped": 0,
+        "entered": 15,
+        "exited": 13,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 1,
+          "S-I": 0,
+          "W-I": 1
+        },
+        "timeSec": 115.0
+      },
+      {
+        "active": 1,
+        "dropped": 0,
+        "entered": 15,
+        "exited": 14,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 0,
+          "S-I": 0,
+          "W-I": 1
+        },
+        "timeSec": 120.0
+      },
+      {
+        "active": 2,
+        "dropped": 0,
+        "entered": 16,
+        "exited": 14,
+        "laneOccupancy": {
+          "I-E": 1,
+          "I-N": 0,
+          "S-I": 0,
+          "W-I": 1
+        },
+        "timeSec": 125.0
+      },
+      {
+        "active": 2,
+        "dropped": 0,
+        "entered": 17,
+        "exited": 15,
+        "laneOccupancy": {
+          "I-E": 1,
+          "I-N": 0,
+          "S-I": 1,
+          "W-I": 0
+        },
+        "timeSec": 130.0
+      },
+      {
+        "active": 2,
+        "dropped": 0,
+        "entered": 18,
+        "exited": 16,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 0,
+          "S-I": 1,
+          "W-I": 1
+        },
+        "timeSec": 135.0
+      },
+      {
+        "active": 2,
+        "dropped": 0,
+        "entered": 18,
+        "exited": 16,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 1,
+          "S-I": 0,
+          "W-I": 1
+        },
+        "timeSec": 140.0
+      },
+      {
+        "active": 2,
+        "dropped": 0,
+        "entered": 18,
+        "exited": 16,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 1,
+          "S-I": 0,
+          "W-I": 1
+        },
+        "timeSec": 145.0
+      },
+      {
+        "active": 1,
+        "dropped": 0,
+        "entered": 18,
+        "exited": 17,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 0,
+          "S-I": 0,
+          "W-I": 1
+        },
+        "timeSec": 150.0
+      },
+      {
+        "active": 1,
+        "dropped": 0,
+        "entered": 18,
+        "exited": 17,
+        "laneOccupancy": {
+          "I-E": 1,
+          "I-N": 0,
+          "S-I": 0,
+          "W-I": 0
+        },
+        "timeSec": 155.0
+      },
+      {
+        "active": 0,
+        "dropped": 0,
+        "entered": 18,
+        "exited": 18,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 0,
+          "S-I": 0,
+          "W-I": 0
+        },
+        "timeSec": 160.0
+      },
+      {
+        "active": 0,
+        "dropped": 0,
+        "entered": 18,
+        "exited": 18,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 0,
+          "S-I": 0,
+          "W-I": 0
+        },
+        "timeSec": 165.0
+      },
+      {
+        "active": 0,
+        "dropped": 0,
+        "entered": 18,
+        "exited": 18,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 0,
+          "S-I": 0,
+          "W-I": 0
+        },
+        "timeSec": 170.0
+      },
+      {
+        "active": 0,
+        "dropped": 0,
+        "entered": 18,
+        "exited": 18,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 0,
+          "S-I": 0,
+          "W-I": 0
+        },
+        "timeSec": 175.0
+      },
+      {
+        "active": 0,
+        "dropped": 0,
+        "entered": 18,
+        "exited": 18,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 0,
+          "S-I": 0,
+          "W-I": 0
+        },
+        "timeSec": 180.0
+      },
+      {
+        "active": 0,
+        "dropped": 0,
+        "entered": 18,
+        "exited": 18,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 0,
+          "S-I": 0,
+          "W-I": 0
+        },
+        "timeSec": 185.0
+      },
+      {
+        "active": 0,
+        "dropped": 0,
+        "entered": 18,
+        "exited": 18,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 0,
+          "S-I": 0,
+          "W-I": 0
+        },
+        "timeSec": 190.0
+      },
+      {
+        "active": 0,
+        "dropped": 0,
+        "entered": 18,
+        "exited": 18,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 0,
+          "S-I": 0,
+          "W-I": 0
+        },
+        "timeSec": 195.0
+      },
+      {
+        "active": 0,
+        "dropped": 0,
+        "entered": 18,
+        "exited": 18,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 0,
+          "S-I": 0,
+          "W-I": 0
+        },
+        "timeSec": 200.0
+      },
+      {
+        "active": 0,
+        "dropped": 0,
+        "entered": 18,
+        "exited": 18,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 0,
+          "S-I": 0,
+          "W-I": 0
+        },
+        "timeSec": 205.0
+      },
+      {
+        "active": 0,
+        "dropped": 0,
+        "entered": 18,
+        "exited": 18,
+        "laneOccupancy": {
+          "I-E": 0,
+          "I-N": 0,
+          "S-I": 0,
+          "W-I": 0
+        },
+        "timeSec": 210.0
+      }
+    ]
+  },
+  "status": "ok"
+}

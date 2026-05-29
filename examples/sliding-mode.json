@@ -1,0 +1,19 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "sliding-mode",
+  "description": "Robust sliding-mode control of an uncertain double integrator with bounded matched disturbance d(t). The reaching condition s ds/dt < -eta |s| guarantees finite-time arrival on the sliding surface s = v + lambda x = 0, on which the closed-loop is the linear system v + lambda x = 0.",
+  "parameters": {
+    "x0": [3, 0],
+    "dt": 0.05,
+    "numSteps": 400,
+    "lambda": 2,
+    "eta": 3,
+    "boundary": 0.05,
+    "uBound": 5,
+    "disturbanceAmp": 1,
+    "disturbanceType": "sin",
+    "seed": 1
+  },
+  "runtime": {"seed": 1},
+  "metadata": {"tags": ["robust-control", "sliding-mode", "smc", "lyapunov", "double-integrator"]}
+}

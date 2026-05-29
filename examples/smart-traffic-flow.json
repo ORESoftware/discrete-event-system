@@ -1,0 +1,32 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "traffic-flow",
+  "description": "Five-intersection traffic replay where smart movable cars choose journeys and compute their own kinematic decisions.",
+  "parameters": {
+    "builtin": "five-intersection",
+    "durationSec": 200,
+    "dtSec": 0.1,
+    "seed": 19,
+    "maxCars": 180,
+    "spawnRateMultiplier": 1,
+    "smartMovables": true,
+    "carLengthM": 4.8,
+    "minGapM": 2.5,
+    "maxAccelMps2": 2.2,
+    "maxDecelMps2": 4,
+    "comfortableDecelMps2": 1.6,
+    "desiredTimeHeadwaySec": 1.2,
+    "reactionTimeSec": 1,
+    "maxJerkMps3": 2.5,
+    "cellSizeM": 0.3048
+  },
+  "runtime": {
+    "animate": true,
+    "outputs": {
+      "html": "out/smart-traffic-flow.html",
+      "csv": "out/smart-traffic-flow.csv",
+      "log": "out/smart-traffic-flow.log.jsonl",
+      "summary": "out/smart-traffic-flow.summary.json"
+    }
+  }
+}

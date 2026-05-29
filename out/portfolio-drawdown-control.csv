@@ -1,0 +1,5 @@
+candidate_id,objective,feasible,metrics,plan
+conservative-cppi,100.67395576670154,true,"{""finalWealth"":101.48010488917696,""maxDrawdown"":0.006228697024674021,""turnover"":0.3458873442226668}","{""floorFraction"":0.88,""multiplier"":2.2,""volTarget"":0.7}"
+adaptive-drawdown-control,100.37943157085202,true,"{""finalWealth"":101.51424201595856,""maxDrawdown"":0.008593556481197051,""turnover"":0.5054476802559839}","{""floorFraction"":0.9,""multiplier"":3.4,""volTarget"":0.55}"
+buy-and-hold,99.11338560876099,true,"{""finalWealth"":102.309386858761,""maxDrawdown"":0.028188250000000106,""turnover"":1}","{""floorFraction"":0,""multiplier"":1,""volTarget"":1}"
+growth-cppi,99.02046876093273,true,"{""finalWealth"":101.78107209601794,""maxDrawdown"":0.021999951257799216,""turnover"":1.113259347715336}","{""floorFraction"":0.82,""multiplier"":4.1,""volTarget"":0.9}"

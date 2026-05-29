@@ -1,0 +1,19 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "particle-swarm",
+  "description": "Particle Swarm Optimization on a three-dimensional sphere objective using shared swarm station primitives.",
+  "parameters": {
+    "objective": "sphere",
+    "dimension": 3,
+    "particles": 32,
+    "iterations": 120,
+    "seed": 11
+  },
+  "runtime": {
+    "animate": false,
+    "outputs": {
+      "csv": "out/particle-swarm.csv",
+      "summary": "out/particle-swarm.summary.json"
+    }
+  }
+}

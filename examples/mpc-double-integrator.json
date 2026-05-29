@@ -1,0 +1,17 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "mpc-double-integrator",
+  "description": "Receding-horizon MPC on a double integrator with hard input bounds |u| <= u_max. The QP is solved at every tick via projected gradient (no external solver) and the first control u_0 is applied. This is the canonical industrial pattern for any linear plant with actuator limits.",
+  "parameters": {
+    "x0": [3, 0],
+    "uMax": 1,
+    "N": 15,
+    "Q": [10, 1],
+    "Qf": [50, 5],
+    "R": 0.1,
+    "dt": 0.1,
+    "numSteps": 100
+  },
+  "runtime": {"seed": 1},
+  "metadata": {"tags": ["mpc", "constrained-optimization", "qp", "receding-horizon", "double-integrator"]}
+}

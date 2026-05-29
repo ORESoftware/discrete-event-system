@@ -1,0 +1,5 @@
+candidate_id,objective,feasible,metrics,plan
+risk-pooled-flex-roster,129.6,true,"{""serviceLevel"":1,""laborCost"":752,""overtime"":0,""idle"":9.2}","{""staffing"":[7,10,13,11,9,6],""flexPool"":4}"
+service-buffer-roster,103.6,true,"{""serviceLevel"":1,""laborCost"":784,""overtime"":0,""idle"":6.199999999999999}","{""staffing"":[8,11,14,12,10,7],""flexPool"":2}"
+overlap-wave-roster,101.54999999999995,true,"{""serviceLevel"":0.9808333333333333,""laborCost"":772.7,""overtime"":1.1500000000000004,""idle"":4.25}","{""staffing"":[8,12,13,13,9,6],""flexPool"":1}"
+lean-fixed-roster,82.20000000000005,true,"{""serviceLevel"":0.9066666666666667,""laborCost"":732.8000000000001,""overtime"":5.600000000000001,""idle"":0.5}","{""staffing"":[7,9,11,10,8,6],""flexPool"":1}"

@@ -1,0 +1,27 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "iterative-learning-control",
+  "description": "Iterative Learning Control on a repeated first-order tracking task. A trial source emits learned feedforward plans, a controller-program station packages them, a plant-trial station simulates the closed-loop trial, a learning-update station adapts the next feedforward sequence, and a result sink records each trial.",
+  "parameters": {
+    "trials": 30,
+    "horizon": 80,
+    "dt": 0.1,
+    "plantRate": 1.2,
+    "plantGain": 1,
+    "learningGain": 0.8,
+    "feedbackGain": 0.8,
+    "controlMax": 5,
+    "referenceKind": "sine",
+    "referenceAmplitude": 1
+  },
+  "runtime": {
+    "animate": true,
+    "outputs": {
+      "csv": "out/iterative-learning-control.csv",
+      "html": "out/iterative-learning-control.html",
+      "frames": "out/iterative-learning-control.frames.jsonl",
+      "summary": "out/iterative-learning-control.summary.json"
+    }
+  },
+  "metadata": {"tags": ["learning-control", "adaptive-control", "ilc", "station-graph"]}
+}

@@ -1,0 +1,40 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "smart-traffic-flow",
+  "description": "Smart-movable traffic flow where each active car owns runTimeStep and is shuffled by the DES runner before the world station commits proposals.",
+  "parameters": {
+    "builtin": "five-intersection",
+    "durationSec": 180,
+    "dtSec": 0.1,
+    "seed": 19,
+    "actorShuffleSeed": 2026,
+    "maxCars": 250,
+    "smartCarPoolSize": 400,
+    "spawnRateMultiplier": 3,
+    "carLengthM": 4.8,
+    "carWidthM": 1.8,
+    "laneWidthM": 3.7,
+    "minGapM": 2.5,
+    "maxAccelMps2": 2.2,
+    "maxDecelMps2": 4,
+    "maxJerkMps3": 6,
+    "reactionTimeSec": 0.8,
+    "timeHeadwaySec": 1.1,
+    "gridCellSizeM": 0.3048,
+    "accidentRiskScale": 16,
+    "accidentAccelBoostMps2": 12,
+    "accidentFaultDurationSec": 1,
+    "distancePreferenceSpread": 0.54,
+    "startPreferenceSpread": 0.65,
+    "accidentFlashSeconds": 2.5
+  },
+  "runtime": {
+    "animate": true,
+    "outputs": {
+      "csv": "out/smart-traffic-flow-five-intersection.csv",
+      "html": "out/smart-traffic-flow-five-intersection.html",
+      "log": "out/smart-traffic-flow-five-intersection.log.jsonl",
+      "summary": "out/smart-traffic-flow-five-intersection.summary.json"
+    }
+  }
+}

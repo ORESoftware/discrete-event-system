@@ -1,0 +1,8 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "portfolio-drawdown-control",
+  "description": "Financial-engineering applied-control demo comparing CPPI-style portfolio drawdown controllers.",
+  "parameters": {"initialWealth": 100},
+  "runtime": {"animate": false, "outputs": {"csv": "out/portfolio-drawdown-control.csv", "summary": "out/portfolio-drawdown-control.summary.json"}},
+  "metadata": {"tags": ["financial-engineering", "control-theory", "portfolio", "drawdown"]}
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "tiger-pomdp",
+  "description": "Cassandra-Kaelbling-Littman 1994 Tiger problem — 50 steps, 1-step belief look-ahead.",
+  "parameters": {
+    "listenAccuracy": 0.85,
+    "openGood": 10,
+    "openBad": -100,
+    "listenCost": -1,
+    "discount": 0.95,
+    "solver": "one-step-lookahead",
+    "numSteps": 50,
+    "seed": 7
+  },
+  "runtime": {"seed": 7},
+  "metadata": {"tags": ["pomdp", "tiger", "belief-state", "qmdp"]}
+}

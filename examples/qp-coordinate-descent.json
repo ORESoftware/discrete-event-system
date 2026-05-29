@@ -1,0 +1,13 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "qp-coordinate-descent",
+  "description": "Box-constrained quadratic program solved with movable coordinate-descent state tokens.",
+  "parameters": {},
+  "outputs": {
+    "csv": "outputs/qp-coordinate-descent.csv"
+  },
+  "runtime": {
+    "animate": false,
+    "verbose": false
+  }
+}

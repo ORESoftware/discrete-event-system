@@ -1,0 +1,222 @@
+{
+  "modelId": "ip-mip-des",
+  "params": {
+    "knapsack": {
+      "values": [
+        10,
+        40,
+        30,
+        50
+      ],
+      "weights": [
+        5,
+        4,
+        6,
+        3
+      ],
+      "capacity": 10
+    },
+    "options": {
+      "maxNodes": 200,
+      "nodeSelection": "dfs",
+      "lpAlgorithm": "auto",
+      "maxCutRounds": 1
+    }
+  },
+  "runtimeMs": 3,
+  "summaryText": "IP/MIP DES SOLVER GRAPH\n-----------------------\n  Status:           optimal\n  LP backend:       auto\n  LP backend usage: incremental-primal-dual=4\n  Technique plan:   incremental-primal-dual\n  z*:               90.000000\n  Best bound:       90.000000\n  Gap:              0.00e+0\n  Nodes explored:   4\n  LP solves:        4\n  LP iterations:    17\n  Cuts added:       3\n  Candidates tried: 5\n  Incumbent source: round-repair:round@node0\n  x* (first 16):    [0.000, 1.000, 0.000, 1.000]",
+  "result": {
+    "status": "optimal",
+    "x": [
+      0,
+      1,
+      0,
+      1
+    ],
+    "z": 90,
+    "bestBound": 90,
+    "gap": 0,
+    "nodesExplored": 4,
+    "lpSolves": 4,
+    "totalLPIterations": 17,
+    "cutsAdded": 3,
+    "candidatesTried": 5,
+    "lpAlgorithm": "auto",
+    "lpAlgorithmUsage": {
+      "incremental-primal-dual": 4
+    },
+    "techniquePlan": {
+      "requestedLPAlgorithm": "auto",
+      "rootLPAlgorithm": "incremental-primal-dual",
+      "externalCandidate": false,
+      "primalDualDynamic": true,
+      "decompositionCandidate": false,
+      "rationale": [
+        "small/medium branch-cut relaxation uses in-engine incremental primal-dual simplex",
+        "all integer variables are binary, so cover cuts and rounding/repair are active"
+      ],
+      "features": {
+        "variableCount": 4,
+        "constraintCount": 1,
+        "integerCount": 4,
+        "continuousCount": 0,
+        "binaryCount": 4,
+        "finiteUpperBounds": 4,
+        "nonzeros": 4,
+        "density": 1,
+        "allInteger": true,
+        "allBinary": true,
+        "constraintVariableComponents": 1
+      }
+    },
+    "incumbentSource": "round-repair:round@node0",
+    "solverKind": "in-house-branch-and-cut",
+    "executionMode": "single-threaded",
+    "compositeStationId": "ip-branch-and-cut",
+    "tokenStats": {
+      "created": 20,
+      "stateful": 16,
+      "stateless": 4,
+      "stateTransitions": 24,
+      "maxGeneration": 6,
+      "byKind": {
+        "ip-node": 4,
+        "ip-relaxation": 4,
+        "ip-candidate": 5,
+        "ip-cut": 3,
+        "ip-complete": 4
+      }
+    },
+    "trace": [
+      {
+        "nodeId": 0,
+        "parentId": null,
+        "depth": 0,
+        "lpStatus": "optimal",
+        "lpZ": 105,
+        "solver": "incremental-primal-dual",
+        "fractional": [
+          2
+        ],
+        "action": "cut",
+        "reason": "added 1 valid cut(s)",
+        "children": [
+          1
+        ],
+        "cutsAdded": 1,
+        "nodeTokenId": "ip-node-0",
+        "lineageRoot": "ip-node-0",
+        "tokenGeneration": 1,
+        "stateMode": "stateful"
+      },
+      {
+        "nodeId": 1,
+        "parentId": 0,
+        "depth": 0,
+        "lpStatus": "optimal",
+        "lpZ": 96,
+        "solver": "incremental-primal-dual",
+        "fractional": [
+          0
+        ],
+        "action": "branch",
+        "reason": "branch on item_0=0.600000",
+        "branchVar": 0,
+        "children": [
+          2,
+          3
+        ],
+        "nodeTokenId": "ip-node-1",
+        "lineageRoot": "ip-node-0",
+        "tokenGeneration": 3,
+        "stateMode": "stateful"
+      },
+      {
+        "nodeId": 3,
+        "parentId": 1,
+        "depth": 1,
+        "lpStatus": "optimal",
+        "lpZ": 80,
+        "solver": "incremental-primal-dual",
+        "fractional": [
+          1
+        ],
+        "action": "prune",
+        "reason": "bound dominated by incumbent",
+        "nodeTokenId": "ip-node-3",
+        "lineageRoot": "ip-node-0",
+        "tokenGeneration": 5,
+        "stateMode": "stateful"
+      },
+      {
+        "nodeId": 2,
+        "parentId": 1,
+        "depth": 1,
+        "lpStatus": "optimal",
+        "lpZ": 90,
+        "solver": "incremental-primal-dual",
+        "fractional": [],
+        "action": "prune",
+        "reason": "bound dominated by incumbent",
+        "nodeTokenId": "ip-node-2",
+        "lineageRoot": "ip-node-0",
+        "tokenGeneration": 5,
+        "stateMode": "stateful"
+      }
+    ],
+    "topology": [
+      {
+        "id": "ip-branch-and-cut",
+        "role": "composite single-threaded in-house branch-and-cut solver",
+        "emits": []
+      },
+      {
+        "id": "ip-search-controller",
+        "parentId": "ip-branch-and-cut",
+        "role": "frontier of branch/cut subproblems",
+        "emits": [
+          "node"
+        ]
+      },
+      {
+        "id": "ip-lp-relaxation",
+        "parentId": "ip-branch-and-cut",
+        "role": "stationary LP solver block with selectable backend",
+        "emits": [
+          "relaxation"
+        ]
+      },
+      {
+        "id": "ip-rounding-repair",
+        "parentId": "ip-branch-and-cut",
+        "role": "movable-variable rounding, repair, and local search",
+        "emits": [
+          "candidate"
+        ]
+      },
+      {
+        "id": "ip-incumbent",
+        "parentId": "ip-branch-and-cut",
+        "role": "best feasible integer solution anchor",
+        "emits": []
+      },
+      {
+        "id": "ip-cut-generator",
+        "parentId": "ip-branch-and-cut",
+        "role": "valid-inequality station, currently binary cover cuts",
+        "emits": [
+          "cut"
+        ]
+      },
+      {
+        "id": "ip-node-decision",
+        "parentId": "ip-branch-and-cut",
+        "role": "prune, strengthen, or branch",
+        "emits": [
+          "node",
+          "complete"
+        ]
+      }
+    ]
+  }
+}

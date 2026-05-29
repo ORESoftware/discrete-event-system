@@ -1,0 +1,5 @@
+node_id,parent_id,depth,lp_status,lp_z,solver,fractional_count,action,reason,children,cuts_added
+0,,0,optimal,105,incremental-primal-dual,1,cut,added 1 valid cut(s),1,1
+1,0,0,optimal,96,incremental-primal-dual,1,branch,branch on item_0=0.600000,2|3,
+3,1,1,optimal,80,incremental-primal-dual,1,prune,bound dominated by incumbent,,
+2,1,1,optimal,90,incremental-primal-dual,0,prune,bound dominated by incumbent,,

@@ -1,0 +1,6 @@
+tick,iteration,solver_kind,objective,feasible,done,best_state,metadata
+1,1,knapsack-dp,-20,true,false,"{""selected"":[1,0,0,0,0],""value"":20,""weight"":2,""capacity"":10}","{""itemsProcessed"":1,""capacity"":10}"
+2,2,knapsack-dp,-50,true,false,"{""selected"":[1,1,0,0,0],""value"":50,""weight"":7,""capacity"":10}","{""itemsProcessed"":2,""capacity"":10}"
+3,3,knapsack-dp,-55,true,false,"{""selected"":[1,0,1,0,0],""value"":55,""weight"":9,""capacity"":10}","{""itemsProcessed"":3,""capacity"":10}"
+4,4,knapsack-dp,-62,true,false,"{""selected"":[1,1,0,1,0],""value"":62,""weight"":10,""capacity"":10}","{""itemsProcessed"":4,""capacity"":10}"
+5,5,knapsack-dp,-62,true,true,"{""selected"":[1,1,0,1,0],""value"":62,""weight"":10,""capacity"":10}","{""itemsProcessed"":5,""capacity"":10}"

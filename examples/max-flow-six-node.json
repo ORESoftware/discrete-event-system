@@ -1,0 +1,33 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "max-flow",
+  "description": "Six-node maximum-flow teaching network solved as one augmenting path per DES tick.",
+  "parameters": {
+    "numNodes": 6,
+    "source": 0,
+    "sink": 5,
+    "nodeNames": ["s", "a", "b", "c", "d", "t"],
+    "nodeCoordinates": [[90, 260], [260, 160], [260, 360], [520, 160], [520, 360], [760, 260]],
+    "edges": [
+      {"from": 0, "to": 1, "capacity": 16, "name": "s-a"},
+      {"from": 0, "to": 2, "capacity": 13, "name": "s-b"},
+      {"from": 1, "to": 2, "capacity": 10, "name": "a-b"},
+      {"from": 2, "to": 1, "capacity": 4, "name": "b-a"},
+      {"from": 1, "to": 3, "capacity": 12, "name": "a-c"},
+      {"from": 3, "to": 2, "capacity": 9, "name": "c-b"},
+      {"from": 2, "to": 4, "capacity": 14, "name": "b-d"},
+      {"from": 4, "to": 3, "capacity": 7, "name": "d-c"},
+      {"from": 3, "to": 5, "capacity": 20, "name": "c-t"},
+      {"from": 4, "to": 5, "capacity": 4, "name": "d-t"}
+    ]
+  },
+  "runtime": {
+    "animate": true,
+    "outputs": {
+      "csv": "out/max-flow-six-node.csv",
+      "html": "out/max-flow-six-node.html",
+      "log": "out/max-flow-six-node.log.jsonl",
+      "summary": "out/max-flow-six-node.summary.json"
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "visual-decision-frontier",
+  "description": "Decision-science model that scores alternatives with MCDA weights and emits visualization-ready frontier metrics.",
+  "parameters": {"riskWeight": 0.35},
+  "runtime": {"animate": false, "outputs": {"csv": "out/visual-decision-frontier.csv", "summary": "out/visual-decision-frontier.summary.json"}},
+  "metadata": {"tags": ["decision-science", "data-science", "visualization", "mcda"]}
+}

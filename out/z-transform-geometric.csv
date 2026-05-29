@@ -1,0 +1,4 @@
+point_index,label,point_re,point_im,value_re,value_im,magnitude,phase,direct_reference_re,direct_reference_im,absolute_error,samples_used
+0,z=2,2,0,1.3330078125,0,1.3330078125,0,1.3330078125,0,0,6
+1,z=1,1,0,1.96875,0,1.96875,0,1.96875,0,0,6
+2,z=-1,-1,0,0.65625,-3.444319122601931e-17,0.65625,-5.2484862820600853e-17,0.65625,-3.444319122601931e-17,0,6

@@ -1,0 +1,5 @@
+candidate_id,objective,feasible,metrics,plan
+aggressive-fuzzy,-2.797632491679441,true,"{""rmsError"":1.680683404777885,""energy"":39.07796347606223,""settlingTick"":140,""finalTemp"":21.652039687108214}","{""errorGain"":0.85,""derivativeGain"":0.25,""outputGain"":5.8,""adaptiveBoost"":0.4}"
+balanced-adaptive-fuzzy,-2.917790086879388,true,"{""rmsError"":1.8481970036173427,""energy"":37.18372333048179,""settlingTick"":140,""finalTemp"":21.201225272018306}","{""errorGain"":0.55,""derivativeGain"":0.2,""outputGain"":4.2,""adaptiveBoost"":0.8}"
+energy-saver-fuzzy,-3.49620978968005,true,"{""rmsError"":2.493764521830208,""energy"":34.49781071399369,""settlingTick"":140,""finalTemp"":20.702015378640372}","{""errorGain"":0.45,""derivativeGain"":0.35,""outputGain"":3.3,""adaptiveBoost"":0.2}"
+calm-fuzzy,-4.337582278452287,true,"{""rmsError"":3.434813363129418,""energy"":30.51075661291477,""settlingTick"":140,""finalTemp"":19.937707947400522}","{""errorGain"":0.35,""derivativeGain"":0.1,""outputGain"":2.8,""adaptiveBoost"":0}"

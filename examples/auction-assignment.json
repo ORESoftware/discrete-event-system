@@ -1,0 +1,15 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "auction-assignment",
+  "description": "Assignment problem solved by auction price and assignment state tokens.",
+  "parameters": {
+    "epsilon": 0.01
+  },
+  "outputs": {
+    "csv": "outputs/auction-assignment.csv"
+  },
+  "runtime": {
+    "animate": false,
+    "verbose": false
+  }
+}

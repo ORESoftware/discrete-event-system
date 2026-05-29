@@ -1,0 +1,117 @@
+{
+  "modelId": "energy-storage-dispatch",
+  "params": {
+    "batteryCapacity": 50
+  },
+  "runtimeMs": 0,
+  "summaryText": "ENERGY STORAGE DISPATCH\n----------------------------------------\n  Category:       Energy (optimization of power systems)\n  Best plan:      reliability-reserve-dispatch\n  Objective:      -19898.387442\n  Metrics:        cost=19521.8, curtailment=0.00e+0, unserved=0.00e+0, emissions=188.29\n  Candidates:     4\n  Stations:       energy-storage-dispatch-scenario-source -> energy-storage-dispatch-candidate-generator -> energy-storage-dispatch-plan-evaluator -> energy-storage-dispatch-result-sink\n  Movables:       DomainScenarioToken, DomainPlanToken, DomainEvaluationToken",
+  "result": {
+    "modelId": "energy-storage-dispatch",
+    "category": "Energy (optimization of power systems)",
+    "best": {
+      "candidateId": "reliability-reserve-dispatch",
+      "plan": {
+        "chargeBelow": 34,
+        "dischargeAbove": 48,
+        "reserve": 22
+      },
+      "objective": -19898.387442328923,
+      "feasible": true,
+      "metrics": {
+        "cost": 19521.814920589793,
+        "curtailment": 0,
+        "unserved": 0,
+        "emissions": 188.2862608695652,
+        "finalSoc": 22
+      }
+    },
+    "candidates": [
+      {
+        "candidateId": "reliability-reserve-dispatch",
+        "plan": {
+          "chargeBelow": 34,
+          "dischargeAbove": 48,
+          "reserve": 22
+        },
+        "objective": -19898.387442328923,
+        "feasible": true,
+        "metrics": {
+          "cost": 19521.814920589793,
+          "curtailment": 0,
+          "unserved": 0,
+          "emissions": 188.2862608695652,
+          "finalSoc": 22
+        }
+      },
+      {
+        "candidateId": "price-arbitrage-dispatch",
+        "plan": {
+          "chargeBelow": 30,
+          "dischargeAbove": 55,
+          "reserve": 8
+        },
+        "objective": -19987.16422424197,
+        "feasible": true,
+        "metrics": {
+          "cost": 19607.279702502838,
+          "curtailment": 0,
+          "unserved": 0,
+          "emissions": 189.94226086956522,
+          "finalSoc": 26
+        }
+      },
+      {
+        "candidateId": "renewable-first-dispatch",
+        "plan": {
+          "chargeBelow": 42,
+          "dischargeAbove": 62,
+          "reserve": 15
+        },
+        "objective": -20854.861766775048,
+        "feasible": true,
+        "metrics": {
+          "cost": 20463.238114601136,
+          "curtailment": 0,
+          "unserved": 0,
+          "emissions": 195.8118260869565,
+          "finalSoc": 38
+        }
+      },
+      {
+        "candidateId": "no-storage-reference",
+        "plan": {
+          "chargeBelow": null,
+          "dischargeAbove": null,
+          "reserve": 0
+        },
+        "objective": -20909.66,
+        "feasible": true,
+        "metrics": {
+          "cost": 20534.36,
+          "curtailment": 0,
+          "unserved": 0,
+          "emissions": 187.65,
+          "finalSoc": 25
+        }
+      }
+    ],
+    "topology": {
+      "stations": [
+        "energy-storage-dispatch-scenario-source",
+        "energy-storage-dispatch-candidate-generator",
+        "energy-storage-dispatch-plan-evaluator",
+        "energy-storage-dispatch-result-sink"
+      ],
+      "movables": [
+        "DomainScenarioToken",
+        "DomainPlanToken",
+        "DomainEvaluationToken"
+      ],
+      "edges": [
+        "energy-storage-dispatch-scenario-source:scenario -> energy-storage-dispatch-candidate-generator:scenario",
+        "energy-storage-dispatch-candidate-generator:candidate-plan -> energy-storage-dispatch-plan-evaluator:candidate-plan",
+        "energy-storage-dispatch-plan-evaluator:evaluation -> energy-storage-dispatch-result-sink:evaluation"
+      ]
+    }
+  }
+}

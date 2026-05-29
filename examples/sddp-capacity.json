@@ -1,0 +1,35 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "sddp-capacity",
+  "description": "Three-stage stochastic capacity expansion using SDDP-style value-function cuts.",
+  "parameters": {
+    "horizon": 3,
+    "demand": [
+      {"low": 20, "high": 50},
+      {"low": 30, "high": 70},
+      {"low": 40, "high": 90}
+    ],
+    "price": [25, 24, 23],
+    "expansionCost": [12, 10, 8],
+    "initialCapacity": 0,
+    "xMax": 100,
+    "step": 10,
+    "samplesPerStage": 50,
+    "seed": 7,
+    "maxIter": 35,
+    "tol": 0.01
+  },
+  "runtime": {
+    "animate": true,
+    "outputs": {
+      "html": "out/sddp-capacity.html",
+      "frames": "out/sddp-capacity.frames.jsonl",
+      "csv": "out/sddp-capacity.csv",
+      "summary": "out/sddp-capacity.summary.json",
+      "log": "out/sddp-capacity.log.jsonl"
+    }
+  },
+  "metadata": {
+    "tags": ["sddp", "multi-stage", "stochastic-programming", "benders"]
+  }
+}

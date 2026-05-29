@@ -1,0 +1,33 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "math-ode-blocks",
+  "description": "ODE as a stationary math block diagram: y' = -k y.",
+  "parameters": {
+    "states": [
+      {
+        "name": "y",
+        "initial": 1,
+        "derivative": "-k*y"
+      }
+    ],
+    "constants": {
+      "k": 1
+    },
+    "t0": 0,
+    "t1": 1,
+    "dt": 0.01,
+    "method": "euler"
+  },
+  "runtime": {
+    "animate": true,
+    "outputs": {
+      "csv": "out/math-ode-exponential-decay.csv",
+      "html": "out/math-ode-exponential-decay.html",
+      "log": "out/math-ode-exponential-decay.jsonl",
+      "summary": "out/math-ode-exponential-decay-summary.json"
+    }
+  },
+  "metadata": {
+    "tags": ["math-blocks", "ode", "integration"]
+  }
+}

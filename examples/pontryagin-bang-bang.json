@@ -1,0 +1,14 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "pontryagin-bang-bang",
+  "description": "Time-optimal control of a double integrator from (3, 0) to the origin via Pontryagin's Maximum Principle. PMP predicts at most one bang-bang switch on the well-known phase-plane switching curve x = -(1/(2 u_max)) v |v|.",
+  "parameters": {
+    "x0": [3, 0],
+    "uMax": 1,
+    "dt": 0.02,
+    "numSteps": 500,
+    "deadband": 0.1
+  },
+  "runtime": {"seed": 1},
+  "metadata": {"tags": ["pontryagin", "pmp", "bang-bang", "time-optimal", "double-integrator", "stationary-entity"]}
+}

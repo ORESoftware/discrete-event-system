@@ -1,0 +1,81 @@
+{
+  "modelId": "neural-xor",
+  "params": {
+    "epochs": 8000,
+    "learningRate": 0.3,
+    "seed": 7,
+    "hiddenLayers": [
+      4
+    ],
+    "samplesPerTick": 1,
+    "shuffleEachEpoch": false
+  },
+  "runtimeMs": 30,
+  "summaryText": "NEURAL XOR (supervised DES training)\n────────────────────────────────────\n  Epochs:                 8000\n  Hidden layers:          4\n  Samples trained:        32000\n  Ticks:                  32001 (done)\n  Avg loss (last 100):    7.176e-5\n  XOR predictions:        [0.0120, 0.9890, 0.9898, 0.0143]\n  Parameter count:        17",
+  "result": {
+    "network": {
+      "layers": [
+        {
+          "weights": [
+            [
+              -2.1381437304563526,
+              -2.0997794331964537
+            ],
+            [
+              3.2710847266790966,
+              3.2745943757313065
+            ],
+            [
+              2.564006128968176,
+              2.4813721159370727
+            ],
+            [
+              -0.13558445730176508,
+              -0.5550140225447058
+            ]
+          ],
+          "biases": [
+            0.8379923302285677,
+            -1.4559732943621024,
+            -3.7051054740025284,
+            -0.7916503558520591
+          ],
+          "activation": "tanh"
+        },
+        {
+          "weights": [
+            [
+              -1.518660848015573,
+              4.180837970097775,
+              -5.332686733355762,
+              1.3810171668683238
+            ]
+          ],
+          "biases": [
+            -4.035279930811238
+          ],
+          "activation": "sigmoid"
+        }
+      ],
+      "inputDim": 2,
+      "outputDim": 1
+    },
+    "lossHistory": "<array length=32000 (omitted from summary)>",
+    "predictions": [
+      [
+        0.012019187187181752
+      ],
+      [
+        0.9890324251947624
+      ],
+      [
+        0.9898103992503671
+      ],
+      [
+        0.014291358718228727
+      ]
+    ],
+    "ticks": 32001,
+    "reason": "done"
+  }
+}

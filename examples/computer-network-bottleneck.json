@@ -1,0 +1,16 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "computer-network",
+  "description": "Bottleneck lab: HTTP, UDP, and TCP flows pile onto a narrow WAN link so queueing delay, drops, and bottlenecks are visible.",
+  "parameters": {
+    "builtin": "bottleneck-lab"
+  },
+  "runtime": {
+    "outputs": {
+      "csv": "out/computer-network-bottleneck.csv",
+      "html": "out/computer-network-bottleneck.html",
+      "frames": "out/computer-network-bottleneck.frames.jsonl",
+      "summary": "out/computer-network-bottleneck-summary.json"
+    }
+  }
+}

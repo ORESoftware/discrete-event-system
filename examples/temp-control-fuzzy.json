@@ -1,0 +1,31 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "temp-control",
+  "description": "Fuzzy-PI Mamdani controller, milder spring scenario",
+  "parameters": {
+    "T_target": 70,
+    "band": 2,
+    "duration_h": 24,
+    "dt_min": 1,
+    "controller": { "kind": "fuzzy" },
+    "outdoor": {
+      "mean": 50,
+      "amp": 12,
+      "phase": 9,
+      "noiseStd": 2.0
+    },
+    "sensorNoiseStd": 0.2,
+    "forecastNoiseStd": 0.0,
+    "forecastHorizon_h": 1
+  },
+  "runtime": {
+    "seed": 7,
+    "outputs": {
+      "csv": "out/temp-control/json-fuzzy.csv",
+      "html": "out/temp-control/json-fuzzy.html"
+    }
+  },
+  "metadata": {
+    "tags": ["temp-control", "fuzzy", "spring"]
+  }
+}

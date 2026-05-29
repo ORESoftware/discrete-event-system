@@ -1,0 +1,17 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "policy-gradient-corridor",
+  "description": "Policy-gradient corridor with environment, agent, and update stations linked by action, transition, train, and resume tokens.",
+  "parameters": {
+    "numEpisodes": 300,
+    "maxStepsPerEpisode": 40,
+    "rolloutLen": 12,
+    "alpha": 0.04,
+    "gamma": 0.95,
+    "seed": 1,
+    "length": 7
+  },
+  "runtime": {
+    "animate": false
+  }
+}

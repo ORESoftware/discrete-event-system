@@ -1,0 +1,16 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "job-shop-dispatch",
+  "description": "Three-job two-machine schedule using a shortest-processing-time dispatch station.",
+  "parameters": {
+    "rule": "spt",
+    "jobs": [
+      {"id": "J1", "due": 10, "operations": [{"machine": "M1", "duration": 3}, {"machine": "M2", "duration": 2}]},
+      {"id": "J2", "due": 8, "operations": [{"machine": "M2", "duration": 2}, {"machine": "M1", "duration": 4}]},
+      {"id": "J3", "due": 12, "operations": [{"machine": "M1", "duration": 2}, {"machine": "M2", "duration": 3}]}
+    ]
+  },
+  "runtime": {
+    "animate": false
+  }
+}

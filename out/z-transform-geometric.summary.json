@@ -1,0 +1,521 @@
+{
+  "modelId": "z-transform",
+  "params": {
+    "sequence": [
+      1,
+      0.5,
+      0.25,
+      0.125,
+      0.0625,
+      0.03125
+    ],
+    "terms": 8,
+    "startIndex": 0,
+    "zValues": [
+      {
+        "label": "z=2",
+        "re": 2,
+        "im": 0
+      },
+      {
+        "label": "z=1",
+        "re": 1,
+        "im": 0
+      },
+      {
+        "label": "z=-1",
+        "re": -1,
+        "im": 0
+      }
+    ],
+    "tolerance": 1e-9
+  },
+  "runtimeMs": 1,
+  "summaryText": "Z-TRANSFORM (DES)\n-----------------\n  convention: X(z) = sum_n x[n] z^(-n), evaluated over the supplied finite sequence.\n  samples:    6\n  points:     3\n  entities:   sources=1 stations=2 sinks=1\n  movables:   TransformSampleToken, TransformContributionToken, TransformTotalsToken\n  validation: 7/7 checks passed\n  z=2: 1.33301 + 0.00000i  |.|=1.33301\n  z=1: 1.96875 + 0.00000i  |.|=1.96875\n  z=-1: 0.656250 - 3.44432e-17i  |.|=0.656250",
+  "result": {
+    "kind": "z",
+    "convention": "X(z) = sum_n x[n] z^(-n), evaluated over the supplied finite sequence.",
+    "samples": [
+      {
+        "sampleIndex": 0,
+        "abscissaName": "n",
+        "abscissa": 0,
+        "value": 1,
+        "weight": 1
+      },
+      {
+        "sampleIndex": 1,
+        "abscissaName": "n",
+        "abscissa": 1,
+        "value": 0.5,
+        "weight": 1
+      },
+      {
+        "sampleIndex": 2,
+        "abscissaName": "n",
+        "abscissa": 2,
+        "value": 0.25,
+        "weight": 1
+      },
+      {
+        "sampleIndex": 3,
+        "abscissaName": "n",
+        "abscissa": 3,
+        "value": 0.125,
+        "weight": 1
+      },
+      {
+        "sampleIndex": 4,
+        "abscissaName": "n",
+        "abscissa": 4,
+        "value": 0.0625,
+        "weight": 1
+      },
+      {
+        "sampleIndex": 5,
+        "abscissaName": "n",
+        "abscissa": 5,
+        "value": 0.03125,
+        "weight": 1
+      }
+    ],
+    "outputs": [
+      {
+        "pointIndex": 0,
+        "label": "z=2",
+        "point": {
+          "re": 2,
+          "im": 0
+        },
+        "value": {
+          "re": 1.3330078125,
+          "im": 0
+        },
+        "magnitude": 1.3330078125,
+        "phase": 0,
+        "samplesUsed": 6,
+        "directReference": {
+          "re": 1.3330078125,
+          "im": 0
+        },
+        "absoluteError": 0
+      },
+      {
+        "pointIndex": 1,
+        "label": "z=1",
+        "point": {
+          "re": 1,
+          "im": 0
+        },
+        "value": {
+          "re": 1.96875,
+          "im": 0
+        },
+        "magnitude": 1.96875,
+        "phase": 0,
+        "samplesUsed": 6,
+        "directReference": {
+          "re": 1.96875,
+          "im": 0
+        },
+        "absoluteError": 0
+      },
+      {
+        "pointIndex": 2,
+        "label": "z=-1",
+        "point": {
+          "re": -1,
+          "im": 0
+        },
+        "value": {
+          "re": 0.65625,
+          "im": -3.444319122601931e-17
+        },
+        "magnitude": 0.65625,
+        "phase": -5.2484862820600853e-17,
+        "samplesUsed": 6,
+        "directReference": {
+          "re": 0.65625,
+          "im": -3.444319122601931e-17
+        },
+        "absoluteError": 0
+      }
+    ],
+    "trace": [
+      {
+        "sampleIndex": 0,
+        "abscissa": 0,
+        "pointIndex": 0,
+        "pointLabel": "z=2",
+        "contribution": {
+          "re": 1,
+          "im": 0
+        },
+        "cumulative": {
+          "re": 1,
+          "im": 0
+        }
+      },
+      {
+        "sampleIndex": 0,
+        "abscissa": 0,
+        "pointIndex": 1,
+        "pointLabel": "z=1",
+        "contribution": {
+          "re": 1,
+          "im": 0
+        },
+        "cumulative": {
+          "re": 1,
+          "im": 0
+        }
+      },
+      {
+        "sampleIndex": 0,
+        "abscissa": 0,
+        "pointIndex": 2,
+        "pointLabel": "z=-1",
+        "contribution": {
+          "re": 1,
+          "im": 0
+        },
+        "cumulative": {
+          "re": 1,
+          "im": 0
+        }
+      },
+      {
+        "sampleIndex": 1,
+        "abscissa": 1,
+        "pointIndex": 0,
+        "pointLabel": "z=2",
+        "contribution": {
+          "re": 0.25,
+          "im": 0
+        },
+        "cumulative": {
+          "re": 1.25,
+          "im": 0
+        }
+      },
+      {
+        "sampleIndex": 1,
+        "abscissa": 1,
+        "pointIndex": 1,
+        "pointLabel": "z=1",
+        "contribution": {
+          "re": 0.5,
+          "im": 0
+        },
+        "cumulative": {
+          "re": 1.5,
+          "im": 0
+        }
+      },
+      {
+        "sampleIndex": 1,
+        "abscissa": 1,
+        "pointIndex": 2,
+        "pointLabel": "z=-1",
+        "contribution": {
+          "re": -0.5,
+          "im": -6.123233995736766e-17
+        },
+        "cumulative": {
+          "re": 0.5,
+          "im": -6.123233995736766e-17
+        }
+      },
+      {
+        "sampleIndex": 2,
+        "abscissa": 2,
+        "pointIndex": 0,
+        "pointLabel": "z=2",
+        "contribution": {
+          "re": 0.0625,
+          "im": 0
+        },
+        "cumulative": {
+          "re": 1.3125,
+          "im": 0
+        }
+      },
+      {
+        "sampleIndex": 2,
+        "abscissa": 2,
+        "pointIndex": 1,
+        "pointLabel": "z=1",
+        "contribution": {
+          "re": 0.25,
+          "im": 0
+        },
+        "cumulative": {
+          "re": 1.75,
+          "im": 0
+        }
+      },
+      {
+        "sampleIndex": 2,
+        "abscissa": 2,
+        "pointIndex": 2,
+        "pointLabel": "z=-1",
+        "contribution": {
+          "re": 0.25,
+          "im": 6.123233995736766e-17
+        },
+        "cumulative": {
+          "re": 0.75,
+          "im": 0
+        }
+      },
+      {
+        "sampleIndex": 3,
+        "abscissa": 3,
+        "pointIndex": 0,
+        "pointLabel": "z=2",
+        "contribution": {
+          "re": 0.015625,
+          "im": 0
+        },
+        "cumulative": {
+          "re": 1.328125,
+          "im": 0
+        }
+      },
+      {
+        "sampleIndex": 3,
+        "abscissa": 3,
+        "pointIndex": 1,
+        "pointLabel": "z=1",
+        "contribution": {
+          "re": 0.125,
+          "im": 0
+        },
+        "cumulative": {
+          "re": 1.875,
+          "im": 0
+        }
+      },
+      {
+        "sampleIndex": 3,
+        "abscissa": 3,
+        "pointIndex": 2,
+        "pointLabel": "z=-1",
+        "contribution": {
+          "re": -0.125,
+          "im": -4.592425496802574e-17
+        },
+        "cumulative": {
+          "re": 0.625,
+          "im": -4.592425496802574e-17
+        }
+      },
+      {
+        "sampleIndex": 4,
+        "abscissa": 4,
+        "pointIndex": 0,
+        "pointLabel": "z=2",
+        "contribution": {
+          "re": 0.00390625,
+          "im": 0
+        },
+        "cumulative": {
+          "re": 1.33203125,
+          "im": 0
+        }
+      },
+      {
+        "sampleIndex": 4,
+        "abscissa": 4,
+        "pointIndex": 1,
+        "pointLabel": "z=1",
+        "contribution": {
+          "re": 0.0625,
+          "im": 0
+        },
+        "cumulative": {
+          "re": 1.9375,
+          "im": 0
+        }
+      },
+      {
+        "sampleIndex": 4,
+        "abscissa": 4,
+        "pointIndex": 2,
+        "pointLabel": "z=-1",
+        "contribution": {
+          "re": 0.0625,
+          "im": 3.061616997868383e-17
+        },
+        "cumulative": {
+          "re": 0.6875,
+          "im": -1.5308084989341912e-17
+        }
+      },
+      {
+        "sampleIndex": 5,
+        "abscissa": 5,
+        "pointIndex": 0,
+        "pointLabel": "z=2",
+        "contribution": {
+          "re": 0.0009765625,
+          "im": 0
+        },
+        "cumulative": {
+          "re": 1.3330078125,
+          "im": 0
+        }
+      },
+      {
+        "sampleIndex": 5,
+        "abscissa": 5,
+        "pointIndex": 1,
+        "pointLabel": "z=1",
+        "contribution": {
+          "re": 0.03125,
+          "im": 0
+        },
+        "cumulative": {
+          "re": 1.96875,
+          "im": 0
+        }
+      },
+      {
+        "sampleIndex": 5,
+        "abscissa": 5,
+        "pointIndex": 2,
+        "pointLabel": "z=-1",
+        "contribution": {
+          "re": -0.03125,
+          "im": -1.9135106236677395e-17
+        },
+        "cumulative": {
+          "re": 0.65625,
+          "im": -3.444319122601931e-17
+        }
+      }
+    ],
+    "topology": {
+      "stations": [
+        "z-sample-source",
+        "z-kernel-station",
+        "z-accumulator-station",
+        "z-result-sink"
+      ],
+      "movables": [
+        "TransformSampleToken",
+        "TransformContributionToken",
+        "TransformTotalsToken"
+      ],
+      "edges": [
+        "z-sample-source:transform-sample -> z-kernel-station:transform-sample",
+        "z-kernel-station:transform-contribution -> z-accumulator-station:transform-contribution",
+        "z-accumulator-station:transform-result -> z-result-sink:transform-result"
+      ]
+    },
+    "entityFramework": {
+      "sources": [
+        "z-sample-source"
+      ],
+      "stations": [
+        "z-kernel-station",
+        "z-accumulator-station"
+      ],
+      "sinks": [
+        "z-result-sink"
+      ],
+      "movableEntities": [
+        "TransformSampleToken",
+        "TransformContributionToken",
+        "TransformTotalsToken"
+      ],
+      "edges": [
+        "z-sample-source:transform-sample -> z-kernel-station:transform-sample",
+        "z-kernel-station:transform-contribution -> z-accumulator-station:transform-contribution",
+        "z-accumulator-station:transform-result -> z-result-sink:transform-result"
+      ]
+    },
+    "runSummary": {
+      "ticks": 6,
+      "reason": "done",
+      "validation": [
+        {
+          "name": "z-sample-source.emitted-all-samples",
+          "passed": true,
+          "observed": "6/6",
+          "expected": "every input sample emitted exactly once",
+          "group": "signal-transform"
+        },
+        {
+          "name": "z-accumulator-station.complete-contribution-count",
+          "passed": true,
+          "observed": "6,6,6",
+          "expected": "one contribution per sample per evaluation point",
+          "group": "signal-transform"
+        },
+        {
+          "name": "z-accumulator-station.finite-sums",
+          "passed": true,
+          "expected": "all accumulated complex sums finite",
+          "group": "signal-transform"
+        },
+        {
+          "name": "z-result-sink.received-result",
+          "passed": true,
+          "expected": "one transform result token reaches the sink",
+          "group": "signal-transform"
+        }
+      ],
+      "validationOk": true
+    },
+    "validation": [
+      {
+        "name": "z-sample-source.emitted-all-samples",
+        "passed": true,
+        "observed": "6/6",
+        "expected": "every input sample emitted exactly once",
+        "group": "signal-transform"
+      },
+      {
+        "name": "z-accumulator-station.complete-contribution-count",
+        "passed": true,
+        "observed": "6,6,6",
+        "expected": "one contribution per sample per evaluation point",
+        "group": "signal-transform"
+      },
+      {
+        "name": "z-accumulator-station.finite-sums",
+        "passed": true,
+        "expected": "all accumulated complex sums finite",
+        "group": "signal-transform"
+      },
+      {
+        "name": "z-result-sink.received-result",
+        "passed": true,
+        "expected": "one transform result token reaches the sink",
+        "group": "signal-transform"
+      },
+      {
+        "name": "z-transform.reference.z=2",
+        "group": "signal-transform-reference",
+        "passed": true,
+        "observed": "1.33301 + 0.00000i",
+        "expected": "1.33301 + 0.00000i"
+      },
+      {
+        "name": "z-transform.reference.z=1",
+        "group": "signal-transform-reference",
+        "passed": true,
+        "observed": "1.96875 + 0.00000i",
+        "expected": "1.96875 + 0.00000i"
+      },
+      {
+        "name": "z-transform.reference.z=-1",
+        "group": "signal-transform-reference",
+        "passed": true,
+        "observed": "0.656250 - 3.44432e-17i",
+        "expected": "0.656250 - 3.44432e-17i"
+      }
+    ]
+  }
+}

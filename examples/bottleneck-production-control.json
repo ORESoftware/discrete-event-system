@@ -1,0 +1,8 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "bottleneck-production-control",
+  "description": "Manufacturing production planning/control model comparing push, kanban, bottleneck-buffer-rope, and adaptive expedite release policies.",
+  "parameters": {"horizon": 18, "dailyDemand": 8},
+  "runtime": {"animate": false, "outputs": {"csv": "out/bottleneck-production-control.csv", "summary": "out/bottleneck-production-control.summary.json"}},
+  "metadata": {"tags": ["manufacturing", "production-control", "bottleneck", "scheduling"]}
+}

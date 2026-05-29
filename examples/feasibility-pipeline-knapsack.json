@@ -1,0 +1,47 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "feasibility-pipeline",
+  "description": "Check and improve a user-supplied binary knapsack solution through the feasibility pipeline.",
+  "parameters": {
+    "problem": {
+      "sense": "max",
+      "variables": [
+        {"name": "x0", "type": "binary"},
+        {"name": "x1", "type": "binary"},
+        {"name": "x2", "type": "binary"}
+      ],
+      "objective": {
+        "coefficients": {"x0": 60, "x1": 100, "x2": 120}
+      },
+      "constraints": [
+        {"name": "capacity", "coefficients": {"x0": 10, "x1": 20, "x2": 30}, "sense": "<=", "rhs": 50}
+      ],
+      "tolerance": 1e-8
+    },
+    "candidate": {
+      "id": "user-best",
+      "values": {"x0": 1, "x1": 1, "x2": 0}
+    },
+    "improvement": {
+      "enabled": true,
+      "maxIterations": 80,
+      "seed": 4,
+      "integerStep": 1,
+      "penalty": 1000000,
+      "allowRepair": true
+    },
+    "timeLimitMs": 180000
+  },
+  "runtime": {
+    "verbose": true,
+    "outputs": {
+      "csv": "out/feasibility-pipeline-knapsack.csv",
+      "html": "out/feasibility-pipeline-knapsack.html",
+      "log": "out/feasibility-pipeline-knapsack.jsonl",
+      "summary": "out/feasibility-pipeline-knapsack.summary.json"
+    }
+  },
+  "metadata": {
+    "tags": ["feasibility", "optimization", "knapsack"]
+  }
+}

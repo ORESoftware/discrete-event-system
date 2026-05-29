@@ -1,0 +1,20 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "four-rooms-smdp",
+  "description": "Four Rooms with hallway options + 4 primitive options — SMDP Q-learning, 200 episodes.",
+  "parameters": {
+    "numEpisodes": 800,
+    "maxStepsPerEpisode": 2000,
+    "alpha": 0.3,
+    "gamma": 0.99,
+    "epsilon": 0.2,
+    "epsilonDecay": 0.99,
+    "epsilonMin": 0.02,
+    "slip": 0,
+    "includePrimitive": true,
+    "initQ": 0.05,
+    "seed": 1
+  },
+  "runtime": {"seed": 1},
+  "metadata": {"tags": ["smdp", "options", "four-rooms", "hierarchical-rl"]}
+}

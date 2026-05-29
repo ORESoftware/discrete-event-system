@@ -1,0 +1,26 @@
+{
+  "$schema": "des/model-spec/v1",
+  "model": "simulated-annealing",
+  "description": "SA on a 5-city pentagon TSP — should find the perimeter as the exact optimum.",
+  "parameters": {
+    "problem": "tsp",
+    "tsp": {
+      "builtin": "pentagon",
+      "n": 5,
+      "init": "random",
+      "moves": "mixed"
+    },
+    "cooling": {"kind": "geometric", "T0": 50, "alpha": 0.998},
+    "options": {"maxIterations": 2000, "seed": 1}
+  },
+  "runtime": {
+    "outputs": {
+      "csv": "out/sa/tsp-pentagon-trace.csv"
+    },
+    "verbose": true
+  },
+  "metadata": {
+    "tags": ["simulated-annealing", "tsp", "pentagon"],
+    "notes": "Optimum tour length is the regular-pentagon perimeter."
+  }
+}

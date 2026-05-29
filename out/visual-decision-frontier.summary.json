@@ -1,0 +1,122 @@
+{
+  "modelId": "visual-decision-frontier",
+  "params": {
+    "riskWeight": 0.35
+  },
+  "runtimeMs": 0,
+  "summaryText": "VISUAL DECISION FRONTIER\n----------------------------------------\n  Category:       Decision science (using data science combined with visualization)\n  Best plan:      adoption-led-view\n  Objective:      53.853500\n  Metrics:        topAlternative=targeted workflow redesign, topScore=50.54, separation=2.0900, frontierCount=3.0000\n  Candidates:     4\n  Stations:       visual-decision-frontier-scenario-source -> visual-decision-frontier-candidate-generator -> visual-decision-frontier-plan-evaluator -> visual-decision-frontier-result-sink\n  Movables:       DomainScenarioToken, DomainPlanToken, DomainEvaluationToken",
+  "result": {
+    "modelId": "visual-decision-frontier",
+    "category": "Decision science (using data science combined with visualization)",
+    "best": {
+      "candidateId": "adoption-led-view",
+      "plan": {
+        "impactWeight": 0.38,
+        "adoptionWeight": 0.42,
+        "costWeight": 0.12,
+        "riskWeight": 0.35
+      },
+      "objective": 53.8535,
+      "feasible": true,
+      "metrics": {
+        "topAlternative": "targeted workflow redesign",
+        "topScore": 50.54,
+        "separation": 2.0900000000000034,
+        "frontierCount": 3,
+        "visualizationReady": true
+      }
+    },
+    "candidates": [
+      {
+        "candidateId": "adoption-led-view",
+        "plan": {
+          "impactWeight": 0.38,
+          "adoptionWeight": 0.42,
+          "costWeight": 0.12,
+          "riskWeight": 0.35
+        },
+        "objective": 53.8535,
+        "feasible": true,
+        "metrics": {
+          "topAlternative": "targeted workflow redesign",
+          "topScore": 50.54,
+          "separation": 2.0900000000000034,
+          "frontierCount": 3,
+          "visualizationReady": true
+        }
+      },
+      {
+        "candidateId": "impact-led-view",
+        "plan": {
+          "impactWeight": 0.6,
+          "adoptionWeight": 0.2,
+          "costWeight": 0.12,
+          "riskWeight": 0.35
+        },
+        "objective": 51.9785,
+        "feasible": true,
+        "metrics": {
+          "topAlternative": "pilot automation",
+          "topScore": 48.86,
+          "separation": 0.7899999999999991,
+          "frontierCount": 3,
+          "visualizationReady": true
+        }
+      },
+      {
+        "candidateId": "risk-adjusted-frontier",
+        "plan": {
+          "impactWeight": 0.48,
+          "adoptionWeight": 0.28,
+          "costWeight": 0.08,
+          "riskWeight": 0.55
+        },
+        "objective": 47.034000000000006,
+        "feasible": true,
+        "metrics": {
+          "topAlternative": "targeted workflow redesign",
+          "topScore": 43.86000000000001,
+          "separation": 1.1600000000000108,
+          "frontierCount": 3,
+          "visualizationReady": true
+        }
+      },
+      {
+        "candidateId": "lean-value-frontier",
+        "plan": {
+          "impactWeight": 0.42,
+          "adoptionWeight": 0.25,
+          "costWeight": 0.25,
+          "riskWeight": 0.35
+        },
+        "objective": 38.118500000000004,
+        "feasible": true,
+        "metrics": {
+          "topAlternative": "targeted workflow redesign",
+          "topScore": 34.85,
+          "separation": 1.7899999999999991,
+          "frontierCount": 3,
+          "visualizationReady": true
+        }
+      }
+    ],
+    "topology": {
+      "stations": [
+        "visual-decision-frontier-scenario-source",
+        "visual-decision-frontier-candidate-generator",
+        "visual-decision-frontier-plan-evaluator",
+        "visual-decision-frontier-result-sink"
+      ],
+      "movables": [
+        "DomainScenarioToken",
+        "DomainPlanToken",
+        "DomainEvaluationToken"
+      ],
+      "edges": [
+        "visual-decision-frontier-scenario-source:scenario -> visual-decision-frontier-candidate-generator:scenario",
+        "visual-decision-frontier-candidate-generator:candidate-plan -> visual-decision-frontier-plan-evaluator:candidate-plan",
+        "visual-decision-frontier-plan-evaluator:evaluation -> visual-decision-frontier-result-sink:evaluation"
+      ]
+    }
+  }
+}

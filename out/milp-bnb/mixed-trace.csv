@@ -1,0 +1,7 @@
+var_index,value
+0,4
+1,0
+2,3.666666666666667
+
+node_id,parent_id,depth,branch_var,branch_type,branch_value,lp_status,lp_z,fractional_count,pruned,pruned_reason,incumbent_updated
+0,,0,,,,optimal,37.66666666666667,0,true,integer-feasible,true

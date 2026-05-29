@@ -1,0 +1,5 @@
+candidate_id,objective,feasible,metrics,plan
+uncertainty-sampling,56.0866563960622,true,"{""selected"":""1|5|3|6"",""cost"":9,""infoGain"":2.253715,""expectedErrorReduction"":0.5528665639606221}","{""uncertaintyWeight"":1,""diversityWeight"":0,""costWeight"":0}"
+diversity-regularized-active-learning,52.594760666928074,true,"{""selected"":""3|1|6|4"",""cost"":7,""infoGain"":1.95174,""expectedErrorReduction"":0.5019476066692807}","{""uncertaintyWeight"":0.7,""diversityWeight"":0.55,""costWeight"":0.1}"
+cost-aware-information-gain,52.594760666928074,true,"{""selected"":""6|1|3|4"",""cost"":7,""infoGain"":1.95174,""expectedErrorReduction"":0.5019476066692807}","{""uncertaintyWeight"":0.75,""diversityWeight"":0.35,""costWeight"":0.45}"
+balanced-portfolio-acquisition,52.594760666928074,true,"{""selected"":""6|3|4|1"",""cost"":7,""infoGain"":1.95174,""expectedErrorReduction"":0.5019476066692807}","{""uncertaintyWeight"":0.55,""diversityWeight"":0.65,""costWeight"":0.25}"
