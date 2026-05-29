@@ -87,6 +87,7 @@ const GREEK: Record<string, string> = {
 };
 
 export function runMathEquationProblem(params: MathEquationInputParams, logger?: {log(event: Record<string, unknown>): void}): MathEquationResult {
+  console.debug(`[math-equation-input] running problem: format=${params.format}, kind=${params.kind ?? 'inferred'}, equation=${params.equation ? JSON.stringify(params.equation) : '(none)'}`);
   const normalized = normalizeMathEquationProblem(params);
   logger?.log({kind: 'math-equation-normalized', level: 'info', format: params.format, problemKind: normalized.kind});
   if (normalized.kind === 'ode') {
@@ -428,6 +429,7 @@ function tokenizeExpression(input: string): ExprToken[] {
     if (c === '(') { tokens.push({kind: 'lparen', text: c}); i++; continue; }
     if (c === ')') { tokens.push({kind: 'rparen', text: c}); i++; continue; }
     if ('+-*/^'.includes(c)) { tokens.push({kind: 'op', text: c}); i++; continue; }
+    console.warn(`[math-equation-input] unsupported expression character "${c}" while tokenizing ${JSON.stringify(input)} — check for stray symbols or an unmapped LaTeX command.`);
     throw new Error(`MathEquationInput: unsupported expression character "${c}" in ${JSON.stringify(input)}`);
   }
   return tokens;

@@ -25,10 +25,12 @@ export class TimeDelayOrTravelEntity<S, T>
 
 
     doValidation(): void {
+        console.warn(`[time-delay:${this.id}] doValidation() is not implemented for TimeDelayOrTravelEntity.`);
         throw new Error("Method not implemented.");
     }
 
     takeItem(m: AbstractMovingEntity<any>): void {
+        console.warn(`[time-delay:${this.id}] takeItem() is not implemented — entity ${(m as any)?.id} cannot enter this travel/delay node.`);
         throw new Error("Method not implemented.");
     }
 

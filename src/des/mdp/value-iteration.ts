@@ -90,6 +90,12 @@ export function valueIteration(opts: VIOptions = {}): VIResult {
     if (delta < tol) break;
   }
 
+  if (finalDelta >= tol) {
+    console.warn(`[mdp.valueIteration] did not converge: maxIter=${maxIter} reached with max|ΔV|=${finalDelta} ≥ tol=${tol} (gamma=${gamma}). Increase maxIter or check the model.`);
+  } else {
+    console.debug(`[mdp.valueIteration] converged in ${iterations} iterations (max|ΔV|=${finalDelta} < tol=${tol}, gamma=${gamma}).`);
+  }
+
   // Extract greedy policy from V.
   const policy = new Int32Array(N_STATES);
   for (let s = 0; s < N_STATES; s++) {

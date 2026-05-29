@@ -61,6 +61,7 @@ export class QueueEntity<S, T>
   }
 
   getSerializableData(): Partial<this> {
+    console.warn(`[queue:${this.id}] getSerializableData() called on base QueueEntity — this path is not supported and will throw.`);
     throw makeError('this is wrong.');
     return {
       ...this,

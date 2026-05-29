@@ -79,6 +79,9 @@ export function adaptiveSimpson(
     const left  = S(a, fa, fm, flm, m);
     const right = S(m, fm, fb, frm, b);
     const err = (left + right - whole) / 15;
+    if (depth >= maxDepth && Math.abs(err) > tol) {
+      console.warn(`[quadrature.adaptiveSimpson] max recursion depth ${maxDepth} reached on [${a}, ${b}] with error gauge ${Math.abs(err).toExponential(2)} > tol ${tol}; result may be inaccurate.`);
+    }
     if (Math.abs(err) <= tol || depth >= maxDepth) return left + right + err;
     return recurse(a, fa, fm, flm, m, left,  tol / 2, depth + 1) +
            recurse(m, fm, fb, frm, b, right, tol / 2, depth + 1);

@@ -71,6 +71,9 @@ export function gradientDescent(
     fx = fNew;
   }
   const g = grad(x); const gn = norm2(g);
+  if (gn >= tol) {
+    console.warn(`[optim.gradientDescent] hit maxIter=${maxIter} without converging; final |grad|=${gn} (tol=${tol}), fx=${fx}.`);
+  }
   return {x, fx, iterations: maxIter, converged: gn < tol, finalGradNorm: gn, history};
 }
 
@@ -103,7 +106,10 @@ export function newtonOptim(
     const H = hess(x);
     let p: number[];
     try { p = solveLinear(H, g); }
-    catch { p = g.slice(); }                   // fall back to gradient direction
+    catch {
+      console.warn(`[optim.newtonOptim] Hessian singular at iter ${iter} (x=[${x.map(v => v.toFixed(3)).join(', ')}]); falling back to gradient direction.`);
+      p = g.slice();
+    }                   // fall back to gradient direction
     // Direction: −p (since p satisfies H p = g, the Newton step is −H^{-1}g = −p).
     let alpha = 1;
     let xNew = x.map((v, i) => v - alpha * p[i]);
@@ -119,6 +125,9 @@ export function newtonOptim(
     fx = fNew;
   }
   const g = grad(x); const gn = norm2(g);
+  if (gn >= tol) {
+    console.warn(`[optim.newtonOptim] hit maxIter=${maxIter} without converging; final |grad|=${gn} (tol=${tol}), fx=${fx}.`);
+  }
   return {x, fx, iterations: maxIter, converged: gn < tol, finalGradNorm: gn, history};
 }
 
@@ -162,6 +171,9 @@ export function bfgs(
     const gNew = grad(xNew);
     const y = gNew.map((v, i) => v - g[i]);
     const sy = dot(s, y);
+    if (sy <= 1e-12) {
+      console.debug(`[optim.bfgs] curvature condition sᵀy=${sy} ≤ 1e-12 at iter ${iter}; skipping inverse-Hessian update to keep H positive-definite.`);
+    }
     if (sy > 1e-12) {
       const Hy = matVec(H, y);
       const yHy = dot(y, Hy);
@@ -184,6 +196,9 @@ export function bfgs(
     fx = fNew; g = gNew;
   }
   const gn = norm2(g);
+  if (gn >= tol) {
+    console.warn(`[optim.bfgs] hit maxIter=${maxIter} without converging; final |grad|=${gn} (tol=${tol}), fx=${fx}.`);
+  }
   return {x, fx, iterations: maxIter, converged: gn < tol, finalGradNorm: gn, history};
 }
 
@@ -211,7 +226,10 @@ function solveLinear(A: number[][], b: number[]): number[] {
   for (let i = 0; i < n; i++) {
     let pivot = i;
     for (let k = i + 1; k < n; k++) if (Math.abs(M[k][i]) > Math.abs(M[pivot][i])) pivot = k;
-    if (Math.abs(M[pivot][i]) < 1e-15) throw new Error('singular matrix');
+    if (Math.abs(M[pivot][i]) < 1e-15) {
+      console.debug(`[optim.solveLinear] near-zero pivot ${M[pivot][i]} at column ${i} of ${n}; matrix is singular.`);
+      throw new Error('singular matrix');
+    }
     if (pivot !== i) { [M[i], M[pivot]] = [M[pivot], M[i]]; [x[i], x[pivot]] = [x[pivot], x[i]]; }
     for (let k = i + 1; k < n; k++) {
       const f = M[k][i] / M[i][i];

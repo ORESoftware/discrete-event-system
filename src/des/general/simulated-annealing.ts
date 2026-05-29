@@ -227,8 +227,14 @@ class SAOptimizer<S> extends SingleStateOptimizer<S> {
 
   protected shouldStop(iter: number): boolean {
     if (iter >= this.maxIters) return true;
-    if (this.stallLimit > 0 && this.stallCount >= this.stallLimit) return true;
-    if (iter > 0 && temperatureAt(this.cooling, iter) <= 0) return true;
+    if (this.stallLimit > 0 && this.stallCount >= this.stallLimit) {
+      console.debug(`[simulated-annealing] early stop at iter ${iter}: best cost stalled for ${this.stallCount} ticks (stallLimit=${this.stallLimit}, best=${this.bestCost}).`);
+      return true;
+    }
+    if (iter > 0 && temperatureAt(this.cooling, iter) <= 0) {
+      console.debug(`[simulated-annealing] stopping at iter ${iter}: temperature reached 0 (cooling=${this.cooling.kind}).`);
+      return true;
+    }
     return false;
   }
 
@@ -291,7 +297,11 @@ export function runSimulatedAnnealing<S>(
   opt.pipe(sink, SingleStateOptimizer.CH_RESULT, SingleStateSinkStation.CH_RESULT);
   runIterativeDES([source, opt, sink], {shuffle: false});
   const result = sink.latest?.snapshot;
-  if (!result) throw new Error('simulated-annealing: result sink did not receive a final state');
+  if (!result) {
+    console.warn(`[simulated-annealing] result sink received no final state after ${options.maxIterations} iterations — the DES pipeline did not deliver a snapshot (check station wiring).`);
+    throw new Error('simulated-annealing: result sink did not receive a final state');
+  }
+  console.debug(`[simulated-annealing] finished: bestCost=${result.bestCost}, finalCost=${result.currentCost}, iterations=${result.iteration}, accepted=${result.acceptedCount}.`);
   return {
     bestState: result.best,
     bestCost: result.bestCost,

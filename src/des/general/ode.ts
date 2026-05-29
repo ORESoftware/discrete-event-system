@@ -124,7 +124,10 @@ export function rk45(f: RHS, y0: number[], t0: number, t1: number, opts: RK45Opt
   const n = y0.length;
   let step = 0;
   while (tn < t1 - 1e-15) {
-    if (step++ > maxSteps) throw new Error(`rk45: exceeded ${maxSteps} steps`);
+    if (step++ > maxSteps) {
+      console.warn(`[ode.rk45] exceeded maxSteps=${maxSteps} at t=${tn} (target t1=${t1}, current h=${h}); integration aborted.`);
+      throw new Error(`rk45: exceeded ${maxSteps} steps`);
+    }
     if (tn + h > t1) h = t1 - tn;
     const k1 = f(tn,             yn);
     const k2 = f(tn + C2 * h,    vplus(yn, k1, h * A21));
@@ -157,7 +160,10 @@ export function rk45(f: RHS, y0: number[], t0: number, t1: number, opts: RK45Opt
     } else {
       const factor = Math.max(0.1, 0.9 * Math.pow(errNorm, -1 / 5));
       h = Math.max(hMin, h * factor);
-      if (h <= hMin) throw new Error(`rk45: step underflow at t=${tn}`);
+      if (h <= hMin) {
+        console.warn(`[ode.rk45] step size underflow at t=${tn}: h=${h} ≤ hMin=${hMin} with errNorm=${errNorm}; problem may be stiff (try backwardEuler).`);
+        throw new Error(`rk45: step underflow at t=${tn}`);
+      }
     }
   }
   return {t, y};
@@ -200,7 +206,10 @@ export function backwardEuler(
         for (let i = 0; i < yNext.length; i++) yNext[i] = yn[i] + dt * fNext[i];
       }
     }
-    if (!success && J) throw new Error(`backwardEuler: Newton failed at t=${tn}`);
+    if (!success && J) {
+      console.warn(`[ode.backwardEuler] Newton iteration failed to converge (tol=${newtonTol}, maxIter=${newtonMaxIter}) at t=${tn}; Jacobian may be wrong or step dt=${dt} too large.`);
+      throw new Error(`backwardEuler: Newton failed at t=${tn}`);
+    }
     yn = yNext; tn = tNext;
     t.push(tn); y.push(yn.slice());
   }
@@ -214,7 +223,10 @@ function solveLinear(A: number[][], b: number[]): number[] {
   for (let i = 0; i < n; i++) {
     let p = i;
     for (let k = i + 1; k < n; k++) if (Math.abs(M[k][i]) > Math.abs(M[p][i])) p = k;
-    if (Math.abs(M[p][i]) < 1e-15) throw new Error('singular matrix in backwardEuler');
+    if (Math.abs(M[p][i]) < 1e-15) {
+      console.warn(`[ode.backwardEuler] singular Newton matrix (pivot ${M[p][i]} at column ${i}/${n}); cannot solve the implicit step.`);
+      throw new Error('singular matrix in backwardEuler');
+    }
     if (p !== i) { [M[i], M[p]] = [M[p], M[i]]; [x[i], x[p]] = [x[p], x[i]]; }
     for (let k = i + 1; k < n; k++) {
       const f = M[k][i] / M[i][i];

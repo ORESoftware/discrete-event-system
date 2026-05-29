@@ -144,6 +144,9 @@ export class PerIndividualProcessor<S, T>
     for (const item of ready) {
       let routed = false;
       const connections = Array.from(this.connectionsOut) as EntityConnection<any, any>[];
+      if (connections.length < 1) {
+        console.warn(`[per-individual:${this.id}] entity ${(item.entity as any)?.id} finished service but station has no out-connections; it will loop back indefinitely.`);
+      }
       for (const conn of this.outputRouter.order(connections)) {
         const target = (conn as EntityConnection<any, any>).getTarget();
         if (!target) continue;
@@ -157,6 +160,7 @@ export class PerIndividualProcessor<S, T>
       if (!routed) {
         // Nobody accepted - stick the item back at the front of the queue
         // with a tiny remaining time so it'll be retried next step.
+        console.debug(`[per-individual:${this.id}] no downstream accepted finished entity ${(item.entity as any)?.id}; retrying next step (queue size ${this.items.length + 1}).`);
         item.remainingTime = 0;
         this.items.unshift(item);
       }

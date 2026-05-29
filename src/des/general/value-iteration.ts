@@ -149,6 +149,7 @@ export class ValueIterationStation extends FixedPointIterationStation<Float64Arr
           let total = 0;
           for (const o of ol) total += o.prob;
           if (Math.abs(total - 1) > probTol) {
+            console.warn(`[value-iteration] outcomes(${s}, ${a}) probabilities sum to ${total} (expected 1 ± ${probTol}) — transition model is not a valid distribution.`);
             throw new Error(
               `outcomes(${s}, ${a}) probabilities sum to ${total}, expected 1 (tol=${probTol})`);
           }
@@ -325,6 +326,11 @@ export class ValueIterationStation extends FixedPointIterationStation<Float64Arr
 export function valueIteration(spec: MDPSpec, opts: VIOptions = {}): VIResult {
   const station = new ValueIterationStation(spec, opts);
   runIterativeDES([station]);
+  const finalDelta = station.getLastDelta();
+  const tol = opts.tol ?? 1e-9;
+  if (finalDelta > tol) {
+    console.warn(`[value-iteration] stopped after ${station.getIteration()} iterations with max|ΔV|=${finalDelta} > tol=${tol} (reason=${station.getReason?.() ?? 'unknown'}); value function may not be optimal.`);
+  }
   const V = station.getCurrent();
   const policy = station.greedyPolicy();
   return {

@@ -94,7 +94,10 @@ export function runIterativeDES(
   while (true) {
     const entities = currentEntities();
     if (opts.stopWhen?.(tick, entities)) { reason = 'stop-when'; break; }
-    if (tick >= maxTicks)                { reason = 'maxticks';  break; }
+    if (tick >= maxTicks) {
+      console.warn(`[runIterativeDES] hit maxTicks=${maxTicks} before the system went quiescent (${entities.length} participants still active) — increase maxTicks or check for a non-terminating model.`);
+      reason = 'maxticks';  break;
+    }
     let anyWork = false;
     for (const s of entities) {
       const hasWork = s.hasWork ? s.hasWork() : true;
@@ -119,6 +122,10 @@ export function runIterativeDES(
     if (allChecks.length > 0) {
       summary.validation = allChecks;
       summary.validationOk = allChecks.every(c => c.passed);
+      if (!summary.validationOk) {
+        const failed = allChecks.filter(c => !c.passed).map(c => c.name);
+        console.warn(`[runIterativeDES] ${failed.length}/${allChecks.length} validators FAILED after ${tick} ticks: ${failed.join(', ')}`);
+      }
     }
   }
   return summary;
@@ -145,5 +152,8 @@ export function assertNoValidationFailures(
   modelName: string,
 ): void {
   const names = validationFailureNames(summary);
-  if (names.length > 0) throw new Error(`${modelName} validation failed: ${names}`);
+  if (names.length > 0) {
+    console.warn(`[${modelName}] post-run validation failed (${failedValidationChecks(summary).length} checks): ${names}`);
+    throw new Error(`${modelName} validation failed: ${names}`);
+  }
 }

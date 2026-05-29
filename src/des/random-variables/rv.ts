@@ -75,6 +75,7 @@ export class ExponentialRandomVariable extends RandomVariable {
 
     this.lambda = lambda;
     if (math.smallerEq(lambda, bgn(0))) {
+      console.warn(`[ExponentialRandomVariable] invalid lambda=${lambda.toString()} (must be > 0); rate parameter cannot be zero or negative.`);
       throw new Error('lambda must be larger than 0.')
     }
     this.preComputedRHS = math.exp(
@@ -315,14 +316,17 @@ export class UniformRandomVariable extends RandomVariable {
     this.bVal = Number(bVal);
 
     if (isNaN(this.aVal)) {
+      console.warn(`[UniformRandomVariable] lower bound aVal parsed to NaN (raw=${String(aVal)}).`);
       throw makeError('this.aVal is not a number.')
     }
     if (isNaN(this.bVal)) {
+      console.warn(`[UniformRandomVariable] upper bound bVal parsed to NaN (raw=${String(bVal)}).`);
       throw makeError('this.bVal is not a number.')
     }
 
     this.width = Number(bVal) - Number(aVal);
     if (math.smaller(this.width, 0.00000001)) {
+      console.warn(`[UniformRandomVariable] degenerate interval: width=${this.width} from [${this.aVal}, ${this.bVal}] (need width > 1e-8).`);
       throw new Error('Width of uniform distribution needs to be greater than 0.00000001')
     }
 

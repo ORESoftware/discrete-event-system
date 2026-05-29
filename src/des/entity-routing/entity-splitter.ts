@@ -66,12 +66,16 @@ export class EntitySplitter<S, T>
 
     this.timeStepCount++;
 
+    if (this.getOutConnections().size < 1) {
+      console.warn(`[splitter:${this.id}] has no out-connections; queued items cannot be broadcast downstream.`);
+    }
     for(const [k,v] of this.queue.dequeueIterator()){
       // send each queue item to each out connection
       for(const conn of this.getOutConnections()){
         if(conn.target.acceptItem(k)){
           conn.target.takeItem(k);
         } else {
+          console.warn(`[splitter:${this.id}] downstream "${(conn.target as any)?.id}" refused item ${(k as any)?.id}; splitter requires all targets to accept (broadcast semantics).`);
           throw makeError('must accept item:', k);
         }
       }

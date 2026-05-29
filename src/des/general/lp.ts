@@ -285,6 +285,7 @@ export function solveLPInternal(p: LPProblem, opts: InternalSimplexOptions = {})
     const phase1Result = simplexCore(T, basis, phase1Cost, tol, maxIter - iters);
     iters += phase1Result.iters;
     if (phase1Result.status !== 'optimal') {
+      console.warn(`[lp.internal] phase 1 ended '${phase1Result.status}' after ${iters} iters (n=${n}, constraints=${m}); LP cannot be solved.`);
       return {status: phase1Result.status, x: [], objective: NaN,
               solver: 'internal', elapsedMs: Date.now() - t0, iters,
               message: 'phase 1 ' + phase1Result.status};
@@ -298,6 +299,7 @@ export function solveLPInternal(p: LPProblem, opts: InternalSimplexOptions = {})
       }
     }
     if (phase1Obj < -1e-7) {
+      console.warn(`[lp.internal] infeasible: phase 1 residual sum of artificials = ${(-phase1Obj).toExponential(3)} (> 0); feasible region is empty.`);
       return {status: 'infeasible', x: [], objective: NaN,
               solver: 'internal', elapsedMs: Date.now() - t0, iters,
               message: 'phase 1 residual sum of artificials = ' + (-phase1Obj).toExponential(3)};
@@ -320,10 +322,12 @@ export function solveLPInternal(p: LPProblem, opts: InternalSimplexOptions = {})
   const phase2Result = simplexCore(T, basis, phase2Cost, tol, maxIter - iters);
   iters += phase2Result.iters;
   if (phase2Result.status === 'unbounded') {
+    console.warn(`[lp.internal] objective is unbounded in the '${p.sense}' direction after ${iters} iters; check for missing bounding constraints.`);
     return {status: 'unbounded', x: [], objective: p.sense === 'max' ? +Infinity : -Infinity,
             solver: 'internal', elapsedMs: Date.now() - t0, iters};
   }
   if (phase2Result.status !== 'optimal') {
+    console.warn(`[lp.internal] phase 2 ended '${phase2Result.status}' after ${iters} iters (maxIter=${maxIter}); returning without optimum.`);
     return {status: phase2Result.status, x: [], objective: NaN,
             solver: 'internal', elapsedMs: Date.now() - t0, iters};
   }
@@ -382,6 +386,7 @@ function simplexCore(T: number[][], basis: number[], cost: number[],
     if (leaving < 0) return {status: 'unbounded', iters};
     pivot(T, basis, leaving, entering, tol);
   }
+  console.warn(`[lp.simplexCore] reached iteration limit (${maxIter}) without optimality — possible cycling or an ill-conditioned tableau.`);
   return {status: 'iter-limit', iters};
 }
 
@@ -430,6 +435,7 @@ export function solveLPExternal(p: LPProblem, opts: ExternalSolverOptions = {}):
     input: payload, encoding: 'utf8', maxBuffer,
   });
   if (res.status !== 0) {
+    console.warn(`[lp.external] scipy:${method} process exited with code ${res.status}: ${res.stderr ?? '(no stderr)'}`);
     return {status: 'numerical-error', x: [], objective: NaN,
             solver: `scipy:${method}`, elapsedMs: Date.now() - t0,
             message: `external solver exited with ${res.status}: ${res.stderr ?? '(no stderr)'}`};
@@ -437,6 +443,7 @@ export function solveLPExternal(p: LPProblem, opts: ExternalSolverOptions = {}):
   let out: any;
   try { out = JSON.parse(res.stdout); }
   catch (e) {
+    console.warn(`[lp.external] could not parse scipy:${method} stdout as JSON: ${(e as Error).message}; stdout head="${String(res.stdout).slice(0, 120)}"`);
     return {status: 'numerical-error', x: [], objective: NaN,
             solver: `scipy:${method}`, elapsedMs: Date.now() - t0,
             message: `failed to parse external solver stdout as JSON: ${(e as Error).message}`};
@@ -474,6 +481,7 @@ export function solveLP(p: LPProblem, opts: ExternalSolverOptions & InternalSimp
     const ext = solveLPExternal(p, {...opts, method});
     if (ext.status !== 'numerical-error') return ext;
     // Fall back to internal if the external bridge failed (no scipy, no python, etc).
+    console.warn(`[lp.solveLP] external solver '${choice}' unavailable/failed (${ext.message ?? 'unknown'}); falling back to internal simplex.`);
     const fallback = solveLPInternal(p, opts);
     fallback.message = (fallback.message ? fallback.message + ' | ' : '')
       + 'external solver unavailable, fell back to internal: ' + (ext.message ?? '');

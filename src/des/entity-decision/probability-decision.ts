@@ -53,10 +53,12 @@ export class ProbabilityDecisionEntity<S, T>
     }
 
     if (math.larger(checkSum, bgn(1.00001))) {
+      console.warn(`[decision:${id}] branch probabilities sum to ${checkSum.toString()} (> 1) across ${this.opts.probabilities.length} branches — they must sum to 1.`);
       throw new Error('probability sum too high')
     }
 
     if (math.smaller(checkSum, bgn(0.9999))) {
+      console.warn(`[decision:${id}] branch probabilities sum to ${checkSum.toString()} (< 1) across ${this.opts.probabilities.length} branches — they must sum to 1.`);
       throw new Error('probability sum too high')
     }
 
@@ -84,6 +86,7 @@ export class ProbabilityDecisionEntity<S, T>
 
   doValidationBeforeRun() {
     if (this.connectionsOut.size !== this.opts.probabilities.length) {
+      console.warn(`[decision:${this.id}] validation failed: ${this.connectionsOut.size} out-connections but ${this.opts.probabilities.length} branch probabilities — these must match.`);
       throw makeError('connections out size must be the same size as probabilities.')
     }
     return true;
@@ -120,6 +123,7 @@ export class ProbabilityDecisionEntity<S, T>
     for (const [k, v] of this.queue.dequeueIterator()) {
 
       if(IsVoid.check(k)){
+        console.warn(`[decision:${this.id}] dequeueIterator yielded a void value while draining queue (size=${this.queue.size}) — head/tail desync.`);
         console.error('void value from queue:', {k,v}, (this.queue as any).head, (this.queue as any).tail);
         process.exit(0);
         break;
@@ -140,6 +144,7 @@ export class ProbabilityDecisionEntity<S, T>
       const outConn = this.connectionsOutByIndex.get(index);
 
       if (!outConn) {
+        console.warn(`[decision:${this.id}] sampled branch index ${index} has no out-connection (have ${this.connectionsOutByIndex.size} indexed connections, ${this.opts.probabilities.length} probabilities) — branch/connection mismatch.`);
         console.log(this.opts);
         console.log(this, this.connectionsOutByIndex);
         throw makeError(`missing connection with index:`, index);
@@ -148,6 +153,7 @@ export class ProbabilityDecisionEntity<S, T>
       if (outConn.target.acceptItem(v)) {
         outConn.target.takeItem(v);
       } else {
+        console.debug(`[decision:${this.id}] branch ${index} target "${(outConn.target as any)?.id}" rejected item; re-queueing (backpressure).`);
         rejected.push(v);
       }
     }

@@ -41,13 +41,19 @@ import {defaultFramesPath} from './adapters/adapter-utils';
 const REGISTRY: Map<string, DESModelRegistration<any, any>> = new Map();
 
 export function registerModel<P, R>(reg: DESModelRegistration<P, R>): void {
-  if (REGISTRY.has(reg.id)) throw new Error(`model "${reg.id}" already registered`);
+  if (REGISTRY.has(reg.id)) {
+    console.warn(`[des-registry] model "${reg.id}" is already registered; duplicate registration usually means an adapter module was imported twice.`);
+    throw new Error(`model "${reg.id}" already registered`);
+  }
   REGISTRY.set(reg.id, reg);
 }
 
 export function getModel(id: string): DESModelRegistration<any, any> {
   const reg = REGISTRY.get(id);
-  if (!reg) throw new Error(`unknown model "${id}". Registered: [${[...REGISTRY.keys()].join(', ')}]`);
+  if (!reg) {
+    console.warn(`[des-registry] unknown model "${id}". Registered models: [${[...REGISTRY.keys()].join(', ')}]`);
+    throw new Error(`unknown model "${id}". Registered: [${[...REGISTRY.keys()].join(', ')}]`);
+  }
   return reg;
 }
 
@@ -75,8 +81,10 @@ export async function runFromSpec(
   opts: RunFromSpecOptions = {},
 ): Promise<DESRunSummary> {
   if (spec.$schema !== 'des/model-spec/v1') {
+    console.warn(`[runFromSpec] unexpected $schema "${spec.$schema}" (expected "des/model-spec/v1") — the spec file may be the wrong format or version.`);
     throw new Error(`unknown $schema "${spec.$schema}". Expected "des/model-spec/v1".`);
   }
+  console.debug(`[runFromSpec] dispatching model="${spec.model}" (animate=${spec.runtime?.animate !== false}).`);
   const reg = getModel(spec.model);
   const runtime: DESRuntimeConfig = spec.runtime ?? {};
   const outCfg: NonNullable<DESRuntimeConfig['outputs']> = {...(runtime.outputs ?? {})};
@@ -153,12 +161,14 @@ function validateModelParameters<P>(
         const pathText = issue.path.length > 0 ? '$.' + issue.path.join('.') : '$';
         return `${pathText}: ${issue.message}`;
       });
+      console.warn(`[des-registry] zod parameter validation failed for model "${modelId}" (${errors.length} issue(s)): ${errors.join('; ')}`);
       throw new Error(`invalid parameters for model "${modelId}":\n  ${errors.join('\n  ')}`);
     }
     return parsed.data;
   }
   const v = validate(value, reg.schema);
   if (!v.valid) {
+    console.warn(`[des-registry] parameter validation failed for model "${modelId}" (${v.errors.length} error(s)): ${v.errors.join('; ')}`);
     throw new Error(`invalid parameters for model "${modelId}":\n  ${v.errors.join('\n  ')}`);
   }
   return v.value as P;
@@ -189,8 +199,15 @@ function serialiseResult(r: unknown): unknown {
 // -----------------------------------------------------------------------------
 
 export async function runFromJsonFile(specPath: string, opts: RunFromSpecOptions = {}): Promise<DESRunSummary> {
+  console.debug(`[runFromJsonFile] loading spec from ${specPath}`);
   const text = fs.readFileSync(specPath, 'utf8');
-  const parsed = JSON.parse(text) as unknown;
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(text) as unknown;
+  } catch (e) {
+    console.warn(`[runFromJsonFile] failed to parse ${specPath} as JSON: ${(e as Error).message}`);
+    throw e;
+  }
   const spec = isUniversalDESModelSpec(parsed)
     ? universalToDESModelSpec(parsed)
     : parsed as DESModelSpec<unknown>;

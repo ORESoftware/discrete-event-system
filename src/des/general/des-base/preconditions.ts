@@ -71,6 +71,7 @@ export class PreconditionError extends Error {
                    typeof observed === 'number' ? `; got ${observed}` :
                    `; got ${JSON.stringify(observed)}`;
     super(`${model}: ${param} must ${condition}${obsStr}`);
+    console.warn(`[precondition] ${model}: "${param}" must ${condition}${obsStr} — failing fast before the run starts.`);
     this.name = 'PreconditionError';
     this.model = model;
     this.param = param;

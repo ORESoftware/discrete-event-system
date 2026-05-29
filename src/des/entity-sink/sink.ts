@@ -114,6 +114,7 @@ export class EntitySink<S, T>
 
   takeItem(m: BasicMovingEntity) {
     this.destroyedCount++;
+    console.debug(`[sink:${this.id}] absorbed entity ${(m as any)?.id}; destroyedCount=${this.destroyedCount}.`);
     m.doFinish();
   }
 

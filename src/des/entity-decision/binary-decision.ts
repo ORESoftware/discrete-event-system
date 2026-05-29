@@ -47,6 +47,7 @@ export class BinaryDecisionEntity<S, T>
 
   doValidation() {
     if(this.connectionsOut.size !== 2){
+      console.warn(`[binary-decision:${this.id}] expected exactly 2 out-connections, found ${this.connectionsOut.size}.`);
       throw new Error('Binary decision node needs two connections out.')
     }
   }
@@ -58,6 +59,7 @@ export class BinaryDecisionEntity<S, T>
       return true;
     }
     catch (err){
+      console.warn(`[binary-decision:${this.id}] pre-run validation failed: ${(err as Error)?.message}`);
       return false;
     }
 

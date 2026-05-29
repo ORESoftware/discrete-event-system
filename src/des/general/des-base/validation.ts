@@ -63,6 +63,7 @@ export function runValidators<S>(
     try {
       out.push(...v.validate(station));
     } catch (e) {
+      console.warn(`[validation] validator "${v.name}" threw during validate(): ${e instanceof Error ? e.message : String(e)} — recording as a failed check.`);
       out.push({
         name: v.name + '/threw',
         passed: false,
@@ -281,6 +282,7 @@ export function externalReferenceValidator<S>(opts: {
     validate(s: S): ValidationCheck[] {
       if (!fs.existsSync(opts.referencePath)) {
         if (opts.silentIfMissing) return [];
+        console.warn(`[validation] external reference file not found for "${opts.name}": ${opts.referencePath} — comparison check will fail. Generate the reference or set silentIfMissing.`);
         return [{
           name: opts.name + '/reference-missing',
           passed: false,

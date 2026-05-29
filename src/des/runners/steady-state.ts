@@ -103,7 +103,11 @@ function main() {
   const dtRef = 0.01;
   const errs = COMPARTMENT_ORDER.map(c =>
     Math.abs(diffRuns.get(dtRef)!.finalPopulations[c] - (A.populations as any)[c]));
-  console.log(`  max |diff(dt=${dtRef}) - analytical| over compartments: ${fmt(Math.max(...errs), 6)}`);
+  const maxErr = Math.max(...errs);
+  console.log(`  max |diff(dt=${dtRef}) - analytical| over compartments: ${fmt(maxErr, 6)}`);
+  if (!Number.isFinite(maxErr) || maxErr > 1e-2) {
+    console.warn(`[steady-state] difference-equation final state disagrees with closed form at dt=${dtRef}: max|Δ|=${fmt(maxErr, 6)} — kernel and analytics may be inconsistent.`);
+  }
   console.log(`  dt=0.5 > maxStableStep=${fmt(maxStableStep(cfgOpen), 2)} -> DIVERGED, as predicted by stability analysis.`);
   console.log('');
 
@@ -111,6 +115,9 @@ function main() {
   // Run all kernels in open-system mode at horizon T
   // ---------------------------------------------------------------------------
   const ode = runOdeOnce({...cfgOpen, horizonDays: HORIZON});
+  if (COMPARTMENT_ORDER.some(c => !Number.isFinite(ode.finalPopulations[c]))) {
+    console.warn(`[steady-state] ODE RK4 produced non-finite final populations at horizon=${HORIZON} (stepSize=${cfgOpen.stepSize}) — integration likely diverged.`);
+  }
   const ssaRuns: ReturnType<typeof runGillespieOnce>[] = [];
   const felRuns: ReturnType<typeof runFelOnce>[]       = [];
   for (let i = 0; i < N_REPS; i++) {

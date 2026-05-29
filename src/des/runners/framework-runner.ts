@@ -49,6 +49,13 @@ function runFrameworkOnceInner(config: SimConfig, opts: RunOpts): RunResult {
   const phase2Steps = Math.round((config.horizonDays - config.phase1Days) / config.stepSize);
   const stepsPerSample = Math.max(1, Math.round(sampleEvery / config.stepSize));
 
+  if (!Number.isFinite(phase1Steps) || !Number.isFinite(phase2Steps)) {
+    console.warn(`[framework-runner] non-finite phase step counts (phase1=${phase1Steps}, phase2=${phase2Steps}) from stepSize=${config.stepSize}, phase1Days=${config.phase1Days}, horizon=${config.horizonDays} — an open-system config will not terminate.`);
+  }
+  if (config.stepSize <= 0) {
+    console.warn(`[framework-runner] stepSize=${config.stepSize} is not positive; the simulation loop will not advance time correctly.`);
+  }
+
   const obs = new ProgramObserver();
 
   const uni = (id: string) => {
@@ -115,7 +122,10 @@ function runFrameworkOnceInner(config: SimConfig, opts: RunOpts): RunResult {
   // Population sampler (folds decision nodes into upstream compartment).
   const stationPopulation = (id: string): number => {
     const e = programEntities.get(id) as any;
-    if (!e) return 0;
+    if (!e) {
+      console.warn(`[framework-runner] stationPopulation: no entity registered for id "${id}"; counting it as 0 (compartment totals may be wrong).`);
+      return 0;
+    }
     let n = 0;
     if (e.inputQueue)      n += e.inputQueue.length ?? e.inputQueue.size ?? 0;
     if (e.processingQueue) n += e.processingQueue.length ?? e.processingQueue.size ?? 0;
@@ -193,9 +203,13 @@ function runFrameworkOnceInner(config: SimConfig, opts: RunOpts): RunResult {
 
   const programList = Array.from(programEntities);
 
-  // Quiet the processor's noisy hardcoded console.log calls during the loop.
+  // Quiet the processor's noisy hardcoded per-step logging during the loop
+  // (console.log historically, console.debug after the per-step logs were
+  // moved to debug level). Restored after the loop.
   const origConsoleLog = console.log;
+  const origConsoleDebug = console.debug;
   console.log = () => {};
+  console.debug = () => {};
 
   const startedAt = Date.now();
 
@@ -207,6 +221,7 @@ function runFrameworkOnceInner(config: SimConfig, opts: RunOpts): RunResult {
     if ((i + 1) % stepsPerSample === 0) sampleNow(currentDay);
   }
   (global as any).turnOffSources = true;
+  origConsoleDebug(`[framework-runner] phase change to 'drain' at day ${currentDay}: sources turned off, running ${phase2Steps} drain steps.`);
   logger?.log({kind: 'phase_change', t: currentDay, phase: 'drain'});
   for (let i = 0; i < phase2Steps; i++) {
     currentDay = (phase1Steps + i + 1) * config.stepSize;
@@ -217,6 +232,7 @@ function runFrameworkOnceInner(config: SimConfig, opts: RunOpts): RunResult {
   }
 
   console.log = origConsoleLog;
+  console.debug = origConsoleDebug;
   const elapsed = Date.now() - startedAt;
 
   const created = (programEntities.get('main-source') as any).createdCount as number;

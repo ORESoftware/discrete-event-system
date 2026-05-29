@@ -28,7 +28,10 @@ export function bisection(
   tol: number = 1e-12, maxIter: number = 200,
 ): RootResult {
   let fa = f(a); let fb = f(b);
-  if (fa * fb > 0) throw new Error(`bisection: no sign change on [${a}, ${b}]: f(a)=${fa}, f(b)=${fb}`);
+  if (fa * fb > 0) {
+    console.warn(`[root.bisection] no sign change on [${a}, ${b}]: f(a)=${fa}, f(b)=${fb}; bracket does not contain a root.`);
+    throw new Error(`bisection: no sign change on [${a}, ${b}]: f(a)=${fa}, f(b)=${fb}`);
+  }
   let iter = 0;
   while (iter < maxIter) {
     const m = 0.5 * (a + b);
@@ -40,6 +43,7 @@ export function bisection(
     iter++;
   }
   const m = 0.5 * (a + b);
+  console.warn(`[root.bisection] hit maxIter=${maxIter} without reaching tol=${tol}; residual=${Math.abs(f(m))}, bracket width=${Math.abs(b - a)}.`);
   return {root: m, iterations: iter, converged: false, finalResidual: Math.abs(f(m))};
 }
 
@@ -61,7 +65,10 @@ export function newton(
       return {root: x, iterations: i, converged: true, finalResidual: Math.abs(fx)};
     }
     const dfx = df(x);
-    if (dfx === 0 || !isFinite(dfx)) break;
+    if (dfx === 0 || !isFinite(dfx)) {
+      console.warn(`[root.newton] derivative degenerate at iter ${i} (x=${x}, f'=${dfx}); aborting Newton iteration early.`);
+      break;
+    }
     let step = fx / dfx;
     let alpha = 1;
     let xNext = x - alpha * step;
@@ -75,7 +82,11 @@ export function newton(
     }
     x = xNext; fx = fNext;
   }
-  return {root: x, iterations: maxIter, converged: Math.abs(fx) < tol, finalResidual: Math.abs(fx)};
+  const newtonConverged = Math.abs(fx) < tol;
+  if (!newtonConverged) {
+    console.warn(`[root.newton] did not converge within ${maxIter} iters; final residual=${Math.abs(fx)} (tol=${tol}).`);
+  }
+  return {root: x, iterations: maxIter, converged: newtonConverged, finalResidual: Math.abs(fx)};
 }
 
 /**
@@ -92,10 +103,17 @@ export function secant(
     if (Math.abs(f1) < tol) {
       return {root: x1, iterations: i, converged: true, finalResidual: Math.abs(f1)};
     }
-    if (f0 === f1) break;
+    if (f0 === f1) {
+      console.warn(`[root.secant] equal function values f(x0)=f(x1)=${f1} at iter ${i}; secant slope is zero, aborting.`);
+      break;
+    }
     const x2 = x1 - f1 * (x1 - x0) / (f1 - f0);
     x0 = x1; f0 = f1;
     x1 = x2; f1 = f(x1);
   }
-  return {root: x1, iterations: maxIter, converged: Math.abs(f1) < tol, finalResidual: Math.abs(f1)};
+  const secantConverged = Math.abs(f1) < tol;
+  if (!secantConverged) {
+    console.warn(`[root.secant] did not converge within ${maxIter} iters; final residual=${Math.abs(f1)} (tol=${tol}).`);
+  }
+  return {root: x1, iterations: maxIter, converged: secantConverged, finalResidual: Math.abs(f1)};
 }

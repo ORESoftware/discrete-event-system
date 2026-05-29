@@ -40,7 +40,10 @@ export class OutputConnectionRouter<C> {
   markAccepted(connections: readonly C[], accepted: C): void {
     if (this.policy !== 'round-robin' || connections.length === 0) return;
     const ix = connections.indexOf(accepted);
-    if (ix < 0) return;
+    if (ix < 0) {
+      console.warn(`[output-router] round-robin markAccepted: accepted connection not found in the ${connections.length}-element connection list; cursor left unchanged (rotation may stall).`);
+      return;
+    }
     this.cursor = (ix + 1) % connections.length;
   }
 

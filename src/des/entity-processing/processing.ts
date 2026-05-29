@@ -321,10 +321,13 @@ export class EntityProcessor<S, T>
       v.bumpOutQueueWaitTime(stepSize);
 
       const connections = Array.from(this.getOutConnections());
+      if (connections.length < 1) {
+        console.warn(`[processor:${this.id}] outQueue flush: entity has no out-connections; item will remain stuck in outQueue (size=${this.outQueue.size}).`);
+      }
       for (const conn of this.outputRouter.order(connections)) {
         const target = conn.getTarget();
         if (!target) {
-          console.error('warning: could not find target.')
+          console.warn(`[processor:${this.id}] outQueue flush: out-connection has no resolvable target; skipping connection.`);
           continue;
         }
 
@@ -333,6 +336,7 @@ export class EntityProcessor<S, T>
           const size = this.outQueue.size;
           this.outQueue.remove(k);
           if (this.outQueue.size !== (size - 1)) {
+            console.warn(`[processor:${this.id}] outQueue.remove did not shrink queue by 1 (before=${size}, after=${this.outQueue.size}) — possible duplicate/missing key.`);
             throw makeError('queue size should be one smaller.');
           }
 
@@ -356,7 +360,7 @@ export class EntityProcessor<S, T>
     }
 
     const evq = this.rv.getNextEventQuantity(stepSize);
-    console.log('event quantity:', evq);
+    console.debug(`[processor:${this.id}] event quantity (service completions) this step: ${evq}; processingQueue.size=${this.processingQueue.size}`);
 
     for (let i = 0; i < evq; i++) {
 
@@ -364,8 +368,10 @@ export class EntityProcessor<S, T>
 
       if (IsVoid.check(next)) {
         if (this.processingQueue.size > 0) {
+          console.warn(`[processor:${this.id}] dequeue returned void but processingQueue.size=${this.processingQueue.size} (>0) — queue invariant violated at completion ${i}/${evq}.`);
           throw makeError('warning, non-empty queue, but zeroth item (peek) was falsy.');
         }
+        console.debug(`[processor:${this.id}] no more items to service this step (drew ${evq} completions, processed ${i}).`);
         break;
       }
 
@@ -379,10 +385,13 @@ export class EntityProcessor<S, T>
       this.processedCount++;
 
       const connections = Array.from(this.getOutConnections());
+      if (connections.length < 1) {
+        console.warn(`[processor:${this.id}] processed item but has zero out-connections — item ${(next as any)?.id} will be dropped into outQueue with nowhere to go.`);
+      }
       for (const conn of this.outputRouter.order(connections)) {
         const target = conn.getTarget();
         if (!target) {
-          console.error('warning: could not find target.')
+          console.warn(`[processor:${this.id}] processed item: out-connection has no resolvable target; skipping connection.`);
           continue;
         }
         if (target.acceptItem(<AbstractMovingEntity<any>>next)) {
@@ -392,6 +401,7 @@ export class EntityProcessor<S, T>
         }
 
         // if not takers, we add to out queue
+        console.debug(`[processor:${this.id}] downstream "${(target as any)?.id}" rejected item; buffering in outQueue (size now ${this.outQueue.size + 1}).`);
         next.setStartTimeInOutputQueue(this.id);
         this.outQueue.enqueue(next);
         break;
@@ -456,6 +466,7 @@ export class EntityProcessor<S, T>
     // Overflow path: all servers busy. End-of-runTimeStep input->processing
     // loop will drain the inputQueue when capacity opens up - same behavior
     // as before Option A.
+    console.debug(`[processor:${this.id}] all ${this.concurrency} servers busy; item ${(m as any)?.id} overflows to inputQueue (size now ${this.queue.size + 1}).`);
     this.queue.enqueue(m);
   }
 

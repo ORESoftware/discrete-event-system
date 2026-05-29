@@ -125,6 +125,7 @@ function nextToken(L: Lexer): Token {
     L.i = j;
     return {kind: 'ident', text};
   }
+  console.warn(`[expr.lex] unexpected character '${c}' at position ${L.i} in ${JSON.stringify(L.s)}.`);
   throw new Error(`unexpected char '${c}' at position ${L.i}`);
 }
 
@@ -136,6 +137,7 @@ interface Parser {
 function advance(P: Parser): Token { const t = P.cur; P.cur = nextToken(P.L); return t; }
 function expect(P: Parser, kind: Token['kind'], text?: string): Token {
   if (P.cur.kind !== kind || (text !== undefined && P.cur.text !== text)) {
+    console.warn(`[expr.parse] syntax error: expected ${kind}${text ? ' "' + text + '"' : ''} but got ${P.cur.kind} "${P.cur.text}" at position ${P.L.i}.`);
     throw new Error(`expected ${kind}${text ? ' "' + text + '"' : ''}, got ${P.cur.kind} "${P.cur.text}"`);
   }
   return advance(P);
@@ -201,6 +203,7 @@ function parseAtom(P: Parser): Expr {
     }
     return {kind: 'var', name: t.text};
   }
+  console.warn(`[expr.parse] unexpected token ${P.cur.kind} "${P.cur.text}" while parsing an atom (position ${P.L.i}).`);
   throw new Error(`unexpected token ${P.cur.kind} "${P.cur.text}"`);
 }
 
@@ -209,6 +212,7 @@ export function parse(src: string): Expr {
   const P: Parser = {L, cur: nextToken(L)};
   const e = parseExpression(P);
   if (P.cur.kind !== 'eof') {
+    console.warn(`[expr.parse] trailing token "${P.cur.text}" after a complete expression in ${JSON.stringify(src)} — likely a missing operator or extra characters.`);
     throw new Error(`unexpected trailing token "${P.cur.text}"`);
   }
   return e;
@@ -232,7 +236,10 @@ export function evaluate(e: Expr, env: Env): number {
     case 'num': return e.value;
     case 'var': {
       const v = env[e.name];
-      if (v === undefined) throw new Error(`undefined variable '${e.name}'`);
+      if (v === undefined) {
+        console.warn(`[expr.evaluate] undefined variable '${e.name}' (env has: ${Object.keys(env).join(', ') || '(empty)'}) — variable not bound in the evaluation environment.`);
+        throw new Error(`undefined variable '${e.name}'`);
+      }
       return v;
     }
     case 'neg': return -evaluate(e.arg, env);

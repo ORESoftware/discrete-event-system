@@ -187,6 +187,9 @@ export class EntityConnection<S, T>
   }
 
   getTarget() {
+    if (!this.target) {
+      console.warn(`[connection:${this.id}] getTarget() returned null — connection from "${(this.source as any)?.id}" has no target wired; downstream routing will skip it.`);
+    }
     return this.target;
   }
 

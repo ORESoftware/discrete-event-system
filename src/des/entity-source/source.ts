@@ -168,7 +168,7 @@ export class EntitySource<S, T>  // S = Source, T= Target
       for (const conn of this.getOutConnections()) {
         const target = conn.getTarget();
         if (!target) {
-          console.error('warning: could not find target.')
+          console.warn(`[source:${this.id}] out-connection has no resolvable target; cannot route newly-created entity.`);
           continue;
         }
         if ((accepted = (target.acceptItem(next)))) {
@@ -178,6 +178,7 @@ export class EntitySource<S, T>  // S = Source, T= Target
       }
 
       if (!accepted) {
+        console.debug(`[source:${this.id}] no downstream accepted new entity (backpressure); buffering in source queue (size now ${this.queue.length + 1}).`);
         this.queue.push(next);
       }
 
@@ -348,7 +349,7 @@ export class DefiniteFiniteSource<V extends HasNumericValue, S, T>  // S = Sourc
 
     if(IsVoid.check(k)){
       // the initialValues are probably drained
-      console.error('initial values are drained?', this.queue);
+      console.warn(`[finite-source:${this.id}] getNextValue() returned void at step ${this.timeStepCount}; initial values appear drained (queue.size=${this.queue.size}).`);
       return;
     }
 
@@ -360,7 +361,7 @@ export class DefiniteFiniteSource<V extends HasNumericValue, S, T>  // S = Sourc
     for (const conn of this.getOutConnections()) {
       const target = conn.getTarget();
       if (!target) {
-        console.error('warning: could not find target.')
+        console.warn(`[finite-source:${this.id}] out-connection has no resolvable target; cannot route emitted value.`);
         continue;
       }
       if ((accepted = (target.acceptItem(next)))) {
@@ -370,6 +371,7 @@ export class DefiniteFiniteSource<V extends HasNumericValue, S, T>  // S = Sourc
     }
 
     if (!accepted) {
+      console.debug(`[finite-source:${this.id}] no downstream accepted emitted value (backpressure); buffering in outQueue (size now ${this.outQueue.size + 1}).`);
       this.outQueue.enqueue(next);
     }
 

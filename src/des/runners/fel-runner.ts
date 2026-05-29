@@ -44,6 +44,9 @@ const drawSuccessor = (
     cum += s.prob;
     if (r < cum) return s.to;
   }
+  if (Math.abs(cum - 1) > 1e-6) {
+    console.warn(`[fel-runner] successor probabilities from "${from}" sum to ${cum} (≠ 1); draw r=${r} fell through, defaulting to last successor "${succs[succs.length - 1].to}".`);
+  }
   return succs[succs.length - 1].to;
 };
 
@@ -129,6 +132,9 @@ function runFelOnceInner(config: SimConfig, opts: RunOpts): RunResult {
       queues[toStation].push(entityId);
       lastStation.set(entityId, toStation);
     } else {
+      if (!config.residence[toStation]) {
+        console.warn(`[fel-runner] no residence interval configured for station "${toStation}"; per-individual exit event cannot be scheduled.`);
+      }
       const [a, b] = config.residence[toStation];
       insertEvent(fel, {
         time: t + drawUniform(a, b),
@@ -187,6 +193,7 @@ function runFelOnceInner(config: SimConfig, opts: RunOpts): RunResult {
 
     if (!phase2 && e.time >= config.phase1Days) {
       phase2 = true;
+      console.debug(`[fel-runner] phase change to 'drain' at t=${Math.floor(e.time)}: arrivals stop (created ${sourceCreated}/${config.sourceCap} so far).`);
       logger?.log({kind: 'phase_change', t: Math.floor(e.time), phase: 'drain'});
     }
 
