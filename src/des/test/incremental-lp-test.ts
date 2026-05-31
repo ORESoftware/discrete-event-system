@@ -1,6 +1,20 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: #[cfg(test)] mod tests in src/des/general/incremental_lp.rs
+// 1:1 file move. Unit tests one module (warm-startable simplex), so prefer that
+// module's `#[cfg(test)] mod tests`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - close()/arrClose() relative float comparisons -> approx::assert_relative_eq!
+//     (element-wise for the solution vectors).
+// =============================================================================
+
+// =============================================================================
 // Unit tests for the incremental/warm-startable LP solver.
 // Run with: node dist/des/test/incremental-lp-test.js
 // =============================================================================

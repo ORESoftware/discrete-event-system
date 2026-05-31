@@ -1,6 +1,28 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/traffic-flow.rs  (module des::general::traffic_flow)
+// 1:1 file move. Small traffic DES: stationary grid/intersections/links + moving cars.
+//
+// Declarations → Rust:
+//   interface TrafficNodeSpec/TrafficLinkSpec/TrafficSourceSpec/TrafficProblem/TrafficCarSnapshot/
+//             TrafficLinkStats/TrafficTimeSample/TrafficSimulationResult -> structs (#[derive(Clone)])
+//   type SignalAxis = 'EW'|'NS'|'ALL'                  -> enum
+//   class TrafficCar extends BasicMovingEntity<Snapshot> implements Token -> struct + impl Token/entity trait
+//   class IntersectionStation/RoadLinkStation/TrafficGridStation extends DESStation -> structs + impl trait
+//   fn validateTrafficProblem/runTrafficSimulation/buildTrafficMaxFlowProblem/
+//      buildDefaultTrafficProblem + private helpers (positiveModulo/hasDirectedPath) -> fns
+//
+// Conversion notes (file-specific):
+//   - INJECT RNG: `mulberry32` seeds car arrivals/jitter -> `RandomSource` (SeededRandom).
+//   - the grid owns many maps: `Map<number, ...>` (nodes/intersections/outgoing) ->
+//     `HashMap<usize, _>`, `Map<string, ...>` (links/reservations/cache) -> `HashMap<String, _>`;
+//     reachability uses `Set<number>` -> `HashSet<usize>`. Iteration order is N/A.
+//   - links own continuous car positions/speeds -> `Vec<f64>` fields; prefer arena indices over
+//     `Rc<RefCell>` for the grid↔link↔car graph.
+//   - depends on max-flow.ts (MaxFlowProblem/solveMaxFlow) and entity-moving -> use crate::... paths.
+//   - validate* throws -> `panic!` (invariant) or `Result`.
+// =============================================================================
 // general/traffic-flow.ts -- small continuous-time-ish traffic DES.
 //
 // The modelling choice mirrors the elevator lesson in this repository:

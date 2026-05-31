@@ -1,6 +1,18 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/runners/ode_runner.rs
+//                    (module des::runners::ode_runner — hyphen → underscore)
+// 1:1 file move. Deterministic mean-field SEIR ODE solver (RK4) reference kernel.
+//
+// Conversion notes (file-specific):
+//   - Helper module imported by the binaries, not a `fn main()`.
+//   - Fully deterministic; any `Date.now()`/`withSeed` is edge-only -> `Clock`.
+//   - `as any` on the assembled `RunResult` -> the concrete typed `RunResult`
+//     struct from types.rs (no dynamic field access).
+// =============================================================================
+
+// =============================================================================
 // Deterministic mean-field SEIR ODE solver (RK4) as a fourth independent
 // reference. No randomness, no entities, no events - just the continuous-flow
 // limit of the same compartmental model.

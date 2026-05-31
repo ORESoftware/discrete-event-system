@@ -1,5 +1,28 @@
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/signals/differential.rs  (module des::signals::differential)
+// 1:1 file move. A signal differentiator node (emits successive-sample differences).
+//
+// Declarations → Rust:
+//   interface DifferentialTimeStepOpts -> struct (currently empty)
+//   const marker (Symbol)              -> n/a
+//   class Differentiator<E,V>          -> struct + impl (+ impl MultiDirectionalSignalEntity)
+//
+// Conversion notes (file-specific):
+//   - `previousValue = <unknown>null as { [marker]: SignalValue }` uses a SYMBOL-KEYED
+//     wrapper object to stash the previous sample -> just an `Option<SignalValue>` field;
+//     the symbol-key wrapper is a TS hack with no Rust analogue.
+//   - `(v as any).getValue()` dynamic access -> concrete `SignalValue` type.
+//   - `queue.dequeue()` `[k,v]` + `IsVoid.check` + `console.error` -> `VecDeque` + `Option`
+//     (no void sentinel); tracing instead of console.
+//   - `stepSize` is unused (a true derivative divides the diff by dt) -> preserve current
+//     behaviour and flag.
+//   - `acceptItem(m: SignalValue)` here narrows the param vs the trait's
+//     `acceptItem(m: AbstractMovingEntity)` -> reconcile the signature in the Rust trait.
+//   - `math.subtract` -> ops; `runFinish()` `throw` -> `unimplemented!()`.
+// =============================================================================
+
 import {SignalEntity} from "./abstract";
 import {EntityConnection, TimeStepOpts} from "../abstract/abstract";
 import * as math from 'mathjs';

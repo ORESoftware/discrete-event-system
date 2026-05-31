@@ -2,6 +2,20 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/newsvendor_test.rs   (integration test crate)
+// 1:1 file move. Spans main-newsvendor / main-inventory-mdp / value-iteration,
+// so it is an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - approx(a,b,t) float comparison -> approx::assert_relative_eq! /
+//     assert_abs_diff_eq! (PMF total-mass checks use abs tolerance).
+// =============================================================================
+
+// =============================================================================
 // Unit tests for the newsvendor and inventory MDP modules.
 //
 // We test the building blocks (PMF construction, profit / E[profit],

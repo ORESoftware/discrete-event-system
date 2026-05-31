@@ -1,6 +1,29 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/linear_vfa.rs  (module des::general::des_base::linear_vfa)
+// 1:1 file move. Approximate DP with linear function approximation (semi-gradient
+// TD / linear Sarsa-Q); extends RLAgentStation.
+//
+// Declarations → Rust:
+//   interface LinearVFAOptions      -> struct (#[derive(Default)] except required fields)
+//   abstract class LinearVFAStation<S> -> trait/struct: RLAgentStation<S, usize>
+//
+// Conversion notes (file-specific):
+//   - INHERITANCE: extends RLAgentStation and IMPLEMENTS its pickAction/update/
+//     endOfEpisode hooks -> in Rust this struct provides those required trait fns;
+//     it ADDS its own `features` hook (-> required trait fn) and `legalActions`
+//     (-> provided default returning None).
+//   - `theta: Float64Array` flat (A×d) matrix -> `Vec<f64>` (or `ndarray`) indexed
+//     `a*d + i`; `.fill()` -> `vec![init; A*d]`.
+//   - `rng: () => number` -> inject `RandomSource` (shared/capabilities); greedy
+//     tie-break should reuse argmax.rs helpers.
+//   - non-ASCII `φ`, `δ` identifiers -> `phi`, `delta`.
+//   - `legalActions(): readonly number[] | null` -> `Option<Vec<usize>>`.
+//   - `throw new Error` on bad dims -> `Result`/`panic!`.
+// =============================================================================
+
+// =============================================================================
 // general/des-base/linear-vfa.ts — base class for APPROXIMATE DYNAMIC
 // PROGRAMMING with LINEAR FUNCTION APPROXIMATION (linear value-function
 // approximation, "linear VFA"). Underlies: linear semi-gradient TD(0) for

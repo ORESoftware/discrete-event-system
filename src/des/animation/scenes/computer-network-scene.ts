@@ -1,6 +1,26 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/animation/scenes/computer-network-scene.rs   (module des::animation::scenes::computer_network_scene)
+// 1:1 file move. Builds frames + charts for the computer-network DES animation.
+//
+// Declarations → Rust:
+//   const *_STAGE_W/H, NET_*/PANEL_* consts  -> `pub const`/`const` (f64)
+//   const PROTOCOL_COLOR: Record<NetworkProtocol,string> -> `match` on enum NetworkProtocol -> &str
+//   interface Point                          -> struct Point { x: f64, y: f64 }
+//   function buildComputerNetworkAnimation   -> pub fn -> { frames, charts } (a small struct)
+//   function build*/draw*/layoutNodes/...     -> free fns
+//
+// Conversion notes (file-specific):
+//   - Frame data (Shape[]/Frame/ChartSpec) is serialized for JSON -> serde structs (see types.rs).
+//   - `draw*(shapes: Shape[], ..)` push into a shared array -> `fn(shapes: &mut Vec<Shape>, ..)`.
+//   - `layoutNodes` returns `Map<string, Point>` -> `HashMap<String, Point>`.
+//   - `PROTOCOL_COLOR` keyed by the `NetworkProtocol` literal union -> `match` on the enum.
+//   - interpolated `rgb(..)` color strings -> `format!`.
+//   - imports problem/result types from ../../general/computer-network -> `use crate::des::general::computer_network::*`.
+// =============================================================================
+
+// =============================================================================
 // Computer-network scene: packet motion, queue buildup, bottlenecks, and
 // fan-out policy semantics.
 // =============================================================================

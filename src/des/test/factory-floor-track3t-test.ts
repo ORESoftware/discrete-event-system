@@ -1,5 +1,20 @@
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: tests/factory_floor_track3t_test.rs   (integration test crate)
+// 1:1 file move. Tests the warehouse MDP/POMDP comparison + its animation
+// scene, so it is an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc expect()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - state-space cardinality identities (n*n*2 + 1) -> assert_eq! on usize.
+//   - observation-accuracy comparisons are float inequalities -> assert!; any
+//     stochastic scenario sampling -> a seeded rand::Rng.
+// =============================================================================
+
 import {
   BASELINE_WAREHOUSE_SCENARIO,
   TRACK3T_WAREHOUSE_SCENARIO,

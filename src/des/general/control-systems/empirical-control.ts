@@ -1,6 +1,41 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/control-systems/empirical-control.rs
+//   (module des::general::control_systems::empirical_control)
+// 1:1 file move. Quantitative controllability/observability via Gramians + trials.
+//
+// Declarations → Rust:
+//   class Mulberry32                     -> struct Mulberry32 + impl (seedable RNG;
+//                                           consider implementing rand::RngCore)
+//   class DiscreteLinearSystem           -> struct + impl (+ assoc fn fromContinuous)
+//   class GramianDegree                  -> struct + impl (base for the two Gramians)
+//   class ControllabilityGramian / ObservabilityGramian extends GramianDegree
+//                                        -> struct composing GramianDegree (NO inherit)
+//   class MinEnergyController / MonteCarloControllability / MonteCarloObservability /
+//         MdpControllabilityDegree / BeliefTracker / MonteCarloDistinguishability
+//                                        -> struct + impl
+//   interface MonteCarloControllabilityResult / MonteCarloObservabilityResult /
+//             PomdpObservabilityResult   -> struct
+//   type DegreeKind = 'lti-degree'|...   -> enum DegreeKind (#[serde(rename_all="kebab-case")])
+//   class *Token (implements Token)      -> struct + impl Token
+//   class *SourceStation / *EvaluatorStation / DegreeReportSinkStation
+//         extends DESStation / PureTransformEntity -> struct + impl trait
+//
+// Conversion notes (file-specific):
+//   - Mulberry32 relies on uint32 wraparound (`>>> 0`, Math.imul) -> use u32
+//     wrapping_add / wrapping_mul to match the bitstream exactly.
+//   - GotChA: `(tracker as unknown as {belief:number[]}).belief = b` reaches into
+//     a private field; in Rust add a proper `set_belief(&mut self, ..)` method —
+//     do NOT mirror the cast.
+//   - extends GramianDegree (ControllabilityGramian/ObservabilityGramian) is
+//     config-in-ctor inheritance -> compose a GramianDegree field; the subclass
+//     ctor builds the matrix then `super(W)`.
+//   - Mat/Vec are shared::linalg aliases; SymmetricEigen/MatrixInverse from there.
+//   - default opts via `?? n` -> Option::unwrap_or; seeds kept for reproducibility.
+// =============================================================================
+
+// =============================================================================
 // control-systems/empirical-control.ts — QUANTITATIVE / EMPIRICAL estimation of
 // controllability and observability.
 //

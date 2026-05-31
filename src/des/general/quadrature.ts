@@ -1,6 +1,20 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/quadrature.rs  (module des::general::quadrature)
+// 1:1 file move. Numerical integration: trapezoid, Simpson, adaptive, Gauss-Legendre, Monte Carlo.
+//
+// Declarations → Rust:
+//   interface QuadResult -> struct (#[derive(Clone, Copy)])
+//   fn trapezoidal/simpson/adaptiveSimpson/gaussLegendre/monteCarlo/monteCarloND
+//        -> free fns or PureTransform classes (per §3.1; config like n/tol in ctor)
+//
+// Conversion notes (file-specific):
+//   - the integrand `f: (x: number) => number` is a closure -> generic `F: Fn(f64) -> f64`.
+//   - INJECT RNG: monteCarlo/monteCarloND use `mulberry32` from prng.ts -> take a `RandomSource`
+//     (SeededRandom == mulberry32); the deterministic rules need no RNG.
+//   - all numerics are `f64`; evaluation counts are `u64`.
+// =============================================================================
 // Numerical integration (quadrature) — multiple methods.
 //
 // All functions take f: (x) → number, integration limits [a, b], and a
@@ -20,6 +34,7 @@
 // =============================================================================
 
 import {mulberry32} from './prng';
+import {PureTransform, StatefulTransform} from '../shared/transform';
 
 export interface QuadResult {
   value: number;
@@ -28,17 +43,47 @@ export interface QuadResult {
   stderr?: number;
 }
 
+/** A one-dimensional integrand f over the interval [a, b]. Bundling the
+ *  positional (f, a, b) arguments keeps the quadrature rules in `Transform`
+ *  shape; the accuracy parameter (n / tol) lives on the constructor. */
+export interface Integrand1D {
+  f: (x: number) => number;
+  a: number;
+  b: number;
+}
+
+/** A multidimensional integrand f over the box [lo, hi]. */
+export interface IntegrandND {
+  f: (x: number[]) => number;
+  lo: number[];
+  hi: number[];
+}
+
 // -----------------------------------------------------------------------------
 // Composite trapezoid.
 //   ∫_a^b f(x) dx ≈ h · (f(a)/2 + f(a+h) + … + f(b−h) + f(b)/2)
 // -----------------------------------------------------------------------------
 
+/** Composite trapezoid rule. Subinterval count `n` is config. */
+export class TrapezoidRule extends PureTransform<Integrand1D, QuadResult> {
+  constructor(private readonly n: number) {
+    super();
+  }
+
+  transform(integrand: Integrand1D): QuadResult {
+    const {f, a, b} = integrand;
+    const n = this.n;
+    if (n < 1) throw new Error(`trapezoidal: n must be ≥ 1, got ${n}`);
+    const h = (b - a) / n;
+    let s = 0.5 * (f(a) + f(b));
+    for (let i = 1; i < n; i++) s += f(a + i * h);
+    return {value: s * h, evaluations: n + 1};
+  }
+}
+
+/** @deprecated Use `new TrapezoidRule(n).transform({f, a, b})`. */
 export function trapezoidal(f: (x: number) => number, a: number, b: number, n: number): QuadResult {
-  if (n < 1) throw new Error(`trapezoidal: n must be ≥ 1, got ${n}`);
-  const h = (b - a) / n;
-  let s = 0.5 * (f(a) + f(b));
-  for (let i = 1; i < n; i++) s += f(a + i * h);
-  return {value: s * h, evaluations: n + 1};
+  return new TrapezoidRule(n).transform({f, a, b});
 }
 
 // -----------------------------------------------------------------------------
@@ -47,15 +92,29 @@ export function trapezoidal(f: (x: number) => number, a: number, b: number, n: n
 //   n must be even.
 // -----------------------------------------------------------------------------
 
-export function simpson(f: (x: number) => number, a: number, b: number, n: number): QuadResult {
-  if (n < 2 || n % 2 !== 0) throw new Error(`simpson: n must be even and ≥ 2, got ${n}`);
-  const h = (b - a) / n;
-  let s = f(a) + f(b);
-  for (let i = 1; i < n; i++) {
-    const x = a + i * h;
-    s += (i % 2 === 0 ? 2 : 4) * f(x);
+/** Composite Simpson 1/3 rule. Subinterval count `n` (even) is config. */
+export class SimpsonRule extends PureTransform<Integrand1D, QuadResult> {
+  constructor(private readonly n: number) {
+    super();
   }
-  return {value: s * h / 3, evaluations: n + 1};
+
+  transform(integrand: Integrand1D): QuadResult {
+    const {f, a, b} = integrand;
+    const n = this.n;
+    if (n < 2 || n % 2 !== 0) throw new Error(`simpson: n must be even and ≥ 2, got ${n}`);
+    const h = (b - a) / n;
+    let s = f(a) + f(b);
+    for (let i = 1; i < n; i++) {
+      const x = a + i * h;
+      s += (i % 2 === 0 ? 2 : 4) * f(x);
+    }
+    return {value: s * h / 3, evaluations: n + 1};
+  }
+}
+
+/** @deprecated Use `new SimpsonRule(n).transform({f, a, b})`. */
+export function simpson(f: (x: number) => number, a: number, b: number, n: number): QuadResult {
+  return new SimpsonRule(n).transform({f, a, b});
 }
 
 // -----------------------------------------------------------------------------
@@ -64,33 +123,48 @@ export function simpson(f: (x: number) => number, a: number, b: number, n: numbe
 // error gauge.
 // -----------------------------------------------------------------------------
 
+/** Adaptive Simpson via recursive bisection. CONFIG (error tolerance `tol`,
+ *  recursion depth cap `maxDepth`) lives on the constructor. */
+export class AdaptiveSimpsonRule extends PureTransform<Integrand1D, QuadResult> {
+  constructor(private readonly tol: number = 1e-9, private readonly maxDepth = 40) {
+    super();
+  }
+
+  transform(integrand: Integrand1D): QuadResult {
+    const {f, a, b} = integrand;
+    const maxDepth = this.maxDepth;
+    let evals = 0;
+    function S(a: number, fa: number, fb: number, fm: number, b: number): number {
+      return (b - a) * (fa + 4 * fm + fb) / 6;
+    }
+    function recurse(a: number, fa: number, fb: number, fm: number, b: number,
+                     whole: number, tol: number, depth: number): number {
+      const m = (a + b) / 2;
+      const lm = (a + m) / 2; const rm = (m + b) / 2;
+      const flm = f(lm); const frm = f(rm); evals += 2;
+      const left  = S(a, fa, fm, flm, m);
+      const right = S(m, fm, fb, frm, b);
+      const err = (left + right - whole) / 15;
+      if (depth >= maxDepth && Math.abs(err) > tol) {
+        console.warn(`[quadrature.adaptiveSimpson] max recursion depth ${maxDepth} reached on [${a}, ${b}] with error gauge ${Math.abs(err).toExponential(2)} > tol ${tol}; result may be inaccurate.`);
+      }
+      if (Math.abs(err) <= tol || depth >= maxDepth) return left + right + err;
+      return recurse(a, fa, fm, flm, m, left,  tol / 2, depth + 1) +
+             recurse(m, fm, fb, frm, b, right, tol / 2, depth + 1);
+    }
+    const m = (a + b) / 2;
+    const fa = f(a); const fb = f(b); const fm = f(m); evals += 3;
+    const whole = S(a, fa, fb, fm, b);
+    const value = recurse(a, fa, fb, fm, b, whole, this.tol, 0);
+    return {value, evaluations: evals};
+  }
+}
+
+/** @deprecated Use `new AdaptiveSimpsonRule(tol, maxDepth).transform({f, a, b})`. */
 export function adaptiveSimpson(
   f: (x: number) => number, a: number, b: number, tol: number = 1e-9, maxDepth = 40,
 ): QuadResult {
-  let evals = 0;
-  function S(a: number, fa: number, fb: number, fm: number, b: number): number {
-    return (b - a) * (fa + 4 * fm + fb) / 6;
-  }
-  function recurse(a: number, fa: number, fb: number, fm: number, b: number,
-                   whole: number, tol: number, depth: number): number {
-    const m = (a + b) / 2;
-    const lm = (a + m) / 2; const rm = (m + b) / 2;
-    const flm = f(lm); const frm = f(rm); evals += 2;
-    const left  = S(a, fa, fm, flm, m);
-    const right = S(m, fm, fb, frm, b);
-    const err = (left + right - whole) / 15;
-    if (depth >= maxDepth && Math.abs(err) > tol) {
-      console.warn(`[quadrature.adaptiveSimpson] max recursion depth ${maxDepth} reached on [${a}, ${b}] with error gauge ${Math.abs(err).toExponential(2)} > tol ${tol}; result may be inaccurate.`);
-    }
-    if (Math.abs(err) <= tol || depth >= maxDepth) return left + right + err;
-    return recurse(a, fa, fm, flm, m, left,  tol / 2, depth + 1) +
-           recurse(m, fm, fb, frm, b, right, tol / 2, depth + 1);
-  }
-  const m = (a + b) / 2;
-  const fa = f(a); const fb = f(b); const fm = f(m); evals += 3;
-  const whole = S(a, fa, fb, fm, b);
-  const value = recurse(a, fa, fb, fm, b, whole, tol, 0);
-  return {value, evaluations: evals};
+  return new AdaptiveSimpsonRule(tol, maxDepth).transform({f, a, b});
 }
 
 // -----------------------------------------------------------------------------
@@ -119,16 +193,30 @@ const GL_NODES: Record<number, {x: number[]; w: number[]}> = {
            0.1494513491505806, 0.0666713443086881]},
 };
 
-export function gaussLegendre(f: (x: number) => number, a: number, b: number, n: number = 5): QuadResult {
-  const nodes = GL_NODES[n];
-  if (!nodes) throw new Error(`gaussLegendre: only n ∈ {2,3,4,5,7,10} supported (got ${n})`);
-  const half = (b - a) / 2;
-  const mid = (a + b) / 2;
-  let s = 0;
-  for (let i = 0; i < n; i++) {
-    s += nodes.w[i] * f(half * nodes.x[i] + mid);
+/** n-point Gauss-Legendre quadrature (n ∈ {2,3,4,5,7,10}). `n` is config. */
+export class GaussLegendreRule extends PureTransform<Integrand1D, QuadResult> {
+  constructor(private readonly n: number = 5) {
+    super();
   }
-  return {value: s * half, evaluations: n};
+
+  transform(integrand: Integrand1D): QuadResult {
+    const {f, a, b} = integrand;
+    const n = this.n;
+    const nodes = GL_NODES[n];
+    if (!nodes) throw new Error(`gaussLegendre: only n ∈ {2,3,4,5,7,10} supported (got ${n})`);
+    const half = (b - a) / 2;
+    const mid = (a + b) / 2;
+    let s = 0;
+    for (let i = 0; i < n; i++) {
+      s += nodes.w[i] * f(half * nodes.x[i] + mid);
+    }
+    return {value: s * half, evaluations: n};
+  }
+}
+
+/** @deprecated Use `new GaussLegendreRule(n).transform({f, a, b})`. */
+export function gaussLegendre(f: (x: number) => number, a: number, b: number, n: number = 5): QuadResult {
+  return new GaussLegendreRule(n).transform({f, a, b});
 }
 
 // -----------------------------------------------------------------------------
@@ -136,21 +224,41 @@ export function gaussLegendre(f: (x: number) => number, a: number, b: number, n:
 // Uses a seeded PRNG by default for reproducibility.
 // -----------------------------------------------------------------------------
 
+/** Monte Carlo integration over [a, b]. CONFIG (sample count `n`, RNG closure)
+ *  lives on the constructor. Stateful because the injected RNG advances across
+ *  calls (matching the migration note to inject a `RandomSource`). */
+export class MonteCarloIntegrator extends StatefulTransform<Integrand1D, QuadResult> {
+  constructor(
+    private readonly n: number = 10000,
+    private readonly rng: () => number = mulberry32(1),
+  ) {
+    super();
+  }
+
+  transform(integrand: Integrand1D): QuadResult {
+    const {f, a, b} = integrand;
+    const n = this.n;
+    const rng = this.rng;
+    let s = 0, ss = 0;
+    for (let i = 0; i < n; i++) {
+      const x = a + (b - a) * rng();
+      const y = f(x);
+      s += y; ss += y * y;
+    }
+    const mean = s / n;
+    const variance = (ss / n) - mean * mean;
+    const value = mean * (b - a);
+    const stderr = Math.sqrt(Math.max(0, variance) / n) * (b - a);
+    return {value, evaluations: n, stderr};
+  }
+}
+
+/** @deprecated Use `new MonteCarloIntegrator(n, rng).transform({f, a, b})`. */
 export function monteCarlo(
   f: (x: number) => number, a: number, b: number, n: number = 10000,
   rng: () => number = mulberry32(1),
 ): QuadResult {
-  let s = 0, ss = 0;
-  for (let i = 0; i < n; i++) {
-    const x = a + (b - a) * rng();
-    const y = f(x);
-    s += y; ss += y * y;
-  }
-  const mean = s / n;
-  const variance = (ss / n) - mean * mean;
-  const value = mean * (b - a);
-  const stderr = Math.sqrt(Math.max(0, variance) / n) * (b - a);
-  return {value, evaluations: n, stderr};
+  return new MonteCarloIntegrator(n, rng).transform({f, a, b});
 }
 
 // -----------------------------------------------------------------------------

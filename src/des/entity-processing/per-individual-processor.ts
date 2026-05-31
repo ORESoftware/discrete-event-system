@@ -1,6 +1,32 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/entity-processing/per-individual-processor.rs  (module des::entity_processing::per_individual_processor)
+// 1:1 file move. FEL-style per-individual service-time processor (M/M/inf-ish).
+//
+// Declarations → Rust:
+//   interface PerIndividualProcessorOpts -> struct { draw_duration, rv?, output_routing? }
+//   interface QueuedItem                  -> struct QueuedItem { entity, remaining_time: f64 }
+//   class PerIndividualProcessor<S,T>     -> struct + impl (+ impl AbstractBidirectionalEntity,
+//                                            HasComputedProperties, HasInternalQueue)
+//
+// Conversion notes (file-specific):
+//   - `drawDuration: () => number` is a CLOSURE that draws a residence time ->
+//     `Box<dyn FnMut() -> f64>` (or a RandomSource-backed sampler trait); use
+//     `move` and watch the borrow checker. Prefer injecting RandomSource over a raw closure.
+//   - `['isProcessor'] = true` brand -> a trait / enum tag (no symbol property).
+//   - `m instanceof ProcessableMovingEntity || (m as any).startNewStation` is a
+//     runtime type test + dynamic method probe -> model entities as a trait/enum;
+//     Rust has no `instanceof`. The many `(x as any)?.field` accesses need concrete types.
+//   - `reg.registerProcessor(this as any)` cast -> a typed registry entry.
+//   - `items: QueuedItem[]` is the real store; `queue: LinkedQueue` is only a
+//     HasInternalQueue facade -> back items with `Vec<QueuedItem>`; `items.unshift`
+//     retry -> `VecDeque::push_front`.
+//   - `Number(stepSize)` BigNumber->f64 conversion happens up front (`dt`).
+//   - `getSerializableData(): Partial<this>` spread+null -> serde DTO with skips.
+// =============================================================================
+
+// =============================================================================
 // PerIndividualProcessor: a station type that mirrors the FEL kernel's
 // semantics inside the framework's run-loop.
 //

@@ -2,6 +2,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-backpropagation.rs   (fn main)
+// 1:1 file move. Backprop through a 2-3-1 sigmoid net expressed as a DES
+// (layers are stations; activations/gradients flow forward and backward).
+//
+// Conversion notes (file-specific):
+//   - mulberry32 / withSeed -> inject SeededRandom (shared::capabilities);
+//     withSeed's global-seed wrapper -> pass the Rng explicitly.
+//   - LayerStation classes (extends BidirectionalTimeSteppedStation) -> struct
+//     + impl trait.
+//   - fs/path artifact writes -> std::fs; top-level run -> fn main.
+// =============================================================================
+
+// =============================================================================
 // Backpropagation through a 2-3-1 fully-connected sigmoid network as a
 // discrete-event system. Each tick is one mini-batch step; layers are
 // stations; activations and gradients are movables flowing forward and

@@ -1,6 +1,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: #[cfg(test)] mod tests in src/des/general/temp_control.rs
+// 1:1 file move. Unit tests one module (temp-control physics + controllers),
+// so prefer that module's `#[cfg(test)] mod tests`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - close(a,b,tol) relative float comparison -> approx::assert_relative_eq!.
+//   - mulberry32 / trueOutdoorTemp noise is seeded -> a seeded rand::Rng so the
+//     stochastic-outdoor and controller runs stay deterministic.
+// =============================================================================
+
+// =============================================================================
 // Unit tests for general/temp-control.ts.
 // Run with: node dist/des/test/temp-control-test.js
 // =============================================================================

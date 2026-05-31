@@ -1,6 +1,31 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/policy_gradient_agent.rs  (module des::general::des_base::policy_gradient_agent)
+// 1:1 file move. Template-method bases for policy-gradient methods (REINFORCE /
+// A2C / PPO / TRPO) plus the paired PolicyUpdateStation.
+//
+// Declarations → Rust:
+//   interface RolloutEntry<S,A>     -> struct RolloutEntry<S, A> (Option fields r/done/sNext)
+//   abstract class PolicyGradientAgent<S,A> -> trait/struct: DESStation (template-method
+//                                              runTimeStep + samplePolicyAndValue hook)
+//   abstract class PolicyUpdateStation -> trait/struct: DESStation (runUpdate hook)
+//
+// Conversion notes (file-specific):
+//   - TEMPLATE METHOD: agent's `runTimeStep` is final; required hook
+//     samplePolicyAndValue -> required trait fn; PolicyUpdateStation's runUpdate
+//     -> required trait fn. The UPDATE mutates `theta`/`V` in place.
+//   - `rng: () => number` -> inject `RandomSource` (shared/capabilities).
+//   - `pendingActionState: {state; episodeId} | null` -> `Option<PendingAction<S>>`.
+//   - Buffer search matches `e.s === t.state && e.a === t.action` by value
+//     equality -> require `S: PartialEq, A: PartialEq` (no JS reference identity).
+//   - getter/setter pairs -> plain methods; `rewardHistory` alias -> accessor
+//     borrowing the inner EpisodeAccounting (no owned alias in Rust).
+//   - The agent/update station communicate via tokens AND a shared param handle —
+//     model with `Rc<RefCell<Params>>` so the update station can mutate the agent.
+// =============================================================================
+
+// =============================================================================
 // general/des-base/policy-gradient-agent.ts — base class for POLICY-GRADIENT
 // methods: REINFORCE, A2C, PPO (clipped & adaptive-KL), TRPO, IMPALA, …
 //

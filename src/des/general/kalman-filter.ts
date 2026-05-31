@@ -1,6 +1,24 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/kalman-filter.rs  (module des::general::kalman_filter)
+// 1:1 file move. Linear Kalman filter on the radar/GPS 1-D tracking problem, as DES blocks.
+//
+// Declarations → Rust:
+//   class RadarPlant / KalmanFilterBlock / NullController -> structs `impl` the control-block traits
+//     (PlantBlock/EstimatorBlock/ControllerBlock are bases -> traits)
+//   interface RadarTrackingOpts / RadarTrackingResult -> structs (Default; optionals -> Option<T>)
+//   fn runRadarTracking           -> free fn (or PureTransform<Opts, Result>)
+//   fn gaussian / identity        -> assoc fns
+//
+// Conversion notes (file-specific):
+//   - `gaussian(rng)` closure RNG (mulberry32) -> inject `RandomSource`.
+//   - `Mat`/`Vec` aliases + matMul/matT/matInv/... live in lqr-controller -> shared/linalg.rs
+//     (`LinAlg`/`MatrixInverse`); `number[][]` -> a matrix type or `Vec<Vec<f64>>`.
+//   - block inheritance (extends PlantBlock/EstimatorBlock) -> trait + struct, not `extends`.
+// =============================================================================
+
+// =============================================================================
 // general/kalman-filter.ts — LINEAR KALMAN FILTER (Kalman 1960) on the
 // canonical RADAR / GPS TRACKING problem.
 //

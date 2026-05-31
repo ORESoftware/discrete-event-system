@@ -1,6 +1,24 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/rl-learning-models.rs  (module des::general::rl_learning_models)
+// 1:1 file move. REINFORCE policy-gradient corridor + expected-SARSA gridworld DES models.
+//
+// Declarations → Rust:
+//   type RLTopology = StationGraphSummary  -> type alias
+//   interface PolicyGradientCorridorParams/Result, ExpectedSarsaGridParams/Result -> structs
+//   class SoftmaxPolicyGradientAgent extends PolicyGradientAgent<number,number> -> struct + impl
+//   class ReinforceUpdateStation extends PolicyUpdateStation -> struct + impl
+//   class ExpectedSarsaAgent extends RLAgentStation<number,number> -> struct + impl
+//   fn runPolicyGradientCorridor / runExpectedSarsaGridworld -> free fns / assoc fns
+//
+// Conversion notes (file-specific):
+//   - INJECT RNG: `mulberry32` + sampling/ε-greedy -> take a `RandomSource` (SeededRandom).
+//   - PolicyGradientAgent/PolicyUpdateStation/RLAgentStation are template-method bases ->
+//     traits with default fns; tabular θ/Q are `Vec<Vec<f64>>` struct fields (`&mut self`).
+//   - depends on rl-environments.ts (Corridor/GridWorld/evalPolicy) -> use crate::...::rl_environments.
+//   - `softmax` helper from des-base -> shared fn over `Vec<f64>`.
+// =============================================================================
 // general/rl-learning-models.ts
 //
 // Additional RL station-graph models built from shared DES base classes:

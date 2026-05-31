@@ -1,6 +1,27 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/domain-application-models.rs  (module des::general::domain_application_models)
+// 1:1 file move. Applied OR/control/DS models on ONE generic DES topology (Scenario->Generate->Evaluate->Sink).
+//
+// Declarations → Rust:
+//   interface DomainModelResult<P>/DomainTrace/DomainEvaluation<P>/DomainScenario<S> -> generic structs
+//   class DomainScenarioToken<S>/DomainPlanToken<S,P>/DomainEvaluationToken<P> (impl Token) -> generic structs `impl Token`
+//   class DomainScenarioSource/CandidateGenerator/PlanEvaluator/ResultSink Station<..> (extend DESStation)
+//                                    -> generic structs `impl` the station trait (base -> trait)
+//   per-domain interface *Params / *Scenario / *Plan + `type *Result = DomainModelResult<*Plan>` -> structs + type aliases
+//   fn runAdaptiveFuzzyControl/runLogisticsRoutingHeuristics/runBottleneckProductionControl/
+//      runSupplyChainRiskPooling/runWorkforceServiceOperations/runPortfolioDrawdownControl/
+//      runDynamicPricingRevenue/runBuyerAwareDynamicPricing/... -> fns
+//
+// Conversion notes (file-specific):
+//   - The generic Scenario/Plan station pipeline carries over as Rust generics `<S, P>`.
+//   - `interface FooScenario extends Required<FooParams>` -> a fully-populated struct (resolve Option defaults up front).
+//   - Generator/evaluator logic per domain -> trait methods or `Fn` params; `Preconditions` throw -> `Result`.
+//   - `DomainModelResult<P = unknown>` default -> generic with a concrete payload type per domain (avoid `unknown`).
+// =============================================================================
+
+// =============================================================================
 // domain-application-models.ts
 //
 // Applied operations/control/data-science models, each expressed as the

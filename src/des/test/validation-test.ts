@@ -1,6 +1,24 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/validation_test.rs   (integration test crate)
+// 1:1 file move. End-to-end test of the VALIDATOR PROTOCOL across the bases.
+// Keep the rich doc-block below; this header sits above it.
+//
+// Test harness → Rust:
+//   ad-hoc per-station validation + console.log  ->  #[test] fns using
+//   assert!/assert_eq! over the runner's validation summary.
+//
+// Conversion notes (file-specific):
+//   - validator factories (numeric/bound/monotonicity/groundTruth/intrinsic/
+//     externalReference) -> a Validator trait + constructor fns; addValidator/
+//     runValidation -> methods on the station trait.
+//   - external-reference validators read files -> std::fs; missing-file graceful
+//     degradation -> match on Result; fs temp usage -> the `tempfile` crate.
+//   - SA/GA/MILP/VI runs are seeded -> a seeded rand::Rng for reproducibility.
+// =============================================================================
+
+// =============================================================================
 // test/validation-test.ts — end-to-end test of the VALIDATOR PROTOCOL.
 //
 // Exercises:

@@ -1,5 +1,21 @@
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/episode_accounting.rs  (module des::general::des_base::episode_accounting)
+// 1:1 file move. Reward/length bookkeeping for RL episodes (scalar + vector).
+//
+// Declarations → Rust:
+//   interface EpisodeSummary / VectorEpisodeSummary -> struct (#[derive(Clone, Copy/Debug)])
+//   class EpisodeAccounting        -> struct EpisodeAccounting { histories: Vec<f64>, .. }
+//   class VectorEpisodeAccounting  -> struct (dimension: usize; currentRewards: Vec<f64>)
+//
+// Conversion notes (file-specific):
+//   - Pure scalar bookkeeping; methods mutate self -> `&mut self`. No I/O, no RNG.
+//   - `new Array(dim).fill(0)` -> `vec![0.0; dim]`; `slice()` copies -> `.clone()`.
+//   - `throw new Error` on dimension mismatch -> `Result`/`panic!` (programmer error).
+//   - `rewardHistory: number[][]` -> `Vec<Vec<f64>>`.
+// =============================================================================
+
 export interface EpisodeSummary {
   reward: number;
   length: number;

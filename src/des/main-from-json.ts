@@ -1,6 +1,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-from-json.rs   (fn main)
+// 1:1 file move. CLI: run any registered DES model from a JSON spec file
+// (with --list / --schema / --example subcommands).
+//
+// Conversion notes (file-specific):
+//   - process.argv parsing + subcommands -> std::env::args (or clap).
+//   - process.exit(code) -> std::process::exit.
+//   - fs read + JSON.parse spec -> std::fs + serde_json.
+//   - des-registry lookup -> use crate::des::general::des_registry.
+//   - async main -> plain fn main (no async needed).
+// =============================================================================
+
+// =============================================================================
 // main-from-json.ts — Run any registered DES model from a JSON spec file.
 //
 // Usage:

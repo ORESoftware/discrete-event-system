@@ -1,6 +1,27 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/soccer-rotation.rs  (module des::general::soccer_rotation)
+// 1:1 file move. Multi-period soccer rotation solved many ways (Hungarian/MDP/LP/IP-MIP) + match sim.
+//
+// Declarations → Rust:
+//   interface SoccerProblem/Schedule/ScheduleEvaluation/AffinityBuilderOptions/LPRelaxedScheduleResult/
+//             MemorylessMDPResult/SoccerIPMIPModel/SoccerIPMIPPolicy*/SoccerPOMDP*/Match*/...  -> structs
+//   fn buildSampleSoccerProblem/evaluateSchedule/validateScheduleStructure/policyRandomSchedule/
+//      policyGreedyHungarian/policyMDPVI*/buildSoccerLP/policyLPRelaxed/buildSoccerIPMIP/
+//      scheduleFromSoccerIPMIPVector/policyIPMIPFeasible/evaluateSoccerPOMDPFeatures/
+//      simulateMatchDES/runManyMatches/welchT + private helpers -> free fns / assoc fns
+//
+// Conversion notes (file-specific):
+//   - INJECT RNG: `policyRandomSchedule(seed)` and `simulateMatchDES`/`runManyMatches` sample ->
+//     take a `RandomSource` (seeded); thread it for reproducible match aggregates.
+//   - depends on hungarian.ts, lp.ts, ip-mip-des.ts -> use crate::des::general::{hungarian, lp, ip_mip_des}.
+//   - `benchKey(bench)` builds a STRING map key (`Map<string, ...>`) for the MDP -> prefer a
+//     sorted `Vec<usize>`/bitset key with `Hash + Eq` over String join in Rust.
+//   - schedules are `number[][]` (period × position) -> `Vec<Vec<usize>>`; affinities `f64`.
+//   - validate*/structure checks throw -> `panic!` (invariant) or return the existing `string | null`
+//     as `Option<String>` for recoverable structural errors.
+// =============================================================================
 // general/soccer-rotation.ts — 7v7 youth-soccer player rotation as a
 // multi-period bipartite-assignment combinatorial optimisation problem.
 //
@@ -59,6 +80,7 @@ import {
 } from './ip-mip-des';
 import {LPProblem, solveLP} from './lp';
 import {mulberry32} from './prng';
+import {PureTransform} from '../shared/transform';
 
 // =============================================================================
 // PROBLEM DEFINITION
@@ -104,7 +126,8 @@ export interface AffinityBuilderOptions {
   seed?: number;
 }
 
-export function buildSampleSoccerProblem(opts: AffinityBuilderOptions = {}): SoccerProblem {
+export class BuildSampleSoccerProblem extends PureTransform<AffinityBuilderOptions, SoccerProblem> {
+  transform(opts: AffinityBuilderOptions): SoccerProblem {
   const numPlayers = opts.numPlayers ?? 12;
   const numPositions = opts.numPositions ?? 7;
   const numPeriods = opts.numPeriods ?? 4;
@@ -161,6 +184,12 @@ export function buildSampleSoccerProblem(opts: AffinityBuilderOptions = {}): Soc
 
   return {numPlayers, numPositions, numPeriods, benchSize,
           affinity: aff, playerNames, positionNames};
+  }
+}
+
+/** @deprecated Use `new BuildSampleSoccerProblem().transform(opts)`. */
+export function buildSampleSoccerProblem(opts: AffinityBuilderOptions = {}): SoccerProblem {
+  return new BuildSampleSoccerProblem().transform(opts);
 }
 
 // =============================================================================
@@ -175,7 +204,11 @@ export interface ScheduleEvaluation {
   benchCounts: number[];           // benchCounts[p] = how many periods player p sat
 }
 
-export function evaluateSchedule(problem: SoccerProblem, schedule: Schedule): ScheduleEvaluation {
+/** Bundled (problem, schedule) input shared by the schedule analysers. */
+export interface ProblemScheduleInput { problem: SoccerProblem; schedule: Schedule; }
+
+export class EvaluateSchedule extends PureTransform<ProblemScheduleInput, ScheduleEvaluation> {
+  transform({problem, schedule}: ProblemScheduleInput): ScheduleEvaluation {
   const T = problem.numPeriods;
   const perPeriod: number[] = [];
   let total = 0;
@@ -206,12 +239,19 @@ export function evaluateSchedule(problem: SoccerProblem, schedule: Schedule): Sc
     fairnessViolations,
     benchCounts,
   };
+  }
+}
+
+/** @deprecated Use `new EvaluateSchedule().transform({problem, schedule})`. */
+export function evaluateSchedule(problem: SoccerProblem, schedule: Schedule): ScheduleEvaluation {
+  return new EvaluateSchedule().transform({problem, schedule});
 }
 
 /** Sanity-check that a schedule is well-formed: each period has exactly
  *  numPositions on-field players (all distinct) and benchSize bench players,
  *  and the union is a permutation of {0, …, numPlayers-1}. */
-export function validateScheduleStructure(problem: SoccerProblem, schedule: Schedule): string | null {
+export class ValidateScheduleStructure extends PureTransform<ProblemScheduleInput, string | null> {
+  transform({problem, schedule}: ProblemScheduleInput): string | null {
   const {numPlayers, numPositions, numPeriods, benchSize} = problem;
   if (schedule.assignment.length !== numPeriods) return `assignment.length ≠ ${numPeriods}`;
   if (schedule.bench.length !== numPeriods) return `bench.length ≠ ${numPeriods}`;
@@ -232,6 +272,12 @@ export function validateScheduleStructure(problem: SoccerProblem, schedule: Sche
     if (seen.size !== numPlayers) return `period ${t}: total players ≠ ${numPlayers}`;
   }
   return null;
+  }
+}
+
+/** @deprecated Use `new ValidateScheduleStructure().transform({problem, schedule})`. */
+export function validateScheduleStructure(problem: SoccerProblem, schedule: Schedule): string | null {
+  return new ValidateScheduleStructure().transform({problem, schedule});
 }
 
 // =============================================================================
@@ -240,8 +286,11 @@ export function validateScheduleStructure(problem: SoccerProblem, schedule: Sche
 
 /** Random valid schedule (for baseline comparison only — does NOT respect
  *  the fairness constraint with high probability). */
-export function policyRandomSchedule(problem: SoccerProblem, seed: number): Schedule {
-  const rng = mulberry32(seed);
+export class PolicyRandomSchedule extends PureTransform<SoccerProblem, Schedule> {
+  constructor(private readonly seed: number) { super(); }
+
+  transform(problem: SoccerProblem): Schedule {
+  const rng = mulberry32(this.seed);
   const assignment: number[][] = [];
   const bench: number[][] = [];
   for (let t = 0; t < problem.numPeriods; t++) {
@@ -254,6 +303,12 @@ export function policyRandomSchedule(problem: SoccerProblem, seed: number): Sche
     bench.push(order.slice(problem.numPositions).sort((a, b) => a - b));
   }
   return {assignment, bench};
+  }
+}
+
+/** @deprecated Use `new PolicyRandomSchedule(seed).transform(problem)`. */
+export function policyRandomSchedule(problem: SoccerProblem, seed: number): Schedule {
+  return new PolicyRandomSchedule(seed).transform(problem);
 }
 
 // -----------------------------------------------------------------------------
@@ -266,8 +321,13 @@ export function policyRandomSchedule(problem: SoccerProblem, seed: number): Sche
 // the bench candidate set.
 // -----------------------------------------------------------------------------
 
-export function policyGreedyHungarian(problem: SoccerProblem, opts: {fairnessAware?: boolean} = {}): Schedule {
-  const fairnessAware = opts.fairnessAware ?? true;
+export interface GreedyHungarianOptions { fairnessAware?: boolean; }
+
+export class PolicyGreedyHungarian extends PureTransform<SoccerProblem, Schedule> {
+  constructor(private readonly opts: GreedyHungarianOptions = {}) { super(); }
+
+  transform(problem: SoccerProblem): Schedule {
+  const fairnessAware = this.opts.fairnessAware ?? true;
   const T = problem.numPeriods;
   const assignment: number[][] = [];
   const bench: number[][] = [];
@@ -316,6 +376,12 @@ export function policyGreedyHungarian(problem: SoccerProblem, opts: {fairnessAwa
     prevBench = tBench;
   }
   return {assignment, bench};
+  }
+}
+
+/** @deprecated Use `new PolicyGreedyHungarian(opts).transform(problem)`. */
+export function policyGreedyHungarian(problem: SoccerProblem, opts: {fairnessAware?: boolean} = {}): Schedule {
+  return new PolicyGreedyHungarian(opts).transform(problem);
 }
 
 // -----------------------------------------------------------------------------
@@ -408,7 +474,8 @@ export interface MemorylessMDPResult {
   value: number;             // sum of per-period rewards, IGNORES fairness
 }
 
-export function policyMDPVIMemoryless(problem: SoccerProblem): MemorylessMDPResult {
+export class PolicyMDPVIMemoryless extends PureTransform<SoccerProblem, MemorylessMDPResult> {
+  transform(problem: SoccerProblem): MemorylessMDPResult {
   const T = problem.numPeriods;
   const k = problem.benchSize;
   const allBenches = [...combinations(problem.numPlayers, k)];
@@ -431,10 +498,17 @@ export function policyMDPVIMemoryless(problem: SoccerProblem): MemorylessMDPResu
     total += bestVal;
   }
   return {schedule: {assignment, bench}, value: total};
+  }
+}
+
+/** @deprecated Use `new PolicyMDPVIMemoryless().transform(problem)`. */
+export function policyMDPVIMemoryless(problem: SoccerProblem): MemorylessMDPResult {
+  return new PolicyMDPVIMemoryless().transform(problem);
 }
 
 /** Solve the multi-period rotation MDP exactly via backward induction. */
-export function policyMDPVI(problem: SoccerProblem): Schedule & {optimalValue: number} {
+export class PolicyMDPVI extends PureTransform<SoccerProblem, Schedule & {optimalValue: number}> {
+  transform(problem: SoccerProblem): Schedule & {optimalValue: number} {
   const T = problem.numPeriods;
   const k = problem.benchSize;
   const allBenches = [...combinations(problem.numPlayers, k)];
@@ -491,6 +565,12 @@ export function policyMDPVI(problem: SoccerProblem): Schedule & {optimalValue: n
   }
   const optimalValue = valueByTPrevBench[0].get('')!;
   return {assignment, bench, optimalValue};
+  }
+}
+
+/** @deprecated Use `new PolicyMDPVI().transform(problem)`. */
+export function policyMDPVI(problem: SoccerProblem): Schedule & {optimalValue: number} {
+  return new PolicyMDPVI().transform(problem);
 }
 
 // -----------------------------------------------------------------------------
@@ -517,7 +597,8 @@ export function policyMDPVI(problem: SoccerProblem): Schedule & {optimalValue: n
 // solver actually contribute information without requiring an ILP.
 // -----------------------------------------------------------------------------
 
-export function buildSoccerLP(problem: SoccerProblem): LPProblem {
+export class BuildSoccerLP extends PureTransform<SoccerProblem, LPProblem> {
+  transform(problem: SoccerProblem): LPProblem {
   const {numPlayers: P, numPositions: K, numPeriods: T} = problem;
   const N = P * K * T;
   const idx = (p: number, pos: number, t: number) => (p * K + pos) * T + t;
@@ -559,6 +640,12 @@ export function buildSoccerLP(problem: SoccerProblem): LPProblem {
   return {
     sense: 'max', c, A_ub, b_ub, A_eq, b_eq, ub,
   };
+  }
+}
+
+/** @deprecated Use `new BuildSoccerLP().transform(problem)`. */
+export function buildSoccerLP(problem: SoccerProblem): LPProblem {
+  return new BuildSoccerLP().transform(problem);
 }
 
 export interface LPRelaxedScheduleResult {
@@ -569,7 +656,8 @@ export interface LPRelaxedScheduleResult {
   iters: number;
 }
 
-export function policyLPRelaxed(problem: SoccerProblem): LPRelaxedScheduleResult {
+export class PolicyLPRelaxed extends PureTransform<SoccerProblem, LPRelaxedScheduleResult> {
+  transform(problem: SoccerProblem): LPRelaxedScheduleResult {
   const lp = buildSoccerLP(problem);
   const sol = solveLP(lp);
   if (sol.status !== 'optimal') {
@@ -631,6 +719,12 @@ export function policyLPRelaxed(problem: SoccerProblem): LPRelaxedScheduleResult
     solver: sol.solver,
     iters: sol.iters ?? 0,
   };
+  }
+}
+
+/** @deprecated Use `new PolicyLPRelaxed().transform(problem)`. */
+export function policyLPRelaxed(problem: SoccerProblem): LPRelaxedScheduleResult {
+  return new PolicyLPRelaxed().transform(problem);
 }
 
 // -----------------------------------------------------------------------------
@@ -650,7 +744,8 @@ export interface SoccerIPMIPModel {
   variableIndex: (playerId: number, positionId: number, period: number) => number;
 }
 
-export function buildSoccerIPMIP(problem: SoccerProblem): SoccerIPMIPModel {
+export class BuildSoccerIPMIP extends PureTransform<SoccerProblem, SoccerIPMIPModel> {
+  transform(problem: SoccerProblem): SoccerIPMIPModel {
   const {numPlayers: P, numPositions: K, numPeriods: T} = problem;
   const N = P * K * T;
   const idx = (p: number, pos: number, t: number) => (p * K + pos) * T + t;
@@ -747,14 +842,25 @@ export function buildSoccerIPMIP(problem: SoccerProblem): SoccerIPMIPModel {
     },
     variableIndex: idx,
   };
+  }
 }
 
-export function scheduleFromSoccerIPMIPVector(
-  problem: SoccerProblem,
-  model: SoccerIPMIPModel,
-  x: readonly number[],
-  threshold = 0.5,
-): Schedule | null {
+/** @deprecated Use `new BuildSoccerIPMIP().transform(problem)`. */
+export function buildSoccerIPMIP(problem: SoccerProblem): SoccerIPMIPModel {
+  return new BuildSoccerIPMIP().transform(problem);
+}
+
+export interface ScheduleFromSoccerIPMIPVectorInput {
+  problem: SoccerProblem;
+  model: SoccerIPMIPModel;
+  x: readonly number[];
+}
+
+export class ScheduleFromSoccerIPMIPVector extends PureTransform<ScheduleFromSoccerIPMIPVectorInput, Schedule | null> {
+  constructor(private readonly threshold = 0.5) { super(); }
+
+  transform({problem, model, x}: ScheduleFromSoccerIPMIPVectorInput): Schedule | null {
+  const threshold = this.threshold;
   if (x.length !== model.ip.c.length) return null;
   const assignment: number[][] = [];
   const bench: number[][] = [];
@@ -784,6 +890,17 @@ export function scheduleFromSoccerIPMIPVector(
   if (validateScheduleStructure(problem, schedule) !== null) return null;
   if (!evaluateSchedule(problem, schedule).fairnessOk) return null;
   return schedule;
+  }
+}
+
+/** @deprecated Use `new ScheduleFromSoccerIPMIPVector(threshold).transform({problem, model, x})`. */
+export function scheduleFromSoccerIPMIPVector(
+  problem: SoccerProblem,
+  model: SoccerIPMIPModel,
+  x: readonly number[],
+  threshold = 0.5,
+): Schedule | null {
+  return new ScheduleFromSoccerIPMIPVector(threshold).transform({problem, model, x});
 }
 
 export interface SoccerIPMIPPolicyOptions {
@@ -810,10 +927,11 @@ export interface SoccerIPMIPPolicyResult {
   fallbackReason?: string;
 }
 
-export function policyIPMIPFeasible(
-  problem: SoccerProblem,
-  opts: SoccerIPMIPPolicyOptions = {},
-): SoccerIPMIPPolicyResult {
+export class PolicyIPMIPFeasible extends PureTransform<SoccerProblem, SoccerIPMIPPolicyResult> {
+  constructor(private readonly opts: SoccerIPMIPPolicyOptions = {}) { super(); }
+
+  transform(problem: SoccerProblem): SoccerIPMIPPolicyResult {
+  const opts = this.opts;
   const model = buildSoccerIPMIP(problem);
   const solverOptions: IPMIPSolveOptions = {
     timeLimitMs: opts.timeLimitMs ?? 30_000,
@@ -843,6 +961,15 @@ export function policyIPMIPFeasible(
     usedFallback: true,
     fallbackReason: `IP/MIP status=${mip.status} had no feasible incumbent; used exact MDP schedule for continuity`,
   };
+  }
+}
+
+/** @deprecated Use `new PolicyIPMIPFeasible(opts).transform(problem)`. */
+export function policyIPMIPFeasible(
+  problem: SoccerProblem,
+  opts: SoccerIPMIPPolicyOptions = {},
+): SoccerIPMIPPolicyResult {
+  return new PolicyIPMIPFeasible(opts).transform(problem);
 }
 
 // -----------------------------------------------------------------------------
@@ -880,11 +1007,11 @@ function binaryEntropy(p: number): number {
   return -(q * Math.log2(q) + (1 - q) * Math.log2(1 - q));
 }
 
-export function evaluateSoccerPOMDPFeatures(
-  problem: SoccerProblem,
-  schedule: Schedule,
-  opts: SoccerPOMDPFeatureOptions = {},
-): SoccerPOMDPFeatureSummary {
+export class EvaluateSoccerPOMDPFeatures extends PureTransform<ProblemScheduleInput, SoccerPOMDPFeatureSummary> {
+  constructor(private readonly opts: SoccerPOMDPFeatureOptions = {}) { super(); }
+
+  transform({problem, schedule}: ProblemScheduleInput): SoccerPOMDPFeatureSummary {
+  const opts = this.opts;
   const fatigueRate = opts.fatigueRate ?? 0.22;
   const recoveryRate = opts.recoveryRate ?? 0.55;
   const belief = new Array(problem.numPlayers).fill(opts.initialFreshProbability ?? 0.82);
@@ -925,6 +1052,16 @@ export function evaluateSoccerPOMDPFeatures(
     meanExpectedLineupReliability:
       perPeriod.reduce((s, p) => s + p.expectedLineupReliability, 0) / Math.max(1, perPeriod.length),
   };
+  }
+}
+
+/** @deprecated Use `new EvaluateSoccerPOMDPFeatures(opts).transform({problem, schedule})`. */
+export function evaluateSoccerPOMDPFeatures(
+  problem: SoccerProblem,
+  schedule: Schedule,
+  opts: SoccerPOMDPFeatureOptions = {},
+): SoccerPOMDPFeatureSummary {
+  return new EvaluateSoccerPOMDPFeatures(opts).transform({problem, schedule});
 }
 
 // =============================================================================
@@ -986,11 +1123,11 @@ export interface MatchResult {
 /** Run a single DES match given a schedule. Goal events are sampled
  *  from a thinned Poisson process whose rate is modulated by the
  *  on-field average affinity. */
-export function simulateMatchDES(
-  problem: SoccerProblem,
-  schedule: Schedule,
-  opts: MatchSimOptions = {},
-): MatchResult {
+export class SimulateMatchDES extends PureTransform<ProblemScheduleInput, MatchResult> {
+  constructor(private readonly opts: MatchSimOptions = {}) { super(); }
+
+  transform({problem, schedule}: ProblemScheduleInput): MatchResult {
+  const opts = this.opts;
   const minutesPerPeriod = opts.minutesPerPeriod ?? 20;
   const teamRate = opts.teamScoreRate ?? 0.06;
   const oppRate = opts.oppScoreRate ?? 0.04;
@@ -1054,6 +1191,16 @@ export function simulateMatchDES(
     subEvents,
     trace,
   };
+  }
+}
+
+/** @deprecated Use `new SimulateMatchDES(opts).transform({problem, schedule})`. */
+export function simulateMatchDES(
+  problem: SoccerProblem,
+  schedule: Schedule,
+  opts: MatchSimOptions = {},
+): MatchResult {
+  return new SimulateMatchDES(opts).transform({problem, schedule});
 }
 
 /** Convenience: run N independent matches and aggregate. */
@@ -1070,14 +1217,19 @@ export interface MatchAggregate {
   benchCounts: number[];
 }
 
-export function runManyMatches(
-  problem: SoccerProblem,
-  schedule: Schedule,
-  policyName: string,
-  numMatches: number,
-  seedBase: number,
-  matchOpts: MatchSimOptions = {},
-): MatchAggregate {
+export interface RunManyMatchesConfig {
+  policyName: string;
+  numMatches: number;
+  seedBase: number;
+  matchOpts?: MatchSimOptions;
+}
+
+export class RunManyMatches extends PureTransform<ProblemScheduleInput, MatchAggregate> {
+  constructor(private readonly config: RunManyMatchesConfig) { super(); }
+
+  transform({problem, schedule}: ProblemScheduleInput): MatchAggregate {
+  const {policyName, numMatches, seedBase} = this.config;
+  const matchOpts = this.config.matchOpts ?? {};
   const evalRes = evaluateSchedule(problem, schedule);
   const diffs: number[] = [];
   let gF = 0, gA = 0;
@@ -1102,13 +1254,35 @@ export function runManyMatches(
     rawGoalDiffs: diffs,
     benchCounts: evalRes.benchCounts,
   };
+  }
+}
+
+/** @deprecated Use `new RunManyMatches({policyName, numMatches, seedBase, matchOpts}).transform({problem, schedule})`. */
+export function runManyMatches(
+  problem: SoccerProblem,
+  schedule: Schedule,
+  policyName: string,
+  numMatches: number,
+  seedBase: number,
+  matchOpts: MatchSimOptions = {},
+): MatchAggregate {
+  return new RunManyMatches({policyName, numMatches, seedBase, matchOpts}).transform({problem, schedule});
 }
 
 /** Welch's t-test for difference of means. */
+export interface WelchTInput { a: number[]; b: number[]; }
+
+export class WelchT extends PureTransform<WelchTInput, number> {
+  transform({a, b}: WelchTInput): number {
+    const ma = a.reduce((s, v) => s + v, 0) / a.length;
+    const mb = b.reduce((s, v) => s + v, 0) / b.length;
+    const va = a.reduce((s, v) => s + (v - ma) ** 2, 0) / Math.max(1, a.length - 1);
+    const vb = b.reduce((s, v) => s + (v - mb) ** 2, 0) / Math.max(1, b.length - 1);
+    return (ma - mb) / Math.sqrt(va / a.length + vb / b.length + 1e-30);
+  }
+}
+
+/** @deprecated Use `new WelchT().transform({a, b})`. */
 export function welchT(a: number[], b: number[]): number {
-  const ma = a.reduce((s, v) => s + v, 0) / a.length;
-  const mb = b.reduce((s, v) => s + v, 0) / b.length;
-  const va = a.reduce((s, v) => s + (v - ma) ** 2, 0) / Math.max(1, a.length - 1);
-  const vb = b.reduce((s, v) => s + (v - mb) ** 2, 0) / Math.max(1, b.length - 1);
-  return (ma - mb) / Math.sqrt(va / a.length + vb / b.length + 1e-30);
+  return new WelchT().transform({a, b});
 }

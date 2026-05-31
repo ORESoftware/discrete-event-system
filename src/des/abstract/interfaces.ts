@@ -1,5 +1,31 @@
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/abstract/interfaces.rs  (module des::abstract::interfaces)
+// 1:1 file move. Defines the capability traits + graph-data shapes of the
+// queueing-network entity model.
+//
+// Declarations → Rust:
+//   interface IsObservable / HasOutput / HasInput / HasManyInputConnections /
+//             HasManyOutputConnections / HasSingleInput/OutputConnection /
+//             HasEntityValidation / HasInternalQueue / HasId
+//                                  -> traits (these are BEHAVIORAL contracts)
+//   interface EntityGraphData      -> struct EntityGraphData (empty marker; `()` or unit struct)
+//   enum EventNames                -> enum EventNames
+//
+// Conversion notes (file-specific):
+//   - These interfaces are heavily structural; in Rust every entity struct must
+//     carry an EXPLICIT `impl HasOutput for X { .. }` etc. Group related traits
+//     so a blanket impl is possible where behaviour is identical.
+//   - `HasInput`/`HasOutput` reference EntityConnection<S,T> and
+//     AbstractMovingEntity — model the graph edges with `Rc<RefCell<..>>` or an
+//     arena/index (Vec + indices) to satisfy the borrow checker; raw mutual
+//     references won't compile.
+//   - `LinkedQueue<T>` (@oresoftware/linked-queue) -> std `VecDeque<T>`.
+//   - Generic params <S, T> carry over directly as trait/struct generics.
+//   - Methods returning `this` (builder style) -> return `&mut self` or `Self`.
+// =============================================================================
+
 import {AbstractMovingEntity} from "../entity-moving/moving";
 import {number, string} from "mathjs";
 import {EntityConnection, EntityObserver} from "./abstract";

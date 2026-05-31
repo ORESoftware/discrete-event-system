@@ -1,7 +1,32 @@
 'use strict';
 
 // =============================================================================
-// JSON adapters for signal transform station graphs.
+// RUST MIGRATION  —  target: src/des/general/adapters/signal-transforms-adapter.rs
+//   (module des::general::adapters::signal_transforms_adapter)
+// 1:1 file move. Registers Z / Laplace / Fourier transform JSON adapters with a
+// shared complex-plane accumulation animation.
+//
+// Declarations → Rust:
+//   const *Schema: ParamSchema + const *ZodSchema (z.object(...)) -> ONE serde +
+//             `validator` schema per model (see gotcha below)
+//   const continuousTransformFields / continuousTransformZodFields -> shared field set
+//   fn hasSamplesOrExpression / summarizeTransform / writeTransformCsv / color /
+//      finiteRange / mapRange / complexSnapshot / contributionRowsForPoint /
+//      transformFrame -> plain `fn` helpers; async fn animateTransform -> async fn
+//   registerModel(...) x3                       -> one struct + impl ModelAdapter trait each
+//
+// Conversion notes (file-specific):
+//   - GotChA: this file carries BOTH a ParamSchema AND a `zod` schema (`z.object`,
+//     `.strict()`, `.refine(...)`, `zodSchema` registration field). In Rust collapse
+//     to one #[derive(Deserialize, Validate)] struct: zod `.refine` (sequence XOR
+//     expression) -> a `#[validate]`/manual validator; `.default(..)` -> serde default;
+//     `.strict()` -> #[serde(deny_unknown_fields)].
+//   - ComplexValue {re, im} -> a Complex<f64> (num-complex); accumulation is complex.
+//   - `constants` open numeric map -> HashMap<String, f64>; `expression` strings are
+//     evaluated by the math engine -> port the evaluator (not a closure).
+//   - `quadrature: 'rectangular'|'trapezoid'` literal union -> enum.
+//   - Shapes (animation/types) -> Vec<Shape>/enum; complex-plane frame derives from
+//     the contribution trace (cumulative sums), no RNG.
 // =============================================================================
 
 import {FrameRecorder} from '../../animation/frame-recorder';

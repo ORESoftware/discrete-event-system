@@ -1,6 +1,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/collaborative_inference_test.rs   (integration test crate)
+// 1:1 file move. Tests collaborative sparse preference inference via the
+// des-registry, so it is an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - sparse per-item maps (experienceYears/ratings) -> HashMap<String, f64>;
+//     numeric inference outputs -> approx::assert_relative_eq! comparisons.
+//   - async main()/await -> a plain sync #[test].
+// =============================================================================
+
+// =============================================================================
 // Tests for collaborative sparse preference inference.
 // =============================================================================
 

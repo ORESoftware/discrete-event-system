@@ -1,6 +1,23 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/animation/scenes/elevator-scene.rs   (module des::animation::scenes::elevator_scene)
+// 1:1 file move. Builds frames + charts for the elevator-dispatch animation.
+//
+// Declarations → Rust:
+//   const STAGE_W/H, VIEW_*/METRIC_*/COLOR_* consts  -> `pub const`/`const`
+//   function dirColor                                -> fn -> &str (match on enums)
+//   function buildElevatorFrame / buildElevatorChart -> pub fns
+//
+// Conversion notes (file-specific):
+//   - Frame data (Shape[]/Frame/ChartSpec) is serialized for JSON -> serde structs (see types.rs).
+//   - `dirColor(dir: 'idle'|'up'|'down', state: 'IDLE'|'MOVING'|'SERVING')` — both
+//     string-literal unions -> small `enum`s, body becomes a `match`.
+//   - builders take the `Building` model -> the corresponding Rust struct.
+//   - all coords are `number` -> `f64`.
+// =============================================================================
+
+// =============================================================================
 // Elevator scene builder.
 //
 // Layout (900×640):

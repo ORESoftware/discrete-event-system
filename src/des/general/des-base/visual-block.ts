@@ -1,5 +1,37 @@
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/visual_block.rs  (module des::general::des_base::visual_block)
+// 1:1 file move. Visual-editor wrapper over CompositeDESStation: ports,
+// connections, layout/style metadata, and SVG-shape rendering.
+//
+// Declarations → Rust:
+//   type VisualBlockRole / VisualPortDirection (string unions) -> enum VisualBlockRole / PortDirection
+//   type VisualPortInput = string | VisualPortOptions -> enum PortInput { Name(String), Opts(VisualPortOptions) }
+//   interface Visual* (Port/PortSpec/Layout/Style/Spec/Options/RenderContext/Connection*) -> structs
+//   type VisualBlockMember / VisualBlockRenderable (unions incl `unknown`) -> enums (avoid `dyn Any`)
+//   const DEFAULT_LAYOUT / DEFAULT_STYLE -> consts (or Default impls)
+//   class VisualBlock extends CompositeDESStation -> struct: composes CompositeDESStation
+//   fn isVisualBlock / renderVisualBlocks / visualBlockSpecs / renderVisualBlockSpec +
+//      normalizePorts/normalizePort/assertUniquePort/clonePorts/cloneConnection/
+//      memberId/memberKind/defaultLayoutFor -> free fns
+//
+// Conversion notes (file-specific):
+//   - INHERITANCE: extends CompositeDESStation and overrides `addSubstation` ->
+//     compose a CompositeDESStation core and impl the trait; call the inner method.
+//   - `Required<VisualBlockLayout>` / `Required<VisualBlockStyle>` (all-filled) ->
+//     a resolved struct with concrete fields (no optionals).
+//   - `metadata?: Record<string, unknown>` -> `Option<HashMap<String, serde_json::Value>>`.
+//   - `isVisualBlock` is a structural type guard (`instanceof` OR duck-typed
+//     `alwaysRenderInHtml`) -> Rust uses the type system / an enum tag; no duck typing.
+//   - `member.constructor?.name` (memberKind) has NO Rust analogue -> store an
+//     explicit `kind`/`type_name` on members.
+//   - Spread clones (`{...port}`, `{...conn}`) -> `#[derive(Clone)]` + `.clone()`.
+//   - `Shape` comes from animation/types -> serde-friendly shape enum; rendering is
+//     a pure data transform (no canvas dependency).
+//   - `throw new Error` (role/port/capacity validation) -> `Result`/`panic!`.
+// =============================================================================
+
 import type {Shape} from '../../animation/types';
 import {CompositeDESStation} from './composite-station';
 import {DESRunLoopEntity, DESStation} from './station';

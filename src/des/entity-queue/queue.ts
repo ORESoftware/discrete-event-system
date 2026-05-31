@@ -1,5 +1,28 @@
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/entity-queue/queue.rs  (module des::entity_queue::queue)
+// 1:1 file move. The base buffering queue entity (parent of processors).
+//
+// Declarations → Rust:
+//   interface QueueEntityGraphData -> struct QueueEntityGraphData { processed_count }
+//                                     (composes EntityGraphData)
+//   class QueueEntity<S,T>         -> struct + impl (+ impl AbstractBidirectionalEntity,
+//                                     HasInternalQueue); this is a base others `extend`.
+//
+// Conversion notes (file-specific):
+//   - INHERITANCE: EntityProcessor / EntityNumericProcessor `extend` QueueEntity ->
+//     model as a `QueueEntity` trait (default fns) + shared field-bag struct that
+//     processors compose; not `extends`.
+//   - `queue: LinkedQueue<AbstractMovingEntity>` -> `VecDeque<_>` (entities behind
+//     `Rc<RefCell>`/index).
+//   - `getSerializableData()` logs then `throw makeError(..)` BEFORE its return
+//     (dead unreachable return) -> `panic!`/`unimplemented!`; the spread DTO is unreachable.
+//   - `opts: { xx?: boolean }` is a near-empty marker -> trim or a small config struct.
+//   - `math.BigNumber` stepSize -> decimal/f64.
+//   - `getGraphData()` returns hardcoded `processedCount: 3` stub -> placeholder.
+// =============================================================================
+
 import {number} from "mathjs";
 import * as math from "mathjs";
 import {AbstractMovingEntity} from "../entity-moving/moving";

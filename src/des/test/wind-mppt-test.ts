@@ -1,6 +1,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/wind_mppt_test.rs   (integration test crate)
+// 1:1 file move. Drives control-systems/wind-mppt through the des-base runner +
+// numerical solvers, so it is an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/close()/pass-fail counters + console.log  ->  #[test] fns
+//   using assert!/assert_eq!; drop the manual tally and PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - close(a,b,tol) relative float comparison -> approx::assert_relative_eq!.
+//   - local `class ExponentialDecay implements OdeSystem` -> a test struct that
+//     `impl OdeSystem`; ODE convergence vs the analytic e^{-kt} stays as asserts.
+// =============================================================================
+
+// =============================================================================
 // Unit tests for general/control-systems/wind-mppt.ts and the shared
 // numerical solvers. Run with:
 //   ./node_modules/.bin/ts-node src/des/test/wind-mppt-test.ts

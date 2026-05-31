@@ -1,6 +1,23 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des-lp-bridge.rs  (module des::general::des_lp_bridge)
+// 1:1 file move. DES<->LP integration patterns: plan-then-simulate, MDP-as-LP, rolling horizon.
+//
+// Declarations → Rust:
+//   fn solveLPThenSimulate<M>     -> generic fn (closure param -> `F: Fn(LPSolution) -> M`)
+//   interface MDPLPSolution / RollingHorizonStep<S,M> -> structs (#[derive(Clone)])
+//   fn buildMDPLP / solveMDPAsLP  -> fns (MDPSpec, gamma) -> LPProblem / MDPLPSolution
+//   fn lpRollingHorizon<S,M>      -> generic fn with `buildLP`/`step` closure params
+//
+// Conversion notes (file-specific):
+//   - Callback params (`simulate`, `buildLP`, `step`) -> generic `Fn`/`FnMut` bounds, not boxed.
+//   - `throw` on non-optimal LP status -> return `Result<_, SolveError>` (recoverable).
+//   - `(number | null)[]` bounds (lb/ub) -> `Vec<Option<f64>>`; `-Infinity` -> `f64::NEG_INFINITY`.
+//   - MDPSpec exposes `numActions`/`outcomes`/`isTerminal` closures (see value-iteration.rs).
+// =============================================================================
+
+// =============================================================================
 // DES ↔ LP integration patterns.
 //
 // In its SIMULATION mode (the original framing of DES), the engine isn't

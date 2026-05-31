@@ -2,6 +2,23 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/animation_test.rs   (integration test crate)
+// 1:1 file move. Smoke-tests the animation plugin (recorder + HTML player).
+// Keep the doc-block below; this header sits above it.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - fs/os/path temp dirs -> the `tempfile` crate (TempDir); cleanup is RAII.
+//   - JSONL frame read/write -> serde_json line-by-line (serde derives).
+//   - the async run()/await -> a plain sync #[test] (no I/O await needed), or
+//     #[tokio::test] only if the Rust recorder is async.
+//   - HTML substring checks (renderShape/renderChart/...) -> assert!(s.contains).
+// =============================================================================
+
+// =============================================================================
 // Smoke test for the animation plugin.
 //
 // Verifies:

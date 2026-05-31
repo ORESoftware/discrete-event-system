@@ -1,6 +1,30 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/finite_horizon_dp.rs  (module des::general::des_base::finite_horizon_dp)
+// 1:1 file move. Template-method base for finite-horizon DP via backward induction.
+//
+// Declarations → Rust:
+//   interface DPOutcome             -> struct DPOutcome { prob, reward, next_state }
+//   interface DPOptions             -> struct (#[derive(Default)])
+//   abstract class FiniteHorizonDPStation -> trait FiniteHorizonDPStation: DESStation
+//   fn maxArr / minArr (private)    -> fn max_arr / min_arr (or iterator .fold with total_cmp)
+//
+// Conversion notes (file-specific):
+//   - TEMPLATE METHOD: `runTimeStep` (one backward sweep) is final; required hooks
+//     horizon/numStates/numActions/transitions -> required trait fns; terminalReward/
+//     stageDiscount/onStageComputed -> provided defaults.
+//   - `rng: () => number` defaulting to `Math.random` -> inject `RandomSource`
+//     (shared/capabilities); the reservoir tie-break must use it.
+//   - `V: number[][]` / `policy: number[][]` -> `Vec<Vec<f64>>` / `Vec<Vec<i64>>`
+//     (policy uses -1 sentinel -> consider `Option<usize>`).
+//   - `stageHistory: Array<{stage,maxV,minV}>` -> `Vec<StageStat>` (named struct).
+//   - non-ASCII `γ` identifier -> `gamma`.
+//   - `throw new Error` (horizon<1) + Preconditions.* -> `Result`/`panic!`; reuse
+//     preconditions.rs.
+// =============================================================================
+
+// =============================================================================
 // general/des-base/finite-horizon-dp.ts — base class for FINITE-HORIZON
 // DYNAMIC PROGRAMMING via backward induction.
 //

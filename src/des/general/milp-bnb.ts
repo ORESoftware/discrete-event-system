@@ -1,6 +1,26 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/milp-bnb.rs  (module des::general::milp_bnb)
+// 1:1 file move. MILP branch-and-bound that composes the IncrementalLP solver as a DES tree.
+//
+// Declarations → Rust:
+//   interface MILPProblem/MILPSolveOptions/MILPSolution/NodeEvent -> structs (#[derive(Clone)])
+//   interface MILPBranch/MILPNode                                 -> structs (private)
+//   class MILPBnBStation extends TreeSearchStation<MILPNode>      -> struct + impl tree-search trait
+//   fn solveMILP / buildKnapsackMILP / buildFacilityLocationMILP  -> free fns / assoc fns
+//   interface FacilityLocationProblem                             -> struct
+//   fn validateProblem / listFractionals / pickBranchVar / formatNode -> private fns
+//
+// Conversion notes (file-specific):
+//   - `pickBranchVar(..., rng: () => number = Math.random)` -> inject `RandomSource`; do not
+//     default to a global RNG inside the solver.
+//   - var indices are `usize`; objective/bounds are `f64`; `integerVars: boolean[]` -> `Vec<bool>`.
+//   - branch-rule string union ('most-fractional' | 'first-fractional') -> enum.
+//   - validateProblem throws -> `panic!` (invariant) or `Result`.
+//   - TreeSearchStation base -> trait with default fns; warm-started IncrementalLP node state
+//     lives as struct fields (see lp / incremental-lp module headers).
+// =============================================================================
 // general/milp-bnb.ts — Mixed-Integer Linear Programming via Branch-and-Bound,
 // modelled as a discrete-event system that COMPOSES our IncrementalLP solver.
 //

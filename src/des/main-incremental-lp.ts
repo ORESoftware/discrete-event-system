@@ -1,6 +1,18 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-incremental-lp.rs   (fn main)
+// 1:1 file move. Incremental LP as a DES: each model edit is a movable, each
+// pivot a tick; optionally animates the polytope/optimum.
+//
+// Conversion notes (file-specific):
+//   - LPEvent / PivotEvent unions -> enum (match on kind).
+//   - process.env.ANIMATE -> std::env::var.
+//   - imports general/incremental-lp + animation scene -> use crate::des::...
+//   - top-level run -> fn main.
+// =============================================================================
+
+// =============================================================================
 // main-incremental-lp.ts — Incremental Linear Programming as a DES.
 //
 // Story: a 2D production-planning LP that evolves over time as the

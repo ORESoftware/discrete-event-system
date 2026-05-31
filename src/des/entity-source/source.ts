@@ -1,5 +1,35 @@
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/entity-source/source.rs  (module des::entity_source::source)
+// 1:1 file move. Source entities that inject new moving-entities into the network.
+//
+// Declarations → Rust:
+//   abstract class AbstractSourceEntity<S,T> -> trait SourceEntity (defaults) +
+//                                               base struct { connections_out }
+//   type EntitySourceGraphData               -> struct EntitySourceGraphData
+//   class EntitySource<S,T>                   -> struct + impl (Poisson-ish via RV)
+//   class DefiniteFiniteSource<V,S,T>         -> struct + impl (drains initialValues)
+//
+// Conversion notes (file-specific):
+//   - `addOutConnection<T>(...)` redeclares a generic `T` that SHADOWS the class
+//     `T`; in Rust rename the method generic to avoid the shadow.
+//   - `(global as any).turnOffSources` is an ambient global flag -> pass shared
+//     run-state/config in, not a process global.
+//   - `rv.getNextEventQuantity(stepSize)` pulls randomness -> the RandomVariable
+//     must carry an injected `RandomSource` (shared/capabilities), not Math.random.
+//   - `[util.inspect.custom](depth, options)` debug hook -> `impl fmt::Debug`.
+//   - `Object.assign({turnOffAfterCount:-1}, opts)` -> struct fields w/ defaults.
+//   - `math.BigNumber` stepSize -> decimal crate / `f64`.
+//   - `LinkedQueue<V>` (queue/outQueue) -> `VecDeque<V>`; dequeue `[k,v]` tuple
+//     cast `as [any,any]` -> typed `Option<(K,V)>`; `getNextValue(): [V,V]` typed.
+//   - `getSerializableData(): Partial<this>` returning `this` -> a serde DTO.
+//   - `connectionsOut: Set<EntityConnection>` -> `Vec`/`HashSet` of `Rc<RefCell<..>>`
+//     trait objects (graph edges); `acceptItem`/`takeItem` borrow target then release.
+//   - `throw new Error('needs initial values')` -> `Result` or `panic!` on construct.
+//   - console.warn/debug -> `tracing` macros.
+// =============================================================================
+
 import * as math from "mathjs";
 import {number} from "mathjs";
 import {HasManyInputConnections, HasManyOutputConnections} from "../abstract/interfaces";

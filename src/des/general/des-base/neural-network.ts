@@ -1,6 +1,34 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/neural_network.rs  (module des::general::des_base::neural_network)
+// 1:1 file move. DES stations wrapping neural models (inference + supervised
+// training) behind typed token channels.
+//
+// Declarations → Rust:
+//   type NumericVector = number[]        -> type NumericVector = Vec<f64>;
+//   interface NeuralNetworkLike          -> trait NeuralNetworkLike (predict required;
+//                                            parameterCount/clone optional -> provided defaults)
+//   interface TrainableNeuralNetwork     -> trait TrainableNeuralNetwork: NeuralNetworkLike
+//                                            (trainSample returns struct, not inline obj)
+//   class Neural*Token (5×)              -> structs + impl Token
+//   class NeuralNetworkStation<N>        -> struct + impl DESStation (holds N)
+//   interface SupervisedNeuralNetworkStationOptions -> struct
+//   class SupervisedNeuralNetworkStation<N> -> struct (extends -> composition + impl)
+//
+// Conversion notes (file-specific):
+//   - INHERITANCE: SupervisedNeuralNetworkStation extends NeuralNetworkStation and
+//     calls `super.hasWork()` / reuses `processInferenceQueue` -> compose a
+//     `NeuralNetworkStation` (or share a core struct) and call its methods; no `extends`.
+//   - `trainSample` returns inline `{loss, prediction}` -> named `TrainSampleResult` struct.
+//   - `meta: Record<string, unknown>` -> `HashMap<String, serde_json::Value>` (or a typed enum).
+//   - `loss: number | null` / `parameterCount: number | null` -> `Option<f64>`/`Option<usize>`.
+//   - `clone?()` returning `NeuralNetworkLike` -> avoid `Clone` of trait objects;
+//     use `Box<dyn NeuralNetworkLike>` + an explicit `box_clone` if needed.
+//   - `N extends NeuralNetworkLike` generic bound -> `N: NeuralNetworkLike`.
+// =============================================================================
+
+// =============================================================================
 // general/des-base/neural-network.ts — DES base classes for neural networks.
 //
 // Neural nets are the hybrid case in this codebase:

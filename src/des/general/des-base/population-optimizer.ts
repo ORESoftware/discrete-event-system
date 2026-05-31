@@ -1,6 +1,33 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/population_optimizer.rs  (module des::general::des_base::population_optimizer)
+// 1:1 file move. Template-method base for population metaheuristics (GA / PSO /
+// DE / ACO / ES) over a generic individual `I`.
+//
+// Declarations → Rust:
+//   const POPULATION_INITIAL/RESULT_CHANNEL -> const &str
+//   class PopulationInitialToken<I> / PopulationResultToken<I> -> struct + impl Token
+//   interface PopulationResultSnapshot<I>   -> struct (#[derive(Clone)])
+//   class PopulationSourceStation<I> / PopulationSinkStation<I> -> struct + impl DESStation
+//   abstract class PopulationOptimizer<I>   -> trait PopulationOptimizer<I>: DESStation
+//
+// Conversion notes (file-specific):
+//   - TEMPLATE METHOD: `runTimeStep` is final; required hooks
+//     initialPopulation/evaluate/select/recombine/mutate/clone/shouldStop -> required
+//     trait fns; eliteCount/onGeneration/onFinish/acceptChild/childRetryLimit/
+//     onChildRejected -> provided defaults.
+//   - `rng: () => number` -> inject `RandomSource` (shared/capabilities) into hooks.
+//   - `best!: I` definite-assignment -> `Option<I>` / two-phase init enum.
+//   - `clone(x)` hook = explicit deep copy -> `I: Clone` bound or keep the hook.
+//   - elitism sort `fitness.map((f,i)) .sort(...)` -> sort `Vec<(f64, usize)>` by f64
+//     (use `total_cmp` for NaN-safety).
+//   - `throw new Error` (double-init, wrong pop size, non-finite fitness, >1 seed)
+//     -> `Result`/`panic!`.
+//   - static class consts -> associated consts.
+// =============================================================================
+
+// =============================================================================
 // general/des-base/population-optimizer.ts — base class for POPULATION-BASED
 // metaheuristics: genetic algorithm, particle swarm, differential evolution,
 // ant colony optimization, evolution strategies, …

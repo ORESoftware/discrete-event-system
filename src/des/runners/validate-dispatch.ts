@@ -1,6 +1,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-dispatch.rs  (a `fn main` binary; an
+//                    `examples/…rs` also works)
+// 1:1 file move. Validates the dispatch combo across problem instances and
+// quantifies how each architectural layer (greedy / LP / MDP-VI / MCTS) performs.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - `as any` on aggregates -> concrete typed structs.
+//   - instance generation + MCTS RNG -> inject `SeededRandom`.
+//   - `console.log` PASS/FAIL + `process.exit` -> `println!` / `std::process::exit`.
+// =============================================================================
+
+// =============================================================================
 // runners/validate-dispatch.ts
 //
 // Validates the dispatch combo on multiple problem instances and quantifies

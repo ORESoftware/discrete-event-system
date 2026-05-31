@@ -1,6 +1,22 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/ppo-des.rs  (module des::general::ppo_des)
+// 1:1 file move. Proximal Policy Optimization as a DES (tabular agent + clipped update station).
+//
+// Declarations → Rust:
+//   interface PPOUpdateOptions / PPODESResult           -> structs (Default where sensible)
+//   class TabularPPOAgent extends PolicyGradientAgent<number, number> -> struct + impl agent trait
+//   class PPOClipUpdateStation extends PolicyUpdateStation -> struct + impl update-station trait
+//   fn runPPODES                                         -> free fn / assoc fn
+//
+// Conversion notes (file-specific):
+//   - INJECT RNG: softmax action sampling uses an rng -> take a `RandomSource` (shared/capabilities);
+//     thread the same source through the environment for reproducibility.
+//   - PolicyGradientAgent / PolicyUpdateStation are template-method bases -> traits with default
+//     fns; the agent's tabular θ and V are `Vec<Vec<f64>>` struct fields mutated via `&mut self`.
+//   - GAE advantage / clipped-surrogate math is plain f64 over `Vec<f64>` trajectory buffers.
+// =============================================================================
 // general/ppo-des.ts — PPO as a DES, built on PolicyGradientAgent and
 // PolicyUpdateStation base classes.
 //

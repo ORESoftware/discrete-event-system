@@ -1,5 +1,21 @@
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: tests/domain_application_test.rs   (integration test crate)
+// 1:1 file move. Tests the applied domain-model pack via the des-registry, so
+// it is an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/CheckRow + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual rows and PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - metric(result,key) reads a string-keyed map of f64 -> a typed struct or
+//     HashMap<String,f64>; numeric checks -> approx::assert_relative_eq!.
+//   - `throw` when a metric is non-numeric -> a Result/panic in the helper.
+//   - async main()/await -> a plain sync #[test].
+// =============================================================================
+
 // Tests for the applied domain model pack.
 
 import {getModel, runFromSpec} from '../general/des-registry';

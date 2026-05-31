@@ -1,6 +1,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-shortest-path.rs   (fn main)
+// 1:1 file move. Shortest-path-as-DES: each node is a station holding its best
+// distance; Bellman-Ford-DES and Dijkstra-DES variants.
+//
+// Conversion notes (file-specific):
+//   - process.env (N_NODES, EDGE_PROB, ALGO, ANIMATE) -> std::env::var; ALGO
+//     union -> enum.
+//   - random graph generation -> SeededRandom; node stations -> struct+impl.
+//   - imports general shortest-path + animation -> use crate::des::...
+//   - async main -> fn main.
+// =============================================================================
+
+// =============================================================================
 // main-shortest-path.ts — Shortest-path-as-DES on a directed weighted
 // graph. Each node IS a stationary entity holding its current best
 // distance estimate; each "wave" message IS a movable carrying a

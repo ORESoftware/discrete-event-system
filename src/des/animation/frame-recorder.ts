@@ -1,6 +1,31 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/animation/frame-recorder.rs   (module des::animation::frame_recorder)
+// 1:1 file move. Streams per-tick scene snapshots to a JSONL file (+ optional
+// live stderr line and one-shot HTML at finish).
+//
+// Declarations → Rust:
+//   interface FrameRecorderOpts  -> struct FrameRecorderOpts (Default-derivable; Option<T> for `?` fields)
+//   class FrameRecorder          -> struct FrameRecorder { writer, charts, frame_count, .. } + impl
+//   function readAnimation       -> free fn -> Result<Animation, _>
+//
+// Conversion notes (file-specific):
+//   - `fs.WriteStream` + `JSON.stringify(ev) + '\n'` (JSONL) -> a buffered writer
+//     (`BufWriter<File>`) writing one `serde_json::to_string(&ev)?` line per frame.
+//   - The mapped-type field `Required<Omit<..>> & Pick<..>` is just a resolved
+//     concrete struct in Rust — write the fields out explicitly.
+//   - `frame(t, tick, build: () => {...})` takes a closure -> `build: impl FnOnce() -> FrameParts`.
+//   - `async finish(): Promise<Animation>` -> the I/O is synchronous here, so a
+//     plain `fn finish(&mut self) -> io::Result<Animation>` suffices (no runtime).
+//   - `readAnimation` parses with `ev: any` and dispatches on `ev.kind` ->
+//     `serde_json::Value` + match, or an `#[serde(tag = "kind")]` event enum.
+//   - `throw new Error(...)` (malformed JSONL / missing header) -> `Result`.
+//   - `process.stderr.isTTY` -> `std::io::stderr().is_terminal()` (is-terminal/atty).
+//   - imports `renderVisualBlocks` from des-base -> `use crate::des::general::des_base::visual_block::*`.
+// =============================================================================
+
+// =============================================================================
 // FrameRecorder — emits per-tick scene snapshots.
 //
 // Three sinks:

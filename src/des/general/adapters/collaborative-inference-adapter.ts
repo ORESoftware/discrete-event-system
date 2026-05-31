@@ -1,6 +1,31 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/adapters/collaborative-inference-adapter.rs
+//   (module des::general::adapters::collaborative_inference_adapter)
+// 1:1 file move. JSON adapter for sparse collaborative preference inference, with
+// an animated station-graph scene builder.
+//
+// Declarations → Rust:
+//   const itemSchema/responseSchema/schema: ParamSchema -> serde + validator metadata
+//   registerModel<P,R>({ id, schema, run, summarize, writeCsv, animate }) -> struct +
+//             impl ModelAdapter trait
+//   fn collaborativeInferenceScene / stationCount / credibilityCaption / text /
+//      rankColor / truncate / lerp / easeOutCubic / mean -> plain `fn` helpers
+//
+// Conversion notes (file-specific):
+//   - GotChA: `top: CollaborativeInferenceResult['top']` is an indexed-access type
+//     (the element type of the `top` field) — name that element struct explicitly
+//     in Rust; indexed-access types have no analogue.
+//   - response.ratings / experienceYears are open `{kind:'object', fields:{}}` maps
+//     (string→number) -> HashMap<String, f64>; `scenario` literal union -> enum.
+//   - `.toLocaleString()` thousands formatting -> a num-format helper (not built in).
+//   - Shapes pushed into `Shape[]` (animation/types) -> Vec<Shape>; Shape -> enum;
+//     the animation is purely derived from the result (eased interpolation), no RNG.
+//   - `Number.isInteger(value)` formatting branch -> f64::fract()==0 check.
+// =============================================================================
+
+// =============================================================================
 // JSON adapter for collaborative sparse preference inference.
 // =============================================================================
 

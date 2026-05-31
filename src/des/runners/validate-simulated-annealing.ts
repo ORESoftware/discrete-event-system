@@ -1,6 +1,18 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-simulated-annealing.rs  (a `fn main`
+//                    binary; an `examples/…rs` also works)
+// 1:1 file move. Verifies the SA solver against known optima (pentagon/Held–Karp
+// TSP) and against MILP-B&B on knapsack.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - SA RNG -> inject `SeededRandom` (shared::capabilities).
+//   - `console.log` PASS/FAIL + `process.exit` -> `println!` / `std::process::exit`.
+// =============================================================================
+
+// =============================================================================
 // runners/validate-simulated-annealing.ts — verify SA solver against
 // known optima (pentagon TSP, Held–Karp on small TSPs) and against
 // MILP-B&B on knapsack.

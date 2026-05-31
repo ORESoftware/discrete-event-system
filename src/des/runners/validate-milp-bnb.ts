@@ -1,6 +1,20 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-milp-bnb.rs  (a `fn main` binary; an
+//                    `examples/…rs` also works)
+// 1:1 file move. Verifies the branch-and-bound MILP solver against brute-force
+// enumeration and against the LP solver with integrality dropped.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - bitmask brute force `for (mask=0; mask < (1<<n); …)` -> `for mask in 0u32..
+//     (1 << n)` (use `usize`/`u32`, not `f64`).
+//   - any `Date.now()`/RNG -> `Clock`/`SeededRandom`.
+//   - `console.log` PASS/FAIL + `process.exit` -> `println!` / `std::process::exit`.
+// =============================================================================
+
+// =============================================================================
 // runners/validate-milp-bnb.ts — verify branch-and-bound MILP solver against
 // brute-force enumeration on small instances and against the LP solver
 // when integrality is dropped.

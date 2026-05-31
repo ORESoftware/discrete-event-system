@@ -2,6 +2,18 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-electric-circuit.rs   (fn main)
+// 1:1 file move. Series RLC step-response as a DES (the tick clock is the
+// numerical integrator) via VoltageSource/Inductor/Capacitor stations.
+//
+// Conversion notes (file-specific):
+//   - station classes -> struct + impl trait.
+//   - the `pending`-emission map flushed after all stations run -> a HashMap
+//     then swap (two-phase update preserves the frozen-inbox semantics).
+//   - integrator scheme (Euler/RK4) -> enum; top-level run -> fn main.
+// =============================================================================
+
+// =============================================================================
 // Series RLC step-response as a discrete-event system. The circuit is a
 // genuine continuous-time physical system; the DES tick clock is the
 // numerical integrator (Euler / RK4 etc.) — illustrating that the same

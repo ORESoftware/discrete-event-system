@@ -1,5 +1,29 @@
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/general/adapters/nonlinear-forecasting-adapter.rs
+//   (module des::general::adapters::nonlinear_forecasting_adapter)
+// 1:1 file move. JSON adapter for the nonlinear MDP/POMDP forecasting model, with
+// an animated multi-panel scene builder.
+//
+// Declarations → Rust:
+//   const nonlinearForecastSchema: ParamSchema -> serde + validator metadata
+//   registerModel<P,R>({ id, schema, run, summarize, writeCsv, animate }) -> struct +
+//             impl ModelAdapter trait
+//   async fn animateNonlinearForecast / fn buildForecastFrame / drawStationPipeline /
+//      drawVariables / drawActivePanels -> async fn + plain `fn` helpers
+//
+// Conversion notes (file-specific):
+//   - `v.source === 'pomdp' | 'nonlinear' | 'lagged' | ...` discovered-variable
+//     source tag -> enum matched for the colour; `beliefMode` similarly.
+//   - POMDP posteriors are fixed-index arrays (`p.posterior[1..3]`) -> a fixed-size
+//     array / struct of belief components.
+//   - Shapes pushed into `Shape[]` (animation/types) -> Vec<Shape>; Shape -> enum;
+//     frames derive from result traces only (no RNG).
+//   - `animate` returns the helper's Promise -> async fn delegating; `?? '' ` blanks
+//     in CSV (fit rows have no lower/upper) -> Option/empty-string formatting.
+// =============================================================================
+
 // JSON adapter for nonlinear MDP/POMDP forecasting.
 
 import {FrameRecorder} from '../../animation/frame-recorder';

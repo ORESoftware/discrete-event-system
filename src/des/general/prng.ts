@@ -1,6 +1,24 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/prng.rs  (module des::general::prng)
+// 1:1 file move. Seedable mulberry32 PRNG used for reproducible Monte-Carlo replications.
+//
+// Declarations → Rust:
+//   fn mulberry32(seed) -> () => number  -> this IS the `SeededRandom` capability
+//                                           (shared/capabilities); return a struct impl RandomSource.
+//   fn withSeed<T>(seed, fn)             -> NO direct Rust analogue (see note); express as
+//                                           "run this closure with an injected SeededRandom".
+//
+// Conversion notes (file-specific):
+//   - `withSeed` MONKEY-PATCHES the global via `(Math as any).random = prng` and restores it.
+//     Rust has no global mutable RNG to swap: the whole RNG-capability port (shared/capabilities,
+//     prng.ts ↔ random-variables.ts) exists to replace this. Migrate call sites to take a
+//     `RandomSource` parameter instead of relying on a swapped global.
+//   - mulberry32 uses u32 wrapping ops (`>>> 0`, `Math.imul`) -> `u32` `wrapping_*` / `^` in Rust;
+//     output is `(t >>> 0) / 4294967296` in [0,1) -> `as f64 / u32::MAX as f64`-style mapping.
+//   - the `as any` casts exist ONLY to mutate `Math.random`; they disappear under injection.
+// =============================================================================
 // Seedable PRNG so we can run reproducible Monte-Carlo replications.
 //
 // `withSeed(seed, fn)` swaps Math.random with a Mulberry32 PRNG keyed on the

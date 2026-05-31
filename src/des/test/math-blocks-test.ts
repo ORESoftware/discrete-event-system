@@ -1,6 +1,20 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/math_blocks_test.rs   (integration test crate)
+// 1:1 file move. Tests stationary math blocks, ODE block systems, and heat-PDE
+// grids, so it is an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - close(a,b,tol) relative float comparison -> approx::assert_relative_eq!.
+//   - the many block classes -> structs implementing a common block trait.
+// =============================================================================
+
+// =============================================================================
 // Tests for stationary math blocks, ODE block systems, and heat PDE grids.
 // =============================================================================
 

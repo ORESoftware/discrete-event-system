@@ -2,6 +2,30 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/observability/validate-epidemic.rs  (module des::observability::validate_epidemic)
+// 1:1 file move. Offline JSONL invariant validator — a CLI BINARY, not library code.
+//
+// Declarations → Rust:
+//   interface Failure                                  -> struct Failure { invariant, detail, context }
+//   const fail / fmt / Z_99 / binomialCI99 (fns)       -> free fns / consts
+//   function main()                                    -> `fn main()` of a `[[bin]]` (or examples/) target
+//
+// Conversion notes (file-specific):
+//   - This is an ENTRY SCRIPT (shebang + `main()` + `process.exit(code)`) -> a Rust
+//     binary; `process.exit(n)` -> `std::process::exit(n)`. Keep it OUT of the library.
+//   - Event records are accessed untyped (`start.config.edges`, `t.from`, `e.t`,
+//     `end.totals.created`, …) -> define typed `#[derive(Deserialize)]` event
+//     structs and deserialize the JSONL instead of `any`.
+//   - `/Decision$/.test(s)` regex -> `s.ends_with("Decision")`.
+//   - `Map<string, Map<string, number>>` / `Set<string>` -> `HashMap<String, HashMap<String,u64>>`
+//     / `HashSet<String>`.
+//   - module-level mutable `failures` array captured by the `fail` closure ->
+//     thread a `&mut Vec<Failure>` (no shared mutable module state).
+//   - `padEnd`/`toFixed` formatting -> `format!` width/precision; `Math.sqrt` -> `f64::sqrt`.
+//   - `Object.entries/values/fromEntries` -> iterate the maps directly.
+// =============================================================================
+
+// =============================================================================
 // Offline validator for the epidemic simulation.
 //
 // Reads the JSONL event stream produced by main-epidemic-improved.ts and

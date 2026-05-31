@@ -1,6 +1,24 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/math-equation-input.rs  (module des::general::math_equation_input)
+// 1:1 file move. Normalizes JSON/LaTeX/XML equation input into math-block ODE/PDE params, then runs.
+//
+// Declarations → Rust:
+//   type EquationInputFormat = 'json'|'latex'|'xml' -> enum; type EquationProblemKind = 'ode'|'heat1d' -> enum
+//   interface MathEquationInputParams/MathEquationNetwork/MathEquationResult/Attrs/ExprToken -> structs
+//   fn runMathEquationProblem / normalizeMathEquationProblem / latexToExpression -> fns
+//   (+ many private parse/coerce helpers: stateFromJson, *FromXml, *OrDefault, ... -> assoc fns)
+//
+// Conversion notes (file-specific):
+//   - `normalizeMathEquationProblem` returns `{kind:'ode',..} | {kind:'heat1d',..}` -> enum + `match`.
+//   - `unknown` / `Record<string, unknown>` inputs -> `serde_json::Value`; coercion helpers -> typed parsing.
+//   - Hand-rolled LaTeX/XML scanning (textBetween/parseAttrs/xmlDecode/...) -> a real parser or `regex`/`serde`.
+//   - `logger?: { log(event) }` callback -> optional `&dyn Logger` trait; `Preconditions` throws -> `Result`.
+//   - Builds on expr.rs + math-blocks.rs (see those headers).
+// =============================================================================
+
+// =============================================================================
 // Equation input normalizer for math-block DES models.
 //
 // User-facing input can be structured JSON, constrained LaTeX, or a tiny XML

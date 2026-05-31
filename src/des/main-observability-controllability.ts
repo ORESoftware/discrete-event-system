@@ -1,6 +1,17 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-observability-controllability.rs   (fn main)
+// 1:1 file move. Demo of the controllability/observability evaluator across
+// LTI state-space, MDP reachability, and POMDP distinguishability.
+//
+// Conversion notes (file-specific):
+//   - class ObsCtrlDemo -> struct + impl; top-level run -> fn main.
+//   - many station/token types imported -> use crate::des::general::
+//     control_systems::observability_controllability.
+// =============================================================================
+
+// =============================================================================
 // main-observability-controllability.ts — runnable demo of the general
 // controllability / observability evaluator across linear state-space models,
 // an MDP (reachability), and POMDPs (distinguishability).

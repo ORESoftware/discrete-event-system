@@ -2,6 +2,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-computer-network.rs  (a `fn main`
+//                    binary; an `examples/…rs` also works)
+// 1:1 file move. Runs the computer-network DES and cross-checks it against a
+// dependency-free Python reference.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level code becomes `fn main()`.
+//   - `fs`/`path` + external program -> `std::fs` / `std::process::Command`.
+//   - `JSON.parse`/`stringify` of problem + result -> serde structs; no `as any`.
+//   - `process.exit(code)` -> `std::process::exit(code)`.
+// =============================================================================
+
+// =============================================================================
 // validate-computer-network.ts
 //
 // Runs the computer-network DES in TypeScript and cross-checks the same problem

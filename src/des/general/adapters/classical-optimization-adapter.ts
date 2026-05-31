@@ -1,7 +1,24 @@
 'use strict';
 
 // =============================================================================
-// JSON adapters for classic optimization station-graph models.
+// RUST MIGRATION  —  target: src/des/general/adapters/classical-optimization-adapter.rs
+//   (module des::general::adapters::classical_optimization_adapter)
+// 1:1 file move. Registers QP / assignment / VRP / job-shop / flow-shop JSON
+// adapters (8 models) over classical-optimization station graphs.
+//
+// Declarations → Rust:
+//   const numberVectorSchema/numberMatrixSchema/customerSchema/operationSchema/
+//         jobSchema/flowShopJobSchema: ParamSchema -> serde + validator metadata
+//   registerModel(...) x8                       -> one struct + impl ModelAdapter trait each
+//
+// Conversion notes (file-specific):
+//   - `Q`/`cost` are `number[][]` matrices -> Vec<Vec<f64>> (or ndarray).
+//   - `rule: 'fifo'|'spt'|'edd'` dispatch literal union -> enum.
+//   - P shapes are mostly imported; auction-assignment uses an intersection
+//     `AssignmentParams & {epsilon?; maxIter?}` -> a struct adding those Option fields.
+//   - `result.assignment.forEach((job, worker) => ...)` uses index-as-worker -> zip
+//     with enumerate; `JSON.stringify(row.x)` in CSV -> serde_json.
+//   - All `run` bodies are thin pass-throughs; defaults live in the schema.
 // =============================================================================
 
 import {ParamSchema} from '../des-spec';

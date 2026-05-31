@@ -1,6 +1,28 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/temp-control.rs  (module des::general::temp_control)
+// 1:1 file move. Indoor temperature control comparing bang-bang/PID/fuzzy/MDP-MPC controllers.
+//
+// Declarations → Rust:
+//   interface HouseParams/OutdoorPattern/ControllerState/TempObs/SimConfig/TickRecord/RunResult -> structs
+//   type ControllerSpec = {...}  -> enum (matched in `makeTempController` factory)
+//   type Term/OutLevel (fuzzy-set string unions) -> enums
+//   abstract class TempControllerBase extends ControllerStation<TempObs, number> -> trait w/ default fns
+//   class BangBang/PID/Fuzzy/MdpMpcController extends TempControllerBase -> structs + impl
+//   fn trueOutdoorTemp/houseStep/controllerStep/fuzzyDeltaController/mdpMPCController/
+//      makeTempController/runTempControl + private membership fns -> fns / assoc fns
+//
+// Conversion notes (file-specific):
+//   - ControllerSpec is a DISCRIMINATED UNION -> `enum`; `makeTempController` becomes a `match`
+//     returning a boxed `dyn TempController` (or an enum of controllers).
+//   - INJECT RNG/CLOCK: this file RE-DECLARES `mulberry32`; outdoor temp uses Gaussian noise +
+//     a diurnal time signal -> take a `RandomSource` and a `Clock` (shared/capabilities); use the
+//     single SeededRandom, not a second copy.
+//   - fuzzy membership returns named structs `{NL,NS,Z,PS,PL}` -> a small struct or `[f64; 5]`.
+//   - TempControllerBase is a template-method base -> trait; controller state (PID integral, MPC
+//     buffers) are `&mut self` struct fields; all numerics `f64`.
+// =============================================================================
 // general/temp-control.ts — INDOOR TEMPERATURE CONTROL as a discrete-event
 // system, with four interchangeable controllers compared on the same physical
 // house and the same 24-hour outdoor temperature trajectory.

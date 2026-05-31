@@ -2,6 +2,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-calculus.rs   (fn main)
+// 1:1 file move. CLI dispatching expr / ode / pde / poisson problems onto the
+// station network and comparing against reference solvers.
+//
+// Conversion notes (file-specific):
+//   - process.env (PROBLEM, RHS_i, y0, ...) -> std::env::var; dispatch ->
+//     match on PROBLEM.
+//   - expr parse -> use crate::des::general::expr (Expr enum, match on kind).
+//   - quadrature/ode helpers -> use crate::des::general::{quadrature, ode}.
+//   - fs/path output -> std::fs; top-level run -> fn main.
+// =============================================================================
+
+// =============================================================================
 // MAIN-CALCULUS: parse a math expression / equation, build a station network,
 // solve, and compare with reference solvers.
 //

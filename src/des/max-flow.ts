@@ -2,6 +2,18 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/max-flow.rs   (fn main)
+// 1:1 file move. Thin runner: solves a textbook max-flow problem as a DES
+// and prints the augmenting-path trace, edge flows, and min cut.
+//
+// Conversion notes (file-specific):
+//   - `if (require.main === module) main()` -> `fn main()`.
+//   - Delegates to general/max-flow -> use crate::des::general::max_flow::
+//     {build_textbook_max_flow_problem, solve_max_flow}.
+//   - `number` is f64; fmt helper -> a format fn.
+// =============================================================================
+
+// =============================================================================
 // max-flow.ts -- runnable maximum-flow optimiser expressed as a DES.
 // =============================================================================
 

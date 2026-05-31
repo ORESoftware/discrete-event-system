@@ -1,8 +1,28 @@
 'use strict';
 
 // =============================================================================
-// general/adapters/temp-control-adapter.ts — JSON adapter for the
-// temperature-control model.
+// RUST MIGRATION  —  target: src/des/general/adapters/temp-control-adapter.rs
+//   (module des::general::adapters::temp_control_adapter)
+// 1:1 file move. JSON adapter for the indoor temperature-control DES (bang-bang /
+// PID / fuzzy / MDP-MPC controllers), with a lazily-imported animation.
+//
+// Declarations → Rust:
+//   interface TempControlParams                -> struct (#[derive(Deserialize)];
+//             house?/outdoor? -> Option<struct>)
+//   const controllerSchema/tempControlSchema: ParamSchema -> serde + validator metadata
+//   const adapter: DESModelRegistration<P,R>   -> struct + impl ModelAdapter trait;
+//             registerModel(adapter) -> explicit registration
+//   fn describeController                        -> match on the controller enum
+//
+// Conversion notes (file-specific):
+//   - ControllerSpec is a discriminated union (bang-bang | pid | fuzzy | mdp-mpc),
+//     encoded as a `oneOf` schema -> enum ControllerSpec matched on `kind`
+//     (#[serde(tag="kind", rename_all="kebab-case")]); describeController is the match.
+//   - GotChA: `animate` uses dynamic `await import(...)` of the temp-control scene +
+//     FrameRecorder -> ordinary `use` imports in Rust (no lazy import).
+//   - `run` copies params into a SimConfig and injects `seed: runtime.seed` ->
+//     thread a seeded RNG through; `params.band ?? 2`, `dt_min ?? 1` -> unwrap_or.
+//   - `path` import is unused-ish here; CSV is plain string rows.
 // =============================================================================
 
 import * as path from 'path';

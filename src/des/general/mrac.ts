@@ -1,6 +1,23 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/mrac.rs  (module des::general::mrac)
+// 1:1 file move. Model-reference adaptive control (Lyapunov/MIT-rule) as a DES control loop.
+//
+// Declarations → Rust:
+//   interface MRACOpts                          -> struct (Default-derivable)
+//   interface MRACResult extends ClosedLoopResult -> struct embedding/flattening ClosedLoopResult
+//   class UnknownGainPlant extends PlantBlock     -> struct + impl Plant trait (private)
+//   class ReferenceModel                          -> struct + impl (private)
+//   class MRACController extends ControllerBlock   -> struct + impl Controller trait (private)
+//   fn runMRAC                                    -> free fn / assoc fn
+//
+// Conversion notes (file-specific):
+//   - PlantBlock/ControllerBlock template-method bases -> traits with default fns; adaptive
+//     gains θ_x, θ_r are mutable controller struct fields advanced via `&mut self` each tick.
+//   - `extends ClosedLoopResult`: compose by embedding the base struct (no interface inheritance).
+//   - all numerics are `f64`; deterministic (no RNG/clock/Map).
+// =============================================================================
 // general/mrac.ts — MODEL REFERENCE ADAPTIVE CONTROL (Whitaker 1958, MIT
 // rule; Narendra & Annaswamy 1989, Lyapunov-based MRAC).
 //

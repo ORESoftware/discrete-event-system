@@ -1,6 +1,27 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/four-rooms.rs  (module des::general::four_rooms)
+// 1:1 file move. Four-Rooms benchmark + hallway OPTIONS + SMDP Q-learning agent.
+//
+// Declarations → Rust:
+//   interface FourRoomsOpts / FourRoomsTrainOpts / FourRoomsResult -> structs
+//   class FourRoomsEnv implements Environment -> struct + `impl Environment`
+//   class FourRoomsSMDPAgent extends SemiMDPAgentStation -> struct + impl (base -> trait)
+//   const FOUR_ROOMS_MAP/HALLWAYS/GOAL/DR/DC -> `const`/`static` arrays
+//   fn buildFourRoomsOptions / makeHallwayOption / rcToIdx/idxToRC/isFree/room -> assoc fns
+//
+// Conversion notes (file-specific):
+//   - `Option<number, number>` here is the RL OPTION type (init/policy/terminate closures),
+//     NOT Rust's `Option` — rename to `RlOption`/`SkillOption` and model fields as trait/`Box<dyn Fn>`.
+//   - `this.rng = opts.rng ?? Math.random` -> inject `RandomSource`; `() => 0` deterministic eval RNG.
+//   - `Map<number,number>` first-action tables -> dense `Vec<usize>` (keys are 0..121) or HashMap.
+//   - `Set<number>` ownerRooms -> `HashSet<usize>`; BFS `queue.shift()` -> `VecDeque`.
+//   - `(evalAgent as any).Q[i][j] = ...` reaches into private state -> expose a setter; avoid `as any`.
+//   - `Infinity` sentinels -> `f64::INFINITY`.
+// =============================================================================
+
+// =============================================================================
 // general/four-rooms.ts — the canonical FOUR ROOMS benchmark (Sutton,
 // Precup, Singh 1999) for SEMI-MDPs / OPTIONS framework.
 //

@@ -1,6 +1,24 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/mountain-car.rs  (module des::general::mountain_car)
+// 1:1 file move. Mountain Car control via tile-coded linear value-function approximation.
+//
+// Declarations → Rust:
+//   interface MountainCarOpts/MountainCarTrainOpts/MountainCarResult -> structs (Default where sensible)
+//   class MountainCarEnv implements Environment        -> struct + impl Environment trait
+//   class MountainCarLinearVFA extends LinearVFAStation<number> -> struct + impl VFA-station trait
+//   fn runMountainCar                                  -> free fn / assoc fn
+//
+// Conversion notes (file-specific):
+//   - INJECT RNG: `Math.random()` for the random start state and `rng: () => number` for the
+//     agent -> `RandomSource` (shared/capabilities); thread the SAME source for determinism.
+//   - `states: Map<number, [number, number]>` -> `HashMap<usize, (f64, f64)>` (episode-id keyed).
+//   - REMOVE `as any`: `(greedyEnv as any).nextId++` / `.states.set(...)` reach private fields
+//     across env instances — in Rust expose typed accessors or restructure the greedy-eval clone
+//     so there is no cast.
+//   - tile-coded feature vector is binary over numTilings×posBins×velBins -> `Vec<f64>`/index set.
+// =============================================================================
 // general/mountain-car.ts — the classic MOUNTAIN CAR control problem
 // (Moore 1990 → Sutton & Barto 1998 §10.1) solved with linear function
 // approximation over a TILE-CODED feature set.
@@ -43,6 +61,7 @@ import {
 import {Environment} from './rl-environments';
 import {mulberry32} from './prng';
 import {Preconditions} from './des-base/preconditions';
+import {RandomSource, DEFAULT_RANDOM} from '../shared/capabilities';
 
 export interface MountainCarOpts {
   /** Number of tilings stacked over (position, velocity). Default 8. */
@@ -70,7 +89,7 @@ class MountainCarEnv implements Environment {
   private readonly states: Map<number, [number, number]> = new Map();
   private nextId = 0;
 
-  constructor(opts: MountainCarOpts = {}) {
+  constructor(opts: MountainCarOpts = {}, private readonly rng: RandomSource = DEFAULT_RANDOM) {
     this.opts = {
       numTilings: opts.numTilings ?? 8,
       numTilesPerDim: opts.numTilesPerDim ?? 8,
@@ -84,7 +103,7 @@ class MountainCarEnv implements Environment {
   reset(): number {
     const id = this.nextId++;
     // Standard MC starting position: uniform on [-0.6, -0.4] with v=0.
-    const x = -0.6 + 0.2 * Math.random();
+    const x = -0.6 + 0.2 * this.rng.nextFloat();
     this.states.set(id, [x, 0]);
     return id;
   }

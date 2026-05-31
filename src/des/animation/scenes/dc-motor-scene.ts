@@ -1,6 +1,24 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/animation/scenes/dc-motor-scene.rs   (module des::animation::scenes::dc_motor_scene)
+// 1:1 file move. Class-based builder for the DC-motor (armature circuit) animation.
+//
+// Declarations → Rust:
+//   const MOTOR_STAGE_W/H, COL_* consts  -> `pub const`/`const`
+//   interface DcMotorSceneOpts           -> struct DcMotorSceneOpts
+//   class DcMotorScene                   -> struct DcMotorScene { fields } + impl
+//
+// Conversion notes (file-specific):
+//   - Frame data (Shape[]/Frame/ChartSpec) is serialized for JSON -> serde structs (see types.rs).
+//   - replays a `readonly MotorStateToken[]` trajectory -> `&[MotorStateToken]` (or owned `Vec`).
+//   - class methods that build frames -> `&self` methods on the struct.
+//   - all coords/physics values are `number` -> `f64`.
+//   - imports DcMotorParams/MotorStateToken from ../../general/control-systems/dc-motor ->
+//     `use crate::des::general::control_systems::dc_motor::*`.
+// =============================================================================
+
+// =============================================================================
 // DC-motor scene builder (class-based).
 //
 // Renders the armature circuit (supply V, resistance R, inductance L, and the

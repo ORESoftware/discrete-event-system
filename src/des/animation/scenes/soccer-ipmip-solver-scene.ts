@@ -1,6 +1,30 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/animation/scenes/soccer-ipmip-solver-scene.rs   (module des::animation::scenes::soccer_ipmip_solver_scene)
+// 1:1 file move. Builds frames + charts for the soccer IP/MIP solver-entity DES animation.
+//
+// Declarations → Rust:
+//   const SOCCER_IPMIP_SOLVER_W/H, SOLVER_FRAMES_PER_EVENT  -> `pub const`/`const`
+//   interface NodeBox / Edge                                -> struct
+//   const NODES / EDGES                                     -> `const`/`static` slices
+//   const NODE_BY_ID = new Map(NODES.map(..))               -> `HashMap<&str, &NodeBox>` (key by id)
+//   helper fns center/interpolate/fmt/pct/trunc/traceEvent/eventPath/activeSegment/
+//             edgeKey/nodeFill/drawArrow/drawNode/drawMetric/drawSidePanel -> fns
+//   function soccerIPMIPSolverFrameCount / buildSoccerIPMIPSolverFrame /
+//            buildSoccerIPMIPSolverCharts                   -> pub fns
+//
+// Conversion notes (file-specific):
+//   - Frame data (Shape[]/Frame/ChartSpec) is serialized for JSON -> serde structs (see types.rs).
+//   - `NODE_BY_ID` (a `Map` built from NODES) -> `HashMap` keyed by node id (`&str`/`String`).
+//   - `edgeKey(a, b)` builds a string key -> use a `(String, String)` tuple key instead.
+//   - `draw*(shapes: Shape[], ..)` -> `&mut Vec<Shape>`.
+//   - `trunc(s: string | undefined, n)` -> `Option<&str>`.
+//   - imports IPMIPTraceEvent/IPMIPSolution from ../../general/ip-mip-des ->
+//     `use crate::des::general::ip_mip_des::*`.
+// =============================================================================
+
+// =============================================================================
 // Soccer IP/MIP solver-entity animation.
 //
 // This scene shows the optimization side of the 7v7 rotation example as a DES

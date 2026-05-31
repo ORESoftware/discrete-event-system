@@ -1,6 +1,21 @@
 #!/usr/bin/env ts-node
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-electric-circuit.rs  (a `fn main`
+//                    binary; an `examples/…rs` also works)
+// 1:1 file move. Compares the framework series-RLC step-response (forward Euler)
+// against the analytical closed form and scipy LSODA.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - `__dirname`-relative `path.join` -> `std::path` (e.g. `CARGO_MANIFEST_DIR`
+//     or a runtime cwd lookup).
+//   - `fs`/`JSON.parse` -> `std::fs` + serde structs.
+//   - `as any` on parsed JSON -> concrete typed structs.
+//   - `process.exit(code)` -> `std::process::exit(code)`.
+// =============================================================================
+
 // Compares the framework's series-RLC step-response (forward Euler at multiple
 // dt values) against the analytical closed form and scipy LSODA.
 //

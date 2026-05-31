@@ -1,6 +1,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/external_module_test.rs   (integration test crate)
+// 1:1 file move. Tests the external solver/validator module registry +
+// script resolution, so it is an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/throws()/pass-fail counters + console.log  ->  #[test] fns
+//   using assert!/assert_eq!; drop the manual tally and PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - fs/os/path + repo-root resolution -> std::fs / std::path::Path.
+//   - runExternalModule shells out -> std::process::Command.
+//   - throws(fn) -> assert on Result::Err (or #[should_panic]).
+// =============================================================================
+
+// =============================================================================
 // test/external-module-test.ts — external solver/validator module registry.
 // =============================================================================
 

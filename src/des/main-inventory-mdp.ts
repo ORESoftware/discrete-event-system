@@ -2,6 +2,18 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-inventory-mdp.rs   (fn main)
+// 1:1 file move. Multi-period inventory MDP: optimal ordering policy via
+// value iteration (leftover stock carries over).
+//
+// Conversion notes (file-specific):
+//   - demand distribution + value iteration -> pure fns; any sampling ->
+//     SeededRandom.
+//   - state/value arrays over inventory levels -> Vec<f64>.
+//   - top-level run -> fn main.
+// =============================================================================
+
+// =============================================================================
 // MULTI-PERIOD INVENTORY MDP — discovering optimal policies via value iteration.
 //
 // Generalisation of the newsvendor: leftover stock CARRIES OVER to the

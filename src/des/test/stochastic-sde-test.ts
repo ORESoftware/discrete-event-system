@@ -1,6 +1,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/stochastic_sde_test.rs   (integration test crate)
+// 1:1 file move. Spans control-systems/stochastic-sde and sde-learning via the
+// des-base runner, so it is an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - rel(a,b) relative-error checks -> approx::assert_relative_eq!.
+//   - SDE integration is stochastic (Mulberry32 / Euler-Maruyama) -> a seeded
+//     rand::Rng so Monte Carlo estimates and MLE fits are reproducible.
+// =============================================================================
+
+// =============================================================================
 // Unit tests for stochastic-sde.ts and sde-learning.ts.
 // Run with:
 //   ./node_modules/.bin/ts-node src/des/test/stochastic-sde-test.ts

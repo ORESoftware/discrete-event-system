@@ -1,6 +1,31 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/network-flow.rs  (module des::general::network_flow)
+// 1:1 file move. Augmenting-path max-flow + a fixed-step traffic-flow DES on a road grid.
+//
+// Declarations → Rust:
+//   interface OptimizationLogger                 -> trait OptimizationLogger
+//   interface FlowEdge/MaxFlowParams/MaxFlowResult/MaxFlowTraceRow/MaxFlowMinCut/
+//             FlowEdgeResult/Traffic* (Node/Lane/Signal/Source/Sink/Network/Params/
+//             CarSnapshot/TraceRow/CellStats/Result/...) -> structs (#[derive(Clone)])
+//   type TrafficNodeKind = 'source'|'intersection'|'sink' -> enum
+//   class AugmentingPathToken/CarToken implements Token   -> structs + impl Token
+//   class MaxFlowOptimizationStation/TrafficCellStation/TrafficGridStation extends DESStation
+//                                                          -> structs + impl DESStation trait
+//   fn runMaxFlow/buildFiveIntersectionTrafficNetwork/runTrafficFlow + private helpers -> fns
+//
+// Conversion notes (file-specific):
+//   - INJECT RNG: `mulberry32` from prng.ts seeds the traffic sim -> take a `RandomSource`
+//     (SeededRandom == mulberry32) instead of importing the closure.
+//   - MANY string-keyed maps: nodes/lanes/routes/signalByNode/`byCell: Map<string, Set<number>>`
+//     -> `HashMap<String, _>` / `HashMap<String, HashSet<u64>>`; car ids are numeric -> `HashSet<u64>`.
+//     String keys need `Hash + Eq`; iteration order is NOT guaranteed (sort if determinism needed).
+//   - the grid owns cars/cells via interior maps and ids; prefer arena (`Vec` + index) edges
+//     over `Rc<RefCell>` to satisfy the borrow checker.
+//   - `optionalLogger?: OptimizationLogger` -> `Option<&dyn OptimizationLogger>`.
+//   - throws in validateTrafficNetwork -> `panic!` (invariant) or `Result`; numerics `f64`.
+// =============================================================================
 // Network-flow and traffic-flow DES models.
 //
 // Max-flow is modeled as one augmenting path per DES tick. Traffic flow is a

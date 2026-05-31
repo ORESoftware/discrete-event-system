@@ -2,6 +2,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/replicate.rs  (a `fn main` binary; an
+//                    `examples/replicate.rs` also works)
+// 1:1 file move. Runs N independent replications of {framework, FEL} kernels and
+// Welch t-tests every empirical metric.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - env (`N`) -> `std::env::var`.
+//   - `fs`/`path` + any `JSON` dump -> `std::fs` + `serde_json`.
+//   - fixed seeds (`0x10000`/`0x20000`) + `Date.now()` -> `SeededRandom`/`Clock`.
+//   - `as any` / `?? 0` on RunResult maps -> typed struct + `HashMap` lookups.
+//   - `console.log` -> `println!`.
+// =============================================================================
+
+// =============================================================================
 // N=30 independent replications of {framework, FEL} kernels on the same model.
 // Welch's t-test on every empirical metric (split probabilities, time-averaged
 // populations, totals) tells us where the two kernels really agree and where

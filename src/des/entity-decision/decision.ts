@@ -1,5 +1,24 @@
 'use strict'
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/entity-decision/decision.rs  (module des::entity_decision::decision)
+// 1:1 file move. Base decision/branching node (mostly a stub here).
+//
+// Declarations → Rust:
+//   interface DecisionEntityGraph (empty) -> marker struct / `()`
+//   class DecisionEntity<S,T>             -> struct + impl (+ impl AbstractBidirectionalEntity,
+//                                            HasComputedProperties, HasInternalQueue)
+//
+// Conversion notes (file-specific):
+//   - `DecisionEntityGraph` is an empty interface duplicated in
+//     probability-decision.ts and binary-decision.ts — define ONCE in Rust.
+//   - `getWithComputedProperties()` is `throw new Error("Method not implemented.")`
+//     -> `unimplemented!()`.
+//   - `queue: LinkedQueue<AbstractMovingEntity>` -> `VecDeque<_>` (entities behind Rc<RefCell>/index).
+//   - `math.BigNumber` stepSize -> decimal/f64; `getGraphData()` is a hardcoded stub.
+//   - `opts: { xx: boolean }` is a placeholder -> trim / small config struct.
+// =============================================================================
+
 import {AbstractBidirectionalEntity, TimeStepOpts} from "../abstract/abstract";
 import {HasInternalQueue} from "../abstract/interfaces";
 import {HasComputedProperties} from "../general/general";

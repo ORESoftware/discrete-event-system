@@ -1,6 +1,20 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/runners/difference_runner.rs
+//                    (module des::runners::difference_runner — hyphen → underscore)
+// 1:1 file move. Discrete-time difference-equation kernel + closed-form steady
+// state for the SEIR-with-hospitalization model.
+//
+// Conversion notes (file-specific):
+//   - Helper module imported by the binaries, not a `fn main()`.
+//   - Deterministic recurrence; any `withSeed`/`Date.now()` is edge-only seeding
+//     -> inject `Clock` / `SeededRandom` rather than reading globals.
+//   - `Record<string, number>` populations -> `HashMap<String, f64>` or a fixed
+//     compartment array indexed by COMPARTMENT_ORDER.
+// =============================================================================
+
+// =============================================================================
 // Discrete-time difference-equation kernel for the SEIR-with-hospitalization
 // model, plus the closed-form steady-state solution.
 //

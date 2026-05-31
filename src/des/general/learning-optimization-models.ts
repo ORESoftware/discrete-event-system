@@ -1,6 +1,27 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/learning-optimization-models.rs  (module des::general::learning_optimization_models)
+// 1:1 file move. Station-graph supervised models: linear/ridge regression, logistic SGD, backprop MLP.
+//
+// Declarations → Rust:
+//   interface SupervisedSample / *Params / *Result -> structs (Default; optionals -> Option<T>)
+//   class RegressionFitToken (impl Token) -> struct `impl Token`
+//   class NormalEquationStation/RegressionFitSinkStation/LogisticRegressionStation/BackpropMLPStation
+//     (extend DESStation / GradientOptimizerStation) -> structs `impl` station traits (bases -> traits)
+//   fn runLinearRegressionLS/runRidgeRegressionLS/runLogisticRegressionSGD/runBackpropMLPClassifier -> fns
+//   fn gradientTrainingResult/logisticPredict/toVectorSamples/solveLinearSystem/default*Samples/multiclassAccuracy -> assoc fns
+//
+// Conversion notes (file-specific):
+//   - `SupervisedSample.y: number | number[]` -> enum `{ Scalar(f64), Vector(Vec<f64>) }` (or always Vec).
+//   - `optimizer: 'sgd' | 'adam'` -> enum; `RidgeRegressionParams extends LinearRegressionParams` -> compose.
+//   - `mulberry32(seed)` MLP weight init -> inject `RandomSource`.
+//   - GradientOptimizerStation is a template base; `protected evaluateBatch(...)` hook -> trait method.
+//   - `solveLinearSystem` (Gaussian elimination) -> `shared/linalg.rs` (`LinearSystem`); throw-on-singular -> Result.
+//   - predict closures `(params, input) => number` -> `Fn` bound / trait method; `number[][]` -> matrix/Vec<Vec<f64>>.
+// =============================================================================
+
+// =============================================================================
 // general/learning-optimization-models.ts
 //
 // Station-graph implementations for supervised optimization models:

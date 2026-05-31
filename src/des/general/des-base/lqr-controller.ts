@@ -1,6 +1,31 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/lqr_controller.rs  (module des::general::des_base::lqr_controller)
+// 1:1 file move. Infinite-horizon LQR: solves the DARE by fixed-point iteration,
+// then runs u = -Kx as a ControllerStation control law.
+//
+// Declarations → Rust:
+//   type Vec = number[] / Mat = number[][] -> type Vec = Vec<f64>; type Mat = Vec<Vec<f64>>;
+//                                             (or `nalgebra`/`ndarray` types)
+//   interface LQRSpec               -> struct LQRSpec (#[derive(Clone)]; Option fields)
+//   class LQRController             -> struct: ControllerStation<Vec, Vec>
+//   fn matCopy/matT/matMul/matAdd/matSub/matScale/matMV/matInv -> reuse shared/linalg.rs
+//                                       (LinAlg/VecOps/MatrixInverse) — do NOT re-port these
+//
+// Conversion notes (file-specific):
+//   - LOCAL matrix helpers duplicate shared/linalg.ts — in Rust delete them and
+//     use `crate::des::shared::linalg::*`; the `export {matMul, ...}` re-export goes away.
+//   - Implements ControllerStation's controlLaw + overrides clamp -> required/over-
+//     ridden trait fns; the Riccati solve happens in the constructor.
+//   - `matInv` throws on singular -> return `Result` / `panic!`; DARE precondition
+//     (R positive-definite) already guarded via preconditions.rs Cholesky.
+//   - non-ASCII `γ` -> `gamma`.
+//   - All-`number` matrices -> `f64`.
+//   - `uMinVec/uMaxVec?: Vec` -> `Option<Vec<f64>>`.
+// =============================================================================
+
+// =============================================================================
 // general/des-base/lqr-controller.ts — base class for the LINEAR QUADRATIC
 // REGULATOR, the canonical "stochastic control = MDP" example.
 //

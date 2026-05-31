@@ -1,6 +1,18 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-lp-factory.rs   (fn main)
+// 1:1 file move. Simulation-optimisation: solve a factory LP, then stress the
+// nominal plan with a DES (log-normal times, breakdowns, finite buffers).
+//
+// Conversion notes (file-specific):
+//   - log-normal processing-time + breakdown sampling -> inject RandomSource/
+//     SeededRandom.
+//   - LP solve + DES wiring -> use crate::des::general::...
+//   - top-level run -> fn main.
+// =============================================================================
+
+// =============================================================================
 // main-lp-factory.ts — DES + LP simulation-optimisation pattern.
 //
 // SCENARIO

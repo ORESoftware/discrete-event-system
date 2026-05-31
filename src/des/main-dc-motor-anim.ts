@@ -1,6 +1,18 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-dc-motor-anim.rs   (fn main)
+// 1:1 file move. Generates an HTML animation of the back-EMF DC-motor
+// (open-loop step vs closed-loop PI speed control).
+//
+// Conversion notes (file-specific):
+//   - class DcMotorAnimator -> struct + impl; async run() -> fn main.
+//   - process.env.MODE ('open'|'closed') -> std::env::var + enum.
+//   - imports general/control-systems/dc-motor + animation scene -> use
+//     crate::des::...
+// =============================================================================
+
+// =============================================================================
 // main-dc-motor-anim.ts — generate an HTML animation of the back-EMF DC-motor.
 //
 //   npm run dc-motor-anim              # closed-loop PI speed control

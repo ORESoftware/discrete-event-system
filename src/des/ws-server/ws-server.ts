@@ -1,5 +1,26 @@
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/ws-server/ws-server.rs   (module des::ws_server::ws_server)
+// 1:1 file move. A WebSocket server that tracks live connections for broadcast.
+//
+// Declarations → Rust:
+//   let server: WebSocket.Server | null   -> shared singleton (OnceLock/Arc), not a mutable global
+//   const wss = { connections: Set<..> }   -> shared connection registry behind Arc<Mutex<..>>
+//   const getWebsocketServer = () =>       -> `fn get_websocket_server() -> ...`
+//
+// Conversion notes (file-specific):
+//   - `ws` -> `tokio-tungstenite`: this is async and REQUIRES a `tokio` runtime;
+//     `new WebSocket.Server({host, port})` -> bind a `TcpListener` + accept loop.
+//   - `wss.connections: Set<WebSocket>` -> a shared set of per-connection sink
+//     handles (`Arc<Mutex<HashMap<ConnId, Sender>>>` / `HashSet`); raw socket
+//     objects aren't `Hash`, so key by an id rather than the socket itself.
+//   - Event callbacks (`server.on('connection')`, `c.once('close')`) -> spawn an
+//     async task per accepted socket and drive its stream in a loop (`FnMut`/`async move`).
+//   - module-level `let server` cache -> `OnceLock` / shared state, not reassignable global.
+//   - `safe.stringify({received:true})` -> `serde_json::to_string` over a DTO.
+// =============================================================================
+
 import * as  WebSocket from 'ws';
 import {WebSocketServer} from "ws";
 import * as safe from '@oresoftware/safe-stringify';

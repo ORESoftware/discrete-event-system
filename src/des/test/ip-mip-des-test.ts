@@ -1,6 +1,20 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: #[cfg(test)] mod tests in src/des/general/ip_mip_des.rs
+// 1:1 file move. Unit tests one module (explicit station-graph IP/MIP solver),
+// so prefer that module's `#[cfg(test)] mod tests`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/close()/pass-fail counters + console.log  ->  #[test] fns
+//   using assert!/assert_eq!; drop the manual tally and PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - close(a,b,tol) and the feasible() 1e-7 slack checks -> approx::assert_*
+//     comparisons with explicit tolerances.
+// =============================================================================
+
+// =============================================================================
 // test/ip-mip-des-test.ts -- explicit station-graph IP/MIP solver tests.
 // =============================================================================
 

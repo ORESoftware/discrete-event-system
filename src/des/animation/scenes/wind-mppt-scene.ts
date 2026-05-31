@@ -1,6 +1,24 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/animation/scenes/wind-mppt-scene.rs   (module des::animation::scenes::wind_mppt_scene)
+// 1:1 file move. Class-based builder for the wind-turbine MPPT animation.
+//
+// Declarations → Rust:
+//   const WIND_STAGE_W/H, COL_* consts  -> `pub const`/`const`
+//   interface WindSceneOpts             -> struct WindSceneOpts
+//   class WindMpptScene                 -> struct WindMpptScene { fields } + impl
+//
+// Conversion notes (file-specific):
+//   - Frame data (Shape[]/Frame/ChartSpec) is serialized for JSON -> serde structs (see types.rs).
+//   - `samples: readonly TurbineStateToken[]` -> `&[TurbineStateToken]` (or owned `Vec`).
+//   - class methods that build frames -> `&self` methods on the struct.
+//   - all coords/physics values are `number` -> `f64`.
+//   - imports TurbineStateToken from ../../general/control-systems/wind-mppt ->
+//     `use crate::des::general::control_systems::wind_mppt::TurbineStateToken`.
+// =============================================================================
+
+// =============================================================================
 // Wind-MPPT scene builder (class-based).
 //
 // Renders a spinning variable-speed wind turbine, live wind arrows, λ / C_p

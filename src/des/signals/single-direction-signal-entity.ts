@@ -1,3 +1,22 @@
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/signals/single-direction-signal-entity.rs  (module des::signals::single_direction_signal_entity)
+// 1:1 file move. Signal node base: ONE input connection, MANY output connections.
+//
+// Declarations → Rust:
+//   abstract class SingleInManyOutSignalEntity<E,V> -> trait + base struct
+//                 (+ impl HasInternalQueue, HasSingleInputConnection, HasManyOutputConnections)
+//
+// Conversion notes (file-specific):
+//   - `maxQueueSize = <unknown>null as number` and `connectionIn = <unknown>null as
+//     EntityConnection` are placeholder-nulls -> `Option<usize>` / `Option<EntityConnection>`.
+//   - `addInConnection` does `return this.connectionIn = conn` (assignment-as-expression)
+//     -> set the field then return a reference; Rust has no assignment expressions.
+//   - `connectionsOut: Set<EntityConnection>` -> `Vec`/`HashSet` of `Rc<RefCell<..>>` edges;
+//     `queue: LinkedQueue<SignalValue>` -> `VecDeque<_>`.
+//   - Generic bounds like `<S extends HasOutput<any, this>>` and methods typed with
+//     `this` -> trait generics + `Self`; structural interfaces need explicit `impl`s.
+// =============================================================================
+
 import {SignalEntity} from "./abstract";
 import {
   HasManyInputConnections,

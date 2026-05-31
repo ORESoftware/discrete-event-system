@@ -1,6 +1,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-lp.rs  (a `fn main` binary; an
+//                    `examples/validate-lp.rs` also works)
+// 1:1 file move. Validates the in-process simplex against scipy.linprog and the
+// MDP-as-LP transformation against generic value iteration.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - env config + `JSON` (external solver output) -> `std::env::var` + serde
+//     structs; no `as any`.
+//   - `ArrayLike<number>` helper params -> `&[f64]`.
+//   - `console.log` PASS/FAIL + `process.exit(fail ? 1 : 0)` -> `println!` /
+//     `std::process::exit`.
+// =============================================================================
+
+// =============================================================================
 // Validate the in-process simplex against scipy.optimize.linprog (HiGHS,
 // HiGHS-IPM, scipy-simplex, scipy-interior-point) on canonical LP problems,
 // and validate the MDP-as-LP transformation against generic value iteration.

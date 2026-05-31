@@ -2,6 +2,25 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/float_bias_test.rs   (integration test crate)
+// 1:1 file move. Bounds floating-point / mathjs bias for the engine's hot ops.
+// Keep the rich doc-block below; this header sits above it.
+//
+// Test harness → Rust:
+//   ad-hoc pass/fail counters + console.log (F1..F6)  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - K-sigma statistical tolerances -> approx::assert_abs_diff_eq! with the
+//     same epsilon; keep the 1e-4 combined-failure budget in a comment.
+//   - mulberry32 + withSeed sampling -> a seeded rand::Rng (determinism is the
+//     whole point of these tests).
+//   - BigNumber<->Number round-trip (F3) -> the chosen decimal crate <-> f64;
+//     test the same exact-equality / no-drift property.
+//   - Kahan-compensated summation stays explicit (the compiler must not fuse it).
+// =============================================================================
+
+// =============================================================================
 // Floating-point / mathjs bias tests for the operations the engine actually
 // relies on.
 //

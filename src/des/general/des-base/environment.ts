@@ -1,6 +1,30 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/environment.rs  (module des::general::des_base::environment)
+// 1:1 file move. Wraps a pure (non-DES) Environment in an RL station emitting
+// StateToken / TransitionToken and consuming ActionToken.
+//
+// Declarations → Rust:
+//   interface PureEnvironment<S,A>      -> trait PureEnvironment<S, A>
+//                                          (step returns struct StepResult { next_state, reward, done })
+//   interface EnvironmentStationOptions -> struct (#[derive(Default)])
+//   class EnvironmentStation<S,A>       -> struct + impl DESStation (holds a `dyn PureEnvironment`)
+//
+// Conversion notes (file-specific):
+//   - `step` returns an inline object `{nextState, reward, done}` -> a named
+//     `StepResult<S>` struct (no anonymous structs in Rust).
+//   - `render?(state)` optional method -> provided default returning `String`.
+//   - `env: PureEnvironment` is held by composition -> `Box<dyn PureEnvironment<S,A>>`.
+//   - getter/setter pairs + `rewardHistory` alias of episodeAccounting -> plain
+//     accessor methods borrowing the inner EpisodeAccounting (no owned alias).
+//   - `Required<EnvironmentStationOptions>` (all-filled opts) -> a resolved
+//     config struct with concrete fields; `Infinity` default -> `f64::INFINITY`
+//     or `Option<u64>`/`u64::MAX` for episode caps.
+//   - `done` is a public externally-set flag -> `pub done: bool`.
+// =============================================================================
+
+// =============================================================================
 // general/des-base/environment.ts — generic Environment Station for RL.
 //
 // Wraps a pure (non-DES) Environment in a station that:

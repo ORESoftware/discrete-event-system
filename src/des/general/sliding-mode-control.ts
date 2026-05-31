@@ -1,6 +1,22 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/sliding-mode-control.rs  (module des::general::sliding_mode_control)
+// 1:1 file move. Robust sliding-mode control of an uncertain double integrator as a DES loop.
+//
+// Declarations → Rust:
+//   interface SlidingModeOpts                       -> struct (Default-derivable)
+//   interface SlidingModeResult extends ClosedLoopResult -> struct embedding/flattening ClosedLoopResult
+//   class UncertainDoubleIntegratorPlant extends PlantBlock -> struct + impl Plant trait (private)
+//   class SlidingModeController extends ControllerBlock      -> struct + impl Controller trait (private)
+//   fn runSlidingMode                               -> free fn / assoc fn
+//
+// Conversion notes (file-specific):
+//   - PlantBlock/ControllerBlock template-method bases -> traits with default fns; the controller
+//     is memoryless (sliding-surface + sign/sat law) so the struct may hold only config.
+//   - `extends ClosedLoopResult`: compose by embedding the base struct (no interface inheritance).
+//   - sign/saturation (boundary-layer) math is plain `f64`; deterministic (no RNG/clock/Map).
+// =============================================================================
 // general/sliding-mode-control.ts — SLIDING MODE CONTROL (Utkin 1977,
 // Edwards & Spurgeon 1998), the canonical *robust* control method:
 // guaranteed convergence even under matched disturbances of known bound.

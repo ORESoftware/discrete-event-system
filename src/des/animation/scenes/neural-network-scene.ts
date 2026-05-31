@@ -1,6 +1,29 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/animation/scenes/neural-network-scene.rs   (module des::animation::scenes::neural_network_scene)
+// 1:1 file move. Builds frames + charts for the neural-network scenes
+// (XOR training / Q-learning corridor / Neural ODE).
+//
+// Declarations → Rust:
+//   const NEURAL_STAGE_W/H        -> `pub const`
+//   type BuiltFrame = Array<..>   -> type alias (e.g. `type BuiltFrame = Vec<FrameParts>`)
+//   const C (color palette object) -> a struct/module of `&str` consts
+//   function buildNeuralXorAnimation / buildNeuralQCorridorAnimation /
+//            buildNeuralOdeAnimation                       -> pub fns
+//   function buildXorFrame/buildXorCharts/buildCorridorFrame/greedyPath/
+//            buildQCharts/buildOdeFrame/baseBackground/metricPanel/progressBar -> fns
+//
+// Conversion notes (file-specific):
+//   - Frame data (Shape[]/Frame/ChartSpec) is serialized for JSON -> serde structs (see types.rs).
+//   - generic result `SupervisedNeuralNetDESResult<FeedForwardNetwork>` -> the generic carries over.
+//   - `const C = {...}` color object -> `struct`/`const &str`s.
+//   - `metricPanel`/`progressBar`/`baseBackground(shapes, ..)` -> `&mut Vec<Shape>`.
+//   - imports from ../../general/neural-network and ../../general/ode ->
+//     `use crate::des::general::{neural_network::*, ode::*}`.
+// =============================================================================
+
+// =============================================================================
 // Neural-network animation scenes.
 //
 // These are post-hoc scenes over results that already ran:

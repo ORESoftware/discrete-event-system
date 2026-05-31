@@ -2,6 +2,23 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-external-fel-models.rs  (a `fn main`
+//                    binary; an `examples/…rs` also works)
+// 1:1 file move. Runs non-epidemic DES models from one JSON spec and compares
+// them to source-only external FEL references.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level code becomes `fn main()`.
+//   - `DESModelSpec` + `runFromJsonFile` (dynamic spec loading) -> typed structs +
+//     serde; no `as any`.
+//   - `fs`/`path` + `child_process` -> `std::fs` / `std::process::Command`.
+//   - `JSON.parse` of external payloads (TrafficFelPayload, …) -> typed `serde`
+//     structs with `#[serde(rename_all=...)]` for the status unions.
+//   - `console.log` results table + `process.exit` -> `println!` /
+//     `std::process::exit`.
+// =============================================================================
+
+// =============================================================================
 // validate-external-fel-models.ts
 //
 // Runs representative non-epidemic DES models from one JSON spec, then sends

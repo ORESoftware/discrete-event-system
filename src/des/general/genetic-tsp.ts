@@ -1,6 +1,26 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/genetic-tsp.rs  (module des::general::genetic_tsp)
+// 1:1 file move. Genetic algorithm for TSP modelled as a DES (each generation = one tick).
+//
+// Declarations → Rust:
+//   interface TSPInstance / GASolverOptions / GenerationInfo / GASolverResult / GAPerformanceStats -> structs
+//   type Tour = number[]          -> `type Tour = Vec<usize>;`
+//   class GeneticTSPOptimizer extends PopulationOptimizer<Tour> -> struct + impl (base -> trait)
+//   fn buildRandomTSP/buildPentagonTSP/tourLength/checkPrecedence/isPermutation/
+//      tournamentSelect/orderCrossover/inversionMutate/swapMutate/repairPrecedence/
+//      twoOptImprove/runGeneticTSP/heldKarpExact/oneTreeLowerBound -> assoc/free fns
+//
+// Conversion notes (file-specific):
+//   - GA operators (select/crossover/mutate) take an `rng: () => number` closure (mulberry32)
+//     -> inject `RandomSource`; vanilla operators map to PureTransform/assoc fns.
+//   - `checkPrecedence` returns `[number, number] | null` -> `Option<(usize, usize)>`.
+//   - `heldKarpExact` is bitmask DP -> index DP by `u32`/`usize` masks (no JS-number bit limits in Rust).
+//   - branch-cut policy 'cut'|'penalize'|'repair' string union -> enum.
+// =============================================================================
+
+// =============================================================================
 // general/genetic-tsp.ts — Genetic Algorithm for the Travelling Salesman
 // Problem, modelled as a discrete-event system (every generation is a
 // tick; selection, crossover, mutation, feasibility, fitness, replacement
@@ -48,6 +68,7 @@
 // =============================================================================
 
 import {mulberry32} from './prng';
+import {PureTransform} from '../shared/transform';
 import {
   PopulationOptimizer, runIterativeDES,
   intrinsicCheck, monotonicityValidator,
@@ -71,79 +92,136 @@ export type Tour = number[];
 // Instance builders
 // -----------------------------------------------------------------------------
 
+export interface BuildRandomTSPInput {
+  n: number;
+  seed?: number;
+  precedence?: Array<[number, number]>;
+}
+
+export class BuildRandomTSP extends PureTransform<BuildRandomTSPInput, TSPInstance> {
+  transform(input: BuildRandomTSPInput): TSPInstance {
+    const n = input.n;
+    const seed = input.seed ?? 42;
+    const rng = mulberry32(seed);
+    const coords: Array<[number, number]> = [];
+    for (let i = 0; i < n; i++) coords.push([rng() * 100, rng() * 100]);
+    const dist: number[][] = [];
+    for (let i = 0; i < n; i++) {
+      const row: number[] = [];
+      for (let j = 0; j < n; j++) {
+        const dx = coords[i][0] - coords[j][0];
+        const dy = coords[i][1] - coords[j][1];
+        row.push(Math.sqrt(dx * dx + dy * dy));
+      }
+      dist.push(row);
+    }
+    return {n, coordinates: coords, distance: dist, precedence: input.precedence};
+  }
+}
+
+/** @deprecated Use `new BuildRandomTSP().transform({n, seed, precedence})`. */
 export function buildRandomTSP(n: number, seed: number = 42, opts: {
   precedence?: Array<[number, number]>;
 } = {}): TSPInstance {
-  const rng = mulberry32(seed);
-  const coords: Array<[number, number]> = [];
-  for (let i = 0; i < n; i++) coords.push([rng() * 100, rng() * 100]);
-  const dist: number[][] = [];
-  for (let i = 0; i < n; i++) {
-    const row: number[] = [];
-    for (let j = 0; j < n; j++) {
-      const dx = coords[i][0] - coords[j][0];
-      const dy = coords[i][1] - coords[j][1];
-      row.push(Math.sqrt(dx * dx + dy * dy));
-    }
-    dist.push(row);
-  }
-  return {n, coordinates: coords, distance: dist, precedence: opts.precedence};
+  return new BuildRandomTSP().transform({n, seed, precedence: opts.precedence});
+}
+
+export interface BuildPentagonTSPInput {
+  n?: number;
+  radius?: number;
 }
 
 /** A small, well-known TSP instance for unit testing: 5 cities arranged
  *  on a regular pentagon, where the optimal tour visits them in order
  *  with length n × side-length. */
-export function buildPentagonTSP(n: number = 5, radius: number = 50): TSPInstance {
-  const coords: Array<[number, number]> = [];
-  for (let i = 0; i < n; i++) {
-    const a = (2 * Math.PI * i) / n;
-    coords.push([50 + radius * Math.cos(a), 50 + radius * Math.sin(a)]);
-  }
-  const dist: number[][] = [];
-  for (let i = 0; i < n; i++) {
-    const row: number[] = [];
-    for (let j = 0; j < n; j++) {
-      const dx = coords[i][0] - coords[j][0];
-      const dy = coords[i][1] - coords[j][1];
-      row.push(Math.sqrt(dx * dx + dy * dy));
+export class BuildPentagonTSP extends PureTransform<BuildPentagonTSPInput, TSPInstance> {
+  transform(input: BuildPentagonTSPInput): TSPInstance {
+    const n = input.n ?? 5;
+    const radius = input.radius ?? 50;
+    const coords: Array<[number, number]> = [];
+    for (let i = 0; i < n; i++) {
+      const a = (2 * Math.PI * i) / n;
+      coords.push([50 + radius * Math.cos(a), 50 + radius * Math.sin(a)]);
     }
-    dist.push(row);
+    const dist: number[][] = [];
+    for (let i = 0; i < n; i++) {
+      const row: number[] = [];
+      for (let j = 0; j < n; j++) {
+        const dx = coords[i][0] - coords[j][0];
+        const dy = coords[i][1] - coords[j][1];
+        row.push(Math.sqrt(dx * dx + dy * dy));
+      }
+      dist.push(row);
+    }
+    return {n, coordinates: coords, distance: dist};
   }
-  return {n, coordinates: coords, distance: dist};
+}
+
+/** @deprecated Use `new BuildPentagonTSP().transform({n, radius})`. */
+export function buildPentagonTSP(n: number = 5, radius: number = 50): TSPInstance {
+  return new BuildPentagonTSP().transform({n, radius});
 }
 
 // -----------------------------------------------------------------------------
 // Tour evaluation + feasibility
 // -----------------------------------------------------------------------------
 
+export interface InstanceTourInput { instance: TSPInstance; tour: Tour; }
+
+export class TourLength extends PureTransform<InstanceTourInput, number> {
+  transform(input: InstanceTourInput): number {
+    const {instance, tour} = input;
+    let s = 0;
+    const n = instance.n;
+    for (let i = 0; i < n; i++) s += instance.distance[tour[i]][tour[(i + 1) % n]];
+    return s;
+  }
+}
+
+/** @deprecated Use `new TourLength().transform({instance, tour})`. */
 export function tourLength(instance: TSPInstance, tour: Tour): number {
-  let s = 0;
-  const n = instance.n;
-  for (let i = 0; i < n; i++) s += instance.distance[tour[i]][tour[(i + 1) % n]];
-  return s;
+  return new TourLength().transform({instance, tour});
 }
 
 /** Returns null if feasible, otherwise the violating (i, j) precedence pair. */
-export function checkPrecedence(instance: TSPInstance, tour: Tour): [number, number] | null {
-  if (!instance.precedence) return null;
-  // Build position map: where does city c appear in the tour?
-  const pos = new Array(instance.n).fill(-1);
-  for (let i = 0; i < tour.length; i++) pos[tour[i]] = i;
-  for (const [a, b] of instance.precedence) {
-    if (pos[a] >= 0 && pos[b] >= 0 && pos[a] >= pos[b]) return [a, b];
+export class CheckPrecedence extends PureTransform<InstanceTourInput, [number, number] | null> {
+  transform(input: InstanceTourInput): [number, number] | null {
+    const {instance, tour} = input;
+    if (!instance.precedence) return null;
+    // Build position map: where does city c appear in the tour?
+    const pos = new Array(instance.n).fill(-1);
+    for (let i = 0; i < tour.length; i++) pos[tour[i]] = i;
+    for (const [a, b] of instance.precedence) {
+      if (pos[a] >= 0 && pos[b] >= 0 && pos[a] >= pos[b]) return [a, b];
+    }
+    return null;
   }
-  return null;
 }
 
-export function isPermutation(tour: Tour, n: number): boolean {
-  if (tour.length !== n) return false;
-  const seen = new Set<number>();
-  for (const c of tour) {
-    if (c < 0 || c >= n) return false;
-    if (seen.has(c)) return false;
-    seen.add(c);
+/** @deprecated Use `new CheckPrecedence().transform({instance, tour})`. */
+export function checkPrecedence(instance: TSPInstance, tour: Tour): [number, number] | null {
+  return new CheckPrecedence().transform({instance, tour});
+}
+
+export interface IsPermutationInput { tour: Tour; n: number; }
+
+export class IsPermutation extends PureTransform<IsPermutationInput, boolean> {
+  transform(input: IsPermutationInput): boolean {
+    const {tour, n} = input;
+    if (tour.length !== n) return false;
+    const seen = new Set<number>();
+    for (const c of tour) {
+      if (c < 0 || c >= n) return false;
+      if (seen.has(c)) return false;
+      seen.add(c);
+    }
+    return true;
   }
-  return true;
+}
+
+/** @deprecated Use `new IsPermutation().transform({tour, n})`. */
+export function isPermutation(tour: Tour, n: number): boolean {
+  return new IsPermutation().transform({tour, n});
 }
 
 // -----------------------------------------------------------------------------
@@ -152,81 +230,137 @@ export function isPermutation(tour: Tour, n: number): boolean {
 
 /** Tournament selection: sample `size` chromosomes uniformly at random from
  *  the population, return the index of the lowest-tour-length one. */
-export function tournamentSelect(populationLengths: number[], size: number, rng: () => number): number {
-  let bestIdx = Math.floor(rng() * populationLengths.length);
-  let bestLen = populationLengths[bestIdx];
-  for (let k = 1; k < size; k++) {
-    const idx = Math.floor(rng() * populationLengths.length);
-    if (populationLengths[idx] < bestLen) { bestLen = populationLengths[idx]; bestIdx = idx; }
+export interface TournamentSelectInput {
+  populationLengths: number[];
+  size: number;
+  rng: () => number;
+}
+
+export class TournamentSelect extends PureTransform<TournamentSelectInput, number> {
+  transform(input: TournamentSelectInput): number {
+    const {populationLengths, size, rng} = input;
+    let bestIdx = Math.floor(rng() * populationLengths.length);
+    let bestLen = populationLengths[bestIdx];
+    for (let k = 1; k < size; k++) {
+      const idx = Math.floor(rng() * populationLengths.length);
+      if (populationLengths[idx] < bestLen) { bestLen = populationLengths[idx]; bestIdx = idx; }
+    }
+    return bestIdx;
   }
-  return bestIdx;
+}
+
+/** @deprecated Use `new TournamentSelect().transform({populationLengths, size, rng})`. */
+export function tournamentSelect(populationLengths: number[], size: number, rng: () => number): number {
+  return new TournamentSelect().transform({populationLengths, size, rng});
 }
 
 /** Order-Crossover (OX) for TSP: copy a random sub-segment of parent 1
  *  to the child, then fill the remaining positions with parent 2's order
  *  (skipping any cities already in the child). The result is always a
  *  permutation. */
-export function orderCrossover(parent1: Tour, parent2: Tour, rng: () => number): Tour {
-  const n = parent1.length;
-  let a = Math.floor(rng() * n);
-  let b = Math.floor(rng() * n);
-  if (a > b) [a, b] = [b, a];
-  const child: Tour = new Array(n).fill(-1);
-  const inChild = new Set<number>();
-  for (let i = a; i <= b; i++) { child[i] = parent1[i]; inChild.add(parent1[i]); }
-  let p2cursor = (b + 1) % n;
-  let cursor = (b + 1) % n;
-  while (cursor !== a) {
-    while (inChild.has(parent2[p2cursor])) p2cursor = (p2cursor + 1) % n;
-    child[cursor] = parent2[p2cursor];
-    inChild.add(parent2[p2cursor]);
-    p2cursor = (p2cursor + 1) % n;
-    cursor = (cursor + 1) % n;
+export interface OrderCrossoverInput { parent1: Tour; parent2: Tour; rng: () => number; }
+
+export class OrderCrossover extends PureTransform<OrderCrossoverInput, Tour> {
+  transform(input: OrderCrossoverInput): Tour {
+    const {parent1, parent2, rng} = input;
+    const n = parent1.length;
+    let a = Math.floor(rng() * n);
+    let b = Math.floor(rng() * n);
+    if (a > b) [a, b] = [b, a];
+    const child: Tour = new Array(n).fill(-1);
+    const inChild = new Set<number>();
+    for (let i = a; i <= b; i++) { child[i] = parent1[i]; inChild.add(parent1[i]); }
+    let p2cursor = (b + 1) % n;
+    let cursor = (b + 1) % n;
+    while (cursor !== a) {
+      while (inChild.has(parent2[p2cursor])) p2cursor = (p2cursor + 1) % n;
+      child[cursor] = parent2[p2cursor];
+      inChild.add(parent2[p2cursor]);
+      p2cursor = (p2cursor + 1) % n;
+      cursor = (cursor + 1) % n;
+    }
+    return child;
   }
-  return child;
+}
+
+/** @deprecated Use `new OrderCrossover().transform({parent1, parent2, rng})`. */
+export function orderCrossover(parent1: Tour, parent2: Tour, rng: () => number): Tour {
+  return new OrderCrossover().transform({parent1, parent2, rng});
 }
 
 /** Inversion mutation: pick a random sub-segment and reverse it. This is
  *  exactly a 2-opt move on the cycle; it preserves permutation-validity
  *  by construction. */
+export interface MutateInput { tour: Tour; rng: () => number; }
+
+export class InversionMutate extends PureTransform<MutateInput, Tour> {
+  transform(input: MutateInput): Tour {
+    const {tour, rng} = input;
+    const n = tour.length;
+    let a = Math.floor(rng() * n);
+    let b = Math.floor(rng() * n);
+    if (a > b) [a, b] = [b, a];
+    const out = tour.slice();
+    while (a < b) { [out[a], out[b]] = [out[b], out[a]]; a++; b--; }
+    return out;
+  }
+}
+
+/** @deprecated Use `new InversionMutate().transform({tour, rng})`. */
 export function inversionMutate(tour: Tour, rng: () => number): Tour {
-  const n = tour.length;
-  let a = Math.floor(rng() * n);
-  let b = Math.floor(rng() * n);
-  if (a > b) [a, b] = [b, a];
-  const out = tour.slice();
-  while (a < b) { [out[a], out[b]] = [out[b], out[a]]; a++; b--; }
-  return out;
+  return new InversionMutate().transform({tour, rng});
 }
 
 /** Swap mutation: pick two random positions, swap them. */
+export class SwapMutate extends PureTransform<MutateInput, Tour> {
+  transform(input: MutateInput): Tour {
+    const {tour, rng} = input;
+    const n = tour.length;
+    const a = Math.floor(rng() * n);
+    let b = Math.floor(rng() * n);
+    while (b === a) b = Math.floor(rng() * n);
+    const out = tour.slice();
+    [out[a], out[b]] = [out[b], out[a]];
+    return out;
+  }
+}
+
+/** @deprecated Use `new SwapMutate().transform({tour, rng})`. */
 export function swapMutate(tour: Tour, rng: () => number): Tour {
-  const n = tour.length;
-  const a = Math.floor(rng() * n);
-  let b = Math.floor(rng() * n);
-  while (b === a) b = Math.floor(rng() * n);
-  const out = tour.slice();
-  [out[a], out[b]] = [out[b], out[a]];
-  return out;
+  return new SwapMutate().transform({tour, rng});
 }
 
 /** Repair attempt: if `tour` violates the precedence (i, j) with i later
  *  than j, swap them. Repeat at most `maxRounds` times. Returns the
  *  repaired tour and a feasibility flag (it may still be infeasible after
  *  the repair budget is exhausted). */
+export interface RepairPrecedenceInput { instance: TSPInstance; tour: Tour; maxRounds?: number; }
+
+export interface RepairPrecedenceResult { tour: Tour; feasible: boolean; }
+
+export class RepairPrecedence extends PureTransform<RepairPrecedenceInput, RepairPrecedenceResult> {
+  transform(input: RepairPrecedenceInput): RepairPrecedenceResult {
+    const {instance, tour} = input;
+    const maxRounds = input.maxRounds ?? 4;
+    if (!instance.precedence) return {tour, feasible: true};
+    const checker = new CheckPrecedence();
+    const out = tour.slice();
+    for (let r = 0; r < maxRounds; r++) {
+      const v = checker.transform({instance, tour: out});
+      if (v === null) return {tour: out, feasible: true};
+      const [a, b] = v;
+      const pa = out.indexOf(a), pb = out.indexOf(b);
+      [out[pa], out[pb]] = [out[pb], out[pa]];
+    }
+    return {tour: out, feasible: checker.transform({instance, tour: out}) === null};
+  }
+}
+
+/** @deprecated Use `new RepairPrecedence().transform({instance, tour, maxRounds})`. */
 export function repairPrecedence(instance: TSPInstance, tour: Tour, maxRounds: number = 4): {
   tour: Tour; feasible: boolean;
 } {
-  if (!instance.precedence) return {tour, feasible: true};
-  const out = tour.slice();
-  for (let r = 0; r < maxRounds; r++) {
-    const v = checkPrecedence(instance, out);
-    if (v === null) return {tour: out, feasible: true};
-    const [a, b] = v;
-    const pa = out.indexOf(a), pb = out.indexOf(b);
-    [out[pa], out[pb]] = [out[pb], out[pa]];
-  }
-  return {tour: out, feasible: checkPrecedence(instance, out) === null};
+  return new RepairPrecedence().transform({instance, tour, maxRounds});
 }
 
 // -----------------------------------------------------------------------------
@@ -314,31 +448,42 @@ function nearestNeighborTour(instance: TSPInstance, start: number): Tour {
   return tour;
 }
 
-export function twoOptImprove(instance: TSPInstance, tour: Tour, maxPasses: number = 1): Tour {
-  const n = tour.length;
-  if (n < 4 || maxPasses <= 0) return tour.slice();
-  const out = tour.slice();
-  const d = instance.distance;
-  for (let pass = 0; pass < maxPasses; pass++) {
-    let improved = false;
-    for (let i = 0; i < n - 1 && !improved; i++) {
-      const a = out[i];
-      const b = out[(i + 1) % n];
-      for (let k = i + 2; k < n; k++) {
-        if (i === 0 && k === n - 1) continue;
-        const c = out[k];
-        const e = out[(k + 1) % n];
-        const delta = d[a][c] + d[b][e] - d[a][b] - d[c][e];
-        if (delta < -1e-12) {
-          reverseSegment(out, i + 1, k);
-          improved = true;
-          break;
+export interface TwoOptImproveInput { instance: TSPInstance; tour: Tour; maxPasses?: number; }
+
+export class TwoOptImprove extends PureTransform<TwoOptImproveInput, Tour> {
+  transform(input: TwoOptImproveInput): Tour {
+    const {instance, tour} = input;
+    const maxPasses = input.maxPasses ?? 1;
+    const n = tour.length;
+    if (n < 4 || maxPasses <= 0) return tour.slice();
+    const out = tour.slice();
+    const d = instance.distance;
+    for (let pass = 0; pass < maxPasses; pass++) {
+      let improved = false;
+      for (let i = 0; i < n - 1 && !improved; i++) {
+        const a = out[i];
+        const b = out[(i + 1) % n];
+        for (let k = i + 2; k < n; k++) {
+          if (i === 0 && k === n - 1) continue;
+          const c = out[k];
+          const e = out[(k + 1) % n];
+          const delta = d[a][c] + d[b][e] - d[a][b] - d[c][e];
+          if (delta < -1e-12) {
+            reverseSegment(out, i + 1, k);
+            improved = true;
+            break;
+          }
         }
       }
+      if (!improved) break;
     }
-    if (!improved) break;
+    return out;
   }
-  return out;
+}
+
+/** @deprecated Use `new TwoOptImprove().transform({instance, tour, maxPasses})`. */
+export function twoOptImprove(instance: TSPInstance, tour: Tour, maxPasses: number = 1): Tour {
+  return new TwoOptImprove().transform({instance, tour, maxPasses});
 }
 
 function reverseSegment(tour: Tour, lo: number, hi: number): void {
@@ -603,7 +748,10 @@ export function runGeneticTSP(
 /** Held–Karp dynamic-programming exact solver for small TSPs (n ≤ 16).
  *  Bitmask DP over (visited subset, current city). Returns optimal tour
  *  and length. Used to validate the GA on small instances. */
-export function heldKarpExact(instance: TSPInstance): {tour: Tour; length: number} {
+export interface HeldKarpResult { tour: Tour; length: number; }
+
+export class HeldKarpExact extends PureTransform<TSPInstance, HeldKarpResult> {
+  transform(instance: TSPInstance): HeldKarpResult {
   const n = instance.n;
   if (n > 16) throw new Error(`Held–Karp only practical for n ≤ 16, got ${n}`);
   const N = 1 << n;
@@ -648,12 +796,19 @@ export function heldKarpExact(instance: TSPInstance): {tour: Tour; length: numbe
   }
   tour.reverse();
   return {tour, length: bestLen};
+  }
+}
+
+/** @deprecated Use `new HeldKarpExact().transform(instance)`. */
+export function heldKarpExact(instance: TSPInstance): HeldKarpResult {
+  return new HeldKarpExact().transform(instance);
 }
 
 /** 1-tree lower bound (Held–Karp's relaxation cousin; cheap): the cost of
  *  a minimum spanning tree on cities {1, …, n-1} plus the two cheapest
  *  edges from city 0 is a valid lower bound on the optimal TSP cost. */
-export function oneTreeLowerBound(instance: TSPInstance): number {
+export class OneTreeLowerBound extends PureTransform<TSPInstance, number> {
+  transform(instance: TSPInstance): number {
   const n = instance.n;
   // Prim's MST on {1, …, n-1}.
   const inTree = new Array(n).fill(false);
@@ -683,4 +838,10 @@ export function oneTreeLowerBound(instance: TSPInstance): number {
   for (let j = 1; j < n; j++) edges0.push(instance.distance[0][j]);
   edges0.sort((a, b) => a - b);
   return mstCost + (edges0[0] ?? 0) + (edges0[1] ?? 0);
+  }
+}
+
+/** @deprecated Use `new OneTreeLowerBound().transform(instance)`. */
+export function oneTreeLowerBound(instance: TSPInstance): number {
+  return new OneTreeLowerBound().transform(instance);
 }

@@ -1,6 +1,19 @@
 #!/usr/bin/env ts-node
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/program.rs   (module des::program)
+// 1:1 file move. Library: builds the default entity graph (getEntities).
+//
+// Conversion notes (file-specific):
+//   - Despite the shebang this is a LIBRARY (exports getEntities, no
+//     require.main guard) -> plain module, NOT a bin.
+//   - getEntities(stepSize) returns Map<string, VisualNode> -> fn returning
+//     HashMap<String, VisualNode<...>>.
+//   - mathjs BigNumber stepSize -> f64 / decimal (one engine-wide choice).
+//   - constructs entities from many des modules -> use crate::des::...
+// =============================================================================
+
 
 
 import {VisualNode} from "./visual/visual-node";

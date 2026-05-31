@@ -1,6 +1,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: #[cfg(test)] mod tests in src/des/general/milp_bnb.rs
+// 1:1 file move. Unit tests one module (milp-bnb), so they belong in that
+// module's `#[cfg(test)] mod tests` rather than a separate `tests/` file.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - close(a,b,tol) relative float comparison -> approx::assert_relative_eq!.
+//   - branch tie-break uses a seed (branchSeed) -> a seeded rand::Rng so the
+//     B&B tree shape stays deterministic.
+// =============================================================================
+
+// =============================================================================
 // Unit tests for general/milp-bnb.ts.
 // Run with: node dist/des/test/milp-bnb-test.js
 // =============================================================================

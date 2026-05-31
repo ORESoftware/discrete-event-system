@@ -1,6 +1,22 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/double-integrator-lqr.rs  (module des::general::double_integrator_lqr)
+// 1:1 file move. Double-integrator plant controlled by an LQR from the discrete-time Riccati eqn.
+//
+// Declarations → Rust:
+//   fn gaussian                 -> assoc fn taking `&mut impl Rng` (Box-Muller)
+//   interface DoubleIntegratorOpts / DoubleIntegratorResult -> structs (Default; optionals -> Option<T>)
+//   fn runDoubleIntegratorLQR   -> free fn (or PureTransform<Opts, Result>)
+//
+// Conversion notes (file-specific):
+//   - `mulberry32(seed)` closure RNG -> seeded `RandomSource`; `gaussian` consumes it.
+//   - Greek local `γ` -> `gamma` (non-ASCII idents won't carry over).
+//   - tuples `[number, number]` -> `(f64, f64)` or `[f64; 2]`; `K: number[][]` -> matrix type.
+//   - LQRController is a stateful station base -> struct + impl; `.slice()` copies -> `.clone()`.
+// =============================================================================
+
+// =============================================================================
 // general/double-integrator-lqr.ts — the canonical DOUBLE INTEGRATOR
 // (point mass under direct force) controlled by an LQR derived from
 // the discrete-time algebraic Riccati equation.

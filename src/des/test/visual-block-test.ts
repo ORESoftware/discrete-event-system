@@ -1,5 +1,20 @@
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: tests/visual_block_test.rs   (integration test crate)
+// 1:1 file move. Exercises VisualBlock rendering + des-base stations/tokens,
+// so it is an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - fs usage (FrameRecorder output) -> the `tempfile` crate.
+//   - local `class NumberToken implements Token` / `class CollectSink extends
+//     DESStation` -> test structs implementing the Token / station traits.
+// =============================================================================
+
 import * as fs from 'fs';
 import {DESStation, Token} from '../general/des-base/station';
 import {runIterativeDES} from '../general/des-base/runner';

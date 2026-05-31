@@ -1,6 +1,27 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/equation-to-stations.rs  (module des::general::equation_to_stations)
+// 1:1 file move. Compiles ODE/PDE expression specs into wired FieldSimulation station networks.
+//
+// Declarations → Rust:
+//   type ODEScheme/Field1DScheme/Field2DScheme = '...'|'...' -> enums; type BC = number|'neumann' -> enum BC { Value(f64), Neumann }
+//   interface ODESystemSpec/Field1DSpec/Field1DBuild/Poisson2DSpec/Poisson2DResult -> structs
+//   fn buildODESystem / buildField1D / solvePoisson2D -> fns returning FieldSimulation / results
+//   fn thomas                      -> assoc fn (tridiagonal solver; vanilla algorithm)
+//   re-export FieldSimulation/FieldStation/Census -> `pub use`
+//
+// Conversion notes (file-specific):
+//   - `FieldUpdater` updaters are CLOSURES capturing idx/spec/compiled-fn -> `Box<dyn Fn(...) -> f64>`
+//     or per-scheme structs implementing an Updater trait; watch the borrow checker on captures.
+//   - `toFunction(expr, args)` returns a compiled closure -> `impl Fn(&[f64]) -> f64` (see expr.rs).
+//   - RUNTIME METHOD REASSIGNMENT `sim.run = function(...) {...}` (BTCS path) has NO Rust analogue —
+//     model as a scheme enum / strategy trait the simulation dispatches on, not a mutated method.
+//   - `null as any` placeholder for the station's sim back-ref -> `Option<..>`/arena index.
+//   - `Float64Array` -> `Vec<f64>`/`&[f64]`; string scheme unions -> enums + `match`; throw -> Result/panic.
+// =============================================================================
+
+// =============================================================================
 // equation-to-stations: take an ODE/PDE specification (expression strings)
 // and build a FieldSimulation network that solves it.
 //

@@ -1,6 +1,21 @@
 #!/usr/bin/env ts-node
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-two-disease.rs  (a `fn main` binary;
+//                    an `examples/…rs` also works)
+// 1:1 file move. Compares the framework two-disease ensemble mean against the
+// scipy LSODA ODE and the Python Gillespie SSA ensemble.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - env (`N`/`REPS`/`SIM_T`/`STEPSIZE`) -> `std::env::var`.
+//   - `fs`/`path` reading the external JSON -> `std::fs` + serde structs.
+//   - `as any` on parsed JSON -> concrete typed structs.
+//   - ensemble RNG -> inject `SeededRandom`.
+//   - `process.exit(code)` -> `std::process::exit(code)`.
+// =============================================================================
+
 // Compares the framework's two-disease ensemble mean against
 //   (1) the deterministic mean-field ODE (scipy LSODA), and
 //   (2) the Python Gillespie SSA ensemble mean,

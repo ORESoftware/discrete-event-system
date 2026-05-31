@@ -1,6 +1,20 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/network_flow_test.rs   (integration test crate)
+// 1:1 file move. Spans network-flow / smart-traffic-flow / max-flow /
+// traffic-flow / stochastic-flow-mdp, so it is an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - float flow/throughput comparisons -> approx::assert_relative_eq!.
+//   - stochastic-flow-MDP sampling -> a seeded rand::Rng; fs usage -> `tempfile`.
+// =============================================================================
+
+// =============================================================================
 // Tests for network-flow, traffic-flow, and stochastic-flow DES models.
 // =============================================================================
 

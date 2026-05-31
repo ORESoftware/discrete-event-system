@@ -1,6 +1,32 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/adapters/optimal-control-adapters.rs
+//   (module des::general::adapters::optimal_control_adapters)
+// 1:1 file move. Registers seven optimal-control JSON adapters (Pontryagin,
+// Kalman, sliding-mode, MRAC, ILC, feedback-linearization, MPC) + an ILC animation.
+//
+// Declarations → Rust:
+//   const pontryaginSchema/kalmanSchema/slidingModeSchema/mracSchema/ilcSchema/
+//         feedbackLinSchema/mpcSchema: ParamSchema -> serde + validator metadata
+//   interface FlatFeedbackLinParams            -> struct (Option fields)
+//   registerModel(...) x7                       -> one struct + impl ModelAdapter trait each
+//   fn buildILCFrame / metricBar / drawMiniSeries / formatILCNumber -> plain `fn` helpers
+//
+// Conversion notes (file-specific):
+//   - GotChA: many `run` bodies coerce decoded arrays via numberPair(p.x0, ..)/
+//     optionalNumberPair(p.Q, ..) into `[number, number]` — in Rust deserialize
+//     directly into `[f64; 2]` / `Option<[f64; 2]>`, no coercion.
+//   - GotChA: feedback-linearization remaps a FLAT FlatFeedbackLinParams into the
+//     nested FeedbackLinearizationOpts{params:{m,l,g,c}, ..} inside `run` — model as
+//     two structs + a From/build step.
+//   - `disturbanceType: 'sin'|'square'|'random'`, `referenceKind`, `quadrature`
+//     literal unions -> enums; 'random' disturbance + seed -> inject seeded RNG.
+//   - drawMiniSeries/edges emit SVG `path` `d` strings -> a path-builder; Shapes ->
+//     Vec<Shape> (enum). Animations derive from result traces (no RNG).
+// =============================================================================
+
+// =============================================================================
 // general/adapters/optimal-control-adapters.ts — JSON adapters for the
 // entity-based optimal-control models added in this batch:
 //

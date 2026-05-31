@@ -1,5 +1,38 @@
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/abstract/abstract.rs  (module des::abstract_::abstract_)
+// 1:1 file move. The root entity hierarchy for the queueing-network model.
+// (`abstract` is a Rust keyword — name the module `abstract_` or `core`.)
+//
+// Declarations → Rust:
+//   abstract class Entity<E,V>            -> trait Entity (default fns) + a base
+//                                            struct holding id/timeStepCount/subs
+//   abstract class EntityObserver<T>      -> trait EntityObserver { fn do_update(..) }
+//   interface IsSerializable<T>           -> trait IsSerializable (or just #[derive(Serialize)])
+//   abstract class Serializable<T>        -> trait via serde; drop bespoke serialize()
+//   abstract class StationaryEntity<E>    -> trait extending Entity
+//   abstract class AbstractBidirectionalEntity -> struct + impls of the Has* traits
+//   class EntityConnection<S,T>           -> struct EntityConnection { source, target, opts }
+//   interface TimeStepOpts / HasNumericValue -> struct (Default-derivable)
+//
+// Conversion notes (file-specific):
+//   - INHERITANCE: Entity -> StationaryEntity -> AbstractBidirectional is a
+//     3-level chain. In Rust: a `trait Entity` with default methods, then
+//     concrete structs compose a shared `EntityCore { id, time_step_count,
+//     subscribers }` field and `impl Entity`. Do NOT try to mirror `extends`.
+//   - `subscribers: Set<EntityObserver>` -> `Vec<Rc<RefCell<dyn EntityObserver>>>`
+//     (trait objects); `subscribersByEvent: Map<string, Set<..>>` ->
+//     `HashMap<String, Vec<...>>`.
+//   - `math.BigNumber` (stepSize) -> a decimal crate or `f64`; pick ONE engine-wide.
+//   - `uuid.v4()` -> `uuid::Uuid::new_v4()`.
+//   - The `<unknown>null as HasOutput` casts are placeholder-null; in Rust make
+//     `source`/`target` `Option<...>` instead of nullable-with-cast.
+//   - `getSerializableData(): Partial<this>` has no Rust analogue; replace with a
+//     dedicated `#[derive(Serialize)]` DTO struct per entity.
+//   - DESSet/DESMap come from general.ts (see that file's header).
+// =============================================================================
+
 import * as safe from "@oresoftware/safe-stringify";
 import * as math from "mathjs";
 import {AbstractMovingEntity} from "../entity-moving/moving";

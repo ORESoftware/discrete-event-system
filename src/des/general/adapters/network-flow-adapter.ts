@@ -1,7 +1,32 @@
 'use strict';
 
 // =============================================================================
-// JSON adapters for max-flow optimization and continuous-time traffic flow.
+// RUST MIGRATION  —  target: src/des/general/adapters/network-flow-adapter.rs
+//   (module des::general::adapters::network_flow_adapter)
+// 1:1 file move. Registers max-flow / traffic-flow / smart-traffic JSON adapters
+// (with SVG-frame animation builders).
+//
+// Declarations → Rust:
+//   type MaxFlowAdapterParams = MaxFlowParams & {…}  -> struct composing the fields
+//             (intersection types: flatten with #[serde(flatten)] or duplicate)
+//   const *Schema: ParamSchema                       -> serde + validator metadata
+//   fn networkForTraffic / nodeLayout / trafficPoint / trafficVector /
+//      trafficPolyline / trafficCarColor / fmtMetric / buildTeachingMaxFlowParams /
+//      hasDirectMaxFlowParams / normalizeMaxFlowParams -> plain `fn` helpers
+//   registerModel<P,R>({ id, run, summarize, writeCsv, animate }) -> struct impl of a
+//             ModelAdapter trait; `animate` is an async method building Shape frames
+//
+// Conversion notes (file-specific):
+//   - GotChA: `(trafficSchema as Extract<ParamSchema, {kind:'object'}>).fields`
+//     narrows a union by cast -> in Rust match on the schema enum variant instead.
+//   - Shapes are pushed into `Shape[]` arrays (animation/types) -> Vec<Shape>; the
+//     Shape union -> an enum.
+//   - `network.lanes.find(...)`, `.reduce(...)` over arrays -> iterator find/fold.
+//   - `row.laneOccupancy[lane.id] ?? 0`, `car.leaderGapM !== undefined` -> HashMap
+//     get + Option; lane/node id maps are string-keyed -> HashMap<String, _>.
+//   - `throw new Error` in normalizeMaxFlowParams (missing fields) -> Result/validation.
+//   - async run/animate use withLogger + FrameRecorder -> async fns; many `?? default`
+//     -> Option::unwrap_or.
 // =============================================================================
 
 import {FrameRecorder} from '../../animation/frame-recorder';

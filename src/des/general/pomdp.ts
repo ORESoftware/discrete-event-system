@@ -1,6 +1,26 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/pomdp.rs  (module des::general::pomdp)
+// 1:1 file move. POMDP solvers (most-likely-state, QMDP, exact α-vector finite horizon).
+//
+// Declarations → Rust:
+//   interface POMDPSpec<S,A,O>/MDPVIOptions/MDPVIResult/BeliefLookaheadOptions/
+//             BeliefActionValue/POMDPExactResult -> structs (generics carry over)
+//   type BeliefLookaheadLeaf = 'zero' | 'qmdp'   -> enum
+//   class QMDPSolver/BeliefLookaheadSolver/MostLikelyStateSolver<S,A,O> -> structs + impl
+//   fn beliefUpdate/mdpValueIteration/expectedBeliefReward/observationDistribution/
+//      pomdpExactFiniteHorizon/pruneAlphas       -> free fns / assoc fns
+//
+// Conversion notes (file-specific):
+//   - POMDPSpec's T(s,a,s')/O(s',a,o)/R(s,a) are CALLBACK fields -> either `Fn(..)->f64`
+//     trait-bound fields or precomputed `Vec<Vec<Vec<f64>>>` tables; pick one engine-wide.
+//   - generic <S, A, O> default to indices; if kept generic they need `Copy + Eq + Hash`
+//     for any map/lookahead keying.
+//   - α-vectors and belief vectors are `number[]`/`number[][]` -> `Vec<f64>`/`Vec<Vec<f64>>`.
+//   - α-vector pruning grows |A|^t·|Ω|^t — keep the |S|≤8, t≤6 caps as `assert!`/panic guards.
+//   - deterministic (planning only); no RNG/clock here.
+// =============================================================================
 // POMDP machinery on top of the framework.
 //
 // We adopt the standard tuple ⟨S, A, Ω, T, O, R, γ⟩ where:

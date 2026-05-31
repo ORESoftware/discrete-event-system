@@ -2,6 +2,23 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/compare-external-fel-models.rs  (a `fn main`
+//                    binary; an `examples/compare-external-fel-models.rs` also works)
+// 1:1 file move. Source/sink DES comparisons vs external FEL reference models,
+// each scenario sharing one JSON input file with the external program.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: the top-level driver code becomes `fn main()`.
+//   - `fs`/`path` (write the shared spec, read results back) -> `std::fs` +
+//     `std::path::PathBuf`.
+//   - `JSON.parse`/`JSON.stringify` of problem specs/results -> `serde_json` over
+//     typed structs (`#[derive(Serialize, Deserialize)]`); no `as any`.
+//   - external invocation (via external-program) -> `std::process::Command`.
+//   - `mulberry32`/`Date.now()` seeding -> `SeededRandom`/`Clock`.
+//   - `process.exit(code)` -> `std::process::exit(code)`.
+// =============================================================================
+
+// =============================================================================
 // compare-external-fel-models.ts
 //
 // Source/sink driven DES comparisons against external reference models. Every

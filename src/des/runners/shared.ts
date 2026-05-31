@@ -1,5 +1,22 @@
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/runners/shared.rs   (module des::runners::shared)
+// 1:1 file move. Shared transition-counter + record/aggregation helpers for the
+// kernel runners.
+//
+// Declarations → Rust:
+//   class TransitionCounter   -> struct TransitionCounter { .. } + impl
+//   interface TransitionTables -> struct TransitionTables (#[derive(Serialize)])
+//
+// Conversion notes (file-specific):
+//   - `Map<string, Map<string, number>>` -> `HashMap<String, HashMap<String, f64>>`
+//     (keys are `String`, which is `Hash + Eq`; iteration order is N/A in Rust).
+//   - `Record<string, Record<string, number>>` matrices -> the same nested
+//     `HashMap`, or a fixed 2-D `Vec<Vec<f64>>` indexed by the MATRIX_ROWS/COLS.
+//   - `?? 0` fallbacks on map lookups -> `.get(..).copied().unwrap_or(0.0)`.
+// =============================================================================
+
 import {COMPARTMENT_GROUPS, COMPARTMENT_ORDER, SimConfig} from './types';
 
 export const TRANSITION_MATRIX_ROWS = ['__source__', 'S', 'E', 'I-P', 'I-A', 'I-S', 'I-H', 'R', 'D'];

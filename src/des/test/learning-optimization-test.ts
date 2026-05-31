@@ -1,6 +1,22 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/learning_optimization_test.rs   (integration test crate)
+// 1:1 file move. Tests station-graph learning/optimization models (regression
+// variants + RL learners) via the des-registry, so it is an integration test.
+//
+// Test harness → Rust:
+//   ad-hoc check()/CheckRow + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual rows and PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - close(a,b,tol) relative float comparison -> approx::assert_relative_eq!
+//     (the exact-line cases assert mse < 1e-20, i.e. assert_abs_diff_eq!(.., 0)).
+//   - SGD / policy-gradient learners are stochastic -> a seeded rand::Rng.
+//   - async main()/await -> a plain sync #[test].
+// =============================================================================
+
+// =============================================================================
 // Tests for station-graph learning and optimization models.
 // =============================================================================
 

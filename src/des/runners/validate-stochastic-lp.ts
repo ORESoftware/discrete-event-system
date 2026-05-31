@@ -1,6 +1,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-stochastic-lp.rs  (a `fn main`
+//                    binary; an `examples/…rs` also works)
+// 1:1 file move. Three-way audit of the stochastic LP solver: SAA vs Benders-as-
+// DES equivalence, 1/√N convergence, and Benders-over-monolithic speedup.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - scenario sampling + `Date.now()` timing -> inject `SeededRandom` / `Clock`
+//     (timing via `std::time::Instant`).
+//   - `console.log` PASS/FAIL + `process.exit` -> `println!` / `std::process::exit`.
+// =============================================================================
+
+// =============================================================================
 // runners/validate-stochastic-lp.ts — three-way audit of the stochastic LP
 // solver:
 //

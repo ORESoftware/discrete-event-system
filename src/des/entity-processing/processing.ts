@@ -1,5 +1,37 @@
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/entity-processing/processing.rs  (module des::entity_processing::processing)
+// 1:1 file move. The multi-server queueing processor (input/processing/out stages).
+//
+// Declarations → Rust:
+//   const isProcessor (fn)                    -> free fn or `dyn`-downcast helper
+//   interface ProcessorEntityGraphData        -> struct (composes QueueEntityGraphData)
+//   class EntityProcessor<S,T>                -> struct + impl (+ impl QueueEntity, HasEntityValidation)
+//
+// Conversion notes (file-specific):
+//   - BRANDING: `[processorSymbol] = true` + `['isProcessor'] = true` and the
+//     `isProcessor(v)` duck-type check -> use a real trait / enum variant tag,
+//     NOT a symbol property. (processorSymbol is duplicated in value-adder.ts;
+//     unify to one marker in Rust.)
+//   - `math.BigNumber` accumulators (busy/idle time, histograms) -> decimal/f64;
+//     `math.add/divide(...) as math.BigNumber` casts -> plain ops.
+//   - `DESMap<number, math.BigNumber>` histograms -> `HashMap<usize, Decimal>`
+//     (number key -> usize/i64); ordering for getSortedHistogram is N/A in Rust.
+//   - `LinkedQueue` with keyed `remove(k)` and `[k,v]` iterators -> a keyed
+//     structure (`IndexMap`/`HashMap` + `VecDeque`); std VecDeque has no remove-by-key.
+//   - `[util.inspect.custom]` -> `impl fmt::Debug`.
+//   - `getSerializableData(): Partial<any>` spreads `...this` then nulls fields ->
+//     a `#[derive(Serialize)]` DTO with `#[serde(skip)]` for subscribers.
+//   - `throw 'wtf'` (bare-string throw) and `throw makeError/new Error(..)` in the
+//     hot loop -> `panic!` for invariant violations; `Result` where recoverable.
+//   - `rv.getNextEventQuantity(stepSize)` -> RandomSource injection (no Math.random).
+//   - `getWithComputedProperties(): any` -> a concrete computed-stats DTO.
+//   - `outputRouter.order/markAccepted` -> see entity-routing/output-routing-policy.
+//   - `bumpHistogram_old` is legacy/dead (Map<number,Set<string>>) — likely drop.
+//   - console.warn/debug -> `tracing` macros.
+// =============================================================================
+
 import * as math from "mathjs";
 import {QueueEntity, QueueEntityGraphData} from "../entity-queue/queue";
 import {EntityGraphData, HasEntityValidation} from "../abstract/interfaces";

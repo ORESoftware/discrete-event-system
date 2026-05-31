@@ -2,6 +2,22 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/queue_bias_test.rs   (integration test crate)
+// 1:1 file move. Bias/correctness tests for the queue backing the processors.
+// Keep the rich doc-block below; this header sits above it.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - LinkedQueue (@oresoftware/linked-queue) -> std VecDeque<T>; getRandomKey()
+//     uniformity moves to a seeded rand::Rng + index selection.
+//   - chi-square uniformity uses mulberry32 -> a seeded rand::Rng; the
+//     statistical threshold (alpha = 0.001) maps to approx tolerances.
+// =============================================================================
+
+// =============================================================================
 // Bias / correctness tests for @oresoftware/linked-queue.
 //
 // The framework's EntityProcessor and PerIndividualProcessor both use this

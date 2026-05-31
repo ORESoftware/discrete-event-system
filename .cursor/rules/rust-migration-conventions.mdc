@@ -1,0 +1,76 @@
+---
+description: TypeScript conventions that keep the DES engine translatable to Rust (traits, structs, Result)
+globs: src/**/*.ts
+alwaysApply: false
+---
+
+# Rust-Migration Conventions
+
+This codebase is being prepared for a 1:1 migration to Rust. Rust has no classes,
+only `struct` + `trait`. Write TypeScript so each unit maps mechanically.
+
+## Behaviour = class implementing a trait, never a bare function
+
+A vanilla function `f(input) -> output` becomes a `PureTransform` subclass.
+
+```typescript
+// ❌ BAD — free function
+export function gradientDescent(f, grad, x0, opts) { /* ... */ }
+
+// ✅ GOOD — config in constructor (struct fields), one input, one output
+import {PureTransform} from '../shared/transform';
+export class GradientDescent extends PureTransform<FirstOrderProblem, OptimResult> {
+  constructor(private readonly opts: OptimOptions = {}) { super(); }
+  transform(problem: FirstOrderProblem): OptimResult { /* ... */ }
+}
+```
+
+- Configuration/parameters → `readonly` constructor fields (Rust struct fields).
+- Multiple arguments → bundle into ONE named `Input` interface (Rust struct).
+  No positional-argument-only functions.
+- Base classes: `PureTransform` (pure/deterministic), `StatefulTransform`
+  (`&mut self`), `FallibleTransform` (returns `Result`). See `shared/transform.ts`.
+- Tiny enum-variant constructors (e.g. `num`, `add` for an AST) may stay as factories.
+
+## Enums = discriminated unions, matched with `switch (x.kind)`
+
+```typescript
+export type Expr = NumNode | VarNode | BinNode;          // -> Rust enum
+export interface NumNode { kind: 'num'; value: number; } // -> variant
+switch (e.kind) { case 'num': /* ... */ }                // -> match
+```
+
+## Errors: `Result<T, E>` for expected failures, `throw` only for bugs
+
+Use `shared/result.ts` (`ok`/`err`/`Result`) for recoverable outcomes (infeasible
+solve, parse error, singular matrix). Reserve `throw` for invariant violations
+(maps to Rust `panic!`).
+
+## No ambient impurity — inject capabilities
+
+Never call `Math.random()` / `Date.now()` directly. Inject a `RandomSource` /
+`Clock` from `shared/capabilities.ts` so behaviour is deterministic and the Rust
+side can pass the same dependency. Use `SeededRandom` in tests/sims.
+
+## Numeric precision (two-tier — see docs/MIGRATION.md §5.4)
+
+The engine cross-validates against five `float64` references (Python/numpy/
+scipy/R/Octave), so the precision tier is chosen by the number's ROLE:
+
+- **Numerical kernels** (linalg, optim, ODE, LP, eigen, stats, RL values) →
+  `f64`. Do NOT use decimals here; it breaks cross-validation and is ~100×
+  slower. For long hot-loop accumulation use the Rust `precision::KahanAccumulator`.
+- **`mathjs.BigNumber` usage** (the DES clock / time accrual, money & market
+  balances, routing probabilities that sum to 1, the RV algebra) is EXACT
+  COMPOUND BOOKKEEPING → maps to Rust `rust_decimal::Decimal` (`des::shared::
+  precision`), constructed via `bgn(x)` (= `math.bignumber(String(x))`) and read
+  out via `to_f64` (= `Number(bn.toString())`). Keep using `bgn`/BigNumber in
+  the TS for these; do not "simplify" them to `number`.
+- **`Fraction`/exact `p/q`** → Rust `num_rational::Rational64`.
+
+## Types
+
+- No `any` / `as any` in new code; prefer precise types and generics.
+- Prefer `readonly` and immutable inputs; return new values.
+- Shared math lives in `shared/linalg.ts` (`LinAlg`, `VecOps`), not file-local helpers.
+```

@@ -1,6 +1,28 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/mcts.rs  (module des::general::mcts)
+// 1:1 file move. Generic UCT Monte Carlo Tree Search driving a DES tree search.
+//
+// Declarations → Rust:
+//   interface MCTSEnv<S>     -> trait MCTSEnv<S> (numActions/applyAction/isTerminal callbacks)
+//   interface MCTSOptions    -> struct MCTSOptions (Default-derivable)
+//   interface Node<S>        -> struct Node<S> (the in-memory tree node)
+//   fn makeNode              -> Node::new associated fn
+//   class MCTSStation<S> extends TreeSearchStation<Node<S>> -> struct + impl tree-search trait
+//   fn mcts<S>               -> free fn / assoc fn
+//
+// Conversion notes (file-specific):
+//   - INJECT RNG: `rng?: () => number` defaulting to `Math.random` -> take a `RandomSource`
+//     (shared/capabilities); the rollout/argmax tie-break must use it, not a global.
+//   - rollout/numActions/applyAction are `(s: S) => ...` closures -> `Fn`/`FnMut` trait
+//     bounds or a `dyn MCTSEnv<S>`; the `(station as unknown as {rng})` cast at the bottom
+//     just reaches a private field — expose it as a method in Rust.
+//   - `children: Map<number, Node<S>>` and rootChildVisits/Values `Map<number, number>`
+//     -> `HashMap<usize, Node<S>>` / `HashMap<usize, f64>` (action index keys).
+//   - tree is a parent/child graph: use `Vec<Node>` + index ids (arena), not `Rc<RefCell>`.
+//   - TreeSearchStation base -> trait with default fns (pickNext/pushChildren overridable).
+// =============================================================================
 // Generic Monte Carlo Tree Search (UCT) with pluggable rollout policy.
 //
 // Designed to plug directly into a DES simulator: any DES whose state can

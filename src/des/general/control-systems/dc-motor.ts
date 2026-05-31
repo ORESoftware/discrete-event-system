@@ -1,6 +1,34 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/control-systems/dc-motor.rs
+//   (module des::general::control_systems::dc_motor)
+// 1:1 file move. Two-state DC-motor ODE plant + PI speed controller on the DES graph.
+//
+// Declarations → Rust:
+//   class DcMotorChannels (static consts) -> associated consts
+//   class MotorStateToken / VoltageToken (implements Token) -> struct + impl Token
+//   interface DcMotorParams / LoadSegment / DcMotorPlantOpts /
+//             SpeedReferenceSegment / SpeedPiVoltageOpts -> struct (Default for opts)
+//   class DcMotorDynamics (implements OdeSystem) -> struct + impl OdeSystem
+//   class LoadProfile                    -> struct + impl
+//   class DcMotorPlantStation extends DESStation -> struct + impl DESStation trait
+//   class SpeedPiVoltageController extends MemoryTransformEntity<In,Out,f64>
+//                                        -> struct + impl trait (state = integral acc)
+//   class DcMotorSinkStation extends DESStation -> struct + impl trait
+//
+// Conversion notes (file-specific):
+//   - `voltage`/`loadTorque` are MUTABLE conditions on DcMotorDynamics set via
+//     setInputs before each RK4 step -> plain &mut fields.
+//   - `stateSpace()` returns an anonymous `{A,B,C,D}` of Mat -> a named struct
+//     (e.g. StateSpaceMatrices) so the obs/ctrl evaluator can consume it.
+//   - `maxVoltage ?? Infinity`, `initialState ?? [0,0]`, `load ?? default` ->
+//     Option::unwrap_or / unwrap_or_else; saturation uses f64::INFINITY.
+//   - Mat alias from shared::linalg (via the linear-algebra shim import).
+//   - SpeedPiVoltageController.previous is the MemoryTransform integral state (&mut self).
+// =============================================================================
+
+// =============================================================================
 // control-systems/dc-motor.ts — separately-excited / permanent-magnet DC motor
 // modelled as a two-state ODE system with explicit BACK-EMF coupling, driven
 // and regulated inside the lightweight DES graph.

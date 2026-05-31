@@ -1,6 +1,28 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/rl_agent.rs  (module des::general::des_base::rl_agent)
+// 1:1 file move. Template-method base for online TD agents (Q-learning / SARSA /
+// expected-SARSA / Double-Q / Q(λ)).
+//
+// Declarations → Rust:
+//   abstract class RLAgentStation<S,A> -> trait RLAgentStation<S, A>: DESStation
+//                                         (template-method runTimeStep + hooks)
+//
+// Conversion notes (file-specific):
+//   - TEMPLATE METHOD: `runTimeStep` is final; required hooks pickAction/update ->
+//     required trait fns; endOfEpisode -> provided default.
+//   - `rng: () => number` -> inject `RandomSource` (shared/capabilities).
+//   - GETTER/SETTER pairs (`get totalSteps`/`set totalSteps`, episodeReward,
+//     episodeLength) -> plain methods `fn total_steps(&self)` / `fn set_total_steps(&mut self, ..)`;
+//     they proxy fields on the embedded `EpisodeAccounting`.
+//   - `rewardHistory = this.episodeAccounting.rewardHistory` ALIASES the inner
+//     Vec — Rust can't share an owned alias; expose via an accessor that borrows
+//     `self.episode_accounting.reward_history`.
+//   - static CH_* consts -> associated consts; tokens come from rl_tokens.rs.
+// =============================================================================
+
+// =============================================================================
 // general/des-base/rl-agent.ts — base class for ONLINE TEMPORAL-DIFFERENCE
 // agents: Q-learning, SARSA, expected SARSA, Double-Q, Q(λ), …
 //

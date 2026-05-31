@@ -1,6 +1,17 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-wind-mppt-anim.rs   (fn main)
+// 1:1 file move. Generates an HTML animation of the wind-MPPT DES.
+//
+// Conversion notes (file-specific):
+//   - class WindMpptAnimator -> struct + impl; async run() -> fn main.
+//   - process.env.CONTROLLER -> std::env + enum.
+//   - FrameRecorder + WindMpptScene + general/control-systems/wind-mppt ->
+//     use crate::des::...
+// =============================================================================
+
+// =============================================================================
 // main-wind-mppt-anim.ts — generate an HTML animation of the wind-MPPT DES.
 //
 //   npm run wind-mppt-anim                 # optimal-torque controller

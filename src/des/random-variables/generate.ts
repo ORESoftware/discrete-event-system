@@ -1,6 +1,23 @@
 #!/usr/bin/env ts-node
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/random-variables/generate.rs  (module des::random_variables::generate)
+// 1:1 file move. Demo/CLI script: sample uniform/exponential draws and print moments.
+//
+// Declarations → Rust:
+//   const runUniform (fn)     -> free fn
+//   const runExponential (fn) -> free fn
+//
+// Conversion notes (file-specific):
+//   - DEMO SCRIPT: the `if (require.main === module) runExponential()` guard +
+//     `console.log` output -> a `[[bin]]`/examples main, not library code.
+//   - `const math = require('mathjs')` (CommonJS) mixed with `import {bignumber}`
+//     -> a single `use`; the require disappears.
+//   - `math.random()` / `Math.random()` -> injected RandomSource (no ambient rng).
+//   - moment estimators on `bignumber`/`number` -> decimal/f64; `math.pow/log/sum` -> ops.
+// =============================================================================
+
 import {bignumber} from "mathjs";
 
 const math = require('mathjs');

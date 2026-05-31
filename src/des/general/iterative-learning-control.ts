@@ -1,6 +1,24 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/iterative-learning-control.rs  (module des::general::iterative_learning_control)
+// 1:1 file move. Iterative Learning Control (ILC) as an explicit DES station graph.
+//
+// Declarations → Rust:
+//   type ILCReferenceKind = 'sine'|'step'|'ramp' -> enum ILCReferenceKind
+//   interface IterativeLearningControlParams / ILCTrialSummary / Result -> structs
+//   class ILC*Token (implement Token) -> structs `impl Token` (payload-carrying)
+//   class ILC*Station (extend DESStation) -> structs `impl` the station trait (override hasWork/runTimeStep)
+//   fn runIterativeLearningControl -> free fn (or StatefulTransform)
+//   fn toSummary / buildReference / clamp / rms -> assoc fns
+//
+// Conversion notes (file-specific):
+//   - Token/station classes are nominal `impl Trait`; `override hasWork()/runTimeStep()` -> trait methods.
+//   - emit/drain/inboxSize channel ops -> typed queues (`VecDeque<Token>` per ChannelName).
+//   - Deterministic (no RNG/clock); `.slice()` copies -> `.clone()`; `throw` on bad trial count -> panic!.
+// =============================================================================
+
+// =============================================================================
 // general/iterative-learning-control.ts
 //
 // Iterative Learning Control (ILC) as an explicit DES station graph.

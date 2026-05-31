@@ -1,6 +1,22 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/animation/scenes/newsvendor-scene.rs   (module des::animation::scenes::newsvendor_scene)
+// 1:1 file move. Builds frames + charts for the newsvendor inventory animation.
+//
+// Declarations → Rust:
+//   const STAGE_W/H              -> `pub const`
+//   const COLORS (palette object) -> a struct/module of `&str` consts
+//   interface NewsvendorFrameData -> struct
+//   function buildNewsvendorFrame / buildNewsvendorChart -> pub fns
+//
+// Conversion notes (file-specific):
+//   - Frame data (Shape[]/Frame/ChartSpec) is serialized for JSON -> serde structs (see types.rs).
+//   - `COLORS` object literal -> `const &str`s.
+//   - all coords/values are `number` -> `f64`.
+// =============================================================================
+
+// =============================================================================
 // Newsvendor / inventory animation scene.
 //
 // Layout (1100×680):

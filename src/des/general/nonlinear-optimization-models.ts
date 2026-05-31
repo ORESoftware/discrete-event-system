@@ -1,6 +1,25 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/nonlinear-optimization-models.rs  (module des::general::nonlinear_optimization_models)
+// 1:1 file move. Newton/BFGS + nonlinear-least-squares solvers as DES state-token loops.
+//
+// Declarations → Rust:
+//   type NonlinearTopology = StationGraphSummary  -> type alias
+//   interface UnconstrainedOptParams/Result, CurveFitPoint, NonlinearLeastSquaresParams/Result -> structs
+//   abstract class UnconstrainedUpdateStation / NonlinearLeastSquaresStation -> traits w/ default fns
+//   class Newton/BFGSRosenbrockStation, GaussNewton/LevenbergMarquardtStation -> structs + impl
+//   class OptStateToken/OptResultToken/NLStateToken/NLResultToken implements Token -> structs + impl Token
+//   fn runNewtonRosenbrock/runBFGSRosenbrock/runGaussNewtonCurveFit/runLevenbergMarquardtCurveFit
+//      + private math (rosenbrock*/solve2/backtracking/bfgsInverseUpdate/normalEquations/...) -> fns
+//
+// Conversion notes (file-specific):
+//   - the two abstract update stations are template-method bases (one abstract `step` hook)
+//     -> trait with a default driver fn + one required method; concrete stations impl it.
+//   - all matrices/vectors are `number[][]`/`number[]` -> `Vec<Vec<f64>>`/`Vec<f64>` (or shared/linalg).
+//   - validate*InitialState throws on bad input -> `panic!` (invariant) or `Result`.
+//   - fully deterministic: no RNG/clock/Map/`any`.
+// =============================================================================
 // general/nonlinear-optimization-models.ts
 //
 // Newton/quasi-Newton and nonlinear least-squares routines as DES state-token

@@ -1,5 +1,21 @@
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/bin/child.rs   (fn main)
+// 1:1 file move. Forked worker process: runs the simulation and streams
+// batched updates back to the parent over IPC.
+//
+// Conversion notes (file-specific):
+//   - Spawned via cp.fork -> compile as a separate binary; process.send / IPC
+//     -> an ipc channel (e.g. ipc-channel) or stdout pipe to the parent.
+//   - Top-level `program` state + setTimeout batching loop -> fn main() owning
+//     the state with a timer/loop.
+//   - process.env.step_size -> std::env::var.
+//   - `<any[]>` batch payloads -> a concrete message enum; safe-stringify ->
+//     serde_json.
+//   - ws (`ws`) -> tokio-tungstenite.
+// =============================================================================
+
 import {getWebsocketServer, wss} from "./ws-server/ws-server";
 import {bgn, deJSON, fisherYatesShuffle} from "./general/general";
 import {VisualNode} from "./visual/visual-node";

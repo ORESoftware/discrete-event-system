@@ -1,5 +1,29 @@
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/general/adapters/adapter-utils.rs
+//   (module des::general::adapters::adapter_utils)
+// 1:1 file move. Shared helpers for the JSON model-spec adapters (CSV, logging).
+//
+// Declarations → Rust:
+//   export fn validationLine / csvCell / csvRow / jsonCsvCell / jsonCsvRow /
+//             writeCsvLines / numberPair / optionalNumberPair / defaultFramesPath /
+//             framesPath                       -> plain `pub fn` (genuinely stateless
+//             utilities — these stay free functions, NOT transform classes)
+//   export async fn withLogger<T>             -> `pub async fn` (or generic fn taking
+//             a closure) returning the closure's result
+//
+// Conversion notes (file-specific):
+//   - `fs.writeFileSync` -> std::fs::write; `JsonlLogger` -> the ported logger type.
+//   - `JSON.stringify(v)` in jsonCsvCell -> serde_json::to_string.
+//   - CSV quoting uses a regex `/[",\n]/` -> the `regex` crate or a manual scan.
+//   - `numberPair`/`optionalNumberPair` throw on length != 2 -> return Result or a
+//     fixed-size `[f64; 2]`; the `throw` is an invariant (panic candidate).
+//   - `runtime.outputs?.log` / `?? fallback` -> Option chaining + unwrap_or.
+//   - withLogger is generic over T and may return `T | Promise<T>` -> a single
+//     async fn; the try/finally that closes the logger -> RAII Drop or explicit close.
+// =============================================================================
+
 import * as fs from 'fs';
 import {JsonlLogger} from '../../observability/logger';
 import {DESRuntimeConfig} from '../des-spec';

@@ -1,6 +1,34 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/validation.rs  (module des::general::des_base::validation)
+// 1:1 file move. The validator protocol for DES stations + factory helpers.
+//
+// Declarations → Rust:
+//   interface ValidationCheck    -> struct ValidationCheck { name, passed, observed?, .. }
+//                                   (#[derive(Clone, Debug)]; Option fields)
+//   interface Validator<S>       -> trait Validator<S> { fn name(&self) -> &str;
+//                                     fn validate(&self, station: &S) -> Vec<ValidationCheck>; }
+//   fn runValidators<S>          -> fn run_validators<S>(station, &[Box<dyn Validator<S>>])
+//   fn formatValidationReport    -> fn format_validation_report(&[ValidationCheck]) -> String
+//   fn intrinsicCheck/numericValidator/boundValidator/monotonicityValidator/
+//      groundTruthValidator/externalReferenceValidator
+//                                 -> constructors returning `impl Validator<S>`
+//                                    (each closure-bundling-opts becomes a struct)
+//
+// Conversion notes (file-specific):
+//   - Each factory captures `opts` closures (extract/predicate/compare) — in Rust
+//     store them as boxed `Fn` fields on a per-factory struct that `impl Validator`.
+//   - `try/catch` around `v.validate()` -> `std::panic::catch_unwind` (or have
+//     validators return `Result` and convert) to record a failed check.
+//   - `externalReferenceValidator`: `fs.existsSync` + `JSON.parse(readFileSync)`
+//     -> `std::fs` + `serde_json::from_str`; `ref: any` -> `serde_json::Value`.
+//   - `console.warn` -> `log::warn!`/`eprintln!`.
+//   - Optional string fields use `Option<String>`; `toPrecision`/`toExponential`
+//     have no std analogue — use `format!("{:.8e}", ..)` style.
+// =============================================================================
+
+// =============================================================================
 // general/des-base/validation.ts — VALIDATOR PROTOCOL for DES stations.
 //
 // Every iterative-algorithm base in `des-base/` exposes `addValidator(v)`,

@@ -1,6 +1,41 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/learning_optimization.rs  (module des::general::des_base::learning_optimization)
+// 1:1 file move. Stations/tokens for supervised learning + candidate optimization
+// pipelines (samples → batches → gradient steps; candidates → evals → incumbent),
+// plus a small math/topology helper kit.
+//
+// Declarations → Rust:
+//   interface StationGraphSummary / GradientEvaluation / GradientOptimizerOptions -> structs
+//   class Vector*/Gradient*/Candidate*/Evaluated*/Incumbent* Token -> struct + impl Token
+//   class VectorSampleSourceStation / MiniBatchStation / GradientTraceSinkStation /
+//         CandidateSourceStation<S> / IncumbentSinkStation<S> /
+//         SingleTokenSourceStation<T> / LatestTokenSinkStation<T> -> struct + impl DESStation
+//   abstract class GradientOptimizerStation -> trait/struct: DESStation (required
+//                                              evaluateBatch hook; SGD/Adam template)
+//   abstract class CandidateEvaluatorStation<S> -> trait/struct: DESStation (required
+//                                              evaluateCandidate hook)
+//   fn stationGraph/emptyStationGraph/channelEdge/stateLoopTopology/runStateLoopPipeline/
+//      nonEmptyArray/cloneMatrix/zeros/dot/norm2/sigmoid/softmax -> free fns
+//
+// Conversion notes (file-specific):
+//   - `optimizer?: 'sgd' | 'adam'` -> enum Optimizer { Sgd, Adam }; Adam keeps m/v
+//     moment buffers (`Vec<f64>`).
+//   - `meta: Record<string, unknown>` -> `HashMap<String, serde_json::Value>`.
+//   - `SingleTokenSourceStation<T>` takes a `tokenFactory: () => T` + validateToken
+//     closure -> boxed `Fn`/`FnMut`; `T extends Token` -> `T: Token`.
+//   - GENERIC math helpers (zeros/dot/norm2/softmax/sigmoid) DUPLICATE shared/linalg —
+//     prefer `crate::des::shared::linalg`/`VecOps` in Rust; drop the local copies.
+//   - `stations: (DESStation | string)[]` union -> enum or `&dyn HasId`; `channelEdge`
+//     formats ids -> `format!`.
+//   - `samples[0]?.meta.epoch ?? 0` optional-chain coercion via `Number(..)` ->
+//     explicit `Option` + parse; no implicit coercion.
+//   - `throw new Error` (bad batchSize/lr/gradient len) -> `Result`/`panic!`.
+//   - `.slice()` defensive copies throughout -> `.clone()`.
+// =============================================================================
+
+// =============================================================================
 // general/des-base/learning-optimization.ts
 //
 // Shared stationary stations and movable tokens for supervised learning and

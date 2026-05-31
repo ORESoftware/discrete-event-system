@@ -1,6 +1,26 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/animation/run-report.rs   (module des::animation::run_report)
+// 1:1 file move. Builder classes that emit styled HTML report / index pages.
+//
+// Declarations → Rust:
+//   interface MetricRow / ReportSection / IndexEntry / IndexGroup /
+//             CatalogEntry / CatalogSection   -> struct (Option<T> for `?` fields)
+//   class RunReportPage                       -> struct + impl (builder)
+//   class SimulationIndexPage                 -> struct + impl (builder)
+//
+// Conversion notes (file-specific):
+//   - `static escape(input)` -> an associated fn `fn escape(input: &str) -> String`
+//     (chained `.replace(..)` map straight to `str::replace`).
+//   - Builder methods returning `this` (`addSection`/`addGroup`/`addCatalog`)
+//     -> return `&mut self` (or `Self`) for chaining.
+//   - HTML produced via backtick template literals -> `format!` / `write!` into a
+//     `String` (or a templating crate); keep markup identical.
+//   - `private readonly` fields -> private struct fields set in a constructor fn.
+// =============================================================================
+
+// =============================================================================
 // run-report.ts — class-only HTML builders for non-animation simulation runs.
 //
 //   • `RunReportPage`     — a styled single-run report (header, metric tables,

@@ -1,7 +1,29 @@
 'use strict';
 
 // =============================================================================
-// JSON adapter for the general optimization feasibility checker pipeline.
+// RUST MIGRATION  —  target: src/des/general/adapters/feasibility-pipeline-adapter.rs
+//   (module des::general::adapters::feasibility_pipeline_adapter)
+// 1:1 file move. JSON adapter for the feasibility-checker/improver pipeline, with
+// an animated station-graph scene builder.
+//
+// Declarations → Rust:
+//   const coefficientMapSchema/variableSchema/objectiveSchema/constraintSchema/
+//         problemSchema/candidateSchema/improvementSchema/feasibilitySchema: ParamSchema
+//                                        -> serde + validator metadata
+//   fn formatNumber / valuesSummary / drawPipeline -> plain `fn` helpers
+//   const adapter: DESModelRegistration<P,R> -> struct + impl ModelAdapter trait;
+//             registerModel(adapter) -> explicit registration
+//
+// Conversion notes (file-specific):
+//   - GotChA: objective/constraint `coefficients` and candidate `values` are open
+//     `{kind:'object', fields:{}}` maps (variable-name → number) -> HashMap<String, f64>;
+//     `Object.entries(e.values)` iteration order is not guaranteed in Rust.
+//   - `type: 'continuous'|'integer'|'binary'`, `sense: '<='|'>='|'='` / `'min'|'max'`
+//     literal unions -> enums.
+//   - Shapes pushed into `Shape[]` (animation/types) -> Vec<Shape>; Shape -> enum;
+//     animation derives from the result trace (no RNG).
+//   - async run/animate via withLogger + FrameRecorder -> async fns; `?? default`
+//     (constraints?.length ?? 0, parentId ?? '') -> Option handling.
 // =============================================================================
 
 import {FrameRecorder} from '../../animation/frame-recorder';

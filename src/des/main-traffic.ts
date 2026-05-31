@@ -2,6 +2,16 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-traffic.rs   (fn main)
+// 1:1 file move. Thin runner: small traffic-flow simulation over DES cell
+// stations (cars carry position/velocity/accel/jerk).
+//
+// Conversion notes (file-specific):
+//   - top-level main() -> fn main(); fixed `seed` -> SeededRandom.
+//   - delegates to general/network-flow -> use crate::des::general::network_flow.
+// =============================================================================
+
+// =============================================================================
 // main-traffic.ts -- small traffic-flow simulation using DES station entities.
 //
 // The active traffic model builds TrafficCellStation objects at roughly

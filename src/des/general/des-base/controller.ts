@@ -1,6 +1,28 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/controller.rs  (module des::general::des_base::controller)
+// 1:1 file move. Template-method base for feedback controllers (bang-bang / PID /
+// fuzzy / MPC / sliding-mode / LQR-LQG) over generic obs `O` and control `U`.
+//
+// Declarations → Rust:
+//   class ObservationToken<O> / ControlToken<U> -> struct + impl Token
+//   abstract class ControllerStation<O,U>        -> trait ControllerStation<O, U>: DESStation
+//
+// Conversion notes (file-specific):
+//   - TEMPLATE METHOD: `runTimeStep` (and `step`) are final; required hook
+//     controlLaw -> required trait fn; uMin/uMax/onTick/reset/clamp -> provided defaults.
+//   - `clamp` uses `typeof u !== 'number'` then `as unknown as U` — a runtime
+//     type test that DOESN'T translate. In Rust, make saturation part of a
+//     `Saturate` bound on `U`, or specialise `ControllerStation<f64, f64>`;
+//     non-scalar `U` simply skips clamping.
+//   - `uMin()/uMax(): U | null` -> `Option<U>`.
+//   - `ControlToken.observation: unknown` -> a concrete `O` generic or `Box<dyn Any>`
+//     (prefer generic).
+//   - History `U[]`/`O[]` -> `Vec<U>`/`Vec<O>`; `.length = 0` reset -> `.clear()`.
+// =============================================================================
+
+// =============================================================================
 // general/des-base/controller.ts — base class for FEEDBACK CONTROL stations:
 // bang-bang, PID, fuzzy, model-predictive control (MPC), receding-horizon
 // DP, sliding-mode, LQR / LQG, …

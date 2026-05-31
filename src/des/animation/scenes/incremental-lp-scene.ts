@@ -1,6 +1,23 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/animation/scenes/incremental-lp-scene.rs   (module des::animation::scenes::incremental_lp_scene)
+// 1:1 file move. Builds frames + charts for the incremental-LP (polytope + tableau) animation.
+//
+// Declarations → Rust:
+//   const STAGE_W/H, POLY_*/TAB_*/VIEW_PAD consts  -> `pub const`/`const` (f64)
+//   function projectFn                             -> fn returning a closure
+//   function computePolytopeVertices               -> fn (geometry over Vec<Vec<f64>>)
+//   function buildIncrementalLPFrame / buildIncrementalLPCharts -> pub fns
+//
+// Conversion notes (file-specific):
+//   - Frame data (Shape[]/Frame/ChartSpec) is serialized for JSON -> serde structs (see types.rs).
+//   - `projectFn(...)` returns a closure -> return `impl Fn(f64, f64) -> (f64, f64)`.
+//   - `computePolytopeVertices(A: number[][], b: number[])` -> `Vec<Vec<f64>>` (or `nalgebra`).
+//   - all coords are `number` -> `f64`.
+// =============================================================================
+
+// =============================================================================
 // Incremental-LP scene: 2D polytope + objective gradient + simplex path,
 // plus a tableau readout panel. The polytope re-shapes as constraints are
 // added/removed; the objective arrow rotates when the obj vector changes;

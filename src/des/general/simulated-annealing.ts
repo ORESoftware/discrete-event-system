@@ -1,6 +1,25 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/simulated-annealing.rs  (module des::general::simulated_annealing)
+// 1:1 file move. Generic single-walker simulated annealing as a DES, with a TSP/knapsack adapter.
+//
+// Declarations → Rust:
+//   interface SAProblem<S>                          -> trait SAProblem<S> (cost/neighbour/initial callbacks)
+//   type CoolingSchedule = {kind:'geometric'|...}   -> enum CoolingSchedule { Geometric{..}, ... }
+//   fn temperatureAt(s, k)                          -> match on the CoolingSchedule enum
+//   interface SASolverOptions/SATickEvent/SAResult<S>/KnapsackInstance -> structs
+//   class SAOptimizer<S> extends SingleStateOptimizer<S> (private) -> struct + impl optimizer trait
+//   fn runSimulatedAnnealing<S>/buildTSPSAProblem/buildKnapsackSAProblem -> free fns / assoc fns
+//
+// Conversion notes (file-specific):
+//   - SAProblem's cost/neighbour/initial are `(S)=>...` closures -> `Fn`/`FnMut` trait bounds on a
+//     generic `S` (or a `dyn SAProblem<S>`); `neighbour` consumes the RNG.
+//   - CoolingSchedule is a DISCRIMINATED UNION on `kind` -> `enum`, matched in `temperatureAt`.
+//   - INJECT RNG: `mulberry32` + Metropolis accept + neighbour moves -> `RandomSource` (SeededRandom).
+//   - SingleStateOptimizer is a template-method base -> trait with default driver fn.
+//   - generic state `S` carries over; TSP state is a `Vec<usize>` tour, knapsack a `Vec<u8>`/bitset.
+// =============================================================================
 // general/simulated-annealing.ts — Simulated Annealing as a discrete-event
 // system, with a TSP problem adapter and a generic interface so other
 // combinatorial problems can plug in.

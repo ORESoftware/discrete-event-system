@@ -1,5 +1,35 @@
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/general/adapters/domain-application-adapter.rs
+//   (module des::general::adapters::domain_application_adapter)
+// 1:1 file move. Registers 11 domain-application JSON adapters (fuzzy control,
+// logistics, manufacturing, supply chain, ops, finance, pricing, energy, active
+// learning, decision science) sharing one summarize/animate/CSV factory set.
+//
+// Declarations → Rust:
+//   const emptySchema + inline ParamSchema per model -> serde + validator metadata
+//   registerModel(...) x11                      -> one struct + impl ModelAdapter trait each
+//   fn domainSummary / writeDomainCsv / metricsLine / formatMetric /
+//      animateDomainModel / buildDomainFrame / drawCandidateBars / drawMetricPanel /
+//      domainCharts / seriesIfPresent -> plain `fn` helpers
+//
+// Conversion notes (file-specific):
+//   - GotChA: shared helpers are HIGHER-ORDER FACTORIES — `domainSummary(title)` and
+//     `animateDomainModel(title)` return closures used as the adapter's summarize/
+//     animate. In Rust prefer a single generic ModelAdapter impl parameterised by
+//     title (struct field), not returned closures.
+//   - DomainModelResult<unknown> erases the per-model plan/trace type; `row.metrics`
+//     is `Record<string, number|string|boolean>` and `row.plan` is `unknown` ->
+//     model metrics as an enum value map (HashMap<String, MetricValue>) and plan as
+//     a typed enum / serde_json::Value; `jsonCsvCell(row.plan)` -> serde_json.
+//   - GotChA: indexed-access types `DomainModelResult<unknown>['candidates']` and
+//     `[...]['candidates'][number]` -> name the Candidate struct explicitly.
+//   - `trace.series[key]` lookups (seriesIfPresent) -> HashMap<String, Vec<f64>> get;
+//     `.filter((x): x is T => ...)` type-guards -> Option::flatten/iterator filter_map.
+//   - Shapes -> Vec<Shape> (enum); animations derive from sorted candidates (no RNG).
+// =============================================================================
+
 // JSON adapters for the domain application model pack.
 
 import {DESRuntimeConfig, ParamSchema} from '../des-spec';

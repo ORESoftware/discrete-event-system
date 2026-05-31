@@ -1,6 +1,23 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/feedback-linearization.rs  (module des::general::feedback_linearization)
+// 1:1 file move. Feedback-linearization (computed-torque) control of an inverted pendulum, as DES blocks.
+//
+// Declarations → Rust:
+//   interface PendulumParams / FeedbackLinearizationOpts -> structs (Default; optionals -> Option<T>)
+//   interface FeedbackLinearizationResult extends ClosedLoopResult -> struct (compose/flatten base fields)
+//   class PendulumPlant / FeedbackLinearizationController -> structs `impl` PlantBlock/ControllerBlock traits
+//   fn runFeedbackLinearization   -> free fn (or PureTransform<Opts, Result>)
+//   fn rk4                        -> assoc fn taking `f: impl Fn(&[f64]) -> Vec<f64>`
+//
+// Conversion notes (file-specific):
+//   - `rk4` takes a derivative CLOSURE `f` -> generic `Fn` bound (or `&dyn Fn`).
+//   - `interface ... extends ClosedLoopResult` -> Rust has no interface inheritance; flatten or compose.
+//   - Greek idents in docs (θ, ℓ) are comments only; deterministic (no RNG/clock).
+// =============================================================================
+
+// =============================================================================
 // general/feedback-linearization.ts — FEEDBACK LINEARIZATION (also called
 // "computed-torque control" in robotics; Khalil 2002 ch.13) on the
 // canonical INVERTED PENDULUM swing-down/track problem.

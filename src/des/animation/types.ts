@@ -1,6 +1,28 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/animation/types.rs   (module des::animation::types)
+// 1:1 file move. The wire/data schema for the animation player (frames, shapes,
+// charts) — pure DTOs, no behaviour.
+//
+// Declarations → Rust:
+//   interface Animation / Frame / ChartSpec / ChartSeries  -> struct (#[derive(Clone, Serialize, Deserialize)])
+//   interface CircleShape/RectShape/LineShape/TextShape/PathShape -> struct (one per Shape variant)
+//   type Shape = Circle | Rect | Line | Text | Path        -> enum Shape (match on `kind`)
+//
+// Conversion notes (file-specific):
+//   - `Shape` is a discriminated union on the string field `kind`; in Rust model
+//     it as an enum and tag it for JSON: `#[serde(tag = "kind", rename_all = "lowercase")]`.
+//   - Optional fields (`title?`, `stroke?`, `label?`, …) -> `Option<T>` with
+//     `#[serde(skip_serializing_if = "Option::is_none")]` to keep JSON identical.
+//   - `anchor?: 'start'|'middle'|'end'` / `fontWeight?: 'normal'|'bold'` are
+//     string-literal unions -> small `enum`s with `#[serde(rename_all = ...)]`.
+//   - All `number`s here are pixel/time coords -> `f64`.
+//   - `ChartSeries.t` / `.y` are parallel arrays -> `Vec<f64>` (keep the invariant
+//     `t.len() == y.len()`).
+// =============================================================================
+
+// =============================================================================
 // Core types for the animation plugin.
 //
 // DESIGN

@@ -1,6 +1,26 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/advanced-control-models.rs  (module des::general::advanced_control_models)
+// 1:1 file move. H-infinity robust control + pursuit-evasion game models as station graphs.
+//
+// Declarations → Rust:
+//   interface *Params / *Result       -> structs (Default; optionals -> Option<T>)
+//   class ScalarRobustPlant / LinearRobustController / WorstCaseScalarDisturbance
+//   class PursuitEvasionPlant / PurePursuit/EvasionController
+//                                      -> structs `impl` the adversarial-control station traits
+//                                         (ClosedLoopPlantStation/Feedback/DisturbancePolicyStation are bases -> traits)
+//   fn runHInfinityRobustControl / runPursuitEvasionGame -> free fns (or PureTransform per param->result)
+//   const advancedControlChannels      -> assoc consts / a channels struct of channel ids
+//
+// Conversion notes (file-specific):
+//   - Free helpers `clamp`, `norm2` are vanilla numeric algorithms -> assoc fns or
+//     `VecOps` in `shared/linalg.rs`; not stations.
+//   - Deterministic (no Math.random/Date.now); state vectors are small `[f64; N]`/`Vec<f64>`.
+//   - `.slice()` clones on trace rows -> `.clone()` of `Vec`s when copying history.
+// =============================================================================
+
+// =============================================================================
 // Additional decision/control models built as station graphs.
 // =============================================================================
 

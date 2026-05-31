@@ -1,6 +1,20 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/lp_test.rs   (integration test crate)
+// 1:1 file move. Spans lp / lp-des / des-lp-bridge / value-iteration, so it is
+// an integration test under `tests/`, not a single module's `#[cfg(test)] mod`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - approx(a,b,tol) and maxAbs() float comparisons -> the `approx` crate:
+//     assert_relative_eq!(a, b, max_relative = 1e-7) (and abs_diff for vectors).
+// =============================================================================
+
+// =============================================================================
 // Unit tests for the LP infrastructure: in-process simplex, DES-engine
 // simplex, and MDP-as-LP transformation.
 //

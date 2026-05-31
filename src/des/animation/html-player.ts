@@ -1,6 +1,28 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/animation/html-player.rs   (module des::animation::html_player)
+// 1:1 file move. Renders an Animation into a single self-contained HTML string.
+//
+// Declarations → Rust:
+//   interface AnimationVariant / AnimationSetOptions  -> struct (Serialize for the JSON blob)
+//   function buildHTML / buildHTMLSet                 -> free fns -> String
+//   function jsonForScript / escapeHtml               -> private fns
+//   const TEMPLATE                                    -> `const TEMPLATE: &str`
+//
+// Conversion notes (file-specific):
+//   - The large embedded HTML/CSS/JS `TEMPLATE` literal -> a raw string
+//     literal `r#"..."#` (or an `include_str!`-ed asset / templating crate).
+//   - `__PLACEHOLDER__` filling via `String.replace(...)` -> `str::replace`
+//     (keep the same tokens so output is byte-identical).
+//   - `JSON.stringify(value)` + the `</script>` / U+2028 / U+2029 escaping ->
+//     `serde_json::to_string` then the same post-process replacements.
+//   - `escapeHtml`'s `{...} as any` char map -> a `match c { '&' => ..., }`.
+//   - `Record<string,string>` (AnimationVariant.controls) -> `HashMap<String,String>`.
+//   - `throw new Error(...)` in buildHTMLSet (empty variants) -> `panic!` (bug) or `Result`.
+// =============================================================================
+
+// =============================================================================
 // HtmlPlayer — generates a self-contained HTML file from an Animation.
 //
 // The output is a single file that:

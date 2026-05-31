@@ -1,7 +1,24 @@
 'use strict';
 
 // =============================================================================
-// JSON adapters for station-graph learning and optimization models.
+// RUST MIGRATION  —  target: src/des/general/adapters/learning-optimization-adapter.rs
+//   (module des::general::adapters::learning_optimization_adapter)
+// 1:1 file move. Registers regression (linear/ridge/logistic/MLP) + RL
+// (policy-gradient/expected-SARSA) JSON adapters (6 models).
+//
+// Declarations → Rust:
+//   const supervisedSampleSchema/samplesSchema: ParamSchema -> serde+validator consts
+//   registerModel(...) x6 -> one struct + impl ModelAdapter trait each
+//   fn gradientSummary / writeGradientCsv / rlSummary -> plain `fn` helpers
+//
+// Conversion notes (file-specific):
+//   - `optimizer: 'sgd'|'adam'` literal union -> enum.
+//   - rlSummary takes an inline `topology: {stations: string[]; movables: string[]}`
+//     param -> a named Topology struct.
+//   - These adapters are thin: `run` just calls the model fn; *Params shapes need
+//     #[derive(Deserialize)] (decoded from JSON), defaults live in the schema.
+//   - CSV writers zip parallel history arrays (loss/gradientNorm, reward/length) ->
+//     iterator zip.
 // =============================================================================
 
 import {ParamSchema} from '../des-spec';

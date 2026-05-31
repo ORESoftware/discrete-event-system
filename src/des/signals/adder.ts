@@ -1,5 +1,24 @@
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/signals/adder.rs  (module des::signals::adder)
+// 1:1 file move. A signal node that sums incoming values and broadcasts the running total.
+//
+// Declarations → Rust:
+//   interface IntegratorTimeStepOpts -> struct (NOTE: misnamed copy from integral.ts)
+//   const marker (Symbol)            -> n/a (unused leftover)
+//   class Adder<E,V>                 -> struct + impl (+ impl MultiDirectionalSignalEntity)
+//
+// Conversion notes (file-specific):
+//   - `runningTotal: BigNumber` accumulator -> decimal/f64; `math.add` -> ops.
+//   - `queue.dequeueIterator()` yielding `[d]` -> `VecDeque::drain`; reads `d.getValue()`.
+//   - DUPLICATE LOGIC: this is identical to `Integrator` (integral.ts) — share one impl
+//     in Rust. `IntegratorTimeStepOpts` + `marker` here are dead copy-paste -> drop.
+//   - `getValue()/doValidation()/runFinish()` `throw` -> `unimplemented!()`.
+//   - emits `new SignalValue({val: runningTotal})` then broadcasts to connectionsOut
+//     (accept/take) -> borrow targets via `Rc<RefCell>` and release between calls.
+// =============================================================================
+
 import {SignalEntity} from "./abstract";
 import {EntityConnection, TimeStepOpts} from "../abstract/abstract";
 import * as math from 'mathjs';

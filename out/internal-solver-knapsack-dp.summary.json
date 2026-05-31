@@ -26,8 +26,8 @@
       "penalty": 1000000
     }
   },
-  "runtimeMs": 1,
-  "summaryText": "INTERNAL SOLVER NETWORK\n------------------------\n  kind=knapsack-dp status=complete\n  iterations=5 ticks=5 reason=done\n  objective=-62.0000 feasible=true done=true\n  wall-clock=1.0000 / 180000.0000 ms checks=5\n  network stationary=4 moving=2 edges=3\n  validation: 2/2 checks passed\n  best: value=62.0000 weight=10.0000/10.0000",
+  "runtimeMs": 0,
+  "summaryText": "INTERNAL SOLVER NETWORK\n------------------------\n  kind=knapsack-dp status=complete\n  iterations=5 ticks=5 reason=done\n  objective=-62.0000 feasible=true done=true\n  wall-clock=0.0000 / 180000.0000 ms checks=5\n  network stationary=4 moving=2 edges=3\n  validation: 2/2 checks passed\n  best: value=62.0000 weight=10.0000/10.0000",
   "result": {
     "kind": "knapsack-dp",
     "status": "complete",
@@ -207,7 +207,7 @@
     "stopSignals": [],
     "wallClock": {
       "budgetMs": 180000,
-      "elapsedMs": 1,
+      "elapsedMs": 0,
       "checks": 5,
       "expired": false
     },

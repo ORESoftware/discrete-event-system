@@ -1,6 +1,20 @@
 #!/usr/bin/env ts-node
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-epidemic.rs   (fn main)
+// 1:1 file move. Wires an SEIR-style epidemic over the entity graph (sources,
+// processors, probability-decision routing, sinks).
+//
+// Conversion notes (file-specific):
+//   - imports many des entity modules (entity-source/processing/sink,
+//     entity-decision, entity-registration, abstract, moving) -> use crate::des::...
+//   - uuid.v4 -> uuid::Uuid::new_v4; safe-stringify -> serde_json; mathjs bgn
+//     -> f64 / decimal.
+//   - pervasive `any` / `<any>` generics -> concrete entity enums/traits.
+//   - top-level run -> fn main.
+// =============================================================================
+
 
 import * as safe from '@oresoftware/safe-stringify';
 import * as math from 'mathjs';

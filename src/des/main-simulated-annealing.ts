@@ -1,6 +1,18 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-simulated-annealing.rs   (fn main)
+// 1:1 file move. CLI driver for Simulated Annealing (TSP at several sizes,
+// cooling-schedule comparison, knapsack vs MILP-B&B/brute).
+//
+// Conversion notes (file-specific):
+//   - SA acceptance uses Math.random -> inject RandomSource/SeededRandom.
+//   - CoolingSchedule type -> enum.
+//   - use crate::des::general::{simulated_annealing, genetic_tsp, milp_bnb}.
+//   - top-level run -> fn main.
+// =============================================================================
+
+// =============================================================================
 // main-simulated-annealing.ts — CLI driver for Simulated Annealing.
 //
 // Demonstrates SA on:

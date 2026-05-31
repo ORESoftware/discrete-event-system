@@ -1,6 +1,16 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-observability-controllability-anim.rs   (fn main)
+// 1:1 file move. Generates an HTML slideshow walking through the
+// controllability/observability tests for LTI, MDP, and POMDP systems.
+//
+// Conversion notes (file-specific):
+//   - class ObsCtrlAnimator -> struct + impl; async run() -> fn main.
+//   - FrameRecorder + ObsCtrlScene -> use crate::des::animation::...
+// =============================================================================
+
+// =============================================================================
 // main-observability-controllability-anim.ts — generate an HTML slideshow
 // animation walking through the controllability / observability tests for
 // linear, MDP, and POMDP systems.

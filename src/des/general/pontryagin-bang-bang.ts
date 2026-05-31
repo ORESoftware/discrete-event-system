@@ -1,6 +1,22 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/pontryagin-bang-bang.rs  (module des::general::pontryagin_bang_bang)
+// 1:1 file move. Time-optimal bang-bang controller (Pontryagin) for the double integrator.
+//
+// Declarations → Rust:
+//   interface PontryaginOpts                       -> struct (Default-derivable)
+//   interface PontryaginResult extends ClosedLoopResult -> struct embedding/flattening ClosedLoopResult
+//   class DoubleIntegratorPlant extends PlantBlock  -> struct + impl Plant trait (private)
+//   class PontryaginBangBangController extends ControllerBlock -> struct + impl Controller trait (private)
+//   fn runPontryaginBangBang / optimalTimeDoubleIntegrator -> free fns / assoc fns
+//
+// Conversion notes (file-specific):
+//   - PlantBlock/ControllerBlock template-method bases -> traits with default fns; the controller
+//     tracks the once-only switch via a `bool`/`Option` field (closed-form, no optimizer).
+//   - `extends ClosedLoopResult`: compose by embedding the base struct (no interface inheritance).
+//   - switching-curve uses `sign`/`abs` on f64; fully deterministic (no RNG/clock/Map).
+// =============================================================================
 // general/pontryagin-bang-bang.ts — TIME-OPTIMAL CONTROL of a double
 // integrator via PONTRYAGIN'S MAXIMUM PRINCIPLE.
 //

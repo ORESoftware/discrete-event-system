@@ -1,6 +1,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/advanced_optimization_control_test.rs   (integration test crate)
+// 1:1 file move. Tests advanced optimization + decision/control station-graph
+// models via the des-registry, so it is an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/CheckRow + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual rows and PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - nearDiagOne()/matrix tolerance checks -> approx::assert_relative_eq!.
+//   - ant-colony / particle-swarm / SDP / MaxSAT are stochastic metaheuristics
+//     -> a seeded rand::Rng so the Pareto fronts and objectives are reproducible.
+// =============================================================================
+
+// =============================================================================
 // Tests for advanced optimization and decision/control station-graph models.
 // =============================================================================
 

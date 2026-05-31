@@ -1,6 +1,21 @@
 #!/usr/bin/env ts-node
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/bin/compare-elevator-dispatch.rs  (a `fn main`
+//                    binary; an `examples/…rs` also works)
+// 1:1 file move. Sweeps seeds/arrival rates to quantify coordinated vs
+// uncoordinated elevator dispatch; emits a table and a JSON dump.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - env (`SEEDS`/`LAMBDAS`/`SIM_T`, comma lists) -> `std::env::var` + split/parse.
+//   - `fs`/`path` + `JSON.stringify` dump -> `std::fs` + `serde_json`.
+//   - `as any` on aggregates -> concrete typed structs.
+//   - per-trial seeding -> inject `SeededRandom`.
+//   - `process.exit(code)` -> `std::process::exit(code)`.
+// =============================================================================
+
 // Sweep across seeds and arrival rates to quantify the value of coordinated
 // dispatch versus the uncoordinated baseline. Produces a clean table and
 // a JSON dump of the per-trial aggregates.

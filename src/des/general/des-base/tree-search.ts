@@ -1,6 +1,27 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/tree_search.rs  (module des::general::des_base::tree_search)
+// 1:1 file move. Template-method base for tree-structured search (MILP B&B /
+// MCTS / A* / beam / alpha-beta) over a generic node `N`.
+//
+// Declarations → Rust:
+//   type SearchObjective = 'minimise' | 'maximise' -> enum SearchObjective { Minimise, Maximise }
+//   interface NodeEvaluation        -> struct NodeEvaluation { bound, is_leaf, value: Option<f64>, .. }
+//   abstract class TreeSearchStation<N> -> trait TreeSearchStation<N>: DESStation
+//
+// Conversion notes (file-specific):
+//   - TEMPLATE METHOD: `runTimeStep` is final; required hooks
+//     pickNext/evaluate/expand/pushChildren -> required trait fns; shouldPrune/
+//     onIncumbentUpdate/onPrune/onExpand/onFinish/currentBestBound -> provided defaults.
+//   - `pickNext(): N | null` -> `fn pick_next(&mut self) -> Option<N>`.
+//   - `incumbent: N | null` -> `Option<N>`; `value?: number` -> `Option<f64>`.
+//   - `incumbentValue` seeded to ±Infinity -> `f64::INFINITY` / `f64::NEG_INFINITY`
+//     by objective.
+//   - No RNG/clock here (pure search); tie-breaking via argmax.rs if a leaf needs it.
+// =============================================================================
+
+// =============================================================================
 // general/des-base/tree-search.ts — base class for TREE-STRUCTURED search
 // algorithms: MILP branch-and-bound, MCTS / UCT, A*, beam search, alpha-beta,
 // best-first / depth-first / breadth-first generic search.

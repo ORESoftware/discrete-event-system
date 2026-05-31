@@ -1,6 +1,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/runners/per_individual_runner.rs
+//                    (module des::runners::per_individual_runner — hyphen → underscore)
+// 1:1 file move. Framework run-loop kernel using PerIndividualProcessor stations.
+//
+// Conversion notes (file-specific):
+//   - Helper module imported by the binaries, not a `fn main()`.
+//   - `Math.random()` + `withSeed` + `opts.seed ?? Date.now()` -> inject
+//     `RandomSource`/`SeededRandom`/`Clock`; no ambient RNG/clock.
+//   - `as any` casts on entities -> concrete entity structs + their trait impls
+//     (PerIndividualProcessor, EntitySource/Sink).
+// =============================================================================
+
+// =============================================================================
 // runPerIndividualOnce: same SEIR-with-hospitalization graph as the framework
 // runner, but every processor station is a PerIndividualProcessor instead of
 // the three-queue EntityProcessor. This kernel still uses the framework's
@@ -22,6 +35,7 @@ import {ProbabilityDecisionEntity} from '../entity-decision/probability-decision
 import {PerIndividualProcessor} from '../entity-processing/per-individual-processor';
 import {JsonlLogger} from '../observability/logger';
 import {withSeed} from '../general/prng';
+import {RandomSource, DEFAULT_RANDOM} from '../shared/capabilities';
 import {
   SimConfig, RunOpts, RunResult,
   COMPARTMENT_ORDER, EDGES,
@@ -39,7 +53,7 @@ export function runPerIndividualOnce(config: SimConfig, opts: RunOpts = {}): Run
   return withSeed(seed, () => runInner(config, {...opts, seed}));
 }
 
-function runInner(config: SimConfig, opts: RunOpts): RunResult {
+function runInner(config: SimConfig, opts: RunOpts, rng: RandomSource = DEFAULT_RANDOM): RunResult {
   const sampleEvery = opts.sampleEveryDays ?? 1;
   const logger = opts.logEvents && opts.logPath
     ? new JsonlLogger(opts.logPath, 'info') : null;
@@ -55,7 +69,7 @@ function runInner(config: SimConfig, opts: RunOpts): RunResult {
 
   const drawFn = (id: string) => {
     const [a, b] = config.residence[id];
-    return () => a + Math.random() * (b - a);
+    return () => a + rng.nextFloat() * (b - a);
   };
 
   // Decision nodes still need a RandomVariable (framework contract).

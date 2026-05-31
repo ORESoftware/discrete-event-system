@@ -1,6 +1,24 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/shortest-path-des.rs  (module des::general::shortest_path_des)
+// 1:1 file move. Shortest path (Bellman-Ford / Dijkstra) as a DES of node stations + wave messages.
+//
+// Declarations → Rust:
+//   interface Edge / Graph / SPResult / BellmanFordOptions -> structs (#[derive(Clone)])
+//   interface PQEntry (private)                            -> struct
+//   class IndexedMinHeap (private)                         -> struct + impl (binary heap w/ index map)
+//   fn reconstructPath / shortestPathBellmanFordDES / shortestPathDijkstraDES /
+//      buildRandomGraph / buildSmallChainGraph             -> free fns / assoc fns
+//
+// Conversion notes (file-specific):
+//   - INJECT RNG: `buildRandomGraph` uses an rng -> take a `RandomSource` (shared/capabilities).
+//   - node ids are `usize`; weights are `f64` (Bellman-Ford allows negatives); distances may be
+//     `f64::INFINITY` -> keep as `f64` sentinel, not `Option`, to match the algorithm.
+//   - IndexedMinHeap is a hand-rolled decrease-key heap -> a `BinaryHeap` + position `Vec`/HashMap,
+//     or the `Reverse`-wrapped std heap with stale-entry skipping.
+//   - `reconstructPath` returns `number[] | null` -> `Option<Vec<usize>>`.
+// =============================================================================
 // general/shortest-path-des.ts — Shortest path on a weighted directed
 // graph computed BY THE DES, where every graph node IS a stationary entity
 // and every distance update IS a movable "wave" message flowing along an

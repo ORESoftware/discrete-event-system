@@ -1,6 +1,20 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/soccer_test.rs   (integration test crate)
+// 1:1 file move. Spans soccer-rotation / hungarian / lp, so it is an
+// integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc expect()/close()/pass-fail counters + console.log  ->  #[test] fns
+//   using assert!/assert_eq!; drop the manual tally and PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - close(a,b,tol) float comparison -> approx::assert_relative_eq!.
+//   - random/MDP rollout policies are stochastic -> a seeded rand::Rng.
+// =============================================================================
+
+// =============================================================================
 // test/soccer-test.ts — unit tests for the 7v7 rotation problem.
 // =============================================================================
 

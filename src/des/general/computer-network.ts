@@ -1,6 +1,27 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/computer-network.rs  (module des::general::computer_network)
+// 1:1 file move. Packet-switched networking (hosts/routers/switches/links/packets) as a DES.
+//
+// Declarations → Rust:
+//   type NetworkNodeKind/RoutingMetric/Protocol/PacketDropReason = '...'|'...' -> enums
+//   interface Network*Spec / *Stats / ComputerNetworkProblem / ComputerNetworkResult / ... -> structs (serde)
+//   class NetworkPacket extends BasicMovingEntity implements Token -> struct + `impl Token` + movable trait
+//   abstract NetworkStation/NetworkNodeStation/NetworkDelayStation -> traits (defaults)
+//   class NetworkHost/Router/Switch/Link/ComputerNetwork Station -> structs `impl` those station traits
+//   fn validateComputerNetworkProblem / runComputerNetworkSimulation / buildDefault* / buildBottleneck* -> fns
+//
+// Conversion notes (file-specific):
+//   - DEEP station inheritance (Host/Router/Switch <- NetworkNodeStation <- NetworkStation <- DESStation)
+//     -> trait hierarchy + composition; no `extends`.
+//   - HEAVY `Map`/`Set` (routing tables, per-flow runtime state, node/link queues keyed by id)
+//     -> `HashMap`/`HashSet` (String/usize keys: Hash+Eq); packet queues -> `VecDeque`.
+//   - String unions -> enums; `NetworkPacket` is both a movable AND a Token -> two trait impls on one struct.
+//   - JSON topology in/out -> serde; `Preconditions` throw -> `Result`/`panic!`.
+// =============================================================================
+
+// =============================================================================
 // general/computer-network.ts -- packet-switched computer networking as DES.
 //
 // This is the network-engineering counterpart to the queueing and flow models:

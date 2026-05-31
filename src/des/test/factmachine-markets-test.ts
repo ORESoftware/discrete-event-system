@@ -2,6 +2,22 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/factmachine_markets_test.rs   (integration test crate)
+// 1:1 file move. Focused checks for the FactMachine multi-market MDP/POMDP
+// simulator, so it is an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - the simulator is seeded (seed: 777, buildDailyMarketCaps(..,777)) ->
+//     a seeded rand::Rng so portfolio runs are reproducible.
+//   - MarketKind union + Partial<PortfolioConfig> overrides -> a Rust enum and
+//     a config struct with Default + explicit field overrides.
+// =============================================================================
+
+// =============================================================================
 // Focused checks for the FactMachine multi-market MDP/POMDP simulator.
 // =============================================================================
 

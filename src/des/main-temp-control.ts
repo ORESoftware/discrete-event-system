@@ -1,6 +1,18 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-temp-control.rs   (fn main)
+// 1:1 file move. CLI driver comparing bang-bang / PID / fuzzy-PI / MDP-MPC
+// controllers on one scenario, plus an MDP-MPC sensitivity sweep.
+//
+// Conversion notes (file-specific):
+//   - controller specs (bang-bang/pid/fuzzy/mdp-mpc) -> enum ControllerSpec.
+//   - noisy outdoor-temperature sampling -> inject RandomSource/SeededRandom.
+//   - use crate::des::general::temp_control; fs write -> std::fs.
+//   - top-level run -> fn main.
+// =============================================================================
+
+// =============================================================================
 // main-temp-control.ts — CLI driver for the temperature-control DES.
 //
 // Runs four interchangeable controllers — bang-bang, PID, fuzzy-PI, MDP-MPC —

@@ -1,6 +1,27 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/entity-routing/output-routing-policy.rs  (module des::entity_routing::output_routing_policy)
+// 1:1 file move. Output-connection ordering policies for single-target routing.
+//
+// Declarations → Rust:
+//   type OutputRoutingPolicy = 'random'|'round-robin'|'ordered'
+//                                  -> enum OutputRoutingPolicy { Random, RoundRobin, Ordered }
+//                                     (#[serde(rename_all = "kebab-case")])
+//   interface HasOutputRoutingPolicy -> trait or a `Option<OutputRoutingPolicy>` field
+//   class OutputConnectionRouter<C>  -> struct { policy, cursor } + impl
+//
+// Conversion notes (file-specific):
+//   - `fisherYatesShuffle` consumes randomness -> the router must hold an injected
+//     `RandomSource` (shared/capabilities); do NOT reach for ambient rng/Math.random.
+//   - `cursor` for round-robin is mutable state -> `order`/`markAccepted` take `&mut self`.
+//   - `connections.indexOf(accepted)` needs identity/equality -> require `C: PartialEq`
+//     or route by index/id rather than by value.
+//   - `order()` returns slice/concat COPIES -> `Vec<C>` (require `C: Clone`) or
+//     return a permutation of indices to avoid cloning edges.
+// =============================================================================
+
+// =============================================================================
 // entity-routing/output-routing-policy.ts
 //
 // Shared output-connection ordering policies for queueing-style stations that

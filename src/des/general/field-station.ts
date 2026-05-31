@@ -1,6 +1,23 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/field-station.rs  (module des::general::field_station)
+// 1:1 file move. Station substrate for ODE/PDE problems (census-snapshot synchronous data flow).
+//
+// Declarations → Rust:
+//   fn shuffleInPlace<T>          -> generic fn over `&mut [T]` + `&mut impl Rng`
+//   abstract class Station extends TimeSteppedStation -> trait Station: TimeSteppedStation
+//   class Census / FieldStation / FieldSimulation -> structs `impl` the station traits
+//   type FieldUpdater = (...) => number -> trait FieldUpdater or `Box<dyn Fn(...) -> f64>`
+//   interface FieldSimulationOptions / FieldSimulationResult -> structs
+//
+// Conversion notes (file-specific):
+//   - `shuffleInPlace` uses `rng()` closure (mulberry32) -> inject `RandomSource`/`rand::Rng`.
+//   - `extends`/`abstract class` chain (TimeSteppedStation -> Station -> FieldStation) -> trait + structs.
+//   - `FieldUpdater` callback -> trait object / `Fn`; the census snapshot is a frozen `Vec<f64>` per tick.
+// =============================================================================
+
+// =============================================================================
 // FieldStation — the framework substrate for ODE / PDE problems.
 //
 // CORE IDEA

@@ -1,5 +1,31 @@
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/entity-sink/sink.rs  (module des::entity_sink::sink)
+// 1:1 file move. Terminal entities that absorb (destroy) moving-entities.
+//
+// Declarations → Rust:
+//   abstract class AbstractSinkEntity<S,T> -> trait SinkEntity (defaults) +
+//                                             base struct { connections_in }
+//   type EntitySinkGraphData               -> struct { destroyed_count }
+//   const entityType (Symbol)              -> n/a (use an enum/trait tag)
+//   class EntitySink<S,T>                  -> struct + impl (+ impl StationaryEntity)
+//
+// Conversion notes (file-specific):
+//   - `[entityType] = 'Sink'` + `['entity.type'] = 'Sink'` brand -> an enum
+//     variant / trait tag, not a symbol property. (entityType + EntitySinkGraphData
+//     are ALSO declared in generic-sink.ts — unify to one definition in Rust.)
+//   - `abstract acceptItem(): boolean` takes NO args here but the HasInput trait's
+//     `acceptItem(m)` takes one — reconcile the signature in the Rust trait.
+//   - ctor takes `rv: RandomVariable` but never uses it -> drop the parameter.
+//   - `opts: {}` empty -> `()` / drop.
+//   - `connectionsIn: Set<EntityConnection>` -> `Vec`/`HashSet` of `Rc<RefCell<..>>` edges.
+//   - `math.BigNumber` stepSize -> decimal/f64.
+//   - `getSerializableData(): any` / `getWithComputedProperties(): any` -> serde DTO.
+//   - `[util.inspect.custom]` -> `impl fmt::Debug`; `m.doFinish()` is the absorb side effect.
+//   - console.debug -> `tracing`.
+// =============================================================================
+
 import * as math from "mathjs";
 import {number} from "mathjs";
 import {Entity, EntityConnection, StationaryEntity} from "../abstract/abstract";

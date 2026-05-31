@@ -1,6 +1,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/qlearning-des.rs  (module des::general::qlearning_des)
+// 1:1 file move. Tabular off-policy Q-learning agent driven as a DES.
+//
+// Declarations → Rust:
+//   interface QLearningOptions / QLearningResult     -> structs (Default where sensible)
+//   class QLearningAgent extends RLAgentStation<number, number> -> struct + impl agent trait
+//   fn runQLearningDES                               -> free fn / assoc fn
+//
+// Conversion notes (file-specific):
+//   - INJECT RNG: `mulberry32` + ε-greedy tie-breaking -> take a `RandomSource`
+//     (SeededRandom == mulberry32); do not import the closure or hit a global.
+//   - RLAgentStation is a template-method base -> trait with default fns; the Q-table is a
+//     `Vec<Vec<f64>>` struct field updated via `&mut self`.
+//   - state/action are numeric indices (`usize`); rewards/values `f64`.
+// =============================================================================
 // general/qlearning-des.ts — Q-learning as a DES.
 //
 // Concrete leaf class extending RLAgentStation: implements ε-greedy

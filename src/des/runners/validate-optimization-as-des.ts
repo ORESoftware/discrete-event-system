@@ -1,6 +1,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-optimization-as-des.rs  (a `fn main`
+//                    binary; an `examples/…rs` also works)
+// 1:1 file move. End-to-end validation that the four base-class hierarchies
+// (SA / GA / Q-learning / PPO as DES) behave correctly on ground-truthed problems.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - `CheckRow` accumulator -> a `struct CheckRow { name, passed, detail }`.
+//   - solver RNG -> inject `SeededRandom` (shared::capabilities).
+//   - `console.log` PASS/FAIL + `process.exit` -> `println!` / `std::process::exit`.
+// =============================================================================
+
+// =============================================================================
 // runners/validate-optimization-as-des.ts — end-to-end validation that
 // the four base-class hierarchies produce algorithmically correct
 // behaviour on small, ground-truthed problems.

@@ -60,7 +60,7 @@
     "timeLimitMs": 180000,
     "checkEveryTicks": 1
   },
-  "runtimeMs": 2,
+  "runtimeMs": 1,
   "summaryText": "FEASIBILITY PIPELINE\n------------------------\n  status=improved trace=81 improvements=14\n  initial feasible=true objective=160.0000 violation=0.0000\n  best    feasible=true objective=220.0000 violation=0.0000 candidate=neighbor-2\n  wall-clock=1.0000 / 180000.0000 ms checks=81\n  network stationary=7 moving=5 edges=7\n  validation: 5/5 checks passed\n  values: x0=0.0000  x1=1.0000  x2=1.0000",
   "result": {
     "status": "improved",

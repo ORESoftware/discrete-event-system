@@ -1,5 +1,21 @@
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/signals/mux.rs  (module des::signals::mux)
+// 1:1 file move. A signal multiplexer node (currently an unimplemented stub).
+//
+// Declarations → Rust:
+//   interface MultiplexerTimeStepOpts -> struct (currently empty)
+//   class Multiplexer<E,V>            -> struct + impl (+ impl MultiDirectionalSignalEntity)
+//
+// Conversion notes (file-specific):
+//   - `runTimeStep` is empty, `acceptItem` returns false, `takeItem` is a no-op ->
+//     a not-yet-implemented node; port the shape and leave `todo!()` bodies.
+//   - `getValue()` returns `<unknown>undefined as V` -> `Option<V>::None`.
+//   - `notifySources()/notifyTargets()/runFinish()` `throw` -> `unimplemented!()`.
+//   - `runningTotal: BigNumber` is unused here -> decimal/f64 if kept.
+// =============================================================================
+
 import {SignalEntity} from "./abstract";
 import {EntityConnection, TimeStepOpts} from "../abstract/abstract";
 import * as math from 'mathjs';

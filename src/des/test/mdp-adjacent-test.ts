@@ -1,6 +1,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/mdp_adjacent_test.rs   (integration test crate)
+// 1:1 file move. End-to-end tests of nine MDP-adjacent models. Keep the
+// doc-block below; this header sits above it.
+//
+// Test harness → Rust:
+//   ad-hoc check()/CheckRow + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual rows and PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - MC/actor-critic/blackjack/stag-hunt are stochastic -> a seeded rand::Rng;
+//     the deliberately-conservative thresholds become assert! inequalities.
+//   - value/reward comparisons -> approx::assert_relative_eq!.
+// =============================================================================
+
+// =============================================================================
 // test/mdp-adjacent-test.ts — end-to-end tests for the nine MDP-adjacent
 // models added in this batch:
 //

@@ -1,5 +1,39 @@
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/entity-moving/moving.rs  (module des::entity_moving::moving)
+// 1:1 file move. The "tokens" that flow through the network (customers/jobs).
+//
+// Declarations → Rust:
+//   abstract class AbstractMovingEntity<E,V> -> trait MovingEntity (default fns)
+//                                               + base struct holding the shared
+//                                               timing/visit fields
+//   abstract class BasicMovingEntity<V>      -> trait/struct extending the above
+//   interface ProcessingTimeValue            -> struct ProcessingTimeValue (#[derive(Clone)])
+//   class ProcessableMovingEntity<V>         -> struct + impl
+//   class BasicQuantityMovingEntity          -> struct { value: f64 } + impl
+//
+// Conversion notes (file-specific):
+//   - INHERITANCE chain Entity -> AbstractMovingEntity -> BasicMovingEntity ->
+//     ProcessableMovingEntity. Flatten to a shared field-bag struct + trait
+//     default methods; do NOT mirror `extends`.
+//   - `static nextMovingId` auto-increment -> `AtomicU64` (not a struct field).
+//   - `math.BigNumber` (timeInSystem, totalWaitTime, totalInProcessTime, …) ->
+//     one decimal crate or `f64`, chosen engine-wide; `math.add/subtract` -> ops.
+//   - `Date.now()` in init()/doFinish() -> inject `Clock` (shared/capabilities).
+//   - `uuid.v4().slice(-10)` -> `uuid::Uuid::new_v4()` then take last 10 chars.
+//   - getters/setters startTime/endTime -> `fn start_time(&self)` / `set_start_time`.
+//   - `stationsVisited: Map<string,{count}>` -> `HashMap<String, VisitCount>`.
+//   - `processingTimeByStation: LinkedQueue<ProcessingTimeValue,string>` is a
+//     KEYED queue -> `IndexMap`/`HashMap<String,_>` + ordering; std has none.
+//   - `<[any,any]>...get(stationId)` tuple casts -> typed `Option<(K, &mut V)>`.
+//   - `(this as any)['value']` dynamic access in getValue -> use a concrete field.
+//   - `value = <unknown>null as number` placeholder -> `Option<f64>` / required field.
+//   - `throw makeError(..)` / `throw new Error('not yet implemented')` ->
+//     `Result` (recoverable) or `panic!`/`unimplemented!` (bug/stub).
+//   - `getSerializableData(): any` -> a `#[derive(Serialize)]` DTO struct.
+// =============================================================================
+
 import * as math from "mathjs";
 import {number} from "mathjs";
 import * as uuid from "uuid";

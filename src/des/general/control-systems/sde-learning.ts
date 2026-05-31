@@ -1,6 +1,33 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/control-systems/sde-learning.rs
+//   (module des::general::control_systems::sde_learning)
+// 1:1 file move. Three SDE ML algorithms (MLE id, EnKF filter, diffusion model).
+//
+// Declarations → Rust:
+//   abstract class ParametricSdeFamily  -> trait ParametricSdeFamily (name/paramDim/
+//                                           initialGuess/instantiate/describe)
+//   class GbmFamily / OuFamily          -> struct + impl ParametricSdeFamily
+//   interface MleFitResult / EnkfOptions / DiffusionOptions -> struct (Default for opts)
+//   class SdeMaximumLikelihoodEstimator / EnsembleKalmanFilter /
+//         Mlp / DenoisingDiffusionModel -> struct + impl
+//   class EnsembleKalmanFilterStation extends MemoryTransformEntity<In,Out,Filter>
+//                                       -> struct + impl trait (state = the filter)
+//
+// Conversion notes (file-specific):
+//   - Vec = number[], Mat = number[][] are LOCAL aliases from shared::linalg —
+//     NOT std::vec::Vec; alias as `type Vec = std::vec::Vec<f64>` carefully or
+//     rename to avoid clashing with Rust's Vec.
+//   - `describe(): Record<string,number>` -> a struct of named params or
+//     BTreeMap<String, f64> (report-only).
+//   - instantiate(theta) returns `SdeSystem` (trait object) -> Box<dyn SdeSystem>.
+//   - Heavy RNG use via Mulberry32 (rng.normal/next) -> inject a seeded RNG; keep
+//     the same seeds for bit-reproducibility across the port.
+//   - finite-difference gradient mutates `theta` in place (Adam) -> &mut Vec<f64>.
+// =============================================================================
+
+// =============================================================================
 // control-systems/sde-learning.ts — THREE machine-learning algorithms for
 // stochastic differential equations, one per classic ML paradigm:
 //

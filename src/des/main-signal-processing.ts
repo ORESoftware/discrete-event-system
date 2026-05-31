@@ -1,6 +1,17 @@
 #!/usr/bin/env ts-node
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-signal-processing.rs   (fn main)
+// 1:1 file move. Small CLI demo of Z / Laplace / Fourier transform models.
+//
+// Conversion notes (file-specific):
+//   - top-level main() -> fn main().
+//   - complex outputs (formatComplex) -> num_complex::Complex<f64>.
+//   - TransformRunResult shape -> struct (#[derive(Clone)]).
+//   - use crate::des::general::signal_transforms.
+// =============================================================================
+
 // Small CLI demo for transform models. For JSON-driven runs use:
 //   npm run from-json -- examples/z-transform-geometric.json
 

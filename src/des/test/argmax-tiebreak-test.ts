@@ -1,6 +1,22 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/argmax_tiebreak_test.rs   (integration test crate)
+// 1:1 file move. Verifies uniform random tie-breaking in argmax and its
+// downstream users. Keep the rich doc-block below; this header sits above it.
+//
+// Test harness → Rust:
+//   ad-hoc statistical checks + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - tie-break draws use mulberry32 -> a seeded rand::Rng; the ~1/k uniformity
+//     bounds become assert! on counts within a tolerance (HashMap<idx,count>).
+//   - the "value function unchanged with/without tie-break" property -> compare
+//     vectors with approx::assert_relative_eq!.
+// =============================================================================
+
+// =============================================================================
 // test/argmax-tiebreak-test.ts — verifies that the new random tie-breaking
 // in `argMaxWithTieBreak`, `scanArgMaxTieBreak`, and the algorithms that
 // use them actually distributes uniformly across the tied set (rather than

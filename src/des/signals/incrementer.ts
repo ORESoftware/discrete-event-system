@@ -1,5 +1,21 @@
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/signals/incrementer.rs  (module des::signals::incrementer)
+// 1:1 file move. A signal incrementer node (currently an unimplemented stub).
+//
+// Declarations → Rust:
+//   interface IncrementorTimeStepOpts -> struct (currently empty)
+//   class SignalIncrementor<E,V>      -> struct + impl (+ impl MultiDirectionalSignalEntity)
+//
+// Conversion notes (file-specific):
+//   - ctor calls `super(null as any)` (null id) -> require/generate a real id (uuid) in Rust.
+//   - `runTimeStep` is empty, `acceptItem` returns false, `takeItem` is a no-op ->
+//     not-yet-implemented; port the shape with `todo!()` bodies.
+//   - `getValue()/runFinish()` `throw` -> `unimplemented!()`.
+//   - `runningTotal: BigNumber` -> decimal/f64 if kept; `queue: LinkedQueue` -> `VecDeque`.
+// =============================================================================
+
 import {SignalEntity} from "./abstract";
 import {EntityConnection, TimeStepOpts} from "../abstract/abstract";
 import * as math from 'mathjs';

@@ -1,6 +1,19 @@
 #!/usr/bin/env ts-node
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-elevator.rs  (a `fn main` binary;
+//                    an `examples/…rs` also works)
+// 1:1 file move. Compares the framework elevator-sim aggregates against the SimPy
+// continuous-time reference (per-person + per-aggregate diffs).
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - `fs`/`path` + `JSON.parse` -> `std::fs` + serde structs.
+//   - `as any` on parsed JSON -> concrete typed structs.
+//   - `process.exit(code)` -> `std::process::exit(code)`.
+// =============================================================================
+
 // Compares the framework's elevator-sim aggregates (out/elevator-framework.json)
 // against the SimPy continuous-time reference (out/external/elevator/simpy.json).
 //

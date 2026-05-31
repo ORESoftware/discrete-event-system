@@ -1,6 +1,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: #[cfg(test)] mod tests in src/des/general/factmachine_math.rs
+// 1:1 file move. Unit tests one module (float64 LMSR market math), so prefer
+// that module's `#[cfg(test)] mod tests`.
+//
+// Test harness → Rust:
+//   ad-hoc expect()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - close(a,b,1e-12) tight float comparison -> approx::assert_relative_eq!.
+//   - `try { f() } catch` invalid-input cases -> assert on a returned
+//     Result::Err, or `#[should_panic]` if the Rust port panics instead.
+// =============================================================================
+
+// =============================================================================
 // test/factmachine-math-test.ts — focused unit tests for the float64
 // FactMachine math layer (mirrors `factmachine-monorepo/.../lmsr.spec.ts`).
 // =============================================================================

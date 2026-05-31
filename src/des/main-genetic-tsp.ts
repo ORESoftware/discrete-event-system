@@ -1,6 +1,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-genetic-tsp.rs   (fn main)
+// 1:1 file move. CLI: solve TSP with a genetic algorithm modelled as a DES,
+// with optional precedence constraints (branch-cutting pathway).
+//
+// Conversion notes (file-specific):
+//   - process.env params (N_CITIES, SEED, INSTANCE, PRECEDENCE, FEASIBILITY,
+//     ANIMATE, GENERATIONS) -> std::env::var.
+//   - GA randomness must route through SeededRandom for reproducibility.
+//   - imports general/genetic-tsp + animation scenes -> use crate::des::...
+//   - async main -> fn main.
+// =============================================================================
+
+// =============================================================================
 // main-genetic-tsp.ts — solve the Travelling Salesman Problem with a
 // genetic algorithm modelled inside the DES engine, with optional
 // precedence constraints that exercise the branch-cutting pathway.

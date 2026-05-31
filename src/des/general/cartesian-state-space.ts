@@ -1,6 +1,24 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/cartesian-state-space.rs  (module des::general::cartesian_state_space)
+// 1:1 file move. Reversible index<->coordinate bridge for multi-dim discrete MDP/POMDP state spaces.
+//
+// Declarations → Rust:
+//   interface CartesianDimension / CoordinateTransition -> structs (#[derive(Clone)])
+//   interface CoordinateMDPSpec  -> struct holding boxed callbacks (see notes)
+//   class CartesianStateSpace    -> struct { dimensions, strides, num_states } + impl
+//   fn coordinateMDPToSpec       -> fn (CoordinateMDPSpec) -> MDPSpec
+//
+// Conversion notes (file-specific):
+//   - `CoordinateMDPSpec` fields `numActions`/`outcomes`/`isTerminal`/... are closures;
+//     model as trait methods or `Box<dyn Fn(&[usize], usize) -> _>` (optionals -> Option<...>).
+//   - dup-name guard uses `Set<string>` -> `HashSet<String>` (String: Hash+Eq).
+//   - integer indices are `usize`; `Math.floor(index/stride)%size` is integer division.
+//   - constructor `throw` are invariant violations -> `panic!` (or a fallible `new`).
+// =============================================================================
+
+// =============================================================================
 // CartesianStateSpace
 //
 // Shared indexing for multi-dimensional discrete MDP/POMDP state spaces.

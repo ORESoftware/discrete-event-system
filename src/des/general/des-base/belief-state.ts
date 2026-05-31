@@ -1,6 +1,27 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/belief_state.rs  (module des::general::des_base::belief_state)
+// 1:1 file move. Belief-state base for POMDP / HMM filtering (Bayesian update +
+// a pickAction policy hook).
+//
+// Declarations → Rust:
+//   class ActionObservationToken<A,O> / BeliefToken -> struct + impl Token
+//   interface POMDPCore<A,O>        -> trait POMDPCore<A, O> (transitionProb/observationProb fns)
+//   abstract class BeliefStateStation<A,O> -> trait/struct: DESStation (provides beliefUpdate;
+//                                              required pickAction hook)
+//
+// Conversion notes (file-specific):
+//   - `belief: number[]` (a Δ(S) simplex) -> `Vec<f64>`; `.slice()` copies -> `.clone()`.
+//   - `core: POMDPCore` held by composition -> `Box<dyn POMDPCore<A, O>>`.
+//   - Only `pickAction` is abstract -> required trait fn; `beliefUpdate`/
+//     `observationLikelihood` are concrete -> provided defaults.
+//   - `BeliefToken.belief: readonly number[]` -> store `Vec<f64>` (clone on emit).
+//   - `throw new Error` on length mismatch -> `Result`/`panic!`.
+//   - Pure numeric (no RNG/clock); a leaf POMDP planner may add one.
+// =============================================================================
+
+// =============================================================================
 // general/des-base/belief-state.ts — base class for BELIEF-STATE iterative
 // algorithms (POMDPs, hidden Markov filtering, simultaneous localisation
 // and mapping, dual control, …).

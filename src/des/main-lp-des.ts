@@ -1,6 +1,18 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-lp-des.rs   (fn main)
+// 1:1 file move. Solves an LP by running simplex as a DES (one pivot = one
+// tick) via Entering/Leaving/Pivot/Observer stations.
+//
+// Conversion notes (file-specific):
+//   - the four station roles -> struct + impl trait each.
+//   - pivot-rule choice (Dantzig/Bland) -> enum; tableau -> Vec<Vec<f64>>.
+//   - delegates to general LP modules -> use crate::des::general::...
+//   - top-level run -> fn main.
+// =============================================================================
+
+// =============================================================================
 // main-lp-des.ts — solve an LP using the DES engine.
 //
 // THE PATTERN

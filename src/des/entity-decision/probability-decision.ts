@@ -1,5 +1,32 @@
 'use strict'
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/entity-decision/probability-decision.rs  (module des::entity_decision::probability_decision)
+// 1:1 file move. Routes each item to one out-connection by a probability vector.
+//
+// Declarations → Rust:
+//   interface DecisionEntityGraph (empty, dup)  -> shared marker struct (define once)
+//   class ProbabilityDecisionEntity<S,T>        -> struct + impl (+ impl AbstractBidirectionalEntity,
+//                                                  HasComputedProperties, HasInternalQueue)
+//
+// Conversion notes (file-specific):
+//   - DETERMINISM: `bgn(Math.random())` in runTimeStep -> draw from the injected
+//     `rv`/RandomSource (shared/capabilities); never call Math.random directly.
+//   - `opts.probabilities: Array<{index, prob: BigNumber}>` -> `Vec<Branch { index, prob }>`;
+//     `math.BigNumber` -> decimal/f64; `math.add/sum/larger/smaller` -> ops.
+//   - ctor sums probs and `throw new Error('probability sum ...')` if != 1 ->
+//     validate in a constructor returning `Result` (or `panic!`).
+//   - `connectionsOutByIndex/InByIndex: Map<number, EntityConnection>` ->
+//     `HashMap<usize, _>` or a `Vec` indexed by branch.
+//   - `process.exit(0)` on a void-dequeue is a HARD ABORT -> do NOT port; log + break
+//     or `panic!` instead.
+//   - `dequeueIterator()` yielding `[k,v]` + `IsVoid.check` -> `VecDeque` drain w/ `Option`.
+//   - inner `for (const v of this.opts.probabilities)` SHADOWS the outer `v` (the
+//     entity) -> rename in Rust to avoid the shadow bug.
+//   - `getWithComputedProperties()` returns `Object.assign({}, this)` typed as Self ->
+//     a real computed DTO. `(outConn.target as any)?.id` -> concrete type.
+// =============================================================================
+
 import {AbstractBidirectionalEntity, EntityConnection, TimeStepOpts} from "../abstract/abstract";
 import {HasInternalQueue} from "../abstract/interfaces";
 import {bgn, HasComputedProperties, makeError} from "../general/general";
@@ -9,6 +36,7 @@ import {IsVoid, LinkedQueue} from "@oresoftware/linked-queue";
 import {RandomVariable} from "../random-variables/rv";
 import {AbstractMovingEntity, BasicMovingEntity} from "../entity-moving/moving";
 import {reg} from "../general/entity-registration";
+import {RandomSource, DEFAULT_RANDOM} from "../shared/capabilities";
 
 
 export interface DecisionEntityGraph {
@@ -36,7 +64,7 @@ export class ProbabilityDecisionEntity<S, T>
 
   maxQueueSize: number = -1;
 
-  constructor(id: string, v: ProbabilityDecisionEntity<S, T>['opts']) {
+  constructor(id: string, v: ProbabilityDecisionEntity<S, T>['opts'], private readonly rng: RandomSource = DEFAULT_RANDOM) {
     super(id);
     this.opts = Object.assign({}, v, {
       // defaults
@@ -129,7 +157,7 @@ export class ProbabilityDecisionEntity<S, T>
         break;
       }
 
-      const r = bgn(Math.random());
+      const r = bgn(this.rng.nextFloat());
 
       let sum = bgn(0);
       let index = -1;

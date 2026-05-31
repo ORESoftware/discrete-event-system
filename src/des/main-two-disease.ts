@@ -2,6 +2,18 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-two-disease.rs   (fn main)
+// 1:1 file move. Two-disease SIR with co-infection interaction (six
+// compartments: S, A, B, AB, R, D).
+//
+// Conversion notes (file-specific):
+//   - compartment / outcome states -> enum; mass-action incidence sampling
+//     -> inject RandomSource/SeededRandom.
+//   - imports des entity modules -> use crate::des::...
+//   - top-level run -> fn main.
+// =============================================================================
+
+// =============================================================================
 // Two-disease epidemic with co-infection interaction.
 //
 // MODEL

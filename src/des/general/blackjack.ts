@@ -1,6 +1,24 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/blackjack.rs  (module des::general::blackjack)
+// 1:1 file move. Blackjack environment solved by on-policy Monte-Carlo control.
+//
+// Declarations → Rust:
+//   fn drawCard / handTotal       -> assoc fns (vanilla helpers; handTotal returns a small struct)
+//   class Blackjack (impl Environment) -> struct Blackjack { rng, dealer/player cards } + impl Environment trait
+//   interface BlackjackTrainOpts / BlackjackResult -> structs (Default; optionals -> Option<T>)
+//   fn runBlackjackMC             -> free fn (or PureTransform<BlackjackTrainOpts, BlackjackResult>)
+//   static Blackjack.dealerStickPolicy -> associated fn
+//
+// Conversion notes (file-specific):
+//   - `this.rng = opts.rng ?? Math.random` -> inject a `RandomSource`; default only at the edge.
+//     RNG is threaded as a closure `() => number` here; pass `&mut impl Rng` in Rust.
+//   - `step` returns an inline object -> a `StepResult { next_state, reward, done }` struct.
+//   - `implements Environment` is structural -> write explicit `impl Environment for Blackjack`.
+// =============================================================================
+
+// =============================================================================
 // general/blackjack.ts — the textbook BLACKJACK environment from
 // Sutton & Barto §5.1, solved by ON-POLICY MONTE CARLO CONTROL.
 //

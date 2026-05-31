@@ -1,6 +1,25 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/lp-des.rs  (module des::general::lp_des)
+// 1:1 file move. Two-phase simplex driven as a DES (entering/leaving/pivot/observer stations; one pivot = one tick).
+//
+// Declarations → Rust:
+//   interface DESSimplexTrace / DESSimplexOptions -> structs (Default; optionals -> Option<T>)
+//   interface DESSimplexSolution extends LPSolution -> struct (compose/flatten LPSolution fields)
+//   class SimplexState / Preprocessed -> structs (shared mutable tableau + preprocessing data)
+//   class Entering/Leaving/Pivot/PhaseTransition/Observer Station (extend SimplexRoleStation)
+//                                    -> structs `impl` a SimplexRole/station trait (base -> trait)
+//   fn solveLPViaDES               -> FallibleTransform<LPProblem, DESSimplexSolution> or fn
+//
+// Conversion notes (file-specific):
+//   - Dense tableau + basis live in SimplexState, mutated by stations each tick -> shared `&mut`
+//     state (Rc<RefCell<SimplexState>> or pass &mut); `number[][]` -> matrix/Vec<Vec<f64>>.
+//   - Pivot rule (Dantzig/Bland) -> enum; phase-1/phase-2 share the loop with a swapped cost row.
+//   - `extends LPSolution` -> no interface inheritance; compose. Failure via LP status, not throw.
+// =============================================================================
+
+// =============================================================================
 // LP solver implemented as a DES.
 //
 // The user observed:

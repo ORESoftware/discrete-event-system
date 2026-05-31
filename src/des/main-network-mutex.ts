@@ -1,5 +1,16 @@
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-network-mutex.rs   (fn main)
+// 1:1 file move. Thin runner: distributed-mutex DES (source/worker/lock) with
+// invariant checks, prints summary + completion order.
+//
+// Conversion notes (file-specific):
+//   - top-level main() -> fn main(); process.env params (ITEMS, INTERARRIVAL,
+//     PROCESSING_TICKS, GRANT_DELAY_TICKS) -> std::env::var.
+//   - delegates to general/network-mutex -> use crate::des::general::network_mutex.
+// =============================================================================
+
 import {runNetworkMutexSimulation} from './general/network-mutex';
 
 function fmt(n: number): string {

@@ -2,6 +2,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-factory-floor-track3t.rs   (fn main)
+// 1:1 file move. Warehouse/factory-floor sim comparing a conventional floor vs
+// a Track3t-enabled floor; the smart forklift is a QMDP POMDP controller.
+//
+// Conversion notes (file-specific):
+//   - POMDP belief over the hidden pallet location -> Vec<f64>; QMDP solve ->
+//     value iteration on the MDP.
+//   - stochastic location/noise sampling -> inject RandomSource/SeededRandom.
+//   - imports animation + warehouse comparison modules -> use crate::des::...
+//   - fs/path output -> std::fs; top-level run -> fn main.
+// =============================================================================
+
+// =============================================================================
 // Track3t-style warehouse/factory-floor simulation.
 //
 // Runs the same job plan through:

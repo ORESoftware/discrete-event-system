@@ -1,7 +1,30 @@
 'use strict';
 
 // =============================================================================
-// JSON adapter for computer-network packet DES.
+// RUST MIGRATION  —  target: src/des/general/adapters/computer-network-adapter.rs
+//   (module des::general::adapters::computer_network_adapter)
+// 1:1 file move. JSON adapter for the packet-switched computer-network DES, with
+// an animation built from a lazily-imported scene module.
+//
+// Declarations → Rust:
+//   interface ComputerNetworkParams            -> struct (builtin?/problem? -> Option)
+//   const networkNodeSchema/networkLinkSchema/networkFlowSchema/
+//         computerNetworkProblemSchema/computerNetworkSchema: ParamSchema
+//                                        -> serde + validator metadata
+//   const adapter: DESModelRegistration<P,R>   -> struct + impl ModelAdapter trait;
+//             registerModel(adapter) -> explicit registration
+//   fn problemFromBuiltin / fmt                 -> plain `fn` helpers
+//
+// Conversion notes (file-specific):
+//   - `builtin: 'small-enterprise'|'bottleneck-lab'`, node `kind` host/router/switch,
+//     flow `protocol` raw/tcp/udp/http, `routingMetric` latency/cost/hop -> enums.
+//   - GotChA: `animate` uses dynamic `await import(...)` of the FrameRecorder and the
+//     computer-network scene module — in Rust these are ordinary module paths
+//     (`use crate::des::animation::...`), no lazy/dynamic import.
+//   - `params.problem ?? problemFromBuiltin(params.builtin)` -> Option::unwrap_or_else;
+//     problemFromBuiltin is a `match` on the builtin enum (default small-enterprise).
+//   - CSV emits a single union schema across flow/link/node rows with blank columns
+//     -> consider three typed row structs or a tagged enum row.
 // =============================================================================
 
 import {DESModelRegistration, DESRuntimeConfig, ParamSchema} from '../des-spec';

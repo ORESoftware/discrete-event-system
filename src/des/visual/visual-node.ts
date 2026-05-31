@@ -1,5 +1,38 @@
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/visual/visual-node.rs  (module des::visual::visual_node)
+// 1:1 file move. Visualization wrapper nodes mirroring the entity graph for UI.
+//
+// Declarations → Rust:
+//   class VisualNodeObserver extends EntityObserver -> struct + impl EntityObserver
+//   class VisualConnection                          -> struct { source, target }
+//   enum VisualNodeEvents { FOO = 'FOO' }           -> enum (#[serde(rename_all=...)] string-valued)
+//   class VisualNode<T> implements IsObservable     -> struct + impl IsObservable
+//   class OneInOneOut/OneInManyOut/ZeroInManyOut/ZeroOutManyIn extends VisualNode
+//                                                   -> marker subtypes (newtype wrappers
+//                                                      or an arity enum; no `extends`)
+//   class ManyInManyOut                             -> struct
+//
+// Conversion notes (file-specific):
+//   - `VisualNodeEvents` is a STRING enum -> Rust enum with `#[serde(rename_all)]`.
+//   - The ctor wires `subscription` to a CLOSURE that captures `this` then iterates
+//     `this.subscribers` -> self-referential observer; use `Rc<RefCell<..>>` +
+//     `FnMut`/`move` and mind the borrow checker (don't hold a borrow across `doUpdate`).
+//   - `fn: ((type,m)=>void|null) = null as any` placeholder -> `Option<Box<dyn FnMut(..)>>`.
+//   - `connectionsOut/In: Map<VisualNode, VisualConnection>` keyed by NODE IDENTITY
+//     -> key by id/index (`HashMap<NodeId, VisualConnection>`); a whole struct as a
+//     map key needs `Hash + Eq` and is the wrong model.
+//   - `sub()` builds an anonymous `new class extends EntityObserver {..}` -> a
+//     closure-backed adapter struct implementing the trait.
+//   - Many `throw new Error("Method not implemented.")` (subscribeTo,
+//     subscribeWithFrequency, sendUpdateToSubs) -> `unimplemented!()`.
+//   - `subscribers: Set<EntityObserver>` / `subscribersByEvent: Map<..>` ->
+//     `Vec<Rc<RefCell<dyn EntityObserver>>>` / `HashMap<String, Vec<..>>`.
+//   - The empty `OneInOneOut`… subclasses are arity markers — likely collapse to
+//     one struct + an arity field/enum rather than four empty types.
+// =============================================================================
+
 import {Entity, EntityObserver, StationaryEntity} from "../abstract/abstract";
 import {IsObservable} from "../abstract/interfaces";
 

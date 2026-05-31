@@ -1,6 +1,18 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-stochastic-lp.rs   (fn main)
+// 1:1 file move. CLI: two-stage stochastic LP solved three ways (closed-form
+// newsvendor, SAA monolithic LP, Benders/L-shaped as a DES).
+//
+// Conversion notes (file-specific):
+//   - process.env params (N, SEED, BUDGET, VERBOSE) -> std::env::var.
+//   - scenario sampling is seeded -> route through SeededRandom.
+//   - delegates to general/stochastic-lp -> use crate::des::general::stochastic_lp.
+//   - async main -> fn main.
+// =============================================================================
+
+// =============================================================================
 // main-stochastic-lp.ts — Two-stage stochastic LP via DES + incremental LP.
 //
 // PROBLEM: 2-product capacity-planning under demand uncertainty.

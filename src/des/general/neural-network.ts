@@ -1,6 +1,28 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/neural-network.rs  (module des::general::neural_network)
+// 1:1 file move. Feed-forward MLP + supervised/Q-learning/neural-ODE DES stations.
+//
+// Declarations → Rust:
+//   type ActivationName / NeuralODESolverName (string unions) -> enums
+//   type StateEncoder<S> = (s: S) => NumericVector            -> Fn(S) -> Vec<f64> bound / boxed closure
+//   interface DenseLayerConfig/SupervisedSample/SupervisedNeuralNetDESResult/XorNeuralNetOptions/
+//             NeuralQLearningOptions/NeuralQLearningResult/NeuralODEOptions/ForwardTrace -> structs
+//   class FeedForwardNetwork implements TrainableNeuralNetwork -> struct + impl trait
+//   class SupervisedDatasetSource/NeuralODESolverStation/NeuralPredictionSink extends DESStation
+//                                                              -> structs + impl DESStation trait
+//   class NeuralQLearningAgent<S> extends RLAgentStation<S, number> -> struct + impl agent trait
+//   class NeuralODESolveToken/NeuralODESolutionToken implements Token -> structs + impl Token
+//   fn run*/solveNeuralODE/oneHotEncoder/argmax + const XOR_DATASET -> fns / const
+//
+// Conversion notes (file-specific):
+//   - INJECT RNG: weight init / ε-greedy use `opts.rng ?? Math.random` -> take a `RandomSource`
+//     (shared/capabilities); never default to the global inside the net.
+//   - imports the ODE solvers (euler/rk2Heun/rk4/rk45) from ode.ts -> use crate::des::general::ode::*.
+//   - weights/activations are `number[]`/`number[][]` -> `Vec<f64>`/`Vec<Vec<f64>>` (or ndarray).
+//   - generic agent param <S> carries over; the encoder closure is the boundary to a typed state.
+// =============================================================================
 // general/neural-network.ts
 //
 // Feed-forward neural networks as DES components:

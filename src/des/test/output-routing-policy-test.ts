@@ -1,6 +1,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/output_routing_policy_test.rs   (integration test crate)
+// 1:1 file move. Exercises OutputConnectionRouter against moving/processing
+// entities, so it is an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc expect()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - bgn()/BigNumber values -> a decimal crate or f64 (pick ONE engine-wide).
+//   - inline sink object literals -> small test structs implementing the sink
+//     trait; `received: ProcessableMovingEntity[]` -> Vec<...>.
+// =============================================================================
+
+// =============================================================================
 // test/output-routing-policy-test.ts -- competitive out-connection policies.
 // =============================================================================
 

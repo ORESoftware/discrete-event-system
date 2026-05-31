@@ -1,6 +1,18 @@
 #!/usr/bin/env ts-node
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-fibonacci-recursion.rs   (fn main)
+// 1:1 file move. Wires a small entity graph (source -> value-adder/splitter ->
+// sink) that computes Fibonacci by recurrent feedback.
+//
+// Conversion notes (file-specific):
+//   - const run = () => {...} closure + top-level invocation -> fn main().
+//   - imports des entity modules (entity-source, value-adder, entity-splitter,
+//     generic-sink, observers) -> use crate::des::...
+//   - mathjs bgn(500) stepSize -> f64 / decimal.
+// =============================================================================
+
 import {DefiniteFiniteSource, EntitySource} from "./entity-source/source";
 import {Entity, EntityObserver} from "./abstract/abstract";
 import {bgn, fisherYatesShuffle} from "./general/general";

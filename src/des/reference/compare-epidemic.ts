@@ -2,6 +2,28 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/reference/compare-epidemic.rs  (module des::reference::compare_epidemic)
+// 1:1 file move. CLI BINARY: diff framework vs. FEL-reference event logs.
+//
+// Declarations → Rust:
+//   const fmt (fn)            -> free fn
+//   interface RunSummary      -> struct RunSummary { label, events, start, end, ... }
+//   function summarize        -> free fn `fn summarize(label, file) -> RunSummary`
+//   function compareRow       -> free fn (prints a comparison line)
+//   function main()           -> `fn main()` of a `[[bin]]`/examples target
+//
+// Conversion notes (file-specific):
+//   - ENTRY SCRIPT (shebang + `main()` at EOF + `process.argv`) -> a Rust binary;
+//     `process.argv[2/3]` -> `std::env::args`.
+//   - Event records are `Record<string, any>` -> typed `#[derive(Deserialize)]`
+//     structs deserialized from the JSONL (avoid `any`). Same event shapes as logger.rs.
+//   - `events.find(..)!` non-null assertions -> `Option` + `expect`.
+//   - nested `Record<string, Record<string, number>>` -> `HashMap<String, HashMap<String,u64>>`.
+//   - `Number.POSITIVE_INFINITY` -> `f64::INFINITY`; `padEnd/padStart/toFixed` -> `format!`.
+//   - `Math.sqrt`/`Math.abs` -> `f64` methods; `Object.entries/values` -> map iteration.
+// =============================================================================
+
+// =============================================================================
 // Side-by-side comparison: framework (no-FEL, station-driven) vs. classical
 // FEL reference. Reads both JSONL event logs and computes metrics side-by-side
 // with absolute and relative differences plus rough Monte-Carlo tolerance.

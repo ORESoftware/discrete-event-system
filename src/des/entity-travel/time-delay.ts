@@ -1,5 +1,27 @@
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/entity-travel/time-delay.rs  (module des::entity_travel::time_delay)
+// 1:1 file move. A travel/time-delay node (currently a mostly-unimplemented stub).
+//
+// Declarations → Rust:
+//   interface TimeDelayEntityGraphData -> struct { processed_count } (composes EntityGraphData)
+//   interface DelayTimeStepOpts        -> struct (extends TimeStepOpts; currently empty)
+//   class TimeDelayOrTravelEntity<S,T> -> struct + impl (+ impl AbstractBidirectionalEntity,
+//                                         HasComputedProperties, HasInternalQueue)
+//
+// Conversion notes (file-specific):
+//   - `doValidation()`/`takeItem()` are `throw new Error("Method not implemented.")`
+//     stubs -> `unimplemented!()`/`todo!()` in Rust.
+//   - `queue: LinkedQueue<E, E>` (keyed by the entity itself) -> `VecDeque<_>`;
+//     entities behind `Rc<RefCell>`/index.
+//   - `rv: RandomVariable` must carry an injected RandomSource (no Math.random).
+//   - `getWithComputedProperties(): this` returns `Object.assign({}, this)` (a shallow
+//     clone typed as `this`) -> return a real computed DTO, not `Self`.
+//   - `math.BigNumber` stepSize -> decimal/f64; `getGraphData()` is a hardcoded stub.
+//   - `(m as any)?.id` dynamic access -> concrete entity type.
+// =============================================================================
+
 import {number} from "mathjs";
 import * as math from "mathjs";
 import {AbstractBidirectionalEntity, TimeStepOpts} from "../abstract/abstract";

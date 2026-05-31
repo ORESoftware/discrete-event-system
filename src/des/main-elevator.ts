@@ -2,6 +2,18 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-elevator.rs   (fn main)
+// 1:1 file move. 3-elevator, 4-floor building: passenger-arrival simulation
+// layered with an MDP-based dispatch control policy on one tick clock.
+//
+// Conversion notes (file-specific):
+//   - car/floor station classes -> struct + impl trait.
+//   - passenger-arrival sampling -> inject RandomSource/SeededRandom.
+//   - MDP dispatch policy -> use crate::des::general::value_iteration.
+//   - top-level run -> fn main.
+// =============================================================================
+
+// =============================================================================
 // 3-elevator, 4-floor building as a discrete-event system — this one
 // blends both halves: a SIMULATION of passenger arrivals layered with
 // an MDP-based CONTROL policy that dispatches cars. Both halves run on

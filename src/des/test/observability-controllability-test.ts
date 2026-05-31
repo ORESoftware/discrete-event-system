@@ -1,6 +1,20 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/observability_controllability_test.rs   (integration test crate)
+// 1:1 file move. Drives control-systems/observability-controllability stations
+// plus shared LinAlg, so it is an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - matrix rank uses an epsilon threshold -> compare via approx::assert_*_eq!
+//     with an explicit tolerance; matrices -> the shared linalg types.
+// =============================================================================
+
+// =============================================================================
 // Unit tests for general/control-systems/observability-controllability.ts.
 // Run with:
 //   ./node_modules/.bin/ts-node src/des/test/observability-controllability-test.ts

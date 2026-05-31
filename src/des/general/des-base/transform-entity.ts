@@ -1,6 +1,33 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/transform_entity.rs  (module des::general::des_base::transform_entity)
+// 1:1 file move. Zero-backlog stationary entity for modeling ordinary functions
+// as DES graph nodes.
+//
+// Declarations → Rust:
+//   interface TransformContext<I,O>   -> struct TransformContext<'a, I, O> (holds &station + emit)
+//   type TransformResult<O>           -> enum/Option: `Option<SmallVec<O>>` or `Vec<O>` (None/[]=drop)
+//   type TransformFunction<I,O>       -> boxed `Fn(I, &mut TransformContext) -> TransformResult`
+//   interface TransformEntityOptions  -> struct (#[derive(Default)]; closure fields boxed `Fn`)
+//   abstract class TransformEntity    -> trait TransformEntity: DESStation (provided wiring +
+//                                         `process_transform_result`); state via a core struct
+//   abstract class PureTransformEntity -> trait w/ required `transform()` hook (hasWork=false)
+//   abstract class MemoryTransformEntity -> trait w/ required `transform_queued()` hook
+//   class FunctionEntity              -> struct FunctionEntity { fn: Box<dyn Fn..> }
+//
+// Conversion notes (file-specific):
+//   - TEMPLATE METHOD: base owns `take`/`processTransformResult`; leaves implement
+//     only `transform` / `transformQueued` hooks.
+//   - `outputChannel?: ChannelName | (fn)` is a union -> enum { Fixed(String), Compute(Box<dyn Fn..>) }.
+//   - `inputChannels: Set<ChannelName>` -> `HashSet<String>`.
+//   - `token as I` downcasts in `validateTransformInput` -> typed channels or `dyn Any` downcast.
+//   - `throw new Error` on unexpected channel -> `Result`/`panic!`.
+//   - `override take`/`override hasWork` are virtual overrides -> just the trait
+//     impl's own methods (no inheritance); Pure vs Memory differ in `hasWork`.
+// =============================================================================
+
+// =============================================================================
 // TransformEntity
 //
 // A zero-backlog stationary entity for modeling ordinary program functions.

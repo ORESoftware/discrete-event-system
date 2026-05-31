@@ -1,7 +1,24 @@
 'use strict';
 
 // =============================================================================
-// JSON adapter for stochastic-flow MDP.
+// RUST MIGRATION  —  target: src/des/general/adapters/stochastic-flow-mdp-adapter.rs
+//   (module des::general::adapters::stochastic_flow_mdp_adapter)
+// 1:1 file move. JSON adapter registering the stochastic-flow MDP (max-flow under
+// stochastic edge availability).
+//
+// Declarations → Rust:
+//   interface StochasticFlowMDPParams          -> struct (builtin?/problem?/seed? -> Option)
+//   const stochasticFlowEdgeSchema/stochasticFlowProblemSchema/stochasticFlowMDPSchema:
+//         ParamSchema                          -> serde + validator metadata
+//   const stochasticFlowMDPAdapter: DESModelRegistration<P,R> -> struct + impl trait;
+//             registerModel(...) -> explicit registration
+//
+// Conversion notes (file-specific):
+//   - `builtin: 'small-stochastic-network'` literal -> enum.
+//   - `runtime.seed ?? params.seed ?? 7`, `?? buildDefault…()` -> Option::unwrap_or chain.
+//   - `row.state.capacities` is serialized into CSV via jsonCsvRow -> serde_json.
+//   - NOTE: near-duplicate of the stochastic-flow-mdp block in
+//     network-flow-adapters.ts; both register id 'stochastic-flow-mdp'.
 // =============================================================================
 
 import {DESModelRegistration, DESRuntimeConfig, ParamSchema} from '../des-spec';

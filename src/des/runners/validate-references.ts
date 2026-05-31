@@ -2,6 +2,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-references.rs  (a `fn main` binary;
+//                    an `examples/…rs` also works)
+// 1:1 file move. Compares four independent reference kernels (FEL-individual,
+// Gillespie, ODE-RK4, PerIndividual) via Welch t-tests + a deterministic run.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - env (`N`) -> `std::env::var`.
+//   - kernel seeding (`withSeed`/`Date.now`) -> `SeededRandom`/`Clock`.
+//   - `console.log` -> `println!`.
+// =============================================================================
+
+// =============================================================================
 // Compare four independent reference kernels against the framework's new
 // PerIndividualProcessor. The four references are:
 //

@@ -1,6 +1,24 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/classical-optimization-models.rs  (module des::general::classical_optimization_models)
+// 1:1 file move. Classic OR routines as DES station graphs: QP, assignment (Hungarian/auction), VRP, job/flow-shop.
+//
+// Declarations → Rust:
+//   interface QP*/Assignment*/VRP*/JobShop*/FlowShop*/JobOperation/ScheduledOperation -> structs
+//   class *Token (impl Token)      -> structs `impl Token`
+//   class *Station (extend DESStation) -> structs `impl` the station trait
+//   fn runQPProjectedGradient/runQPCoordinateDescent/runHungarianAssignment/runAuctionAssignment/
+//      runVRPSavings/runVRPNearestNeighbor/runJobShopDispatch/runFlowShopNEH -> fns (or PureTransform)
+//
+// Conversion notes (file-specific):
+//   - `AssignmentResult` here is distinct from hungarian.rs's — keep module-qualified (no global merge).
+//   - Many token classes -> nominal `impl Token` structs; station inheritance -> traits.
+//   - `cloneMatrix`/`dot`/`norm2` helpers -> `shared/linalg.rs` (`VecOps`/`LinAlg`); `number[][]` -> matrix type.
+//   - Largely deterministic; `Preconditions` throw on bad params -> `Result`/`panic!`.
+// =============================================================================
+
+// =============================================================================
 // general/classical-optimization-models.ts
 //
 // Additional classic optimization routines as explicit DES station graphs:
