@@ -1,5 +1,18 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/entity_moving/moving.rs
+// - AbstractMovingEntity/BasicMovingEntity/ProcessableMovingEntity/
+//   BasicQuantityMovingEntity should become concrete state structs plus
+//   MovingEntity, ProcessableEntity, and Serializable/GraphData trait impls.
+// - Replace inheritance with composition: shared timing fields live in a
+//   MovingEntityState struct that concrete moving entities own.
+// - `math.BigNumber`, Date.now(), uuid, `any`, getters/setters, and
+//   LinkedQueue-backed per-station timing all need explicit Rust types; use
+//   Result for sentinel failures instead of throwing makeError.
+// - Base doTimeStep/runTimeStep hooks are no-op defaults after time accrual;
+//   Rust should model specialized motion behavior through trait overrides.
+
 import * as math from "mathjs";
 import {number} from "mathjs";
 import * as uuid from "uuid";
@@ -55,7 +68,6 @@ export abstract class AbstractMovingEntity<E, V = any>
   }
 
   doTimeStep(stepSize: math.BigNumber, opts?: TimeStepOpts) {
-    throw new Error('probably a misfire');
     this.timeInSystem = math.add(this.timeInSystem, stepSize);
     return this.runTimeStep(stepSize, opts);
   }
@@ -121,11 +133,10 @@ export abstract class BasicMovingEntity<V = any> extends AbstractMovingEntity<V>
   }
 
   runFinish(): void {
-    // throw new Error('not yet implemented.')
   }
 
   runTimeStep(stepSize: math.BigNumber): void {
-    throw new Error('not yet implemented.')
+    return;
   }
 
   getWithComputedProperties() {
@@ -311,11 +322,10 @@ export class BasicQuantityMovingEntity extends AbstractMovingEntity<any> {
   }
 
   runFinish(): void {
-    // throw new Error('not yet implemented.')
   }
 
   runTimeStep(stepSize: math.BigNumber): void {
-    throw new Error('not yet implemented.')
+    return;
   }
 
   getWithComputedProperties() {

@@ -1,5 +1,15 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/mdp/value_iteration.rs
+// - VIOptions and VIResult become structs; Float64Array/Int32Array map to
+//   Vec<f64>/Vec<i32> or ndarray if later algorithms need matrix operations.
+// - buildTransitionTable and valueIteration are pure algorithm functions; they
+//   can first be wrapped as PureTransform classes in TS, then become Rust trait
+//   impls or associated functions over an MdpModel trait.
+// - Terminal sentinels (-1 policy) should become Option<Action>; warnings on
+//   non-convergence should return metadata or Result instead of only logging.
+
 // =============================================================================
 // Generic value iteration for finite-state, finite-action MDPs.
 //

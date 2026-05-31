@@ -1,3 +1,7 @@
+// RUST MIGRATION: Target module `src/des/general/adapters/nonlinear_forecasting_adapter.rs`.
+// RUST MIGRATION: Convert nonlinear forecasting adapter registration and animation helpers into adapter structs/functions around `DESModelSpec`.
+// RUST MIGRATION: Map forecast params, station panels, traces, and frame captions to `serde` config/result structs; runtime paths become `PathBuf`.
+// RUST MIGRATION: Return `Result<_, ValidationError>` for invalid horizon, station, and forecast input validation.
 'use strict';
 
 // JSON adapter for nonlinear MDP/POMDP forecasting.

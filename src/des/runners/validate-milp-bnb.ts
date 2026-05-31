@@ -1,3 +1,8 @@
+// RUST MIGRATION:
+// - Target: src/bin/validate_milp_bnb.rs.
+// - Keep this as a CLI validation binary with Result-returning main; replace process.exitCode with ExitCode.
+// - Convert brute-force/check scenario data to nominal structs and keep Vec<f64>/Vec<i32> ownership explicit.
+// - Route MILP and LP relaxation calls through migrated solver modules, with tolerance helpers kept private.
 'use strict';
 
 // =============================================================================

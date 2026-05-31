@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Internal solver network</title>
 <style>
   body {
@@ -19,15 +20,26 @@
   header .subtitle { margin: 4px 0 0; font-size: 13px; color: #666; }
   main {
     padding: 16px 24px;
+    box-sizing: border-box;
+    max-width: 100vw;
   }
   .stage-wrap {
     background: #fff;
     border: 1px solid #ddd;
     border-radius: 6px;
     padding: 8px;
-    display: inline-block;
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: calc(100vw - 48px);
+    overflow: hidden;
   }
-  svg.stage { display: block; }
+  svg.stage {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+  }
   .controls {
     margin-top: 12px;
     display: flex;
@@ -59,6 +71,31 @@
     border-radius: 4px;
     font-size: 13px;
   }
+  .variant-controls {
+    margin: 0 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 13px;
+  }
+  .variant-controls select {
+    padding: 6px 8px;
+    background: #fff;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+    font-size: 13px;
+  }
+  .variant-selectors {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .variant-summary {
+    color: #555;
+    font-size: 12px;
+  }
   .caption {
     margin-top: 6px;
     font-family: SF Mono, Menlo, Consolas, monospace;
@@ -72,6 +109,15 @@
     font-size: 12px;
     border-top: 1px solid #eee;
   }
+  @media (max-width: 700px) {
+    header { padding: 12px 14px 8px; }
+    main { padding: 12px 14px; }
+    .stage-wrap { max-width: calc(100vw - 28px); padding: 6px; }
+    .controls { gap: 8px; }
+    .controls button { padding: 6px 10px; }
+    .controls .ts-readout { min-width: 160px; }
+    .variant-controls { gap: 8px; }
+  }
 </style>
 </head>
 <body>
@@ -80,6 +126,10 @@
   <p class="subtitle">Solver station emits incumbent tokens; wall-clock checker emits stop tokens</p>
 </header>
 <main>
+  <div class="variant-controls" id="variant-controls" hidden>
+    <span class="variant-selectors" id="variant-selectors"></span>
+    <span class="variant-summary" id="variant-summary"></span>
+  </div>
   <div class="stage-wrap"><svg id="stage" class="stage"></svg></div>
   <div class="caption" id="caption">&nbsp;</div>
   <div class="controls">
@@ -95,7 +145,10 @@
         <option value="1" selected>1x</option>
         <option value="2">2x</option>
         <option value="4">4x</option>
+        <option value="5">5x</option>
         <option value="8">8x</option>
+        <option value="10">10x</option>
+        <option value="15">15x</option>
         <option value="16">16x</option>
       </select>
     </label>
@@ -106,16 +159,15 @@
   Press space to play/pause, &larr;/&rarr; to step.
 </footer>
 
-<script type="application/json" id="anim-data">{"width":900,"height":560,"fps":8,"title":"Internal solver network","subtitle":"Solver station emits incumbent tokens; wall-clock checker emits stop tokens","background":"#ffffff","frames":[{"t":1,"tick":0,"shapes":[{"kind":"rect","x":0,"y":0,"w":900,"h":560,"fill":"#f8fafc"},{"kind":"text","x":450,"y":36,"text":"knapsack-dp  complete","fontSize":20,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"line","x1":142,"y1":185,"x2":213,"y2":185,"stroke":"#64748b","strokeWidth":2},{"kind":"line","x1":345,"y1":185,"x2":524,"y2":185,"stroke":"#64748b","strokeWidth":2},{"kind":"line","x1":351,"y1":320,"x2":524,"y2":209,"stroke":"#ef4444","strokeWidth":2,"dasharray":"6,6","opacity":0.25},{"kind":"circle","x":294.11764705882354,"y":185,"r":9,"fill":"#2563eb","stroke":"#ffffff","strokeWidth":2,"title":"SolverSolutionToken"},{"kind":"rect","x":32,"y":159,"w":116,"h":52,"fill":"#dbeafe","stroke":"#1e293b","rx":6},{"kind":"rect","x":197,"y":153,"w":156,"h":64,"fill":"#ede9fe","stroke":"#1e293b","rx":6},{"kind":"rect","x":191,"y":302,"w":168,"h":56,"fill":"#dcfce7","stroke":"#1e293b","rx":6},{"kind":"rect","x":514,"y":155,"w":172,"h":60,"fill":"#fef3c7","stroke":"#1e293b","rx":6},{"kind":"text","x":90,"y":189,"text":"source","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":275,"y":189,"text":"knapsack-dp","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":275,"y":334,"text":"time checker","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":600,"y":189,"text":"solution sink","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":90,"y":82,"text":"iteration 1","fontSize":15,"fill":"#334155"},{"kind":"text","x":90,"y":108,"text":"objective -20.0000","fontSize":15,"fill":"#334155"},{"kind":"text","x":90,"y":134,"text":"feasible","fontSize":15,"fill":"#047857","fontWeight":"bold"},{"kind":"rect","x":520,"y":318,"w":260,"h":14,"fill":"#e2e8f0","stroke":"#94a3b8","rx":3},{"kind":"rect","x":520,"y":318,"w":0.0014444444444444446,"h":14,"fill":"#22c55e","rx":3},{"kind":"text","x":650,"y":356,"text":"wall clock 1.0000 / 180000.0000 ms","fontSize":13,"anchor":"middle","fill":"#334155"},{"kind":"text","x":90,"y":430,"text":"value=20.0000 weight=2.0000/10.0000","fontSize":14,"fill":"#0f172a"}],"caption":"knapsack-dp: objective=-20.0000 feasible"},{"t":2,"tick":1,"shapes":[{"kind":"rect","x":0,"y":0,"w":900,"h":560,"fill":"#f8fafc"},{"kind":"text","x":450,"y":36,"text":"knapsack-dp  complete","fontSize":20,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"line","x1":142,"y1":185,"x2":213,"y2":185,"stroke":"#64748b","strokeWidth":2},{"kind":"line","x1":345,"y1":185,"x2":524,"y2":185,"stroke":"#64748b","strokeWidth":2},{"kind":"line","x1":351,"y1":320,"x2":524,"y2":209,"stroke":"#ef4444","strokeWidth":2,"dasharray":"6,6","opacity":0.25},{"kind":"circle","x":313.2352941176471,"y":185,"r":9,"fill":"#2563eb","stroke":"#ffffff","strokeWidth":2,"title":"SolverSolutionToken"},{"kind":"rect","x":32,"y":159,"w":116,"h":52,"fill":"#dbeafe","stroke":"#1e293b","rx":6},{"kind":"rect","x":197,"y":153,"w":156,"h":64,"fill":"#ede9fe","stroke":"#1e293b","rx":6},{"kind":"rect","x":191,"y":302,"w":168,"h":56,"fill":"#dcfce7","stroke":"#1e293b","rx":6},{"kind":"rect","x":514,"y":155,"w":172,"h":60,"fill":"#fef3c7","stroke":"#1e293b","rx":6},{"kind":"text","x":90,"y":189,"text":"source","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":275,"y":189,"text":"knapsack-dp","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":275,"y":334,"text":"time checker","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":600,"y":189,"text":"solution sink","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":90,"y":82,"text":"iteration 2","fontSize":15,"fill":"#334155"},{"kind":"text","x":90,"y":108,"text":"objective -50.0000","fontSize":15,"fill":"#334155"},{"kind":"text","x":90,"y":134,"text":"feasible","fontSize":15,"fill":"#047857","fontWeight":"bold"},{"kind":"rect","x":520,"y":318,"w":260,"h":14,"fill":"#e2e8f0","stroke":"#94a3b8","rx":3},{"kind":"rect","x":520,"y":318,"w":0.0014444444444444446,"h":14,"fill":"#22c55e","rx":3},{"kind":"text","x":650,"y":356,"text":"wall clock 1.0000 / 180000.0000 ms","fontSize":13,"anchor":"middle","fill":"#334155"},{"kind":"text","x":90,"y":430,"text":"value=50.0000 weight=7.0000/10.0000","fontSize":14,"fill":"#0f172a"}],"caption":"knapsack-dp: objective=-50.0000 feasible"},{"t":3,"tick":2,"shapes":[{"kind":"rect","x":0,"y":0,"w":900,"h":560,"fill":"#f8fafc"},{"kind":"text","x":450,"y":36,"text":"knapsack-dp  complete","fontSize":20,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"line","x1":142,"y1":185,"x2":213,"y2":185,"stroke":"#64748b","strokeWidth":2},{"kind":"line","x1":345,"y1":185,"x2":524,"y2":185,"stroke":"#64748b","strokeWidth":2},{"kind":"line","x1":351,"y1":320,"x2":524,"y2":209,"stroke":"#ef4444","strokeWidth":2,"dasharray":"6,6","opacity":0.25},{"kind":"circle","x":332.3529411764706,"y":185,"r":9,"fill":"#2563eb","stroke":"#ffffff","strokeWidth":2,"title":"SolverSolutionToken"},{"kind":"rect","x":32,"y":159,"w":116,"h":52,"fill":"#dbeafe","stroke":"#1e293b","rx":6},{"kind":"rect","x":197,"y":153,"w":156,"h":64,"fill":"#ede9fe","stroke":"#1e293b","rx":6},{"kind":"rect","x":191,"y":302,"w":168,"h":56,"fill":"#dcfce7","stroke":"#1e293b","rx":6},{"kind":"rect","x":514,"y":155,"w":172,"h":60,"fill":"#fef3c7","stroke":"#1e293b","rx":6},{"kind":"text","x":90,"y":189,"text":"source","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":275,"y":189,"text":"knapsack-dp","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":275,"y":334,"text":"time checker","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":600,"y":189,"text":"solution sink","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":90,"y":82,"text":"iteration 3","fontSize":15,"fill":"#334155"},{"kind":"text","x":90,"y":108,"text":"objective -55.0000","fontSize":15,"fill":"#334155"},{"kind":"text","x":90,"y":134,"text":"feasible","fontSize":15,"fill":"#047857","fontWeight":"bold"},{"kind":"rect","x":520,"y":318,"w":260,"h":14,"fill":"#e2e8f0","stroke":"#94a3b8","rx":3},{"kind":"rect","x":520,"y":318,"w":0.0014444444444444446,"h":14,"fill":"#22c55e","rx":3},{"kind":"text","x":650,"y":356,"text":"wall clock 1.0000 / 180000.0000 ms","fontSize":13,"anchor":"middle","fill":"#334155"},{"kind":"text","x":90,"y":430,"text":"value=55.0000 weight=9.0000/10.0000","fontSize":14,"fill":"#0f172a"}],"caption":"knapsack-dp: objective=-55.0000 feasible"},{"t":4,"tick":3,"shapes":[{"kind":"rect","x":0,"y":0,"w":900,"h":560,"fill":"#f8fafc"},{"kind":"text","x":450,"y":36,"text":"knapsack-dp  complete","fontSize":20,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"line","x1":142,"y1":185,"x2":213,"y2":185,"stroke":"#64748b","strokeWidth":2},{"kind":"line","x1":345,"y1":185,"x2":524,"y2":185,"stroke":"#64748b","strokeWidth":2},{"kind":"line","x1":351,"y1":320,"x2":524,"y2":209,"stroke":"#ef4444","strokeWidth":2,"dasharray":"6,6","opacity":0.25},{"kind":"circle","x":351.47058823529414,"y":185,"r":9,"fill":"#2563eb","stroke":"#ffffff","strokeWidth":2,"title":"SolverSolutionToken"},{"kind":"rect","x":32,"y":159,"w":116,"h":52,"fill":"#dbeafe","stroke":"#1e293b","rx":6},{"kind":"rect","x":197,"y":153,"w":156,"h":64,"fill":"#ede9fe","stroke":"#1e293b","rx":6},{"kind":"rect","x":191,"y":302,"w":168,"h":56,"fill":"#dcfce7","stroke":"#1e293b","rx":6},{"kind":"rect","x":514,"y":155,"w":172,"h":60,"fill":"#fef3c7","stroke":"#1e293b","rx":6},{"kind":"text","x":90,"y":189,"text":"source","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":275,"y":189,"text":"knapsack-dp","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":275,"y":334,"text":"time checker","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":600,"y":189,"text":"solution sink","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":90,"y":82,"text":"iteration 4","fontSize":15,"fill":"#334155"},{"kind":"text","x":90,"y":108,"text":"objective -62.0000","fontSize":15,"fill":"#334155"},{"kind":"text","x":90,"y":134,"text":"feasible","fontSize":15,"fill":"#047857","fontWeight":"bold"},{"kind":"rect","x":520,"y":318,"w":260,"h":14,"fill":"#e2e8f0","stroke":"#94a3b8","rx":3},{"kind":"rect","x":520,"y":318,"w":0.0014444444444444446,"h":14,"fill":"#22c55e","rx":3},{"kind":"text","x":650,"y":356,"text":"wall clock 1.0000 / 180000.0000 ms","fontSize":13,"anchor":"middle","fill":"#334155"},{"kind":"text","x":90,"y":430,"text":"value=62.0000 weight=10.0000/10.0000","fontSize":14,"fill":"#0f172a"}],"caption":"knapsack-dp: objective=-62.0000 feasible"},{"t":5,"tick":4,"shapes":[{"kind":"rect","x":0,"y":0,"w":900,"h":560,"fill":"#f8fafc"},{"kind":"text","x":450,"y":36,"text":"knapsack-dp  complete","fontSize":20,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"line","x1":142,"y1":185,"x2":213,"y2":185,"stroke":"#64748b","strokeWidth":2},{"kind":"line","x1":345,"y1":185,"x2":524,"y2":185,"stroke":"#64748b","strokeWidth":2},{"kind":"line","x1":351,"y1":320,"x2":524,"y2":209,"stroke":"#ef4444","strokeWidth":2,"dasharray":"6,6","opacity":0.25},{"kind":"circle","x":370.5882352941177,"y":185,"r":9,"fill":"#22c55e","stroke":"#ffffff","strokeWidth":2,"title":"SolverSolutionToken"},{"kind":"rect","x":32,"y":159,"w":116,"h":52,"fill":"#dbeafe","stroke":"#1e293b","rx":6},{"kind":"rect","x":197,"y":153,"w":156,"h":64,"fill":"#ede9fe","stroke":"#1e293b","rx":6},{"kind":"rect","x":191,"y":302,"w":168,"h":56,"fill":"#dcfce7","stroke":"#1e293b","rx":6},{"kind":"rect","x":514,"y":155,"w":172,"h":60,"fill":"#fef3c7","stroke":"#1e293b","rx":6},{"kind":"text","x":90,"y":189,"text":"source","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":275,"y":189,"text":"knapsack-dp","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":275,"y":334,"text":"time checker","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":600,"y":189,"text":"solution sink","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":90,"y":82,"text":"iteration 5","fontSize":15,"fill":"#334155"},{"kind":"text","x":90,"y":108,"text":"objective -62.0000","fontSize":15,"fill":"#334155"},{"kind":"text","x":90,"y":134,"text":"feasible","fontSize":15,"fill":"#047857","fontWeight":"bold"},{"kind":"rect","x":520,"y":318,"w":260,"h":14,"fill":"#e2e8f0","stroke":"#94a3b8","rx":3},{"kind":"rect","x":520,"y":318,"w":0.0014444444444444446,"h":14,"fill":"#22c55e","rx":3},{"kind":"text","x":650,"y":356,"text":"wall clock 1.0000 / 180000.0000 ms","fontSize":13,"anchor":"middle","fill":"#334155"},{"kind":"text","x":90,"y":430,"text":"value=62.0000 weight=10.0000/10.0000","fontSize":14,"fill":"#0f172a"}],"caption":"knapsack-dp: objective=-62.0000 feasible"}],"charts":[{"x":70,"y":455,"w":760,"h":80,"title":"Objective by solver iteration","series":[{"label":"objective","color":"#2563eb","t":[1,2,3,4,5],"y":[-20,-50,-55,-62,-62]}]}]}</script>
+<script type="application/json" id="anim-data">{"width":900,"height":560,"fps":8,"title":"Internal solver network","subtitle":"Solver station emits incumbent tokens; wall-clock checker emits stop tokens","background":"#ffffff","frames":[{"t":1,"tick":0,"shapes":[{"kind":"rect","x":0,"y":0,"w":900,"h":560,"fill":"#f8fafc"},{"kind":"text","x":450,"y":36,"text":"knapsack-dp  complete","fontSize":20,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"line","x1":142,"y1":185,"x2":213,"y2":185,"stroke":"#64748b","strokeWidth":2},{"kind":"line","x1":345,"y1":185,"x2":524,"y2":185,"stroke":"#64748b","strokeWidth":2},{"kind":"line","x1":351,"y1":320,"x2":524,"y2":209,"stroke":"#ef4444","strokeWidth":2,"dasharray":"6,6","opacity":0.25},{"kind":"circle","x":294.11764705882354,"y":185,"r":9,"fill":"#2563eb","stroke":"#ffffff","strokeWidth":2,"title":"SolverSolutionToken"},{"kind":"rect","x":32,"y":159,"w":116,"h":52,"fill":"#dbeafe","stroke":"#1e293b","rx":6},{"kind":"rect","x":197,"y":153,"w":156,"h":64,"fill":"#ede9fe","stroke":"#1e293b","rx":6},{"kind":"rect","x":191,"y":302,"w":168,"h":56,"fill":"#dcfce7","stroke":"#1e293b","rx":6},{"kind":"rect","x":514,"y":155,"w":172,"h":60,"fill":"#fef3c7","stroke":"#1e293b","rx":6},{"kind":"text","x":90,"y":189,"text":"source","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":275,"y":189,"text":"knapsack-dp","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":275,"y":334,"text":"time checker","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":600,"y":189,"text":"solution sink","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":90,"y":82,"text":"iteration 1","fontSize":15,"fill":"#334155"},{"kind":"text","x":90,"y":108,"text":"objective -20.0000","fontSize":15,"fill":"#334155"},{"kind":"text","x":90,"y":134,"text":"feasible","fontSize":15,"fill":"#047857","fontWeight":"bold"},{"kind":"rect","x":520,"y":318,"w":260,"h":14,"fill":"#e2e8f0","stroke":"#94a3b8","rx":3},{"kind":"rect","x":520,"y":318,"w":0,"h":14,"fill":"#22c55e","rx":3},{"kind":"text","x":650,"y":356,"text":"wall clock 0.0000 / 180000.0000 ms","fontSize":13,"anchor":"middle","fill":"#334155"},{"kind":"text","x":90,"y":430,"text":"value=20.0000 weight=2.0000/10.0000","fontSize":14,"fill":"#0f172a"}],"caption":"knapsack-dp: objective=-20.0000 feasible"},{"t":2,"tick":1,"shapes":[{"kind":"rect","x":0,"y":0,"w":900,"h":560,"fill":"#f8fafc"},{"kind":"text","x":450,"y":36,"text":"knapsack-dp  complete","fontSize":20,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"line","x1":142,"y1":185,"x2":213,"y2":185,"stroke":"#64748b","strokeWidth":2},{"kind":"line","x1":345,"y1":185,"x2":524,"y2":185,"stroke":"#64748b","strokeWidth":2},{"kind":"line","x1":351,"y1":320,"x2":524,"y2":209,"stroke":"#ef4444","strokeWidth":2,"dasharray":"6,6","opacity":0.25},{"kind":"circle","x":313.2352941176471,"y":185,"r":9,"fill":"#2563eb","stroke":"#ffffff","strokeWidth":2,"title":"SolverSolutionToken"},{"kind":"rect","x":32,"y":159,"w":116,"h":52,"fill":"#dbeafe","stroke":"#1e293b","rx":6},{"kind":"rect","x":197,"y":153,"w":156,"h":64,"fill":"#ede9fe","stroke":"#1e293b","rx":6},{"kind":"rect","x":191,"y":302,"w":168,"h":56,"fill":"#dcfce7","stroke":"#1e293b","rx":6},{"kind":"rect","x":514,"y":155,"w":172,"h":60,"fill":"#fef3c7","stroke":"#1e293b","rx":6},{"kind":"text","x":90,"y":189,"text":"source","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":275,"y":189,"text":"knapsack-dp","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":275,"y":334,"text":"time checker","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":600,"y":189,"text":"solution sink","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":90,"y":82,"text":"iteration 2","fontSize":15,"fill":"#334155"},{"kind":"text","x":90,"y":108,"text":"objective -50.0000","fontSize":15,"fill":"#334155"},{"kind":"text","x":90,"y":134,"text":"feasible","fontSize":15,"fill":"#047857","fontWeight":"bold"},{"kind":"rect","x":520,"y":318,"w":260,"h":14,"fill":"#e2e8f0","stroke":"#94a3b8","rx":3},{"kind":"rect","x":520,"y":318,"w":0,"h":14,"fill":"#22c55e","rx":3},{"kind":"text","x":650,"y":356,"text":"wall clock 0.0000 / 180000.0000 ms","fontSize":13,"anchor":"middle","fill":"#334155"},{"kind":"text","x":90,"y":430,"text":"value=50.0000 weight=7.0000/10.0000","fontSize":14,"fill":"#0f172a"}],"caption":"knapsack-dp: objective=-50.0000 feasible"},{"t":3,"tick":2,"shapes":[{"kind":"rect","x":0,"y":0,"w":900,"h":560,"fill":"#f8fafc"},{"kind":"text","x":450,"y":36,"text":"knapsack-dp  complete","fontSize":20,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"line","x1":142,"y1":185,"x2":213,"y2":185,"stroke":"#64748b","strokeWidth":2},{"kind":"line","x1":345,"y1":185,"x2":524,"y2":185,"stroke":"#64748b","strokeWidth":2},{"kind":"line","x1":351,"y1":320,"x2":524,"y2":209,"stroke":"#ef4444","strokeWidth":2,"dasharray":"6,6","opacity":0.25},{"kind":"circle","x":332.3529411764706,"y":185,"r":9,"fill":"#2563eb","stroke":"#ffffff","strokeWidth":2,"title":"SolverSolutionToken"},{"kind":"rect","x":32,"y":159,"w":116,"h":52,"fill":"#dbeafe","stroke":"#1e293b","rx":6},{"kind":"rect","x":197,"y":153,"w":156,"h":64,"fill":"#ede9fe","stroke":"#1e293b","rx":6},{"kind":"rect","x":191,"y":302,"w":168,"h":56,"fill":"#dcfce7","stroke":"#1e293b","rx":6},{"kind":"rect","x":514,"y":155,"w":172,"h":60,"fill":"#fef3c7","stroke":"#1e293b","rx":6},{"kind":"text","x":90,"y":189,"text":"source","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":275,"y":189,"text":"knapsack-dp","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":275,"y":334,"text":"time checker","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":600,"y":189,"text":"solution sink","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":90,"y":82,"text":"iteration 3","fontSize":15,"fill":"#334155"},{"kind":"text","x":90,"y":108,"text":"objective -55.0000","fontSize":15,"fill":"#334155"},{"kind":"text","x":90,"y":134,"text":"feasible","fontSize":15,"fill":"#047857","fontWeight":"bold"},{"kind":"rect","x":520,"y":318,"w":260,"h":14,"fill":"#e2e8f0","stroke":"#94a3b8","rx":3},{"kind":"rect","x":520,"y":318,"w":0,"h":14,"fill":"#22c55e","rx":3},{"kind":"text","x":650,"y":356,"text":"wall clock 0.0000 / 180000.0000 ms","fontSize":13,"anchor":"middle","fill":"#334155"},{"kind":"text","x":90,"y":430,"text":"value=55.0000 weight=9.0000/10.0000","fontSize":14,"fill":"#0f172a"}],"caption":"knapsack-dp: objective=-55.0000 feasible"},{"t":4,"tick":3,"shapes":[{"kind":"rect","x":0,"y":0,"w":900,"h":560,"fill":"#f8fafc"},{"kind":"text","x":450,"y":36,"text":"knapsack-dp  complete","fontSize":20,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"line","x1":142,"y1":185,"x2":213,"y2":185,"stroke":"#64748b","strokeWidth":2},{"kind":"line","x1":345,"y1":185,"x2":524,"y2":185,"stroke":"#64748b","strokeWidth":2},{"kind":"line","x1":351,"y1":320,"x2":524,"y2":209,"stroke":"#ef4444","strokeWidth":2,"dasharray":"6,6","opacity":0.25},{"kind":"circle","x":351.47058823529414,"y":185,"r":9,"fill":"#2563eb","stroke":"#ffffff","strokeWidth":2,"title":"SolverSolutionToken"},{"kind":"rect","x":32,"y":159,"w":116,"h":52,"fill":"#dbeafe","stroke":"#1e293b","rx":6},{"kind":"rect","x":197,"y":153,"w":156,"h":64,"fill":"#ede9fe","stroke":"#1e293b","rx":6},{"kind":"rect","x":191,"y":302,"w":168,"h":56,"fill":"#dcfce7","stroke":"#1e293b","rx":6},{"kind":"rect","x":514,"y":155,"w":172,"h":60,"fill":"#fef3c7","stroke":"#1e293b","rx":6},{"kind":"text","x":90,"y":189,"text":"source","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":275,"y":189,"text":"knapsack-dp","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":275,"y":334,"text":"time checker","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":600,"y":189,"text":"solution sink","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":90,"y":82,"text":"iteration 4","fontSize":15,"fill":"#334155"},{"kind":"text","x":90,"y":108,"text":"objective -62.0000","fontSize":15,"fill":"#334155"},{"kind":"text","x":90,"y":134,"text":"feasible","fontSize":15,"fill":"#047857","fontWeight":"bold"},{"kind":"rect","x":520,"y":318,"w":260,"h":14,"fill":"#e2e8f0","stroke":"#94a3b8","rx":3},{"kind":"rect","x":520,"y":318,"w":0,"h":14,"fill":"#22c55e","rx":3},{"kind":"text","x":650,"y":356,"text":"wall clock 0.0000 / 180000.0000 ms","fontSize":13,"anchor":"middle","fill":"#334155"},{"kind":"text","x":90,"y":430,"text":"value=62.0000 weight=10.0000/10.0000","fontSize":14,"fill":"#0f172a"}],"caption":"knapsack-dp: objective=-62.0000 feasible"},{"t":5,"tick":4,"shapes":[{"kind":"rect","x":0,"y":0,"w":900,"h":560,"fill":"#f8fafc"},{"kind":"text","x":450,"y":36,"text":"knapsack-dp  complete","fontSize":20,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"line","x1":142,"y1":185,"x2":213,"y2":185,"stroke":"#64748b","strokeWidth":2},{"kind":"line","x1":345,"y1":185,"x2":524,"y2":185,"stroke":"#64748b","strokeWidth":2},{"kind":"line","x1":351,"y1":320,"x2":524,"y2":209,"stroke":"#ef4444","strokeWidth":2,"dasharray":"6,6","opacity":0.25},{"kind":"circle","x":370.5882352941177,"y":185,"r":9,"fill":"#22c55e","stroke":"#ffffff","strokeWidth":2,"title":"SolverSolutionToken"},{"kind":"rect","x":32,"y":159,"w":116,"h":52,"fill":"#dbeafe","stroke":"#1e293b","rx":6},{"kind":"rect","x":197,"y":153,"w":156,"h":64,"fill":"#ede9fe","stroke":"#1e293b","rx":6},{"kind":"rect","x":191,"y":302,"w":168,"h":56,"fill":"#dcfce7","stroke":"#1e293b","rx":6},{"kind":"rect","x":514,"y":155,"w":172,"h":60,"fill":"#fef3c7","stroke":"#1e293b","rx":6},{"kind":"text","x":90,"y":189,"text":"source","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":275,"y":189,"text":"knapsack-dp","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":275,"y":334,"text":"time checker","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":600,"y":189,"text":"solution sink","fontSize":13,"anchor":"middle","fontWeight":"bold","fill":"#0f172a"},{"kind":"text","x":90,"y":82,"text":"iteration 5","fontSize":15,"fill":"#334155"},{"kind":"text","x":90,"y":108,"text":"objective -62.0000","fontSize":15,"fill":"#334155"},{"kind":"text","x":90,"y":134,"text":"feasible","fontSize":15,"fill":"#047857","fontWeight":"bold"},{"kind":"rect","x":520,"y":318,"w":260,"h":14,"fill":"#e2e8f0","stroke":"#94a3b8","rx":3},{"kind":"rect","x":520,"y":318,"w":0,"h":14,"fill":"#22c55e","rx":3},{"kind":"text","x":650,"y":356,"text":"wall clock 0.0000 / 180000.0000 ms","fontSize":13,"anchor":"middle","fill":"#334155"},{"kind":"text","x":90,"y":430,"text":"value=62.0000 weight=10.0000/10.0000","fontSize":14,"fill":"#0f172a"}],"caption":"knapsack-dp: objective=-62.0000 feasible"}],"charts":[{"x":70,"y":455,"w":760,"h":80,"title":"Objective by solver iteration","series":[{"label":"objective","color":"#2563eb","t":[1,2,3,4,5],"y":[-20,-50,-55,-62,-62]}]}]}</script>
 <script>
 (function() {
   'use strict';
   const SVG_NS = 'http://www.w3.org/2000/svg';
-  const ANIM = JSON.parse(document.getElementById('anim-data').textContent);
+  const PAYLOAD = JSON.parse(document.getElementById('anim-data').textContent);
+  const VARIANTS = Array.isArray(PAYLOAD.variants) ? PAYLOAD.variants : null;
+  let ANIM = VARIANTS ? VARIANTS[0].animation : PAYLOAD;
   const stage = document.getElementById('stage');
-  stage.setAttribute('width', ANIM.width);
-  stage.setAttribute('height', ANIM.height);
-  stage.style.background = ANIM.background || '#fff';
   const caption = document.getElementById('caption');
   const scrub = document.getElementById('scrub');
   const readout = document.getElementById('readout');
@@ -123,13 +175,25 @@
   const speedSel = document.getElementById('speed');
   const stepBack = document.getElementById('step-back');
   const stepFwd  = document.getElementById('step-fwd');
+  const variantControls = document.getElementById('variant-controls');
+  const variantSelectors = document.getElementById('variant-selectors');
+  const variantSummary = document.getElementById('variant-summary');
 
-  const N = ANIM.frames.length;
-  scrub.max = String(N - 1);
+  let N = ANIM.frames.length;
   let i = 0;
   let playing = false;
   let lastTimestamp = null;
   let speed = 1;
+
+  function applyAnimationConfig() {
+    N = ANIM.frames.length;
+    scrub.max = String(Math.max(0, N - 1));
+    stage.setAttribute('width', ANIM.width);
+    stage.setAttribute('height', ANIM.height);
+    stage.setAttribute('viewBox', '0 0 ' + ANIM.width + ' ' + ANIM.height);
+    stage.setAttribute('preserveAspectRatio', 'xMidYMid meet');
+    stage.style.background = ANIM.background || '#fff';
+  }
 
   // --- Rendering -----------------------------------------------------------
 
@@ -279,6 +343,12 @@
   }
 
   function render(idx) {
+    if (N === 0) {
+      clearStage();
+      caption.textContent = 'No frames';
+      readout.textContent = 'frame 0 / 0';
+      return;
+    }
     const f = ANIM.frames[idx];
     clearStage();
     for (const s of f.shapes) renderShape(s);
@@ -305,6 +375,7 @@
   }
 
   function setPlaying(p) {
+    if (N === 0) p = false;
     playing = p;
     playBtn.textContent = playing ? 'Pause' : 'Play';
     if (playing) {
@@ -315,6 +386,123 @@
   }
 
   // --- Wiring --------------------------------------------------------------
+
+  function selectVariant(idx) {
+    if (!VARIANTS) return;
+    setPlaying(false);
+    const variant = VARIANTS[idx];
+    ANIM = variant.animation;
+    i = 0;
+    applyAnimationConfig();
+    syncVariantControls(variant);
+    if (variantSummary) variantSummary.textContent = variant.summary || '';
+    render(i);
+  }
+
+  function displayControlName(name) {
+    return String(name).replace(/[-_]+/g, ' ');
+  }
+
+  function controlKeys() {
+    if (!VARIANTS || VARIANTS.length === 0) return [];
+    const seen = new Set();
+    const keys = [];
+    for (const variant of VARIANTS) {
+      if (!variant.controls) return [];
+      for (const key of Object.keys(variant.controls)) {
+        if (!seen.has(key)) {
+          seen.add(key);
+          keys.push(key);
+        }
+      }
+    }
+    return keys;
+  }
+
+  function uniqueControlValues(key) {
+    const seen = new Set();
+    const values = [];
+    for (const variant of VARIANTS || []) {
+      const value = variant.controls && variant.controls[key];
+      if (value !== undefined && !seen.has(value)) {
+        seen.add(value);
+        values.push(value);
+      }
+    }
+    return values;
+  }
+
+  function syncVariantControls(variant) {
+    if (!variantSelectors || !variant || !variant.controls) return;
+    const selects = variantSelectors.querySelectorAll('select[data-variant-control]');
+    selects.forEach(function(select) {
+      const key = select.getAttribute('data-variant-control');
+      if (key && variant.controls[key] !== undefined) select.value = variant.controls[key];
+    });
+  }
+
+  function selectVariantByControls() {
+    if (!VARIANTS || !variantSelectors) return;
+    const wanted = {};
+    const selects = variantSelectors.querySelectorAll('select[data-variant-control]');
+    selects.forEach(function(select) {
+      const key = select.getAttribute('data-variant-control');
+      if (key) wanted[key] = select.value;
+    });
+    const match = VARIANTS.findIndex(function(variant) {
+      if (!variant.controls) return false;
+      for (const key in wanted) {
+        if (variant.controls[key] !== wanted[key]) return false;
+      }
+      return true;
+    });
+    if (match >= 0) selectVariant(match);
+  }
+
+  function populateVariantControls() {
+    if (!VARIANTS || !variantSelectors) return;
+    while (variantSelectors.firstChild) variantSelectors.removeChild(variantSelectors.firstChild);
+    const keys = controlKeys();
+    if (keys.length > 0) {
+      for (const key of keys) {
+        const label = document.createElement('label');
+        label.textContent = displayControlName(key) + ' ';
+        const select = document.createElement('select');
+        select.setAttribute('data-variant-control', key);
+        for (const value of uniqueControlValues(key)) {
+          const option = document.createElement('option');
+          option.value = value;
+          option.textContent = value;
+          select.appendChild(option);
+        }
+        select.addEventListener('change', selectVariantByControls);
+        label.appendChild(select);
+        variantSelectors.appendChild(label);
+      }
+      syncVariantControls(VARIANTS[0]);
+      return;
+    }
+
+    const label = document.createElement('label');
+    label.textContent = (PAYLOAD.selectorLabel || 'variant') + ' ';
+    const select = document.createElement('select');
+    select.id = 'variant-select';
+    for (let k = 0; k < VARIANTS.length; k++) {
+      const option = document.createElement('option');
+      option.value = String(k);
+      option.textContent = VARIANTS[k].label || VARIANTS[k].id || ('variant ' + (k + 1));
+      select.appendChild(option);
+    }
+    select.addEventListener('change', function() { selectVariant(+select.value); });
+    label.appendChild(select);
+    variantSelectors.appendChild(label);
+  }
+
+  if (VARIANTS && VARIANTS.length > 0) {
+    variantControls.hidden = false;
+    populateVariantControls();
+    variantSummary.textContent = VARIANTS[0].summary || '';
+  }
 
   playBtn.addEventListener('click', function() { setPlaying(!playing); });
   scrub.addEventListener('input', function() { i = +scrub.value; setPlaying(false); render(i); });
@@ -327,6 +515,7 @@
     else if (e.key === 'ArrowRight') { setPlaying(false); i = Math.min(N - 1, i + 1); render(i); }
   });
 
+  applyAnimationConfig();
   if (N > 0) render(0);
 })();
 </script>

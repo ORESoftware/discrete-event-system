@@ -1,5 +1,17 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/runner.rs
+// - Keep file-for-file. IterativeRunOptions, IterativeRunSummary, and
+//   ValidationCheck aggregation types become structs.
+// - runIterativeDES/runResultStation remain module functions operating over
+//   DESRunLoopEntity trait objects or generics; shuffleInPlace stays private.
+// - Math.random becomes an injected RNG trait/generic and Set maps to HashSet
+//   for duplicate participant detection.
+// - These are runner helpers, not graph transforms; if validation formatting is
+//   lifted into a graph node, use PureTransform. Replace assertion throws with
+//   Result-returning APIs.
+
 // =============================================================================
 // general/des-base/runner.ts — the iterative DES runner.
 //

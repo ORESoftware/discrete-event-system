@@ -1,5 +1,12 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/animation/html_player.rs
+// - Keep AnimationVariant and AnimationSetOptions as serde structs; buildHTML/buildHTMLSet become build_html/build_html_set.
+// - HTML/string builders should return Result<String, HtmlRenderError> and use a template writer rather than ad-hoc fallible panics.
+// - jsonForScript and escapeHtml stay private module helpers; serde_json replaces JSON.stringify and explicit escaping stays tested.
+// - The embedded JS template can remain a raw string constant or move behind an include_str! template without changing the module boundary.
+
 // =============================================================================
 // HtmlPlayer — generates a self-contained HTML file from an Animation.
 //

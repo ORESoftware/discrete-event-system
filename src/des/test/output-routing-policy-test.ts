@@ -1,3 +1,6 @@
+// RUST MIGRATION: Prefer moving these focused checks into `src/des/entity_routing/output_routing_policy.rs` under `#[cfg(test)] mod tests`.
+// Test-port notes: translate routing-policy cases into `#[test]` functions returning `Result<()>`; replace ad hoc helpers with `assert!`, `assert_eq!`, and approximate-float helpers; keep token fixtures deterministic.
+
 'use strict';
 
 // =============================================================================

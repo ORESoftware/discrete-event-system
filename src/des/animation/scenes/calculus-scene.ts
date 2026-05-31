@@ -1,5 +1,12 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/animation/scenes/calculus_scene.rs
+// - Keep buildField1DFrame/buildField1DChart/buildPoissonFrame as module helpers returning Frame/ChartSpec serde data.
+// - Numeric arrays should become Vec<f64> or typed matrix/grid structs; choose a matrix crate only if later callers need it.
+// - valueToColor and projection helpers remain private pure functions.
+// - If a PDE field renderer becomes DES graph-visible, wrap it in a PureTransform struct with transform(field_state) -> Frame fragment.
+
 // =============================================================================
 // Field-evolution scene: render a 1-D PDE field u(x, t) as a coloured
 // strip (each cell = one station, colour encodes value, vertical bars

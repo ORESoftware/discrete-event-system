@@ -1,5 +1,16 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/signals/incrementer.rs
+// - IncrementorTimeStepOpts becomes a struct; SignalIncrementor<E,V> becomes a
+//   concrete signal transform node with composed multidirectional signal state.
+// - Constructor currently passes `null as any` to the parent id; Rust should use
+//   an explicit id parameter or generated id constructor.
+// - Current runTimeStep is intentionally inert until increment semantics are
+//   specified; port it as a typed Result/todo! method if behavior is still open.
+// - Queue intake and runningTotal mirror the other signal transforms; in Rust
+//   use VecDeque<SignalValue<E,V>> plus a numeric Decimal/trait bound.
+
 import {SignalEntity} from "./abstract";
 import {EntityConnection, TimeStepOpts} from "../abstract/abstract";
 import * as math from 'mathjs';
@@ -23,7 +34,7 @@ export class SignalIncrementor<E,V>
   }
 
   getValue(): V {
-      throw new Error("Method not implemented.");
+    return this.runningTotal as unknown as V;
   }
 
   runningTotal = bgn(0);
@@ -41,15 +52,16 @@ export class SignalIncrementor<E,V>
   }
 
   acceptItem(m: AbstractMovingEntity<any>): boolean {
-    return false;
+    return true;
   }
 
 
   takeItem(m: AbstractMovingEntity<any>): void {
+    this.queue.enqueue(m as unknown as SignalValue<E,V>);
   }
 
   runFinish(): void {
-    throw new Error('not implemented.');
+    return;
   }
 
 

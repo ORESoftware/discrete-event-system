@@ -1,3 +1,7 @@
+// RUST MIGRATION: Target module `src/des/general/control_systems/linear_algebra.rs`.
+// RUST MIGRATION: Convert `Vec`/`Mat` aliases, `LinAlg`, inverse, eigen, and rank helpers into nominal structs/traits over `Vec<f64>` and `Vec<Vec<f64>>`.
+// RUST MIGRATION: Keep plant/controller/estimator users on explicit `f64` matrix/vector APIs and pass solver tolerances/config instead of globals.
+// RUST MIGRATION: Any graph-visible pure matrix evaluator should be wrapped as a PureTransform-style struct with a `transform` method returning `Result`.
 'use strict';
 
 // =============================================================================

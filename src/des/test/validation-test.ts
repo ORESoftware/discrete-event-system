@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/validation_test.rs` as end-to-end coverage for the validator protocol and solver/model invariants.
+// Test-port notes: translate protocol checks into `#[test]` functions returning `Result<()>`; replace ad hoc helpers with `assert!`, `assert_eq!`, `matches!`, and approximate-float helpers; keep fixtures deterministic.
+
 'use strict';
 
 // =============================================================================

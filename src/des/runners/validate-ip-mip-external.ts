@@ -1,4 +1,9 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION:
+// - Target: src/bin/validate_ip_mip_external.rs.
+// - Keep this as a CLI validation binary with Result-returning main; replace process.exit with ExitCode.
+// - Convert IP/MIP problems, ExternalPayload, and CheckRow into serde structs and use serde_json for problem/output files.
+// - Treat IP_MIP_REFERENCE_ID as an external adapter invoked through external_program using std::process or tokio::process.
 'use strict';
 
 // =============================================================================

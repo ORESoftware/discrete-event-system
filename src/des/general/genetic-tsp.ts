@@ -1,3 +1,9 @@
+// RUST MIGRATION: target module src/des/general/genetic_tsp.rs.
+// RUST MIGRATION: TSPInstance, GASolverOptions, GenerationInfo, GASolverResult, and GAPerformanceStats become serde structs; Tour becomes Vec<usize>.
+// RUST MIGRATION: GeneticTSPOptimizer becomes a struct implementing PopulationOptimizer<Tour>; avoid subclassing by moving hooks into trait impl methods.
+// RUST MIGRATION: Pure operators such as tourLength, crossover, mutation, twoOptImprove, heldKarpExact, and oneTreeLowerBound stay free functions.
+// RUST MIGRATION: runGeneticTSP is a solver transform returning Result; all RNG-dependent builders/operators should take injected rand::Rng.
+// RUST MIGRATION: Held-Karp dynamic programming maps naturally to HashMap bitmask keys or dense Vec tables; preserve precedence validation with Result.
 'use strict';
 
 // =============================================================================

@@ -1,3 +1,8 @@
+// RUST MIGRATION: Target module `src/des/general/value_iteration.rs`.
+// RUST MIGRATION: Convert outcome, MDP spec/options/result interfaces to `serde` structs; use typed state/action IDs instead of raw `number` where practical.
+// RUST MIGRATION: Port `ValueIterationStation` as a struct implementing the fixed-point iteration trait, storing values as `Vec<f64>` instead of `Float64Array`.
+// RUST MIGRATION: Keep `valueIteration`, `qValue`, and `qValuesAll` as free solver functions; add `PureTransform` only if the solver is wired as a graph-visible block.
+// RUST MIGRATION: Return `Result` for invalid probabilities, empty action sets, bad gamma/tolerance, non-finite rewards, and malformed transition outcomes.
 'use strict';
 
 // =============================================================================

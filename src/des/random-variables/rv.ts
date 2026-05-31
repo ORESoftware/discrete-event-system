@@ -1,3 +1,14 @@
+// RUST MIGRATION:
+// - Target: src/des/random_variables/rv.rs
+// - RandomVariable becomes a trait with rate/event-count/event-stream methods;
+//   Bernoulli/Poisson/Exponential/Uniform variants become structs implementing
+//   that trait, optionally wrapped by an enum for serde and dynamic dispatch.
+// - Event-count generation is a PureTransform boundary over RNG + time step;
+//   inject an RNG trait instead of calling math.random/Math.random directly.
+// - `math.BigNumber` should use the project-wide Decimal/time alias; generator
+//   methods map to Iterator implementations; thrown parameter checks become
+//   Result<Self, RandomVariableError>.
+
 import * as math from "mathjs";
 import {BigNumber, number} from "mathjs";
 import {bgn, getReasonableU, getReasonableUNative, makeError} from "../general/general";

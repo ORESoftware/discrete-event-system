@@ -1,3 +1,7 @@
+// RUST MIGRATION: target module src/des/general/grid_localization_pomdp.rs.
+// RUST MIGRATION: GridLocalizationActionKind and GridLocalizationObservation become enums; params/actions/trace/result/model become serde structs.
+// RUST MIGRATION: buildGridLocalizationPOMDP and runGridLocalizationPOMDP are POMDP model/transformation entrypoints; expose graph-visible ones as PureTransform structs.
+// RUST MIGRATION: Dense transition/observation/belief tables should use Vec matrices; sampling takes injected rand::Rng and validation returns Result.
 'use strict';
 
 // =============================================================================

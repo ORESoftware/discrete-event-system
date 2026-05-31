@@ -1,4 +1,10 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION:
+// - Target: src/des/animation/render.rs
+// - Keep file-for-file as the post-hoc renderer module; a thin src/bin wrapper can call main_result() if this becomes a CLI binary.
+// - Convert process.argv/process.exit flow to a Result-returning main_result(args: impl Iterator<Item=String>) and map errors to exit codes at the boundary.
+// - Filesystem paths should use PathBuf/std::fs; preserve the .frames.jsonl -> .html suffix rule with typed path helpers.
+// - readAnimation/buildHTML become frame_recorder::read_animation and html_player::build_html returning Results.
 'use strict';
 
 // Post-hoc renderer: read a `.frames.jsonl` file produced by FrameRecorder

@@ -1,3 +1,8 @@
+// RUST MIGRATION:
+// - Target: src/bin/validate_dispatch.rs.
+// - Keep this as a CLI validation binary with async/Result-returning main; replace require.main/process.exit with Rust entrypoint plumbing.
+// - Convert study scenarios and check outcomes to nominal structs, and keep solver comparisons wired through migrated dispatch/lp modules.
+// - Treat policy factories as strategy traits or concrete structs rather than any-typed callbacks.
 'use strict';
 
 // =============================================================================

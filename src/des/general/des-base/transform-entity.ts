@@ -1,5 +1,18 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/transform_entity.rs
+// - Keep this as the canonical transform module. Port Token/ChannelName from
+//   station.rs, then define TransformContext, TransformResult, TransformEntity,
+//   PureTransformEntity, PureTransform, MemoryTransformEntity, and FunctionEntity
+//   in this file.
+// - Convert TransformEntity into a state-owning struct plus trait hooks. The
+//   zero-backlog PureTransform path should become a Rust trait with
+//   `fn transform(&self, input, ctx) -> TransformResult`.
+// - FunctionEntity is a TypeScript compatibility adapter; in Rust prefer named
+//   structs implementing PureTransform over boxed closures except at boundary APIs.
+// - Keep all fallible validation as Result-returning constructors or methods.
+
 // =============================================================================
 // TransformEntity
 //
@@ -156,6 +169,21 @@ export abstract class PureTransformEntity<I extends Token = Token, O extends Tok
 }
 
 /**
+ * Short Rust-facing alias for pure transform stations.
+ *
+ * New TypeScript code may extend this name when the class represents a normal
+ * function lifted into the DES graph. Existing code can keep PureTransformEntity;
+ * both map to the same Rust `PureTransform` trait.
+ */
+export abstract class PureTransform<I extends Token = Token, O extends Token = Token>
+  extends PureTransformEntity<I, O> {
+
+  constructor(id: string, opts: TransformEntityOptions<I, O> = {}) {
+    super(id, opts);
+  }
+}
+
+/**
  * Queue-backed transform for functions that need local memory or operate over
  * the current DES time slice. Inputs wait in named inboxes until runTimeStep().
  */
@@ -184,7 +212,7 @@ export abstract class MemoryTransformEntity<
 }
 
 /** Concrete pure function station for users who prefer function-call syntax. */
-export class FunctionEntity<I extends Token = Token, O extends Token = Token> extends PureTransformEntity<I, O> {
+export class FunctionEntity<I extends Token = Token, O extends Token = Token> extends PureTransform<I, O> {
   constructor(
     id: string,
     private readonly fn: TransformFunction<I, O>,

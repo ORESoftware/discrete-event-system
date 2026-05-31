@@ -1,3 +1,7 @@
+// RUST MIGRATION: Target module `src/des/general/control_systems/dc_motor.rs`.
+// RUST MIGRATION: Convert motor dynamics, plant stations, load/reference profiles, and PI controllers into structs with `OdeSystem`/controller traits.
+// RUST MIGRATION: Use `f64` vectors/matrices for state/current/speed math, inject plant/controller config explicitly, and return `Result` for invalid physical params.
+// RUST MIGRATION: Graph-visible controller/evaluator logic should become PureTransform-style structs with a `transform` method.
 'use strict';
 
 // =============================================================================

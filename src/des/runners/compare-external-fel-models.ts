@@ -1,4 +1,9 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION:
+// - Target: src/bin/compare_external_fel_models.rs.
+// - Keep this as a CLI comparison binary with Result-returning main; route env/config through clap or std::env.
+// - Convert SharedTrafficInput, CheckRow, and EngineReport into serde structs and keep report JSON/Markdown I/O in std::fs.
+// - Model runExternalModule calls as external adapter ports using std::process or tokio::process, with serde_json payload boundaries.
 'use strict';
 
 // =============================================================================

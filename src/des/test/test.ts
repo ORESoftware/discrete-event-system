@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/test.rs` only if this remains a smoke suite for general helpers and random-variable behavior.
+// Test-port notes: convert console/manual checks into `#[test]` functions returning `Result<()>`; replace ad hoc helpers with `assert!`, `assert_eq!`, approximate-float helpers, and deterministic seeds.
+
 'use strict';
 
 import {IterableInt} from 'iterable.int';
@@ -77,4 +80,3 @@ console.log({
 // while(true){
 //     console.log(process.pid, i++);
 // }
-

@@ -1,6 +1,16 @@
 #!/usr/bin/env ts-node
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/random_variables/generate.rs
+// - This is a sampling CLI/dev helper. Keep pure sampling in structs such as
+//   RunUniform/RunExponential implementing a PureTransform-like trait, with a
+//   thin `src/bin/random_generate.rs` wrapper for stdout.
+// - Replace CommonJS require, math.random, dynamic arrays, and console printing
+//   with rand crate injection, Vec<f64>/Decimal, and Result-returning IO.
+// - The inline map/reduce helpers should become named transforms or iterator
+//   chains with explicit numeric types.
+
 import {bignumber} from "mathjs";
 
 const math = require('mathjs');

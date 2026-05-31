@@ -1,3 +1,8 @@
+// RUST MIGRATION:
+// - Target: src/des/runners/stats.rs.
+// - Keep this as a small numeric utility module; WelchResult becomes a serde-friendly struct if emitted in reports.
+// - Pure helpers such as mean/stddev/welch/erf can remain private or pub module functions with f64 signatures.
+// - Avoid panics for empty/degenerate inputs if callers need recoverability; otherwise preserve current NaN/zero semantics explicitly.
 'use strict';
 
 // Tiny stats helpers: mean, sample variance, Welch's t-test, and a normal-

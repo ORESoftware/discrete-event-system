@@ -1,4 +1,9 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION:
+// - Target: src/bin/replicate.rs.
+// - Keep this as a CLI runner with Result-returning main; map N and output paths to clap/std::env plus PathBuf.
+// - Convert replicate result rows to serde structs and write payloads through serde_json/std::fs.
+// - Keep per-kernel orchestration as calls into the migrated runner modules and leave statistical helpers in runners::stats.
 'use strict';
 
 // =============================================================================

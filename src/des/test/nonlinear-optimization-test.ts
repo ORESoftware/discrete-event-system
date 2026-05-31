@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/nonlinear_optimization_test.rs` for Newton, quasi-Newton, and nonlinear least-squares DES model coverage.
+// Test-port notes: translate optimization cases into `#[test]` functions returning `Result<()>`; replace ad hoc checks with `assert!`, `assert_eq!`, and approximate-float helpers; keep numeric tolerances explicit.
+
 'use strict';
 
 // =============================================================================

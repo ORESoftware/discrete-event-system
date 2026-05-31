@@ -1,5 +1,16 @@
 'use strict'
 
+// RUST MIGRATION:
+// - Target: src/des/entity_decision/binary_decision.rs
+// - DecisionEntityGraph becomes a graph-data struct; BinaryDecisionEntity<S,T>
+//   becomes a struct owning queue state plus impls for EntityLike,
+//   BidirectionalEntityLike, HasInternalQueue, and validation traits.
+// - LinkedQueue<AbstractMovingEntity<any>> should become VecDeque<Box<dyn
+//   MovingEntity>> only if heterogeneous moving entities are required; otherwise
+//   keep the station generic over T.
+// - Convert throws/warnings in validation to Result<(), DecisionError>, and keep
+//   `math.BigNumber` time-step inputs behind the shared decimal/time alias.
+
 import {AbstractBidirectionalEntity, TimeStepOpts} from "../abstract/abstract";
 import {HasInternalQueue} from "../abstract/interfaces";
 import {HasComputedProperties} from "../general/general";
@@ -66,7 +77,7 @@ export class BinaryDecisionEntity<S, T>
   }
 
   getWithComputedProperties(): BinaryDecisionEntity<S, T> {
-    throw new Error("Method not implemented.");
+    return Object.assign({}, this);
   }
 
   isEmpty(): boolean {

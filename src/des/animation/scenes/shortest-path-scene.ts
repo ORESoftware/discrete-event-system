@@ -1,5 +1,12 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/animation/scenes/shortest_path_scene.rs
+// - Keep buildShortestPathFrame/buildShortestPathCharts as module helpers over typed Graph and SPResult structs.
+// - Private color/layout helpers remain private functions; arrays of Shape become Vec<Shape>.
+// - Distances that are Infinity in TS need an explicit Rust representation such as Option<f64> or a Distance enum before serde.
+// - If this scene is exposed as a DES graph node, lift it into a PureTransform struct with transform(result_snapshot) -> Frame.
+
 // =============================================================================
 // Shortest-path-DES scene: graph nodes, directed edges, propagating
 // "wave" of distance updates per tick. Each node is colored by its

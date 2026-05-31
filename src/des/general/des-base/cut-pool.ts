@@ -1,5 +1,15 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/cut_pool.rs
+// - Keep file-for-file. CutEnvelopeSense should become an enum and AffineCut a
+//   data struct with Vec<f64> coefficients.
+// - AffineCutPool becomes a concrete struct with inherent methods; any public
+//   evaluation/update behavior can also implement a small trait for optimizers.
+// - Keep scalar/vector helper logic private or associated with AffineCutPool; if
+//   a cut evaluator is made into a DES graph node, expose it via PureTransform.
+// - Convert invalid dimensions or envelope misuse to Result-returning methods.
+
 // =============================================================================
 // general/des-base/cut-pool.ts -- reusable affine cut pools for decomposition
 // algorithms: Benders/L-shaped, SDDP, Kelley cutting planes, outer

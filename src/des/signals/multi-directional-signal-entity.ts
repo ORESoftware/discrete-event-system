@@ -1,5 +1,15 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/signals/multi_directional_signal_entity.rs
+// - MultiDirectionalSignalEntity<E,V> becomes reusable signal connection state
+//   plus trait impls for SignalEntity, HasManyInput, HasManyOutput, and
+//   HasInternalQueue with associated SignalValue item type.
+// - `maxQueueSize = null as number` should become Option<usize> or a bounded
+//   queue policy; LinkedQueue maps to VecDeque unless key removal is required.
+// - Abstract accept/take hooks should return Result or explicit acceptance
+//   enums when Rust callers need backpressure details.
+
 import {SignalEntity} from "./abstract";
 import {HasManyInputConnections, HasInternalQueue, HasManyOutputConnections} from "../abstract/interfaces";
 import * as math from "mathjs";
@@ -71,6 +81,5 @@ export abstract class MultiDirectionalSignalEntity<E,V>
 
 
 }
-
 
 

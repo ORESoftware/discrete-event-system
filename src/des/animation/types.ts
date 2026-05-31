@@ -1,5 +1,11 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/animation/types.rs
+// - Keep file-for-file. Convert Animation, Frame, ChartSpec, and ChartSeries to serde Serialize/Deserialize structs.
+// - Convert Shape to a tagged serde enum with circle/rect/line/text/path variants; optional TS fields become Option<T>.
+// - Preserve visualBlockId as an optional string boundary field until the visual block model has typed Rust ids.
+
 // =============================================================================
 // Core types for the animation plugin.
 //

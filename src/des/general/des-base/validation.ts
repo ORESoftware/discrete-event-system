@@ -1,5 +1,17 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/validation.rs
+// - Keep file-for-file. ValidationCheck becomes a data struct and Validator
+//   becomes a trait over station/model references.
+// - Validator factory functions can remain module functions returning boxed
+//   validator structs/closures, or become concrete structs implementing the
+//   Validator trait when type erasure gets awkward.
+// - fs JSON loading maps to std::fs plus serde_json at the boundary; helper
+//   formatters stay pure module functions unless lifted into PureTransform.
+// - Replace thrown validator errors with Result and capture failures explicitly
+//   in ValidationCheck.
+
 // =============================================================================
 // general/des-base/validation.ts — VALIDATOR PROTOCOL for DES stations.
 //

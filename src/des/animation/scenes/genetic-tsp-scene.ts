@@ -1,5 +1,12 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/animation/scenes/genetic_tsp_scene.rs
+// - Keep exported STAGE constants plus buildGeneticTSPFrame/buildGeneticTSPCharts as module helpers returning Frame/ChartSpec serde structs.
+// - ArchitectureFrameArgs becomes a Rust struct; TSPInstance/Tour imports should stay typed domain structs from general::genetic_tsp.
+// - If these scene builders become DES graph-visible, wrap them in a PureTransform struct with transform(...) rather than leaving a bare function.
+// - Local draw helpers remain private functions that push into Vec<Shape>.
+
 // =============================================================================
 // Genetic-TSP scene — REWRITTEN to put the DES architecture (the GA
 // station chain) on the LEFT and analytics on the RIGHT.

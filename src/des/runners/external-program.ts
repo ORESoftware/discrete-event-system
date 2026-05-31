@@ -1,3 +1,8 @@
+// RUST MIGRATION:
+// - Target: src/des/runners/external_program.rs.
+// - Keep this as the process-adapter module; interfaces become serde-friendly structs/enums plus an ExternalProgramRunner trait.
+// - Replace spawnSync with std::process::Command or tokio::process::Command and return Result<ExternalProgramResult, ExternalProgramError>.
+// - Use PathBuf canonicalization for repo-root/script guards and keep external parameter values explicit instead of structural Record types.
 'use strict';
 
 // =============================================================================

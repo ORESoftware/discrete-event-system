@@ -1,3 +1,7 @@
+// RUST MIGRATION: Target module `src/des/general/adapters/signal_transforms_adapter.rs`.
+// RUST MIGRATION: Convert z/Laplace/Fourier transform adapters, zod validation, and animation helpers into structs/functions around `DESModelSpec`.
+// RUST MIGRATION: Map transform configs, complex points, contributions, traces, and frames to `serde` config/result structs; paths become `PathBuf`.
+// RUST MIGRATION: Replace zod/schema failures and expression/sample validation with `Result<_, ValidationError>`.
 'use strict';
 
 // =============================================================================

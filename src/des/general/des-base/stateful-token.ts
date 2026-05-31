@@ -1,5 +1,18 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/stateful_token.rs
+// - Keep file-for-file. TokenStateMode becomes an enum; lineage, transition,
+//   stats, and stateful-token interfaces become data structs/traits.
+// - Factory functions can become constructors or associated functions on token
+//   structs; PayloadStatefulToken and StatefulTokenRegistry become concrete
+//   structs.
+// - Map usage in the registry maps to HashMap/BTreeMap keyed by token id; type
+//   guards become trait/object checks or enum matching.
+// - Pure lineage/transition helpers can remain module functions, or become
+//   PureTransform/PureTransformEntity if they are graph nodes. Use Result for
+//   invalid state transitions.
+
 import {Token} from './station';
 
 export type TokenStateMode = 'stateless' | 'stateful';

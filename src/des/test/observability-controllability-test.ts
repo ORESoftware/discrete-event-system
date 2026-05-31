@@ -1,3 +1,6 @@
+// RUST MIGRATION: Prefer moving these focused checks into `src/des/general/control_systems/observability_controllability.rs` under `#[cfg(test)] mod tests`.
+// Test-port notes: translate matrix/control assertions into `#[test]` functions returning `Result<()>`; replace ad hoc helpers with `assert!`, `assert_eq!`, and approximate-float helpers; keep fixtures deterministic.
+
 'use strict';
 
 // =============================================================================

@@ -1,3 +1,8 @@
+// RUST MIGRATION:
+// - Target: src/bin/validate_temp_control.rs.
+// - Keep this as a CLI validation binary with Result-returning main; replace process.exitCode with ExitCode.
+// - Convert temperature-control scenarios and check rows to nominal structs with explicit tolerances.
+// - Route controller/plant calls through migrated modules; pure comparisons remain private helper functions.
 'use strict';
 
 // =============================================================================

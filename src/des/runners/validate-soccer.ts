@@ -1,3 +1,8 @@
+// RUST MIGRATION:
+// - Target: src/bin/validate_soccer.rs.
+// - Keep this as a CLI validation binary with Result-returning main; replace process.exit with ExitCode.
+// - Convert sample problem/check data to nominal structs and keep solver result comparisons explicit.
+// - Route LP/DES solver variants through migrated traits or enum-backed adapters, leaving tolerance helpers private.
 'use strict';
 
 // =============================================================================

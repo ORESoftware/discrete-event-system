@@ -1,5 +1,16 @@
 'use strict'
 
+// RUST MIGRATION:
+// - Target: src/des/entity_decision/probability_decision.rs
+// - ProbabilityDecisionEntity<S,T> becomes a struct with VecDeque item storage,
+//   indexed HashMap/Vec connection tables, and impls for entity, queue, and
+//   bidirectional endpoint traits.
+// - The branch picker is a PureTransform-like component: inputs are RNG,
+//   probabilities, and an item; output is a target connection or typed error.
+// - Replace `Math.random`, `process.exit`, `any` connection targets, and thrown
+//   makeError paths with injected RNG traits and Result<_, DecisionError>.
+// - `math.BigNumber` probabilities need one shared Decimal alias before porting.
+
 import {AbstractBidirectionalEntity, EntityConnection, TimeStepOpts} from "../abstract/abstract";
 import {HasInternalQueue} from "../abstract/interfaces";
 import {bgn, HasComputedProperties, makeError} from "../general/general";
@@ -28,6 +39,7 @@ export class ProbabilityDecisionEntity<S, T>
 
   opts: {
     rv: RandomVariable,
+    rng?: () => number,
     probabilities: Array<{
       index: number,
       prob: math.BigNumber
@@ -81,7 +93,7 @@ export class ProbabilityDecisionEntity<S, T>
   }
 
   doValidation(): void {
-    throw new Error("Method not implemented.");
+    this.doValidationBeforeRun();
   }
 
   doValidationBeforeRun() {
@@ -125,11 +137,10 @@ export class ProbabilityDecisionEntity<S, T>
       if(IsVoid.check(k)){
         console.warn(`[decision:${this.id}] dequeueIterator yielded a void value while draining queue (size=${this.queue.size}) — head/tail desync.`);
         console.error('void value from queue:', {k,v}, (this.queue as any).head, (this.queue as any).tail);
-        process.exit(0);
-        break;
+        throw makeError('void value from decision queue', this.id);
       }
 
-      const r = bgn(Math.random());
+      const r = bgn((this.opts.rng ?? Math.random)());
 
       let sum = bgn(0);
       let index = -1;

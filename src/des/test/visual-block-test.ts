@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/visual_block_test.rs` as integration coverage for visual blocks, transform entities, and frame recording.
+// Test-port notes: translate visual/render checks into `#[test]` functions returning `Result<()>`; use `assert!`, `assert_eq!`, approximate-float helpers, `tempfile` for outputs, and deterministic token fixtures.
+
 'use strict';
 
 import * as fs from 'fs';

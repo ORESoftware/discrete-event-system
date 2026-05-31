@@ -1,3 +1,8 @@
+// RUST MIGRATION:
+// - Target: src/des/runners/shared.rs.
+// - Keep this as the shared runner utility module; TransitionCounter becomes a struct with impl methods.
+// - Map TransitionCountMap to HashMap/BTreeMap depending on deterministic iteration needs, and serialize TransitionTables with serde.
+// - Keep table builders and population aggregators as private/public pure functions unless lifted into PureTransform-style traits.
 'use strict';
 
 import {COMPARTMENT_GROUPS, COMPARTMENT_ORDER, SimConfig} from './types';

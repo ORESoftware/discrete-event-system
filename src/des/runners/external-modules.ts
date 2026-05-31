@@ -1,3 +1,8 @@
+// RUST MIGRATION:
+// - Target: src/des/runners/external_modules.rs.
+// - Keep this as the built-in external adapter registry; constants become pub const IDs and registration becomes an idempotent initializer.
+// - Convert loose ExternalModuleParams extraction into typed adapter config structs with serde validation at the boundary.
+// - Preserve Python/SUMO reference modules as external adapters invoked through the migrated external_program process port.
 'use strict';
 
 // =============================================================================

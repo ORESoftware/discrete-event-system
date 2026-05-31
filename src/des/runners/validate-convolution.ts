@@ -1,4 +1,9 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION:
+// - Target: src/bin/validate_convolution.rs.
+// - Keep this as a CLI validation binary with Result-returning main; replace process.exit with ExitCode.
+// - Convert framework and NumPy JSON fixtures into serde structs and compare golden arrays with explicit tolerances.
+// - File I/O belongs at the boundary via std::fs/std::path; numerical helpers stay private pure functions.
 'use strict';
 
 // Compares the framework's convolution output (out/convolution-framework.json)

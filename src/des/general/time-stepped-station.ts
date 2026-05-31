@@ -1,3 +1,8 @@
+// RUST MIGRATION: Target module `src/des/general/time_stepped_station.rs`.
+// RUST MIGRATION: Replace abstract class inheritance with traits for time-stepped, buffered, routed, bidirectional, and synchronous-dataflow station behavior.
+// RUST MIGRATION: Shared queues/buffers should be embedded structs (`VecDeque<T>` where FIFO), while payload types become generic type parameters with trait bounds.
+// RUST MIGRATION: Convert `SynchronousDataflowConnection` to a `serde` struct if persisted, otherwise keep it as an internal connection descriptor.
+// RUST MIGRATION: Methods that can fail due to missing routes, backpressure, or invalid connections should return `Result` instead of throwing or silently dropping.
 'use strict';
 
 // =============================================================================

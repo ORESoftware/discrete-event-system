@@ -1,3 +1,8 @@
+// RUST MIGRATION: Target module `src/des/general/shortest_path_des.rs`.
+// RUST MIGRATION: Convert graph specs, wave/update tokens, trace rows, and result interfaces to `serde` structs; algorithm mode unions should become enums.
+// RUST MIGRATION: Port node/station/message classes as structs implementing `Token`/`DESStation` traits so each graph node remains a stationary entity.
+// RUST MIGRATION: Use `HashMap`/`HashSet`/priority queues for distance, predecessor, adjacency, and frontier indexes instead of structural object maps.
+// RUST MIGRATION: Keep top-level shortest-path runners/builders as free functions; return `Result` for negative-cycle, unreachable-node, and malformed-graph errors.
 'use strict';
 
 // =============================================================================

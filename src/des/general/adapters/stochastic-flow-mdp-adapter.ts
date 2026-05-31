@@ -1,3 +1,7 @@
+// RUST MIGRATION: Target module `src/des/general/adapters/stochastic_flow_mdp_adapter.rs`.
+// RUST MIGRATION: Convert stochastic-flow MDP adapter registration into Rust adapter structs/functions around `DESModelSpec`.
+// RUST MIGRATION: Map graph edges, stochastic transition params, policies, and results to `serde` config/result structs; output paths become `PathBuf`.
+// RUST MIGRATION: Return `Result<_, ValidationError>` for invalid capacities, probabilities, states, and action definitions.
 'use strict';
 
 // =============================================================================

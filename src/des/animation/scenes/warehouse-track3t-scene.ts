@@ -1,5 +1,12 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/animation/scenes/warehouse_track3t_scene.rs
+// - Keep buildWarehouseComparisonFrame/frameCount/frameTime/buildWarehouseComparisonCharts as module helpers.
+// - PanelGeom, MotionFrame, ReserveRow, and route/layout records become private Rust structs; Shape/ChartSpec are serde data from animation::types.
+// - TS arrays/maps of traces and stations should become Vec plus HashMap/BTreeMap only where lookup or deterministic order is required.
+// - If frame generation becomes DES graph-visible, wrap it as a WarehouseComparisonSceneTransform with transform(...).
+
 import {ChartSpec, Shape} from '../types';
 import {
   StationDefinition,

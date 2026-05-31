@@ -1,3 +1,8 @@
+// RUST MIGRATION:
+// - Target: src/des/runners/gillespie_runner.rs.
+// - Keep file-for-file as a library runner exposing run_gillespie_once; Reaction becomes a concrete struct with typed station IDs.
+// - Replace seedable randomness with an RNG trait/object and keep Gillespie propensity calculations as private pure helpers.
+// - Convert logging and invalid config paths to Result while preserving deterministic RunResult output structs.
 'use strict';
 
 // =============================================================================

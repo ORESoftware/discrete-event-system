@@ -14,7 +14,7 @@
     "method": "euler",
     "initialValues": []
   },
-  "runtimeMs": 2,
+  "runtimeMs": 3,
   "summaryText": "MATH EQUATION INPUT\n------------------------\n  format=latex kind=ode\n  generated network: nodes=2 edges=2\n  ODE final state: y=0.366032\n  validation: 5/5 checks passed",
   "result": {
     "inputFormat": "latex",
@@ -1143,6 +1143,90 @@
           "fromChannel": "out",
           "toChannel": "in",
           "signal": "MathSignal"
+        }
+      ],
+      "visualBlocks": [
+        {
+          "id": "integrator:y",
+          "kind": "math-block",
+          "role": "station",
+          "label": "integrator:y",
+          "alwaysRenderInHtml": true,
+          "layout": {
+            "x": 24,
+            "y": 24,
+            "w": 180,
+            "h": 64
+          },
+          "ports": {
+            "inputs": [
+              {
+                "id": "in",
+                "direction": "in",
+                "kind": "MathSignal",
+                "label": "in",
+                "required": false
+              }
+            ],
+            "outputs": [
+              {
+                "id": "out",
+                "direction": "out",
+                "kind": "MathSignal",
+                "label": "out",
+                "required": false
+              }
+            ]
+          },
+          "connectionsIn": [],
+          "connectionsOut": [],
+          "contains": [],
+          "style": {
+            "fill": "#f8fafc",
+            "stroke": "#2563eb",
+            "text": "#0f172a"
+          }
+        },
+        {
+          "id": "rhs:y",
+          "kind": "math-block",
+          "role": "station",
+          "label": "rhs:y",
+          "alwaysRenderInHtml": true,
+          "layout": {
+            "x": 24,
+            "y": 100,
+            "w": 180,
+            "h": 64
+          },
+          "ports": {
+            "inputs": [
+              {
+                "id": "in",
+                "direction": "in",
+                "kind": "MathSignal",
+                "label": "in",
+                "required": false
+              }
+            ],
+            "outputs": [
+              {
+                "id": "out",
+                "direction": "out",
+                "kind": "MathSignal",
+                "label": "out",
+                "required": false
+              }
+            ]
+          },
+          "connectionsIn": [],
+          "connectionsOut": [],
+          "contains": [],
+          "style": {
+            "fill": "#f8fafc",
+            "stroke": "#2563eb",
+            "text": "#0f172a"
+          }
         }
       ],
       "validation": [

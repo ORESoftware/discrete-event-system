@@ -1,3 +1,8 @@
+// RUST MIGRATION: target module src/des/general/lp.rs.
+// RUST MIGRATION: LPProblem, LPSolution, InternalSimplexOptions, ExternalSolverOptions, and SimplexResult become serde structs where public; LPStatus becomes an enum.
+// RUST MIGRATION: solveLPInternal, solveLPExternal, solveLP, and lpToString are solver/adapter free functions unless explicitly registered as PureTransform entrypoints.
+// RUST MIGRATION: Replace JS object option merging with explicit defaults/builders, matrix arrays with Vec<Vec<f64>>, and external solver failures with Result.
+// RUST MIGRATION: pivot/simplexCore should use mutable slices and clear status enums to avoid exceptions and aliasing surprises.
 'use strict';
 
 // =============================================================================

@@ -1,13 +1,21 @@
 'use strict';
 
-import {number} from "mathjs";
+// RUST MIGRATION:
+// - Target: src/des/entity_queue/queue.rs
+// - QueueEntityGraphData becomes a serde-friendly struct; QueueEntity<S,T>
+//   becomes a queue-station struct composing BidirectionalEntityState and
+//   VecDeque/queue storage.
+// - `HasInternalQueue<AbstractMovingEntity<any>>` should become a nominal trait
+//   with an associated Item type, avoiding broad trait objects unless mixed
+//   moving-entity queues are required.
+// - Base getSerializableData now returns a minimal snapshot; Rust should derive
+//   Serialize on a QueueEntitySnapshot rather than serializing graph pointers.
+
 import * as math from "mathjs";
 import {AbstractMovingEntity} from "../entity-moving/moving";
 import {AbstractBidirectionalEntity} from "../abstract/abstract";
 import {EntityGraphData, HasInternalQueue} from "../abstract/interfaces";
 import {LinkedQueue} from "@oresoftware/linked-queue";
-import {RandomVariable} from "../random-variables/rv";
-import {makeError} from "../general/general";
 
 export interface QueueEntityGraphData extends EntityGraphData {
   processedCount: number;
@@ -61,12 +69,10 @@ export class QueueEntity<S, T>
   }
 
   getSerializableData(): Partial<this> {
-    console.warn(`[queue:${this.id}] getSerializableData() called on base QueueEntity — this path is not supported and will throw.`);
-    throw makeError('this is wrong.');
     return {
-      ...this,
+      maxQueueSize: this.maxQueueSize,
       opts: undefined
-    };
+    } as Partial<this>;
   }
 
   doTimeStep(stepSize: math.BigNumber) {

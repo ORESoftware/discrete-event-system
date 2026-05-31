@@ -1,3 +1,7 @@
+// RUST MIGRATION: Target module `src/des/general/adapters/mdp_adjacent_adapters.rs`.
+// RUST MIGRATION: Convert inventory, mountain-car, tiger, localization, actor-critic, blackjack, and LQR adapters into structs/functions around `DESModelSpec`.
+// RUST MIGRATION: Encode MDP/POMDP params, policies, traces, and summaries as `serde` config/result structs; runtime/output paths become `PathBuf`.
+// RUST MIGRATION: Use `Result<_, ValidationError>` for probability, grid, transition, and action-space validation.
 'use strict';
 
 // =============================================================================

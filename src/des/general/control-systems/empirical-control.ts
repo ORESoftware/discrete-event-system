@@ -1,3 +1,7 @@
+// RUST MIGRATION: Target module `src/des/general/control_systems/empirical_control.rs`.
+// RUST MIGRATION: Convert RNG, LTI/MDP/POMDP models, Monte Carlo estimators, and degree evaluators into structs plus traits for controllers/estimators.
+// RUST MIGRATION: Use `f64` matrices/vectors for Gramian and belief math; inject RNG seeds/config instead of hidden randomness.
+// RUST MIGRATION: Graph-visible degree evaluators should become PureTransform-style structs with `transform` methods returning typed reports.
 'use strict';
 
 // =============================================================================

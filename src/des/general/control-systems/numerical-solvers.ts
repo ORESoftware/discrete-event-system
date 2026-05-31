@@ -1,3 +1,7 @@
+// RUST MIGRATION: Target module `src/des/general/control_systems/numerical_solvers.rs`.
+// RUST MIGRATION: Convert `OdeSystem` and fixed-step integrators into traits plus structs for plant dynamics and controller-facing simulation.
+// RUST MIGRATION: Use `f64` vectors for states/derivatives, inject step size/config explicitly, and return `Result` for dimension or integration errors.
+// RUST MIGRATION: Expose any graph-visible pure integration evaluator as a PureTransform-style struct with a `transform` method.
 'use strict';
 
 // =============================================================================

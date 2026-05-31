@@ -1,5 +1,20 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/expr.rs
+// - Expr is a direct Rust enum with variants Num, Var, Bin, Neg, and Func.
+//   The node interfaces become enum payload structs only if variant fields grow.
+// - Parser and lexer helpers can remain private module functions. Parse/evaluate
+//   errors should return `Result<Expr, ExprError>` and `Result<f64, ExprError>`
+//   instead of throwing.
+// - FUNC_IMPL becomes a match on FuncName. FuncName itself should be a Rust enum
+//   with FromStr/Display impls for parse and stringify.
+// - toFunction is JavaScript-specific closure packaging; in Rust prefer an
+//   Evaluator struct that owns Expr plus argument ordering, or expose evaluate
+//   directly over a HashMap/BTreeMap environment.
+// - numericalDerivative/numericalGradient may stay free functions. If used in a
+//   DES graph, wrap them later as PureTransform implementors.
+
 // =============================================================================
 // Tiny symbolic expression engine.
 //

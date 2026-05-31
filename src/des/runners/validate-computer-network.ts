@@ -1,4 +1,9 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION:
+// - Target: src/bin/validate_computer_network.rs.
+// - Keep this as a CLI validation binary with Result-returning main; replace process.exit with Result/ExitCode.
+// - Convert problem/reference payloads and CheckRow values into serde structs written/read with serde_json.
+// - Treat COMPUTER_NETWORK_REFERENCE_ID as an external adapter invoked through external_program using std::process or tokio::process.
 'use strict';
 
 // =============================================================================

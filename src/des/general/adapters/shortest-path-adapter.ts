@@ -1,3 +1,7 @@
+// RUST MIGRATION: Target module `src/des/general/adapters/shortest_path_adapter.rs`.
+// RUST MIGRATION: Convert shortest-path adapter registration and builtin graph handling into adapter structs/functions around `DESModelSpec`.
+// RUST MIGRATION: Map graph edges, source/target params, paths, and metrics to `serde` config/result structs; output paths become `PathBuf`.
+// RUST MIGRATION: Use `Result<_, ValidationError>` for malformed graph, missing node, and negative/invalid weight errors.
 'use strict';
 
 // =============================================================================

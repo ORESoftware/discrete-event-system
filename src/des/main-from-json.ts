@@ -1,3 +1,7 @@
+// RUST MIGRATION: target src/bin/main_from_json.rs.
+// RUST MIGRATION: Keep this binary thin: parse CLI/env/path inputs with clap/std::env/PathBuf, then call library orchestration.
+// RUST MIGRATION: Port the runnable body as fn main() -> Result<()> and move reusable DES setup into src/des modules/traits.
+// RUST MIGRATION: This entrypoint is JSON-first; model files should become serde-deserialized config structs with validation before execution.
 'use strict';
 
 // =============================================================================

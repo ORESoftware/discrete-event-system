@@ -1,5 +1,12 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/animation/run_report.rs
+// - Convert MetricRow, ReportSection, IndexEntry, IndexGroup, CatalogEntry, and CatalogSection to serde-friendly structs.
+// - RunReportPage and SimulationIndexPage become builder structs with inherent add_* methods and Result<String, ReportRenderError> render methods.
+// - HTML/string builders should use template/writer helpers; keep escape as a private helper or small trait-free utility.
+// - Preserve relative-link behavior and avoid global state so the module ports cleanly to Rust ownership.
+
 // =============================================================================
 // run-report.ts — class-only HTML builders for non-animation simulation runs.
 //

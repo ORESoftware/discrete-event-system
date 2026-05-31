@@ -1,4 +1,9 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION:
+// - Target: src/bin/validate_two_disease.rs.
+// - Keep this as a CLI validation binary with Result-returning main; replace process.exit with ExitCode.
+// - Convert framework/Python JSON fixtures and comparison statistics to serde structs.
+// - Keep Welch/integration/error helpers private module functions and read golden external adapter output via std::fs/std::path.
 'use strict';
 
 // Compares the framework's two-disease ensemble mean against

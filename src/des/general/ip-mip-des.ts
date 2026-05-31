@@ -1,3 +1,9 @@
+// RUST MIGRATION: target module src/des/general/ip_mip_des.rs.
+// RUST MIGRATION: Relaxation algorithm unions, token state union, trace events, and branch/cut payloads become enums with serde tags.
+// RUST MIGRATION: IPMIPProblem, options, solutions, performance stats, topology nodes, and constraints become serde structs with Vec<f64>/Vec<Vec<f64>> matrices.
+// RUST MIGRATION: PayloadStatefulToken subclasses and DESStation/CompositeDESStation subclasses become structs implementing Token, StatefulToken, Station, and CompositeStation traits.
+// RUST MIGRATION: solveIPMIPWithDES and buildIPMIPSolverTechniquePlan are graph-visible solver transforms; expose them as PureTransform entry structs returning Result.
+// RUST MIGRATION: Partial<Record<...>> usage maps to HashMap<ConcreteLPRelaxationAlgorithm, usize>, and all validation/LP relaxation failures should flow through Result/status enums.
 'use strict';
 
 // =============================================================================

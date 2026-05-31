@@ -1,4 +1,7 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION: Port file-for-file to `tests/elevator_invariants_test.rs` as integration coverage for `main_elevator` schedules and invariants.
+// Test-port notes: translate invariant checks into `#[test]` functions returning `Result<()>`; replace ad hoc helpers with `assert!`, `assert_eq!`, and approximate-float helpers; keep generated schedules deterministic.
+
 'use strict';
 
 // =============================================================================

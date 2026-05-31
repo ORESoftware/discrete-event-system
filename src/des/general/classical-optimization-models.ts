@@ -1,3 +1,8 @@
+// RUST MIGRATION: target module src/des/general/classical_optimization_models.rs.
+// RUST MIGRATION: QP/assignment/VRP/job-shop/flow-shop params and results become serde structs; rule string unions become enums.
+// RUST MIGRATION: Token and DESStation subclasses become structs implementing Token and Station traits; channel constants can be &'static str associated consts.
+// RUST MIGRATION: Pure numerical helpers such as qpObjective, solveAssignmentDP, dispatchSchedule, and NEH builders stay free functions.
+// RUST MIGRATION: run* model entrypoints assemble DES-visible solver graphs, so expose each as a PureTransform-style struct returning Result for validation errors.
 'use strict';
 
 // =============================================================================

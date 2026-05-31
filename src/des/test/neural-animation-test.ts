@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/neural_animation_test.rs` as smoke coverage for neural animation scenes and frame recording.
+// Test-port notes: translate scene checks into `#[test]` functions returning `Result<()>`; use `assert!`, `assert_eq!`, approximate-float helpers, `tempfile` for outputs, and deterministic frame/model fixtures.
+
 'use strict';
 
 // =============================================================================

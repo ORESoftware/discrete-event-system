@@ -1,3 +1,7 @@
+// RUST MIGRATION: target module src/des/general/double_integrator_lqr.rs.
+// RUST MIGRATION: DoubleIntegratorOpts and DoubleIntegratorResult become serde structs; matrix/vector traces should use Vec<[f64; 2]> or Vec<Vec<f64>> consistently.
+// RUST MIGRATION: runDoubleIntegratorLQR is a control simulation entrypoint and should be a PureTransform-style struct returning Result.
+// RUST MIGRATION: gaussian noise must use an injected rand::Rng plus a normal sampler crate; validation/linear algebra failures should return Result.
 'use strict';
 
 // =============================================================================

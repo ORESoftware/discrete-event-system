@@ -1,4 +1,7 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION: Port file-for-file to `tests/newsvendor_test.rs` as integration coverage for newsvendor, inventory MDPs, and policy-structure detection.
+// Test-port notes: translate inventory cases into `#[test]` functions returning `Result<()>`; replace ad hoc helpers with `assert!`, `assert_eq!`, and approximate-float helpers; keep demand fixtures deterministic.
+
 'use strict';
 
 // =============================================================================

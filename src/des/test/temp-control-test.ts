@@ -1,3 +1,6 @@
+// RUST MIGRATION: Prefer moving these focused checks into `src/des/general/temp_control.rs` under `#[cfg(test)] mod tests`.
+// Test-port notes: translate thermal-control cases into `#[test]` functions returning `Result<()>`; replace ad hoc helpers with `assert!`, `assert_eq!`, and approximate-float helpers; keep numeric fixtures deterministic.
+
 'use strict';
 
 // =============================================================================

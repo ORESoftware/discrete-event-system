@@ -1,3 +1,6 @@
+// RUST MIGRATION: Prefer moving these focused checks into `src/des/general/control_systems/wind_mppt.rs` under `#[cfg(test)] mod tests`, with shared solver assertions near `numerical_solvers.rs`.
+// Test-port notes: translate wind/MPPT integrator cases into `#[test]` functions returning `Result<()>`; replace helpers with `assert!`, `assert_eq!`, approximate-float helpers, and deterministic numeric fixtures.
+
 'use strict';
 
 // =============================================================================

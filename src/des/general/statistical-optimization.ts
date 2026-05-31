@@ -1,3 +1,8 @@
+// RUST MIGRATION: Target module `src/des/general/statistical_optimization.rs`.
+// RUST MIGRATION: Convert distribution, demand, risk-capacity, SDDP, adaptive-simulation params/results/traces to `serde` structs; family/method unions become enums.
+// RUST MIGRATION: Port iteration stations as structs implementing the fixed-point iteration trait, embedding shared station state instead of TS inheritance.
+// RUST MIGRATION: Use `HashMap`/`HashSet` for scenario/cut/candidate indexes and typed structs for cuts and adaptive alternatives.
+// RUST MIGRATION: Inject RNG for all sampling paths, keep pure fit/scenario/profit helpers as free functions, and return `Result` for invalid distributions, grids, and linear solves.
 'use strict';
 
 // =============================================================================

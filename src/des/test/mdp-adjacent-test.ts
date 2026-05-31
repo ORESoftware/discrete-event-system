@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/mdp_adjacent_test.rs` as integration coverage for the MDP/POMDP/SMDP/RL adjacent model set.
+// Test-port notes: translate each model scenario into `#[test]` functions returning `Result<()>`; replace helper checks with `assert!`, `assert_eq!`, approximate-float helpers, and deterministic seeds.
+
 'use strict';
 
 // =============================================================================

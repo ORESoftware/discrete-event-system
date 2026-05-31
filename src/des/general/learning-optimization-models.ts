@@ -1,3 +1,9 @@
+// RUST MIGRATION: target module src/des/general/learning_optimization_models.rs.
+// RUST MIGRATION: SupervisedSample and regression/training params/results become serde structs; inherited params should be flattened explicitly.
+// RUST MIGRATION: RegressionFitToken and station classes become Token/Station/GradientOptimizer trait impl structs rather than subclasses.
+// RUST MIGRATION: runLinearRegressionLS, runRidgeRegressionLS, runLogisticRegressionSGD, and runBackpropMLPClassifier are graph-visible model transforms; expose as PureTransform entry structs.
+// RUST MIGRATION: Linear algebra helpers stay free functions or move to a shared module; matrices are Vec<Vec<f64>> unless using nalgebra.
+// RUST MIGRATION: Default sample builders and accuracy helpers stay pure free functions; validation/training failures return Result.
 'use strict';
 
 // =============================================================================

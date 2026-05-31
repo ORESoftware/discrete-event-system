@@ -1,4 +1,7 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION: Prefer moving these distribution checks into `src/des/random_variables/rv.rs` under `#[cfg(test)] mod tests`.
+// Test-port notes: translate sampling/statistical checks into `#[test]` functions returning `Result<()>`; replace helper checks with `assert!`, `assert_eq!`, approximate-float helpers, and explicit deterministic seeds.
+
 'use strict';
 
 // =============================================================================

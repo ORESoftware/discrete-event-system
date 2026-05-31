@@ -1,5 +1,17 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/rl_tokens.rs
+// - Keep file-for-file. StateToken, ActionToken, TransitionToken,
+//   TrainTriggerToken, and ResumeToken become token structs.
+// - Generic state/action payloads should become type parameters where the owning
+//   agent/environment is generic, or concrete enums when crossing dynamic
+//   boundaries.
+// - Empty marker token classes map to unit structs implementing the Token marker
+//   trait from station.rs.
+// - No throws here; constructors should stay infallible unless future validation
+//   requires Result.
+
 // =============================================================================
 // general/des-base/rl-tokens.ts — common token types for RL stations.
 // =============================================================================

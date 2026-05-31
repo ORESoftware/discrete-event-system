@@ -1,3 +1,6 @@
+// RUST MIGRATION: Prefer moving these unit checks into `src/des/general/control_systems/dc_motor.rs` under `#[cfg(test)] mod tests`.
+// Test-port notes: translate ODE/back-EMF checks into `#[test]` functions returning `Result<()>`; replace ad hoc helpers with `assert!`, `assert_eq!`, and approximate-float helpers; keep integrator tolerances explicit.
+
 'use strict';
 
 // =============================================================================

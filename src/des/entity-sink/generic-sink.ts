@@ -1,5 +1,17 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/entity_sink/generic_sink.rs
+// - EntitySinkGraphData becomes a struct; GenericEntitySink<S,T> becomes a sink
+//   station struct composing input-connection state and implementing SinkLike,
+//   EntityLike, and Observable traits.
+// - `StationaryEntity<GenericEntitySink<...>>` is currently used as a structural
+//   class/interface mix; port it as trait impls over owned state, not
+//   inheritance.
+// - Replace Symbol marker fields, BasicMovingEntity-only takeItem typing,
+//   util.inspect, console logging, and `any` serialization with typed enums,
+//   Debug impls, log facade calls, and serde structs.
+
 import * as math from "mathjs";
 import {number} from "mathjs";
 import {Entity, EntityConnection, StationaryEntity} from "../abstract/abstract";

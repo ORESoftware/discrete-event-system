@@ -1,4 +1,9 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION:
+// - Target: src/bin/run_external_module.rs.
+// - Keep this as the external-adapter CLI with Result-returning main; replace process.argv parsing with clap.
+// - Preserve JSON-like key=value parameter parsing as serde_json::Value or typed params at the boundary.
+// - Route process execution through the migrated external_program adapter using std::process or tokio::process.
 'use strict';
 
 // =============================================================================

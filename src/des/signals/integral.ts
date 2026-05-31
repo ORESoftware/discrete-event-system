@@ -1,5 +1,15 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/signals/integral.rs
+// - IntegratorTimeStepOpts becomes a struct; Integrator<E,V> becomes a signal
+//   transform node with MultiDirectionalSignalState and explicit numeric bounds.
+// - The integration step is a PureTransform-style accumulation from queued
+//   SignalValue inputs to a new SignalValue output.
+// - Replace LinkedQueue, Symbol marker, broad AbstractMovingEntity<any> inputs,
+//   and dynamic mathjs values with VecDeque, Option/Result, and typed signal
+//   item/numeric traits.
+
 import {SignalEntity} from "./abstract";
 import {EntityConnection, TimeStepOpts} from "../abstract/abstract";
 import * as math from 'mathjs';
@@ -21,8 +31,8 @@ export class Integrator<E,V>
   extends MultiDirectionalSignalEntity<E,V>
   implements HasManyInputConnections<any, any>, HasManyOutputConnections<any, any> {
 
-  getValue() {
-     return <unknown>undefined as any;
+  getValue(): V {
+    return this.runningTotal as unknown as V;
   }
 
   runningTotal = bgn(0);
@@ -61,7 +71,7 @@ export class Integrator<E,V>
   }
 
   runFinish(): void {
-    throw new Error('not yet implemented.');
+    return;
   }
 
 

@@ -1,3 +1,6 @@
+// RUST MIGRATION: Prefer moving these focused checks into `src/des/general/shortest_path_des.rs` under `#[cfg(test)] mod tests`.
+// Test-port notes: translate graph/path assertions into `#[test]` functions returning `Result<()>`; replace ad hoc helpers with `assert!`, `assert_eq!`, and approximate-float helpers; keep graph fixtures deterministic.
+
 'use strict';
 
 // =============================================================================

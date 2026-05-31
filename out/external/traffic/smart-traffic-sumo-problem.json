@@ -291,14 +291,14 @@
     ]
   },
   "internalSummary": {
-    "entered": 60,
-    "exited": 33,
+    "entered": 58,
+    "exited": 34,
     "crashed": 0,
-    "activeAtEnd": 27,
-    "dropped": 519,
-    "meanTravelTimeSec": 72.3272727272707,
-    "meanSpeedMps": 4.865154798534965,
-    "maxActiveCars": 28
+    "activeAtEnd": 24,
+    "dropped": 40,
+    "meanTravelTimeSec": 70.9411764705858,
+    "meanSpeedMps": 5.668453080290459,
+    "maxActiveCars": 26
   },
   "demand": [
     {
@@ -311,7 +311,7 @@
         "I3-I4",
         "I4-E"
       ],
-      "vehicles": 8,
+      "vehicles": 7,
       "beginSec": 0,
       "endSec": 180
     },
@@ -415,7 +415,7 @@
         "I3-I4",
         "I4-S4"
       ],
-      "vehicles": 11,
+      "vehicles": 10,
       "beginSec": 0,
       "endSec": 180
     }

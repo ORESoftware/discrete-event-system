@@ -1,3 +1,6 @@
+// RUST MIGRATION: Prefer moving these unit checks into `src/des/general/control_systems/empirical_control.rs` under `#[cfg(test)] mod tests`.
+// Test-port notes: translate DES/control-system scenarios into `#[test]` functions returning `Result<()>`; replace ad hoc helpers with `assert!`, `assert_eq!`, and approximate-float helpers; keep RNG seeds deterministic.
+
 'use strict';
 
 // =============================================================================

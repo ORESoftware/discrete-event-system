@@ -1,5 +1,12 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/animation/scenes/temp_control_scene.rs
+// - SceneData should become a Rust struct and buildTempControlFrame/buildTempControlAnimation remain module helpers.
+// - RunResult/TickRecord stay typed imports from general::temp_control; animation output is serde Animation/Frame/Shape data.
+// - Private drawing/chart helpers should take &mut Vec<Shape> and return Result only if rendering can fail.
+// - If temperature-control frames become graph-visible, use a TempControlSceneTransform implementing PureTransform::transform.
+
 // =============================================================================
 // Temperature-control scene builder.
 //

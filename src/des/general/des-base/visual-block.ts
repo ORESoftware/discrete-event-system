@@ -1,5 +1,17 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/visual_block.rs
+// - Keep file-for-file. Visual role/direction unions become enums; port,
+//   layout, style, connection, and render specs become data structs.
+// - VisualBlock becomes a struct implementing CompositeDESStation/DESStation
+//   behavior plus visual metadata methods.
+// - Helper functions such as renderVisualBlocks, visualBlockSpecs, port
+//   normalization, and memberKind can stay module functions; if rendering is
+//   lifted into a DES graph node, expose it through PureTransform.
+// - Set usage maps to HashSet/BTreeSet. Convert duplicate port, missing port,
+//   and role/connection validation throws to Result.
+
 import type {Shape} from '../../animation/types';
 import {CompositeDESStation} from './composite-station';
 import {DESRunLoopEntity, DESStation} from './station';

@@ -1,5 +1,12 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/animation/scenes/newsvendor_scene.rs
+// - NewsvendorFrameData becomes a Rust struct; buildNewsvendorFrame/buildNewsvendorChart remain module helpers.
+// - COLORS should become constants or a small palette struct; optional chart bounds/captions become Option<T>.
+// - Keep helper calculations private and return typed Frame/ChartSpec/Shape serde data.
+// - If inventory rendering becomes DES graph-visible, wrap NewsvendorFrameData -> Frame in a PureTransform implementor.
+
 // =============================================================================
 // Newsvendor / inventory animation scene.
 //

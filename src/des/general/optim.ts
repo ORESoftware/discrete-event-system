@@ -1,5 +1,20 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/optim.rs
+// - Keep this file as a pure numerical-optimization module. OptimOptions and
+//   OptimResult become serde-friendly structs; history rows should become a
+//   named OptimHistoryRow struct.
+// - gradientDescent/newtonOptim/bfgs can remain public module functions in
+//   Rust because they are stateless solvers, not DES graph nodes. If a solver is
+//   later inserted into a DES graph, wrap it in a PureTransform implementor with
+//   `transform(request) -> result`.
+// - Callback arguments map to generic `F: Fn(&[f64]) -> f64` / gradient traits.
+//   Avoid boxed dyn callbacks unless call sites need runtime dispatch.
+// - Warnings and singular-matrix paths should become Result errors with a small
+//   OptimError enum. Use f64 first, then revisit decimal/BigFloat only if tests
+//   show precision drift.
+
 // =============================================================================
 // Multivariable optimization.
 //

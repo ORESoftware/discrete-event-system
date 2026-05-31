@@ -1,5 +1,12 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/animation/scenes/obs_ctrl_scene.rs
+// - StoryStep aliases Frame-without-time in TS; make it a small Rust struct or reuse a FrameBuilder data type.
+// - ObsCtrlScene becomes a storyboard struct with inherent methods returning Vec<Shape>/Frame fragments, not a superclass hierarchy.
+// - Matrix imports should stay as typed linear_algebra module values; avoid serde_json::Value except at external boundaries.
+// - If this storyboard becomes graph-visible, expose a PureTransform implementation that maps control-system state to StoryStep.
+
 // =============================================================================
 // Observability / Controllability scene builder (class-based storyboard).
 //

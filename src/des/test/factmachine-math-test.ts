@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/factmachine_math_test.rs` unless the float64 math layer lands with local `#[cfg(test)]` tests.
+// Test-port notes: translate LMSR/math checks into `#[test]` functions returning `Result<()>`; replace ad hoc helpers with `assert!`, `assert_eq!`, and approximate-float helpers; pin tolerances explicitly.
+
 'use strict';
 
 // =============================================================================

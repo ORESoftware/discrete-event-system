@@ -1,4 +1,9 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION:
+// - Target: src/bin/validate_factmachine.rs.
+// - Keep this as a CLI validation binary with Result-returning main; map FACTMACHINE_PY and env scenarios to clap/std::env.
+// - Convert Python last-line JSON payloads and check rows to serde structs.
+// - Replace execFileSync with std::process::Command or tokio::process and keep external FactMachine as an adapter boundary.
 'use strict';
 
 // =============================================================================

@@ -1,3 +1,13 @@
+// RUST MIGRATION:
+// - Target: src/des/signals/abstract.rs
+// - SignalMarker becomes a zero-sized marker type or enum variant;
+//   SignalTimeStepOpts and SignalEntityGraphData become typed structs rather
+//   than symbol-indexed structural interfaces.
+// - SignalEntity<E,V> should be a SignalEntity trait layered on MovingEntity,
+//   with shared signal state composed into concrete structs.
+// - Null/undefined placeholders (`return null as any`) need typed Option/Result
+//   return contracts before the Rust port.
+
 import {Entity, TimeStepOpts} from "../abstract/abstract";
 import {EntityGraphData} from "../abstract/interfaces";
 import * as math from 'mathjs';

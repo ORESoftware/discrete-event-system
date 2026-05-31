@@ -1,5 +1,17 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/single_state_optimizer.rs
+// - Keep file-for-file. Channel constants become pub consts; initial/result
+//   token classes and SingleStateResultSnapshot become token/data structs.
+// - SingleStateSourceStation and SingleStateSinkStation become concrete
+//   DESStation structs; SingleStateOptimizer becomes a trait plus shared
+//   optimizer-state struct for current/best/history fields.
+// - Proposal, cost, accept, clone, and stop hooks map to trait methods; pure
+//   cost/proposal graph adapters should implement PureTransform/PureTransformEntity.
+// - Convert duplicate seed, uninitialized optimizer, and non-finite cost throws
+//   to Result.
+
 // =============================================================================
 // general/des-base/single-state-optimizer.ts — base class for SINGLE-WALKER
 // iterative optimisation: simulated annealing, hill climbing, tabu search,

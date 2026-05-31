@@ -1,5 +1,16 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/entity_sink/sink.rs
+// - AbstractSinkEntity<S,T> becomes a SinkLike trait plus shared SinkState
+//   containing input connections; EntitySink<S,T> becomes the concrete sink
+//   struct with EntityLike/Observer/HasManyInput impls.
+// - Convert abstract class inheritance and structural HasManyInputConnections
+//   into nominal traits with associated Item/Source types.
+// - EntitySinkGraphData and audit/serializable data should be serde structs;
+//   replace `any`, Symbol markers, util.inspect, and console debug strings with
+//   typed graph events and Debug/logging implementations.
+
 import * as math from "mathjs";
 import {number} from "mathjs";
 import {Entity, EntityConnection, StationaryEntity} from "../abstract/abstract";

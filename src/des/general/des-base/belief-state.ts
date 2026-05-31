@@ -1,5 +1,17 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/belief_state.rs
+// - Keep file-for-file. ActionObservationToken and BeliefToken become token
+//   structs; POMDPCore should become a behavior trait or concrete model struct
+//   depending on whether callers own transition/observation data.
+// - BeliefStateStation becomes a trait plus shared state struct holding the
+//   belief vector and core reference; preserve the DESStation implementation as
+//   an impl block over that state.
+// - Bayesian update helpers can be private/associated functions; if exposed as
+//   graph filters later, model them as PureTransform/PureTransformEntity.
+// - Convert invalid dimensions and normalization failures from throws to Result.
+
 // =============================================================================
 // general/des-base/belief-state.ts — base class for BELIEF-STATE iterative
 // algorithms (POMDPs, hidden Markov filtering, simultaneous localisation

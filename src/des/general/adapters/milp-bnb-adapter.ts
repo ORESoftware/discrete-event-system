@@ -1,3 +1,7 @@
+// RUST MIGRATION: Target module `src/des/general/adapters/milp_bnb_adapter.rs`.
+// RUST MIGRATION: Convert MILP branch-and-bound and IP/MIP DES registrations into adapter structs/functions around `DESModelSpec`.
+// RUST MIGRATION: Promote MILP params, branch nodes, incumbent traces, and solutions to `serde` config/result structs; output paths become `PathBuf`.
+// RUST MIGRATION: Return `Result<_, ValidationError>` for dimension mismatches, invalid bounds, and solver validation failures.
 'use strict';
 
 // =============================================================================

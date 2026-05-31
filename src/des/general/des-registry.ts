@@ -1,3 +1,7 @@
+// RUST MIGRATION: target module src/des/general/des_registry.rs.
+// RUST MIGRATION: REGISTRY becomes a HashMap<String, Box<dyn DESModelRegistrationDyn>> or typed enum registry; avoid TS any by introducing an object-safe trait.
+// RUST MIGRATION: registerModel/getModel/listModels/runFromSpec/runFromJsonFile are registry/IO free functions; async file reads map to tokio or std fs depending on runtime.
+// RUST MIGRATION: RunFromSpecOptions and DESRunSummary-compatible results become serde structs, and validation/lookup/file errors should return Result.
 'use strict';
 
 // =============================================================================

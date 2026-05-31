@@ -1,4 +1,7 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION: Port file-for-file to `tests/animation_test.rs` as integration coverage for frame recording, HTML player output, and animation types.
+// Test-port notes: translate smoke checks into `#[test]` functions returning `Result<()>`; use `assert!`, `assert_eq!`, approximate float helpers, `tempfile` for scratch files, and deterministic frame fixtures.
+
 'use strict';
 
 // =============================================================================

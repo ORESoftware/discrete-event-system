@@ -1,5 +1,12 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/animation/scenes/incremental_lp_scene.rs
+// - Keep buildIncrementalLPFrame/buildIncrementalLPCharts as module helpers over typed LPSnapshot/LPEvent structs.
+// - Numeric matrices/vectors should become Vec<Vec<f64>> initially, with a later nalgebra-style type only if shared math needs it.
+// - Project/polytope helper closures can become small private structs or functions; thrown/invalid geometry paths should be Result.
+// - If LP rendering becomes DES graph-visible, expose a PureTransform from snapshot/event stream to Frame.
+
 // =============================================================================
 // Incremental-LP scene: 2D polytope + objective gradient + simplex path,
 // plus a tableau readout panel. The polytope re-shapes as constraints are

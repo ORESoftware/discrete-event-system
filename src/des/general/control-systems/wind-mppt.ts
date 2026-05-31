@@ -1,3 +1,7 @@
+// RUST MIGRATION: Target module `src/des/general/control_systems/wind_mppt.rs`.
+// RUST MIGRATION: Convert turbine aerodynamics, wind profiles, rotor dynamics, plant stations, and MPPT controllers into structs plus plant/controller traits.
+// RUST MIGRATION: Use `f64` vectors/matrices for rotor/state/control math, inject wind/controller config explicitly, and return `Result` for invalid turbine params.
+// RUST MIGRATION: Graph-visible controller/evaluator logic should become PureTransform-style structs with `transform` methods.
 'use strict';
 
 // =============================================================================

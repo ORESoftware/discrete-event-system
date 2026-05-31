@@ -1,5 +1,5 @@
 {
-  "elapsedMs": 24.235963821411133,
+  "elapsedMs": 13.716936111450195,
   "kernel": "python-computer-network-fel-reference",
   "result": {
     "activePackets": 0,
@@ -3906,7 +3906,7 @@
         "generatedPackets": 624,
         "goodputMbps": 5.9904,
         "id": "a-to-server",
-        "meanCostPerDeliveredPacket": 1.2879999999999887e-05,
+        "meanCostPerDeliveredPacket": 1.288e-05,
         "meanLatencyMs": 15.0,
         "meanTimeInSystemMs": 15.0,
         "offeredLoadMbps": 9.18528,
@@ -3915,7 +3915,7 @@
         "protocol": "http",
         "source": "client-a",
         "throughputMbps": 9.18528,
-        "totalCost": 0.008037119999999929
+        "totalCost": 0.00803712
       },
       {
         "deliveredBytes": 305760,
@@ -3927,7 +3927,7 @@
         "generatedPackets": 294,
         "goodputMbps": 2.352,
         "id": "b-to-server",
-        "meanCostPerDeliveredPacket": 7.279999999999982e-06,
+        "meanCostPerDeliveredPacket": 7.28e-06,
         "meanLatencyMs": 16.0,
         "meanTimeInSystemMs": 16.0,
         "offeredLoadMbps": 2.44608,
@@ -3936,7 +3936,7 @@
         "protocol": "tcp",
         "source": "client-b",
         "throughputMbps": 2.44608,
-        "totalCost": 0.0021403199999999946
+        "totalCost": 0.00214032
       }
     ],
     "generatedPackets": 918,
@@ -4587,7 +4587,7 @@
         "tMs": 1000.0
       }
     ],
-    "totalCost": 0.010177439999999953,
+    "totalCost": 0.01017744,
     "totalSimulatedMs": 1016.0
   },
   "semantic": "packet-network future event list with periodic source/service ticks matching the internal DES contract"

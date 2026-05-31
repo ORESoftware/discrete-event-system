@@ -1,3 +1,8 @@
+// RUST MIGRATION: Target module `src/des/general/neural_network.rs`.
+// RUST MIGRATION: Convert activation/solver-name unions to enums and configs, samples, options, traces, and results to `serde` structs.
+// RUST MIGRATION: Port `FeedForwardNetwork`, supervised stations, Q-learning agent, ODE tokens/station, and prediction sink as structs implementing neural/RL/DES traits.
+// RUST MIGRATION: Closure typedefs such as `StateEncoder` should become trait bounds or boxed `Fn` ports; exported runners can stay free functions unless graph-visible wrappers are needed.
+// RUST MIGRATION: Replace `Math.random` call sites with an injected RNG trait/closure, and surface training/ODE validation failures as `Result`.
 'use strict';
 
 // =============================================================================

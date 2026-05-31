@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/preconditions_test.rs` as integration coverage for pre-run guards and model precondition errors.
+// Test-port notes: translate error-path checks into `#[test]` functions returning `Result<()>`; replace ad hoc helpers with `assert!`, `assert_eq!`, and `matches!`; keep seeded fixtures deterministic.
+
 'use strict';
 
 // =============================================================================

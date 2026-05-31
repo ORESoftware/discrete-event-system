@@ -1,5 +1,17 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/entity_processing/per_individual_processor.rs
+// - PerIndividualProcessorOpts and QueuedItem become structs; the processor
+//   itself owns `Vec<QueuedItem>` plus connection state and implements the same
+//   processor/queue/entity traits as EntityProcessor.
+// - `drawDuration: () => number` should be an injected RNG/service-time trait or
+//   generic closure parameter; keep this as a PureTransform boundary for
+//   per-entity residence-time draws.
+// - The `(m as any)` compatibility shims, `reg.registerProcessor(this as any)`,
+//   and no-downstream retry loop need typed trait bounds and Result/logging
+//   decisions in Rust.
+
 // =============================================================================
 // PerIndividualProcessor: a station type that mirrors the FEL kernel's
 // semantics inside the framework's run-loop.

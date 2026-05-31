@@ -1,4 +1,9 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION:
+// - Target: src/bin/validate_with_externals.rs.
+// - Keep this as a CLI validation binary with Result-returning main; map N/STEPSIZE/output dirs to clap/std::env.
+// - Convert ExternalRun, per-kernel summaries, and Welch outputs into serde structs for golden comparison reports.
+// - Keep external fixture loading at the std::fs/std::path boundary and reuse migrated runner/stat modules internally.
 'use strict';
 
 // =============================================================================

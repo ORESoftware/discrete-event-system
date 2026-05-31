@@ -1,6 +1,15 @@
 #!/usr/bin/env ts-node
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/random_variables/half.rs
+// - This helper should become a named PureTransform struct, e.g.
+//   DownsampleByHalving { target_len }, with `transform(Vec<f64>) -> Vec<f64>`.
+// - Fix the implicit JS sort before porting: Rust needs an explicit numeric
+//   comparator/ordering, especially for floats.
+// - Replace `any[]`, tuple accumulator tricks, and console-driven execution
+//   with typed Vec operations and a separate bin/test harness.
+
 const goFrom_131072_to_1024 = (v: number[]) => {
 
   let ret = [...v].sort();

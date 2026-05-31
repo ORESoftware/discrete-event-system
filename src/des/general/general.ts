@@ -1,3 +1,8 @@
+// RUST MIGRATION: target module src/des/general/general.rs.
+// RUST MIGRATION: DESSet and DESMap become thin newtype wrappers around HashSet/HashMap only if the extra semantics are still needed; otherwise use std collections directly.
+// RUST MIGRATION: HasComputedProperties should become a trait, while any-heavy helpers like sendRaw/deJSON/makeError need typed serde_json::Value and Result boundaries.
+// RUST MIGRATION: getShortUUID maps to the uuid crate, math.BigNumber helpers require a decimal/big-number crate decision, and WebSocket sending belongs behind an IO port trait.
+// RUST MIGRATION: fisherYatesShuffle is a generator today; port as an iterator struct or pure function taking injected rand::Rng.
 'use strict';
 
 import * as math from "mathjs";
@@ -34,10 +39,10 @@ export const deJSON = (fn: (v: any) => void) => {
   };
 }
 
-export const fisherYatesShuffle = function* <T>(deck: Array<T>) {
+export const fisherYatesShuffle = function* <T>(deck: Array<T>, rng: () => number = Math.random) {
   // TODO: store previous array
   for (let i = deck.length - 1; i >= 0; i--) {
-    const swapIndex = Math.floor(Math.random() * (i + 1));
+    const swapIndex = Math.floor(rng() * (i + 1));
     [deck[i], deck[swapIndex]] = [deck[swapIndex], deck[i]];
     yield deck[i];
   }
@@ -105,15 +110,15 @@ export class DESMap<K extends Number, V extends math.BigNumber> extends Map<K, V
 
 }
 
-export const getReasonableU = (): math.BigNumber => {
+export const getReasonableU = (rng: () => number = Math.random): math.BigNumber => {
   // smallest u is 0.001, biggest is 0.999
-  const u = math.max(0.001, Math.random());
+  const u = math.max(0.001, rng());
   return bgn(math.min(0.999, u));
 }
 
-export const getReasonableUNative = (): number => {
+export const getReasonableUNative = (rng: () => number = Math.random): number => {
   // smallest u is 0.001, biggest is 0.999
-  const u = Math.max(0.001, Math.random());
+  const u = Math.max(0.001, rng());
   return Math.min(0.999, u);
 }
 
@@ -193,4 +198,3 @@ export const makeError = (...msg: Array<any>) => {
     return clc.bold(isPrimitive(v) ? v : util.inspect(v, {depth: 20}));
   }).join(' '));
 }
-

@@ -1,5 +1,15 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/policy_gradient_agent.rs
+// - Keep file-for-file. RolloutEntry becomes a data struct.
+// - PolicyGradientAgent and PolicyUpdateStation become traits plus shared
+//   station-state structs for rollout buffering, reward accounting, and update
+//   emission.
+// - Policy/value/update hooks map to trait methods; any pure advantage or loss
+//   computation lifted into the graph should use PureTransform/PureTransformEntity.
+// - Convert invalid rollout/update state and emitted-token failures to Result.
+
 // =============================================================================
 // general/des-base/policy-gradient-agent.ts — base class for POLICY-GRADIENT
 // methods: REINFORCE, A2C, PPO (clipped & adaptive-KL), TRPO, IMPALA, …

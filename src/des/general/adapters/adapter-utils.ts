@@ -1,3 +1,6 @@
+// RUST MIGRATION: Target module `src/des/general/adapters/adapter_utils.rs`.
+// RUST MIGRATION: Convert these shared adapter helpers to free functions around `DESModelSpec`/registration modules; use `serde` structs for any config/result records.
+// RUST MIGRATION: Represent CSV/output paths as `PathBuf`, filesystem writes as `std::fs`/`std::io::Result`, and validation failures as `Result<_, ValidationError>`.
 'use strict';
 
 import * as fs from 'fs';

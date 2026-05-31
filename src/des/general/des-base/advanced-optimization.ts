@@ -1,5 +1,19 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/advanced_optimization.rs
+// - Keep file-for-file. OptimizationCandidateToken, GraphWalkToken,
+//   ConstraintAssignmentToken, and ParetoCandidateToken become token structs;
+//   trace/options/archive interfaces become data structs.
+// - NumericSwarmOptimizerStation, PheromoneGraphSearchStation,
+//   ConstraintSatisfactionSearchStation, SourceDrivenConstraintSatisfactionSearchStation,
+//   and UnitVectorRelaxationStation become traits plus reusable state structs.
+// - ParetoArchiveStation remains a concrete struct implementing DESStation;
+//   Set usage maps to HashSet/BTreeSet depending on deterministic ordering needs.
+// - Keep pure helpers such as dominates, normalize, vectorDot, and gram as module
+//   functions unless lifted into the DES graph, where they should be PureTransform
+//   or PureTransformEntity implementations. Replace thrown errors with Result.
+
 // =============================================================================
 // Shared station/token bases for advanced optimization families.
 //

@@ -1,5 +1,12 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/animation/scenes/soccer_scene.rs
+// - SoccerFrameInput becomes a Rust struct; buildSoccerFrame/buildSoccerCharts stay module helpers returning Frame/ChartSpec data.
+// - POSITION_RELATIVE and color constants can be const arrays/strings; optional events and labels become Option<T>.
+// - Keep draw/layout helpers private and pass &mut Vec<Shape> where TS mutates a Shape array.
+// - If frame generation is made DES graph-visible, wrap it in a SoccerSceneTransform implementing PureTransform::transform.
+
 // =============================================================================
 // Soccer pitch + bench animation scene.
 //

@@ -1,5 +1,15 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/argmax.rs
+// - Keep file-for-file. ARGMAX_EPS_DEFAULT becomes a pub const and the argmax
+//   routines can stay as pure module functions returning indices/options.
+// - Replace rng callbacks with an injected RNG trait or generic R: Rng, keeping
+//   deterministic tie-breaking explicit at call sites.
+// - These helpers are not DES stations today; if an argmax scorer is lifted into
+//   the graph, wrap it in a PureTransform/PureTransformEntity with transform().
+// - Prefer Result/Option for empty inputs or invalid scores instead of throws.
+
 // =============================================================================
 // general/des-base/argmax.ts
 //

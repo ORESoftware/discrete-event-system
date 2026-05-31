@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/network_mutex_test.rs` as integration coverage for network mutex stations and stateful token transitions.
+// Test-port notes: translate concurrency/state scenarios into `#[test]` functions returning `Result<()>`; replace helper checks with `assert!`, `assert_eq!`, approximate-float helpers, and deterministic token fixtures.
+
 'use strict';
 
 import {

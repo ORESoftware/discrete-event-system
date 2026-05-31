@@ -1,4 +1,9 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION:
+// - Target: src/bin/validate_smart_traffic_external.rs.
+// - Keep this as a CLI validation binary with Result-returning main; replace process.exit with ExitCode.
+// - Convert TrafficDemandRow, ExternalTrafficPayload, and CheckRow into serde structs and use serde_json for adapter payloads.
+// - Treat TRAFFIC_SUMO_REFERENCE_ID as an external adapter behind external_program using std::process or tokio::process.
 'use strict';
 
 // =============================================================================

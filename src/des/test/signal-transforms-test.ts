@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/signal_transforms_test.rs` for Z, Laplace, and Fourier transform DES station-graph coverage.
+// Test-port notes: translate transform scenarios into `#[test]` functions returning `Result<()>`; replace ad hoc checks with `assert!`, `assert_eq!`, approximate-float helpers, and deterministic fixtures.
+
 'use strict';
 
 // =============================================================================

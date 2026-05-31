@@ -1,4 +1,9 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION:
+// - Target: src/bin/validate_elevator.rs.
+// - Keep this as a CLI validation binary with Result-returning main; replace process.exit with ExitCode.
+// - Convert framework/SimPy JSON fixtures and aggregate comparison rows to serde structs.
+// - Keep the elevator external reference as an adapter-produced golden payload and file I/O behind std::fs/std::path.
 'use strict';
 
 // Compares the framework's elevator-sim aggregates (out/elevator-framework.json)

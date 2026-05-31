@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/external_module_test.rs` for external solver and validator registry behavior.
+// Test-port notes: convert registry scenarios into `#[test]` functions returning `Result<()>`; use `assert!`/`assert_eq!`/approx helpers, `tempfile` for scratch modules, and deterministic fixtures.
+
 'use strict';
 
 // =============================================================================

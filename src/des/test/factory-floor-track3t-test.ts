@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/factory_floor_track3t_test.rs` as integration coverage for warehouse scenarios and comparison animations.
+// Test-port notes: translate scenario checks into `#[test]` functions returning `Result<()>`; replace ad hoc checks with `assert!`, `assert_eq!`, and approximate-float helpers; keep animation fixtures deterministic.
+
 'use strict';
 
 import {

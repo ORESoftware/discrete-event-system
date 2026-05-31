@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/optimization_as_des_test.rs` as integration coverage for the des-base optimization hierarchy.
+// Test-port notes: translate optimizer scenarios into `#[test]` functions returning `Result<()>`; replace ad hoc checks with `assert!`, `assert_eq!`, approximate-float helpers, and deterministic PRNG seeds.
+
 'use strict';
 
 // =============================================================================

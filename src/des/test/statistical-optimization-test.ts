@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/statistical_optimization_test.rs` for statistical and stochastic optimization extension coverage.
+// Test-port notes: translate stochastic optimization scenarios into `#[test]` functions returning `Result<()>`; replace ad hoc checks with `assert!`, `assert_eq!`, approximate-float helpers, and deterministic seeds.
+
 'use strict';
 
 // =============================================================================

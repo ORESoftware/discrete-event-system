@@ -1,3 +1,6 @@
+// RUST MIGRATION: target module src/des/general/do_audit.rs.
+// RUST MIGRATION: doAudit is a small diagnostic command and can be a free function or src/bin/do_audit.rs wrapper around the registry.
+// RUST MIGRATION: Replace thrown makeError paths with Result<(), Error>; avoid any-typed entity values by using the Rust entity trait hierarchy.
 'use strict';
 
 import {reg} from "./entity-registration";
@@ -36,5 +39,4 @@ export const doAudit = () => {
   first = false;
 
 };
-
 

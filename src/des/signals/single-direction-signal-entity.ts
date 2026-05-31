@@ -1,3 +1,12 @@
+// RUST MIGRATION:
+// - Target: src/des/signals/single_direction_signal_entity.rs
+// - SingleInManyOutSignalEntity<E,V> becomes a shared signal station state
+//   struct plus SignalEntity/HasSingleInput/HasManyOutput trait impls.
+// - `connectionIn = null as EntityConnection` should become Option<Connection>
+//   and queue capacity should be an explicit Option<usize> or bounded queue.
+// - Replace `any` endpoint/moving-entity contracts with associated Item/Input/
+//   Output types so Rust does not need broad trait objects by default.
+
 import {SignalEntity} from "./abstract";
 import {
   HasManyInputConnections,
@@ -72,7 +81,6 @@ export abstract class SingleInManyOutSignalEntity<E,V>
 
 
 }
-
 
 
 

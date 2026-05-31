@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/stochastic_sde_test.rs` unless the SDE modules absorb these checks as local `#[cfg(test)]` suites.
+// Test-port notes: translate stochastic/integrator scenarios into `#[test]` functions returning `Result<()>`; replace helpers with `assert!`, `assert_eq!`, approximate-float helpers, and deterministic seeds.
+
 'use strict';
 
 // =============================================================================

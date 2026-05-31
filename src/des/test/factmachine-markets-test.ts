@@ -1,4 +1,7 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION: Port file-for-file to `tests/factmachine_markets_test.rs` as integration coverage for FactMachine market MDP/POMDP simulations.
+// Test-port notes: translate market scenarios into `#[test]` functions returning `Result<()>`; replace helper checks with `assert!`, `assert_eq!`, and approximate-float helpers; keep stochastic seeds deterministic.
+
 'use strict';
 
 // =============================================================================

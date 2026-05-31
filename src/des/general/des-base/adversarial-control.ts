@@ -1,5 +1,17 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/adversarial_control.rs
+// - Keep file-for-file. Channel constants become pub const values; observation,
+//   control, and disturbance token classes become token structs.
+// - ClosedLoopGameTraceRow and ClosedLoopPlantOptions become data structs, while
+//   ClosedLoopPlantStation, FeedbackPolicyStation, and DisturbancePolicyStation
+//   become traits plus shared station-state structs.
+// - wireClosedLoopGame and runClosedLoopGame can remain module functions for
+//   graph assembly/running; if individual policies become pure graph adapters,
+//   model them as PureTransform/PureTransformEntity implementors.
+// - Convert validation and runner failures from thrown errors to Result.
+
 // =============================================================================
 // Shared station/token bases for closed-loop adversarial and stochastic control.
 //

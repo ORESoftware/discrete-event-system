@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/computer_network_test.rs` as integration coverage for packet-switched network DES specs.
+// Test-port notes: translate scenario checks into `#[test]` functions returning `Result<()>`; replace helper assertions with `assert!`, `assert_eq!`, and approximate-float helpers; keep network fixtures and seeds deterministic.
+
 'use strict';
 
 // =============================================================================

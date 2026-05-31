@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/internal_solver_network_test.rs` for GA/SA/knapsack/shortest-path/TSP solver-network coverage.
+// Test-port notes: translate solver scenarios into `#[test]` functions returning `Result<()>`; replace ad hoc checks with `assert!`, `assert_eq!`, approximate-float helpers, and deterministic fixtures.
+
 'use strict';
 
 // =============================================================================

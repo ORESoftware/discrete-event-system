@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/multistage_stochastic_test.rs` for SDDP, stochastic programming, and shared cut-pool behavior.
+// Test-port notes: translate decomposition cases into `#[test]` functions returning `Result<()>`; replace ad hoc checks with `assert!`, `assert_eq!`, approximate-float helpers, and deterministic scenario seeds.
+
 'use strict';
 
 // =============================================================================

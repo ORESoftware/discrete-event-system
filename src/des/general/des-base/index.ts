@@ -1,5 +1,15 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/mod.rs
+// - This is the Rust `mod.rs` boundary for all des_base modules. Each export
+//   below should become a `pub mod ...;` plus selective `pub use ...;` re-export.
+// - Preserve the class-family hierarchy as trait families: DESStation as the
+//   base trait/state pair, then optimizer, RL, controller, transform, and visual
+//   block traits layered over it.
+// - Keep the module list one-to-one with the TypeScript files during the first
+//   migration. Consolidation can happen only after behavioral parity tests pass.
+
 // =============================================================================
 // general/des-base/index.ts — public API of the DES base hierarchy.
 //

@@ -1,5 +1,15 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/multi_agent.rs
+// - Keep file-for-file. JointEnvironment becomes a behavior trait and
+//   MultiAgentSystemOpts becomes a config struct.
+// - JointEnvStation and MultiAgentSystem become state-owning structs; per-agent
+//   action buffers map from Map to HashMap/BTreeMap keyed by agent id.
+// - Joint step/policy helpers can stay associated methods; if a coordination
+//   rule is lifted into a graph node, use PureTransform/PureTransformEntity.
+// - Convert agent-count and missing-action errors to Result.
+
 // =============================================================================
 // general/des-base/multi-agent.ts — base class for SIMULTANEOUS-MOVE
 // MULTI-AGENT REINFORCEMENT LEARNING ON A SHARED ENVIRONMENT.

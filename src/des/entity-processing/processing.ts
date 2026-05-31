@@ -1,5 +1,19 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/entity_processing/processing.rs
+// - EntityProcessor<S,T> becomes a processor station struct that composes the
+//   QueueEntity state and implements EntityLike, QueueLike, ProcessorLike, and
+//   OutputRoutingPolicy-aware routing traits.
+// - LinkedQueue/IterableInt/DESMap should become VecDeque/ranges/HashMap or
+//   BTreeMap depending on deterministic reporting needs; observer payloads
+//   should use typed graph-data structs instead of `any`.
+// - The service-completion step is a PureTransform boundary over
+//   (processor-state, step-size, random-variable) -> routed/requeued effects.
+// - Convert thrown strings/errors, util.inspect hooks, Symbol markers, and
+//   `math.BigNumber` arithmetic into typed Result paths and shared decimal/time
+//   abstractions.
+
 import * as math from "mathjs";
 import {QueueEntity, QueueEntityGraphData} from "../entity-queue/queue";
 import {EntityGraphData, HasEntityValidation} from "../abstract/interfaces";
@@ -266,7 +280,7 @@ export class EntityProcessor<S, T>
     const id = x.id;
 
     if(!x.id){
-      throw new Error('boof');
+      throw makeError('cannot bump histogram for entity without an id.');
     }
 
     // for(const v of (x as any).processingTimeByStation){

@@ -1,3 +1,8 @@
+// RUST MIGRATION:
+// - Target: src/bin/validate_shortest_path.rs.
+// - Keep this as a CLI validation binary with Result-returning main; replace process.exit with ExitCode.
+// - Convert graph scenarios and expected paths to nominal structs, using Vec and HashMap/BTreeMap for adjacency data.
+// - Keep check/close helpers private and route Bellman-Ford/DES shortest-path calls through migrated modules.
 'use strict';
 
 // =============================================================================

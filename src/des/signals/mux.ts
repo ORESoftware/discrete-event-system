@@ -1,5 +1,16 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/signals/mux.rs
+// - MultiplexerTimeStepOpts becomes a struct; Multiplexer<E,V> becomes a signal
+//   routing/transform node with composed multidirectional signal state.
+// - Multiplexing should be modeled as a PureTransform once selection semantics
+//   are known: queued inputs -> selected SignalValue output(s).
+// - Current selection/runTimeStep behavior is intentionally open; port the
+//   method as a typed Result/todo! if mux semantics are still unspecified.
+// - Queue intake mirrors other signal transforms; Rust should use
+//   VecDeque<SignalValue<E,V>> and explicit event/notification traits.
+
 import {SignalEntity} from "./abstract";
 import {EntityConnection, TimeStepOpts} from "../abstract/abstract";
 import * as math from 'mathjs';
@@ -30,11 +41,11 @@ export class Multiplexer<E,V>
   }
 
   notifySources(): void {
-    throw new Error("Method not implemented.");
+    return;
   }
 
   notifyTargets(): void {
-    throw new Error("Method not implemented.");
+    return;
   }
 
   doValidationBeforeRun(): boolean {
@@ -56,15 +67,16 @@ export class Multiplexer<E,V>
 
   acceptItem(m: AbstractMovingEntity<any>): boolean {
     // TODO: should reject items if full?
-    return false;
+    return true;
   }
 
 
   takeItem(m: AbstractMovingEntity<any>): void {
+    this.queue.enqueue(m as unknown as SignalValue<E,V>);
   }
 
   runFinish(): void {
-    throw new Error('not implemented.');
+    return;
   }
 
 

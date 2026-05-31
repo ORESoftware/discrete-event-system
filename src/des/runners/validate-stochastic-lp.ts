@@ -1,3 +1,8 @@
+// RUST MIGRATION:
+// - Target: src/bin/validate_stochastic_lp.rs.
+// - Keep this as a CLI validation binary with Result-returning main; replace process.exit with ExitCode.
+// - Convert stochastic scenarios and sampled outcomes to nominal structs, using Vec<f64> and explicit probability types.
+// - Keep close/arrClose/check helpers private and route stochastic LP calls through migrated solver modules.
 'use strict';
 
 // =============================================================================

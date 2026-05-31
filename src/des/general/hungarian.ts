@@ -1,3 +1,7 @@
+// RUST MIGRATION: target module src/des/general/hungarian.rs.
+// RUST MIGRATION: AssignmentDirection becomes an enum and AssignmentResult becomes a serde struct.
+// RUST MIGRATION: hungarian is a pure solver and should stay a free function returning Result<AssignmentResult, Error> for malformed matrices.
+// RUST MIGRATION: Use Vec<Vec<f64>> for cost matrices and keep rectangular padding/dual arrays explicit.
 'use strict';
 
 // =============================================================================

@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/advanced_optimization_control_test.rs` as integration coverage for advanced optimization and control DES models.
+// Test-port notes: translate top-level checks into `#[test]` functions returning `Result<()>`; replace ad hoc check helpers with `assert!`, `assert_eq!`, and approximate-float helpers; keep any RNG seeds deterministic.
+
 'use strict';
 
 // =============================================================================

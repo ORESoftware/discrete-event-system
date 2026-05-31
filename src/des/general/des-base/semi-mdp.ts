@@ -1,5 +1,15 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/semi_mdp.rs
+// - Keep file-for-file. Option and SemiMDPOptions become data/config structs or
+//   an option behavior trait if initiation/policy/termination stay dynamic.
+// - SemiMDPAgentStation becomes a trait plus shared RL-agent state struct for
+//   active options, elapsed duration, and option-level Q updates.
+// - Pure option policies/termination predicates can stay trait methods; if
+//   represented as graph nodes, implement PureTransform/PureTransformEntity.
+// - Convert missing legal-option and invalid option-duration throws to Result.
+
 // =============================================================================
 // general/des-base/semi-mdp.ts — base classes for SEMI-MARKOV DECISION
 // PROCESSES under the OPTIONS FRAMEWORK (Sutton, Precup, Singh 1999).

@@ -1,4 +1,9 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION:
+// - Target: src/bin/validate_neural_network.rs.
+// - Keep this as a CLI validation binary with Result-returning main; replace process.exit with ExitCode.
+// - Convert reference network payloads and CheckRow values into serde structs read with serde_json.
+// - Treat NEURAL_NETWORK_REFERENCE_ID as an external adapter behind external_program using std::process or tokio::process.
 'use strict';
 
 // =============================================================================

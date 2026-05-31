@@ -1,4 +1,9 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION:
+// - Target: src/bin/validate_newsvendor.rs.
+// - Keep this as a CLI validation binary with Result-returning main; map NEWSVENDOR_PY to clap/std::env.
+// - Convert Python JSON payloads, scenarios, and check rows into serde structs with explicit Option fields.
+// - Replace execFileSync with std::process::Command or tokio::process and keep newsvendor reference as an external adapter.
 'use strict';
 
 // =============================================================================

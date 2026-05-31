@@ -1,5 +1,16 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/entity_source/source.rs
+// - AbstractSourceEntity<S,T> becomes a SourceLike trait plus SourceState for
+//   output connections; EntitySource and DefiniteFiniteSource become concrete
+//   source structs with EntityLike, HasManyOutput, and Serializable impls.
+// - Source emission is a PureTransform boundary: (source state, step size,
+//   random variable/initial values) -> emitted/requeued moving entities.
+// - Replace `(global as any).turnOffSources`, uuid, LinkedQueue/Array queues,
+//   `any` casts, and thrown/sentinel IsVoid paths with config fields, typed RNG
+//   and queue abstractions, and Result-returning methods.
+
 import * as math from "mathjs";
 import {number} from "mathjs";
 import {HasManyInputConnections, HasManyOutputConnections} from "../abstract/interfaces";

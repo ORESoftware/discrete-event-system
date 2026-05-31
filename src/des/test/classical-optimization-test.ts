@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/classical_optimization_test.rs` as integration coverage for classic optimization station-graph models.
+// Test-port notes: translate top-level checks into `#[test]` functions returning `Result<()>`; replace ad hoc check helpers with `assert!`, `assert_eq!`, and approximate-float helpers; keep seeded cases deterministic.
+
 'use strict';
 
 // =============================================================================

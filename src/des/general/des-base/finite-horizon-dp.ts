@@ -1,5 +1,16 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/finite_horizon_dp.rs
+// - Keep file-for-file. DPOutcome and DPOptions become data/config structs and
+//   FiniteHorizonDPStation becomes a trait plus reusable station-state struct.
+// - Preserve horizon tables as Vec<Vec<f64>>/Vec<usize>; model transition and
+//   reward hooks as trait methods over concrete problem structs.
+// - Math.random becomes an injected RNG trait/generic. maxArr/minArr stay
+//   private helpers unless promoted to associated functions.
+// - If any DP backup is exposed as a graph node, wrap it in PureTransform or
+//   PureTransformEntity. Convert invalid horizon/dimension throws to Result.
+
 // =============================================================================
 // general/des-base/finite-horizon-dp.ts — base class for FINITE-HORIZON
 // DYNAMIC PROGRAMMING via backward induction.

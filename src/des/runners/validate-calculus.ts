@@ -1,4 +1,9 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION:
+// - Target: src/bin/validate_calculus.rs.
+// - Keep this as a CLI validation binary with Result-returning main; map CALCULUS_PY and scenario knobs through clap/std::env.
+// - Convert Python payloads and check rows to serde structs; use serde_json for the last-line protocol.
+// - Replace execFileSync with std::process::Command or tokio::process and keep calculus comparison helpers private.
 'use strict';
 
 // =============================================================================

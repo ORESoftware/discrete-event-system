@@ -1,4 +1,8 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION: target src/des/program.rs.
+// RUST MIGRATION: Keep this as a library-ish orchestration module; if runnable behavior remains, add a thin src/bin/program.rs wrapper.
+// RUST MIGRATION: Map classes/interfaces to structs/traits and keep visual/runtime effects behind explicit ports returning Result.
+// RUST MIGRATION: Use clap/std::env/PathBuf only at wrapper boundaries and keep JSON examples/config as serde-deserialized structs.
 'use strict';
 
 

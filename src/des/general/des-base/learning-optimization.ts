@@ -1,5 +1,17 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/learning_optimization.rs
+// - Keep file-for-file. Token classes become token structs; StationGraphSummary,
+//   GradientEvaluation, and optimizer options become data/config structs.
+// - Source/sink/evaluator/optimizer station classes become structs implementing
+//   DESStation; GradientOptimizerStation and CandidateEvaluatorStation should be
+//   traits plus shared state structs for their template-method hooks.
+// - Pure numeric helpers such as dot, norm2, sigmoid, softmax, zeros, and
+//   cloneMatrix can stay module functions; if a helper is used as a graph node,
+//   make it a PureTransform/PureTransformEntity implementation.
+// - Convert batch-size, learning-rate, and gradient-shape throws to Result.
+
 // =============================================================================
 // general/des-base/learning-optimization.ts
 //

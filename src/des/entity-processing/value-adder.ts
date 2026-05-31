@@ -1,5 +1,15 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/entity_processing/value_adder.rs
+// - EntityNumericProcessor<S,T> becomes a small station struct with queue state
+//   and ProcessorLike/QueueLike impls; DoesFanOut can stay as a composed helper
+//   or PureTransform-style routing strategy.
+// - Basic numeric reduction (`k.value + p.value`) should move into a typed
+//   transform over BasicQuantityMovingEntity values instead of `any` casts.
+// - Replace LinkedQueue, Symbol marker fields, util.inspect customization, and
+//   thrown queue invariant errors with VecDeque/typed markers/Debug impls/Result.
+
 import * as math from "mathjs";
 import {QueueEntity, QueueEntityGraphData} from "../entity-queue/queue";
 import {EntityGraphData, HasEntityValidation} from "../abstract/interfaces";
@@ -179,5 +189,4 @@ export class EntityNumericProcessor<S, T>
   }
 
 }
-
 

@@ -1,3 +1,7 @@
+// RUST MIGRATION: Target module `src/des/general/adapters/domain_application_adapter.rs`.
+// RUST MIGRATION: Convert domain application adapter registrations, CSV writers, and animation builders into adapter structs/functions around `DESModelSpec`.
+// RUST MIGRATION: Use `serde` config/result structs for domain metrics, candidates, traces, and chart payloads; model output locations as `PathBuf`.
+// RUST MIGRATION: Return `Result<_, ValidationError>` for bad domain params and `Result` for filesystem/rendering failures.
 'use strict';
 
 // JSON adapters for the domain application model pack.

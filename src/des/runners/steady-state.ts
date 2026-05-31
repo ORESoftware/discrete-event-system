@@ -1,4 +1,9 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION:
+// - Target: src/bin/steady_state.rs.
+// - Keep this as a CLI analysis runner with Result-returning main; map N_REPS/HORIZON and output options to clap/std::env.
+// - Convert steady-state tables into nominal structs and reuse serde_json/csv-style writers at the boundary.
+// - Keep analytical comparisons wired to difference_runner and shared stats modules rather than duplicating math.
 'use strict';
 
 // =============================================================================

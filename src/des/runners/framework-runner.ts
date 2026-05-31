@@ -1,3 +1,8 @@
+// RUST MIGRATION:
+// - Target: src/des/runners/framework_runner.rs.
+// - Keep file-for-file as a library runner exposing run_framework_once over migrated DES entity structs/traits.
+// - Replace framework construction helpers with explicit builder structs; DES graph callbacks should become PureTransform-style trait impls.
+// - Isolate mathjs/logging/seed behavior behind numeric, JsonlLogger, and RNG traits so the runner ports cleanly.
 'use strict';
 
 // =============================================================================

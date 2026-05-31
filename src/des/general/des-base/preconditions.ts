@@ -1,5 +1,17 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/preconditions.rs
+// - Keep file-for-file. PreconditionError should become a typed error enum or
+//   struct implementing std::error::Error.
+// - The Preconditions namespace maps cleanly to module functions or an empty
+//   Preconditions struct with associated functions; prefer Result<(), Error>
+//   return values over throwing.
+// - Matrix/vector checks should accept slices such as &[f64] and &[Vec<f64>];
+//   keep pure checks private/module-level unless exported through mod.rs.
+// - If validation is represented as a DES graph node later, wrap the check in a
+//   PureTransform/PureTransformEntity implementation.
+
 // =============================================================================
 // general/des-base/preconditions.ts — uniform PRE-RUN guards for every
 // model's initial conditions and parameters.

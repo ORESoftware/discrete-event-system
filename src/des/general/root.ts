@@ -1,3 +1,7 @@
+// RUST MIGRATION: Target module `src/des/general/root.rs`.
+// RUST MIGRATION: Convert `RootResult` to a `serde` struct and represent `f`/`df` as generic `Fn(f64) -> f64` bounds or boxed callbacks.
+// RUST MIGRATION: Keep bisection, Newton, and secant as free numerical functions; add `PureTransform` wrappers only for DES graph-visible solver blocks.
+// RUST MIGRATION: Return `Result<RootResult, RootError>` for missing sign changes, zero derivatives, invalid tolerances, and non-finite iterates.
 'use strict';
 
 // =============================================================================

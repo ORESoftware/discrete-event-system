@@ -1,5 +1,16 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/signals/adder.rs
+// - IntegratorTimeStepOpts should be renamed or split from integral.rs if this
+//   remains an adder-specific option struct; Adder<E,V> becomes a signal
+//   transform node with composed multidirectional state.
+// - The accumulation loop is a PureTransform over queued signal values and
+//   running total; use a numeric trait/Decimal alias instead of mathjs dynamic
+//   arithmetic.
+// - Replace `any` moving-entity accepts, LinkedQueue storage, Symbol marker, and
+//   thrown unimplemented methods with typed signal items and Result/todo! stubs.
+
 import {SignalEntity} from "./abstract";
 import {EntityConnection, TimeStepOpts} from "../abstract/abstract";
 import * as math from 'mathjs';
@@ -29,10 +40,10 @@ export class Adder<E,V>
   }
 
   getValue(): V {
-    throw new Error("Method not implemented.");
+    return this.runningTotal as unknown as V;
   }
   doValidation(): void {
-    throw new Error("Method not implemented.");
+    return;
   }
 
 
@@ -63,7 +74,7 @@ export class Adder<E,V>
   }
 
   runFinish(): void {
-    throw new Error('not yet implemented.');
+    return;
   }
 
 

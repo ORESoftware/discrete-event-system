@@ -1,3 +1,6 @@
+// RUST MIGRATION: Prefer moving these focused checks into `src/des/general/stochastic_lp.rs` under `#[cfg(test)] mod tests`.
+// Test-port notes: translate SAA/Benders/oracle cases into `#[test]` functions returning `Result<()>`; replace ad hoc helpers with `assert!`, `assert_eq!`, and approximate-float helpers; keep scenario seeds deterministic.
+
 'use strict';
 
 // =============================================================================

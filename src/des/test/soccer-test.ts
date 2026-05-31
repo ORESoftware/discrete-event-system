@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/soccer_test.rs` as integration coverage for 7v7 rotation, Hungarian assignment, and LP helpers.
+// Test-port notes: translate lineup/solver checks into `#[test]` functions returning `Result<()>`; replace ad hoc checks with `assert!`, `assert_eq!`, and approximate-float helpers; keep fixtures deterministic.
+
 'use strict';
 
 // =============================================================================

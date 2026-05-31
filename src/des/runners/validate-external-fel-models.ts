@@ -1,4 +1,9 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION:
+// - Target: src/bin/validate_external_fel_models.rs.
+// - Keep this as a CLI validation binary with Result-returning main; replace process.exit with ExitCode.
+// - Convert FEL problem specs, reference outputs, and CheckRow data into serde structs written/read with serde_json.
+// - Treat each external FEL implementation as an adapter behind external_program using std::process or tokio::process.
 'use strict';
 
 // =============================================================================

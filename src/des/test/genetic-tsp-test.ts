@@ -1,3 +1,6 @@
+// RUST MIGRATION: Prefer moving these focused checks into `src/des/general/genetic_tsp.rs` under `#[cfg(test)] mod tests`.
+// Test-port notes: translate TSP/GA assertions into `#[test]` functions returning `Result<()>`; replace ad hoc helpers with `assert!`, `assert_eq!`, approximate-float helpers, and deterministic PRNG seeds.
+
 'use strict';
 
 // =============================================================================

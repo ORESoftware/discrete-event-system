@@ -1,3 +1,7 @@
+// RUST MIGRATION: Target module `src/des/general/adapters/network_flow_adapter.rs`.
+// RUST MIGRATION: Convert max-flow, traffic, and smart-traffic adapter registrations into adapter structs/functions around `DESModelSpec`.
+// RUST MIGRATION: Encode graph edges, traffic networks, signals, traces, and animation data as `serde` config/result structs; paths become `PathBuf`.
+// RUST MIGRATION: Use `Result<_, ValidationError>` for graph normalization, capacity, lane, and signal validation.
 'use strict';
 
 // =============================================================================

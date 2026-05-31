@@ -1,3 +1,8 @@
+// RUST MIGRATION: Target module `src/des/general/ode.rs`.
+// RUST MIGRATION: Represent `RHS`/`Jac` as generic `Fn` bounds or boxed callback traits; `ODETrace` becomes a `serde` struct with `Vec<f64>` state rows.
+// RUST MIGRATION: Keep exported solvers (`euler`, `rk2_heun`, `rk4`, `rk45`, `backward_euler`) as free functions; wrap as `PureTransform` only when plugged into a DES graph.
+// RUST MIGRATION: Port RK45 options and internal constants directly; make step-size and tolerance validation return `Result<ODETrace, OdeError>`.
+// RUST MIGRATION: Replace helper vector closures with small private free functions over slices to avoid unnecessary allocation where Rust borrowing can help.
 'use strict';
 
 // =============================================================================

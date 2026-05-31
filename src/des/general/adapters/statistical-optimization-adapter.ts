@@ -1,3 +1,7 @@
+// RUST MIGRATION: Target module `src/des/general/adapters/statistical_optimization_adapter.rs`.
+// RUST MIGRATION: Convert statistical optimization and stochastic-LP adapter registrations into structs/functions around `DESModelSpec`.
+// RUST MIGRATION: Encode distributions, empirical demand, risk params, alternatives, traces, and solutions as `serde` config/result structs; paths become `PathBuf`.
+// RUST MIGRATION: Use `Result<_, ValidationError>` for normalization, probability, range, and stochastic-LP validation.
 'use strict';
 
 // =============================================================================

@@ -1,4 +1,9 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION:
+// - Target: src/bin/validate_court_mdp.rs.
+// - Keep this as a CLI validation binary with Result-returning main; replace process.exit with ExitCode.
+// - Convert court MDP framework/reference JSON payloads into serde structs and preserve golden comparisons by name.
+// - File I/O stays at the boundary with std::fs/std::path; comparison helpers remain private module functions.
 'use strict';
 
 // Compares the framework's USACC MDP value iteration (out/court-mdp-framework.json)

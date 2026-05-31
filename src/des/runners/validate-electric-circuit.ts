@@ -1,4 +1,9 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION:
+// - Target: src/bin/validate_electric_circuit.rs.
+// - Keep this as a CLI validation binary with Result-returning main; replace process.exit with ExitCode.
+// - Convert framework/reference JSON fixtures into serde structs and keep circuit golden comparisons explicit.
+// - File I/O should use std::fs/std::path, with numerical tolerance helpers kept private.
 'use strict';
 
 // Compares the framework's series-RLC step-response (forward Euler at multiple

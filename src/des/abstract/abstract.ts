@@ -1,5 +1,27 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/abstract/abstract.rs
+// - Keep this file as the legacy queueing-network foundation module. The newer
+//   algorithm-as-DES foundation lives in general/des_base/station.rs; do not
+//   merge them during the first Rust port.
+// - EntityObserver<T> becomes an Observer<T> trait with `do_update`. Use
+//   trait objects (`Box<dyn Observer<T>>` or Rc/Arc wrappers) only where runtime
+//   subscription polymorphism is truly needed.
+// - IsSerializable<T> becomes a trait bounded by serde Serialize where possible.
+//   Serializable<T> should not be a Rust superclass; move its default JSON
+//   helpers into trait default methods or free helper functions.
+// - Entity<E, V> should become a shared EntityState struct plus an EntityLike
+//   trait. Concrete entities own EntityState and implement the behavioral hooks.
+// - EntityConnection<S, T> maps to a struct containing typed source/target ids
+//   or graph handles. Avoid storing arbitrary `any`-like source/target objects;
+//   Rust will want explicit traits for input and output endpoints.
+// - StationaryEntity and AbstractBidirectionalEntity are trait layers in Rust:
+//   StationaryEntityLike + BidirectionalEntityLike, backed by reusable connection
+//   sets. Methods that now warn/throw should return Result where callers can act.
+// - `mathjs.BigNumber` is a migration decision point. Preserve the type boundary
+//   here, then choose `rust_decimal`, `bigdecimal`, or f64 after numerical tests.
+
 import * as safe from "@oresoftware/safe-stringify";
 import * as math from "mathjs";
 import {AbstractMovingEntity} from "../entity-moving/moving";

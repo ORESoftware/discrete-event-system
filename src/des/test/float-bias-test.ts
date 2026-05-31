@@ -1,4 +1,7 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION: Port file-for-file to `tests/float_bias_test.rs` as deterministic numeric-bias coverage for the engine's float operations.
+// Test-port notes: translate statistical checks into `#[test]` functions returning `Result<()>`; replace helpers with `assert!`, `assert_eq!`, and approximate-float helpers; pin PRNG seeds and tolerances.
+
 'use strict';
 
 // =============================================================================

@@ -1,3 +1,8 @@
+// RUST MIGRATION:
+// - Target: src/des/runners/fel_runner.rs.
+// - Keep file-for-file as a library runner exposing run_fel_once; FelEvent becomes an ordered event struct.
+// - Replace Math.random fallbacks with an injected RNG trait and keep with_seed behavior as a deterministic RNG adapter.
+// - Convert throw/implicit failure points to Result only at construction/logging boundaries; event-loop helpers can stay private.
 'use strict';
 
 // =============================================================================

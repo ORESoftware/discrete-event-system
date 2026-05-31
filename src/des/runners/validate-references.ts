@@ -1,4 +1,9 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION:
+// - Target: src/bin/validate_references.rs.
+// - Keep this as a CLI validation binary with Result-returning main; map N/STEPSIZE to clap/std::env.
+// - Convert per-kernel summaries and Welch outputs into golden comparison structs reused by report rendering.
+// - Keep kernel calls delegated to migrated runner modules and stats math delegated to runners::stats.
 'use strict';
 
 // =============================================================================

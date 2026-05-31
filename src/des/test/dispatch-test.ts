@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/dispatch_test.rs` as integration coverage for dispatch, LP, MCTS, and seeded policy behavior.
+// Test-port notes: translate top-level scenarios into `#[test]` functions returning `Result<()>`; replace ad hoc checks with `assert!`, `assert_eq!`, approximate-float helpers, and deterministic PRNG seeds.
+
 'use strict';
 
 // =============================================================================

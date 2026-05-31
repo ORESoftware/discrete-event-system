@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/neural_network_test.rs` for supervised DES training, neural Q-learning, and neural ODE coverage.
+// Test-port notes: translate learning checks into `#[test]` functions returning `Result<()>`; replace helper assertions with `assert!`, `assert_eq!`, approximate-float helpers, and deterministic seeds.
+
 'use strict';
 
 // =============================================================================

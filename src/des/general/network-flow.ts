@@ -1,3 +1,8 @@
+// RUST MIGRATION: Target module `src/des/general/network_flow.rs`.
+// RUST MIGRATION: Convert flow/traffic params, trace rows, min-cut, and result interfaces to `serde` structs; `TrafficNodeKind` should become a Rust enum.
+// RUST MIGRATION: Port `AugmentingPathToken`, `MaxFlowOptimizationStation`, `CarToken`, `TrafficCellStation`, and `TrafficGridStation` as structs implementing the shared `Token`/`DESStation` traits.
+// RUST MIGRATION: Keep `runMaxFlow`, `runTrafficFlow`, and network builders as free functions unless graph-exposed later; validators/path helpers should return `Result`.
+// RUST MIGRATION: Replace object/array indexes that behave as maps with `HashMap`/`HashSet`, and carry the optional logger as a trait object or callback.
 'use strict';
 
 // =============================================================================

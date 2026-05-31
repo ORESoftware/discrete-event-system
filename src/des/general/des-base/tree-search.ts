@@ -1,5 +1,16 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/tree_search.rs
+// - Keep file-for-file. SearchObjective becomes an enum and NodeEvaluation
+//   becomes a data struct.
+// - TreeSearchStation becomes a trait plus shared station-state struct for the
+//   frontier, incumbent, counts, and history.
+// - pickNext/evaluate/expand and optional pruning hooks map to trait methods;
+//   pure evaluators or heuristics lifted into a graph should use
+//   PureTransform/PureTransformEntity.
+// - Convert invalid objective, empty-frontier, and evaluation failures to Result.
+
 // =============================================================================
 // general/des-base/tree-search.ts — base class for TREE-STRUCTURED search
 // algorithms: MILP branch-and-bound, MCTS / UCT, A*, beam search, alpha-beta,

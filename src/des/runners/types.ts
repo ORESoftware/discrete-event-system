@@ -1,3 +1,8 @@
+// RUST MIGRATION:
+// - Target: src/des/runners/types.rs.
+// - Keep this as the shared data-model module; Kernel becomes an enum and SimConfig/RunOpts/RunResult become serde structs.
+// - Replace Record<string, ...> with HashMap/BTreeMap or typed compartment enums where deterministic order matters.
+// - Constants such as COMPARTMENT_ORDER, DEFAULT_CONFIG, and EDGES should become const/static constructors with explicit ownership.
 'use strict';
 
 // =============================================================================

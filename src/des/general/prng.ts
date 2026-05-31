@@ -1,3 +1,7 @@
+// RUST MIGRATION: Target module `src/des/general/prng.rs`.
+// RUST MIGRATION: Port `mulberry32` as a small seeded RNG struct implementing a local RNG trait or `rand_core::RngCore`.
+// RUST MIGRATION: Do not reproduce `withSeed` as a global `Math.random` swap; pass RNG handles explicitly through simulator/model APIs.
+// RUST MIGRATION: Keep the helper API free-function shaped for compatibility, but make Rust callers prefer dependency-injected RNG ports for deterministic tests.
 'use strict';
 
 // =============================================================================

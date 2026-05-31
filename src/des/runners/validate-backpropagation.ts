@@ -1,4 +1,9 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION:
+// - Target: src/bin/validate_backpropagation.rs.
+// - Keep this as a CLI validation binary with Result-returning main; replace process.exit with ExitCode/Result.
+// - Convert loaded framework/reference JSON payloads into serde structs and keep golden comparisons explicit.
+// - File I/O should use std::fs/std::path; external backpropagation output remains an adapter-produced fixture.
 'use strict';
 
 // Compares the framework's backprop output (out/backprop-framework.json)

@@ -1,6 +1,17 @@
 #!/usr/bin/env ts-node
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/observability/validate_epidemic.rs
+// - This is a CLI validator; keep the module file-for-file, but expose a
+//   `ValidateEpidemic` PureTransform-style struct for event-log -> report and a
+//   thin `src/bin/validate_epidemic.rs` wrapper for argv/exit codes.
+// - Failure becomes a struct; event records should be serde_json::Value or typed
+//   event enums instead of `any` maps.
+// - Replace process.argv/process.exit, regex helpers, and thrown missing-event
+//   errors with clap/std::env, Regex or string predicates, and Result<Report,
+//   ValidateError>.
+
 // =============================================================================
 // Offline validator for the epidemic simulation.
 //

@@ -1,3 +1,9 @@
+// RUST MIGRATION: target module src/des/general/factory_floor_track3t.rs.
+// RUST MIGRATION: Warehouse station/action/observation/config/metrics/result interfaces become serde structs; WarehouseStationKind becomes an enum.
+// RUST MIGRATION: WarehousePallet, WarehouseStation/Source/Sink, WarehouseForklift, WarehouseQMDPSolver, and WarehousePlanner become structs with Token/Station/Planner trait impls.
+// RUST MIGRATION: POMDP and belief tables should use Vec matrices where dense and HashMap<String, usize> for dynamic station indexes.
+// RUST MIGRATION: simulateWarehouseScenario and runWarehouseComparison are DES-visible simulation transforms; inject rand::Rng and return Result for layout/scenario validation.
+// RUST MIGRATION: Keep helper math and summarization as free functions; use serde-friendly Vec traces instead of structural object literals.
 'use strict';
 
 // =============================================================================

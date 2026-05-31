@@ -1,3 +1,7 @@
+// RUST MIGRATION: Target module `src/des/general/adapters/learning_optimization_adapter.rs`.
+// RUST MIGRATION: Convert supervised/RL learning optimization registrations and report writers into adapter structs/functions around `DESModelSpec`.
+// RUST MIGRATION: Map samples, training configs, traces, and run results to `serde` config/result structs; CSV/animation paths become `PathBuf`.
+// RUST MIGRATION: Return `Result<_, ValidationError>` for malformed samples, model params, and unsupported learning modes.
 'use strict';
 
 // =============================================================================

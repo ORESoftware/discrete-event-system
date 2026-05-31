@@ -1,5 +1,17 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/composite_station.rs
+// - Keep file-for-file. CompositeInputPort, CompositeOutputPort, and
+//   CompositeStationSnapshot become data structs; CompositePortBridgeStation is
+//   a private bridge struct inside this module.
+// - CompositeDESStation becomes a state-owning struct implementing DESStation
+//   plus a composite-station trait for substation registration and port binding.
+// - Keep bridge/port helpers private unless needed by mod.rs re-exports; graph
+//   projection helpers should become PureTransform/PureTransformEntity only if
+//   they are made runnable DES nodes.
+// - Convert duplicate-port and invalid-connection failures to Result.
+
 import {ChannelName, DEFAULT_CHANNEL, DESStation, Token} from './station';
 import {ValidationCheck} from './validation';
 

@@ -1,5 +1,17 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/controller.rs
+// - Keep file-for-file. ObservationToken and ControlToken become token structs
+//   parameterized over observation/control payload types.
+// - ControllerStation becomes a trait plus shared station-state struct; preserve
+//   observe/control/reset hooks as trait methods implemented by concrete
+//   controllers.
+// - Keep channel routing as explicit enums/consts where possible; any pure
+//   controller law used as a graph node should become a PureTransform or
+//   PureTransformEntity implementation.
+// - Convert validation failures to Result instead of throwing.
+
 // =============================================================================
 // general/des-base/controller.ts — base class for FEEDBACK CONTROL stations:
 // bang-bang, PID, fuzzy, model-predictive control (MPC), receding-horizon

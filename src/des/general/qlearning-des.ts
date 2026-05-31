@@ -1,3 +1,8 @@
+// RUST MIGRATION: Target module `src/des/general/qlearning_des.rs`.
+// RUST MIGRATION: Convert Q-learning options and result interfaces to `serde` structs with explicit numeric state/action newtypes or `usize`.
+// RUST MIGRATION: Port `QLearningAgent` as a struct implementing the `RLAgentStation` trait; inherited hooks become trait methods.
+// RUST MIGRATION: Keep `runQLearningDES` as a graph runner free function, or wrap it in `PureTransform` only if it is surfaced as a graph-visible transform.
+// RUST MIGRATION: Replace epsilon-greedy randomness with an injected RNG trait/closure and return `Result` for invalid learning rates, discounts, or episode counts.
 'use strict';
 
 // =============================================================================

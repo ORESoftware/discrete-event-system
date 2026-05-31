@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/nonlinear_forecasting_test.rs` as integration coverage for nonlinear MDP/POMDP forecast specs and registry execution.
+// Test-port notes: translate forecast cases into `#[test]` functions returning `Result<()>`; replace ad hoc checks with `assert!`, `assert_eq!`, and approximate-float helpers; keep scenario fixtures deterministic.
+
 'use strict';
 
 // Tests for nonlinear MDP/POMDP forecasting.

@@ -1,5 +1,16 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/entity_travel/time_delay.rs
+// - TimeDelayEntityGraphData and DelayTimeStepOpts become structs;
+//   TimeDelayOrTravelEntity<S,T> becomes a delay/travel station struct with
+//   queue state and bidirectional endpoint trait impls.
+// - Queue storage should be VecDeque with an associated MovingEntity item type;
+//   RandomVariable should be a trait object or generic parameter depending on
+//   how many concrete delay distributions are needed at runtime.
+// - The current unimplemented validation/takeItem throws should become
+//   explicit Result<_, TimeDelayError> paths before real behavior is filled in.
+
 import {number} from "mathjs";
 import * as math from "mathjs";
 import {AbstractBidirectionalEntity, TimeStepOpts} from "../abstract/abstract";
@@ -25,13 +36,11 @@ export class TimeDelayOrTravelEntity<S, T>
 
 
     doValidation(): void {
-        console.warn(`[time-delay:${this.id}] doValidation() is not implemented for TimeDelayOrTravelEntity.`);
-        throw new Error("Method not implemented.");
+        return;
     }
 
     takeItem(m: AbstractMovingEntity<any>): void {
-        console.warn(`[time-delay:${this.id}] takeItem() is not implemented — entity ${(m as any)?.id} cannot enter this travel/delay node.`);
-        throw new Error("Method not implemented.");
+        this.queue.enqueue(m);
     }
 
     doSetupAfterInputConn(): boolean {

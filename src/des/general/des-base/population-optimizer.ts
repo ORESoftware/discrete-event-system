@@ -1,5 +1,17 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/population_optimizer.rs
+// - Keep file-for-file. Channel constants become pub consts; initial/result
+//   token classes and PopulationResultSnapshot become token/data structs.
+// - PopulationSourceStation and PopulationSinkStation become concrete DESStation
+//   structs; PopulationOptimizer becomes a trait plus shared optimizer-state
+//   struct for population, fitness, best, and history.
+// - Pure proposal/fitness helpers can stay trait methods; if exposed as graph
+//   transforms, implement PureTransform/PureTransformEntity with transform().
+// - Convert duplicate seed, uninitialized optimizer, and invalid fitness throws
+//   to Result.
+
 // =============================================================================
 // general/des-base/population-optimizer.ts — base class for POPULATION-BASED
 // metaheuristics: genetic algorithm, particle swarm, differential evolution,

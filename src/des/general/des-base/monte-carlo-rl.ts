@@ -1,5 +1,15 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/monte_carlo_rl.rs
+// - Keep file-for-file. MonteCarloOptions becomes a config struct and
+//   MonteCarloAgent becomes a concrete struct implementing the RLAgent trait.
+// - Episode traces map to Vec records; Set usage for first-visit tracking maps
+//   to HashSet or BTreeSet depending on deterministic iteration needs.
+// - Action-value update helpers can stay private/associated methods; if a
+//   return estimator becomes a graph transform, expose it as PureTransform.
+// - Convert invalid options and impossible state/action errors to Result.
+
 // =============================================================================
 // general/des-base/monte-carlo-rl.ts — base class for ON-POLICY MONTE CARLO
 // CONTROL (Sutton & Barto §5.4): every-visit and first-visit Monte Carlo

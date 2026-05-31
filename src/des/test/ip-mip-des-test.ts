@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/ip_mip_des_test.rs` as integration coverage for explicit station-graph IP/MIP solving.
+// Test-port notes: translate optimization cases into `#[test]` functions returning `Result<()>`; replace ad hoc check helpers with `assert!`, `assert_eq!`, and approximate-float helpers; keep branching fixtures deterministic.
+
 'use strict';
 
 // =============================================================================

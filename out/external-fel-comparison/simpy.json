@@ -1,0 +1,6 @@
+{
+  "elapsedMs": 0.03814697265625,
+  "kernel": "simpy-traffic-reference",
+  "message": "SimPy is not installed for this Python interpreter: No module named 'simpy'",
+  "status": "unavailable"
+}

@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/universal_model_spec_test.rs` as integration coverage for universal DES JSON documents and registry execution.
+// Test-port notes: translate JSON/spec cases into `#[test]` functions returning `Result<()>`; use `assert!`, `assert_eq!`, approximate helpers where needed, and `tempfile`/serde fixtures.
+
 'use strict';
 
 // =============================================================================

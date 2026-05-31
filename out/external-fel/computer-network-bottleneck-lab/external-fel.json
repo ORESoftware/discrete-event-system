@@ -1,5 +1,5 @@
 {
-  "elapsedMs": 72.4790096282959,
+  "elapsedMs": 42.764902114868164,
   "kernel": "python-computer-network-fel-reference",
   "result": {
     "activePackets": 0,
@@ -7507,7 +7507,7 @@
         "generatedPackets": 1764,
         "goodputMbps": 3.2912,
         "id": "http-api",
-        "meanCostPerDeliveredPacket": 2.498342245989285e-05,
+        "meanCostPerDeliveredPacket": 2.4983422459893048e-05,
         "meanLatencyMs": 262.32085561497325,
         "meanTimeInSystemMs": 262.32085561497325,
         "offeredLoadMbps": 12.27744,
@@ -7516,7 +7516,7 @@
         "protocol": "http",
         "source": "web-client",
         "throughputMbps": 5.20608,
-        "totalCost": 0.018687599999999853
+        "totalCost": 0.0186876
       },
       {
         "deliveredBytes": 58464,
@@ -7528,7 +7528,7 @@
         "generatedPackets": 1400,
         "goodputMbps": 0.2268,
         "id": "udp-telemetry",
-        "meanCostPerDeliveredPacket": 3.175822222222229e-05,
+        "meanCostPerDeliveredPacket": 3.175822222222222e-05,
         "meanLatencyMs": 93.60317460317461,
         "meanTimeInSystemMs": 93.60317460317461,
         "offeredLoadMbps": 5.1968,
@@ -7537,7 +7537,7 @@
         "protocol": "udp",
         "source": "telemetry-client",
         "throughputMbps": 0.233856,
-        "totalCost": 0.0020007680000000043
+        "totalCost": 0.002000768
       },
       {
         "deliveredBytes": 38880,
@@ -7549,7 +7549,7 @@
         "generatedPackets": 693,
         "goodputMbps": 0.1512,
         "id": "tcp-bulk",
-        "meanCostPerDeliveredPacket": 5.424000000000029e-05,
+        "meanCostPerDeliveredPacket": 5.424000000000001e-05,
         "meanLatencyMs": 123.03703703703704,
         "meanTimeInSystemMs": 123.03703703703704,
         "offeredLoadMbps": 3.99168,
@@ -7558,7 +7558,7 @@
         "protocol": "tcp",
         "source": "web-client",
         "throughputMbps": 0.15552,
-        "totalCost": 0.0014644800000000078
+        "totalCost": 0.0014644800000000002
       }
     ],
     "generatedPackets": 3857,
@@ -8617,7 +8617,7 @@
         "tMs": 2200.0
       }
     ],
-    "totalCost": 0.022152847999999892,
+    "totalCost": 0.022152848,
     "totalSimulatedMs": 2273.0
   },
   "semantic": "packet-network future event list with periodic source/service ticks matching the internal DES contract"

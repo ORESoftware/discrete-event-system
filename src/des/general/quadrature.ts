@@ -1,3 +1,8 @@
+// RUST MIGRATION: Target module `src/des/general/quadrature.rs`.
+// RUST MIGRATION: Convert `QuadResult` to a `serde` struct; represent integrands as generic `Fn(f64) -> f64` bounds or boxed callbacks.
+// RUST MIGRATION: Keep quadrature routines as free numerical functions; create `PureTransform` wrappers only for DES graph-visible integration blocks.
+// RUST MIGRATION: Convert the Gauss-Legendre node table to `const` arrays or a `match` on supported orders.
+// RUST MIGRATION: Inject RNG for Monte Carlo routines and return `Result<QuadResult, QuadError>` for invalid intervals, sample counts, dimensions, or unsupported orders.
 'use strict';
 
 // =============================================================================

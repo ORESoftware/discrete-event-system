@@ -1,3 +1,8 @@
+// RUST MIGRATION: target module src/des/general/equation_to_stations.rs.
+// RUST MIGRATION: ODEScheme, Field1DScheme, BC, and Field2DScheme become enums; ODESystemSpec, Field1DSpec, Field1DBuild, Poisson2DSpec, and Poisson2DResult become serde structs.
+// RUST MIGRATION: buildODESystem/buildField1D create DES-visible FieldSimulation networks, so expose them as PureTransform-style builders or Result-returning constructors.
+// RUST MIGRATION: thomas and solvePoisson2D are numerical solvers and can stay free functions; represent Float64Array as Vec<f64> and validation failures as Result.
+// RUST MIGRATION: Expression callbacks need a Rust expression trait or compiled closure object instead of ad hoc JS functions.
 'use strict';
 
 // =============================================================================

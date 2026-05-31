@@ -1,3 +1,8 @@
+// RUST MIGRATION: target module src/des/general/ga_des.rs.
+// RUST MIGRATION: TSPGAOptions and GADESResult become serde structs; Tour aliases should be Vec<usize>.
+// RUST MIGRATION: TSPGAOptimizer becomes a struct implementing the PopulationOptimizer trait hooks instead of extending a base class.
+// RUST MIGRATION: runTSPGADES is graph-visible optimization and should be a PureTransform entry struct; helper population/tour builders stay free functions.
+// RUST MIGRATION: Keep RNG injected through rand::Rng and return Result for invalid population/tour inputs.
 'use strict';
 
 // =============================================================================

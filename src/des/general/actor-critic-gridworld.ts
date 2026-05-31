@@ -1,3 +1,7 @@
+// RUST MIGRATION: target module src/des/general/actor_critic_gridworld.rs.
+// RUST MIGRATION: ActorCriticTrainOpts and ActorCriticResult become serde structs with Vec<f64>/Vec<usize> fields.
+// RUST MIGRATION: runActorCriticGridworld is a graph-visible training entrypoint; port it as a PureTransform-style struct with transform(opts) -> Result<ActorCriticResult, Error>.
+// RUST MIGRATION: Keep all RNG behind an injected rand::Rng/seeded adapter, and model table updates as owned Vec<Vec<f64>> state.
 'use strict';
 
 // =============================================================================

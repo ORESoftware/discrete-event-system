@@ -1,3 +1,7 @@
+// RUST MIGRATION: Target module `src/des/general/adapters/computer_network_adapter.rs`.
+// RUST MIGRATION: Convert the computer-network adapter and built-in problem selection into adapter structs/functions around `DESModelSpec`.
+// RUST MIGRATION: Map network nodes, links, flows, params, and results to `serde` config/result structs; file/runtime paths become `PathBuf`.
+// RUST MIGRATION: Express schema validation and builtin lookup failures as `Result<_, ValidationError>`.
 'use strict';
 
 // =============================================================================

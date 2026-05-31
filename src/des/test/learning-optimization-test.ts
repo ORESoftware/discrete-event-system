@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/learning_optimization_test.rs` as integration coverage for station-graph learning and optimization models.
+// Test-port notes: translate learning scenarios into `#[test]` functions returning `Result<()>`; replace ad hoc checks with `assert!`, `assert_eq!`, approximate-float helpers, and deterministic PRNG seeds.
+
 'use strict';
 
 // =============================================================================

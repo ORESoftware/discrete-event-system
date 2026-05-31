@@ -1,3 +1,8 @@
+// RUST MIGRATION: Target module `src/des/general/random_variables.rs`.
+// RUST MIGRATION: Keep PMF math and sampling helpers as free functions over slices/`Vec<f64>`; add `PureTransform` wrappers only when a DES graph consumes them directly.
+// RUST MIGRATION: Replace callback RNGs with a generic RNG trait parameter, and make every sampler accept the RNG explicitly.
+// RUST MIGRATION: Convert invalid probabilities, rates, shapes, and non-normalized mass checks into `Result` errors instead of throwing.
+// RUST MIGRATION: Use iterator-based convolution and distribution builders, but preserve deterministic output ordering for tests and future serde snapshots.
 'use strict';
 
 // =============================================================================

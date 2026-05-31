@@ -1,4 +1,9 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION:
+// - Target: src/bin/validate_contact_vs_meanfield.rs.
+// - Keep this as a CLI validation binary with Result-returning main; replace process.exit with ExitCode.
+// - Convert scenario/check/result records to nominal structs and keep numerical tolerances as named constants.
+// - Pure comparison/math helpers remain private module functions unless a reusable mean-field transform trait emerges.
 'use strict';
 
 // =============================================================================

@@ -1,3 +1,8 @@
+// RUST MIGRATION: target module src/des/general/math_blocks.rs.
+// RUST MIGRATION: BlockModelLogger should become a logging trait, MathSignal/MathSample/options/results/node/edge/trace structs become serde structs, and operator unions become enums.
+// RUST MIGRATION: MathBlock and each concrete block become structs implementing VisualBlock/MathBlock traits; inheritance chains such as SubtractBlock extends SumBlock become shared helper traits/composition.
+// RUST MIGRATION: runMathBlockDiagram, runODEBlockSystem, and runHeat1DBlockGrid are graph-visible transforms and should be PureTransform entry structs returning Result.
+// RUST MIGRATION: Record<string, number> signal maps become HashMap<String, f64>, expression callbacks need a parser/trait port, and validation returns Result/ValidationCheck vectors.
 'use strict';
 
 // =============================================================================

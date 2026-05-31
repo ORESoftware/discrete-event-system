@@ -1,3 +1,8 @@
+// RUST MIGRATION: Target module `src/des/general/sliding_mode_control.rs`.
+// RUST MIGRATION: Convert `SlidingModeOpts` and `SlidingModeResult` to `serde` structs, composing the closed-loop result instead of relying on interface inheritance.
+// RUST MIGRATION: Port plant/controller classes as structs implementing `PlantBlock`/`ControllerBlock` traits, with controller gains stored in typed fields.
+// RUST MIGRATION: Keep `runSlidingMode` as a free simulation runner unless a DES graph-visible control transform is added.
+// RUST MIGRATION: Inject any disturbance/noise source through an RNG or signal trait and return `Result` for invalid gains, bounds, or time-step inputs.
 'use strict';
 
 // =============================================================================

@@ -1,5 +1,17 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/control_blocks.rs
+// - Keep file-for-file. VectorSignal becomes a signal/token struct, while
+//   PlantBlock, ControllerBlock, and EstimatorBlock become traits plus shared
+//   block-state structs over the signal-entity plumbing.
+// - ClosedLoopOpts and ClosedLoopResult become data structs; vectors/matrices
+//   should use Vec<f64> or a math crate only after a domain review.
+// - runClosedLoop and ensureConnected can remain module functions; pure control
+//   laws lifted into the DES graph should be modeled as PureTransform or
+//   PureTransformEntity implementations with transform().
+// - Replace dt/connection validation throws with Result-returning constructors.
+
 // =============================================================================
 // general/des-base/control-blocks.ts — control-systems block diagrams that
 // USE the queueing-style StationaryEntity + AbstractMovingEntity framework

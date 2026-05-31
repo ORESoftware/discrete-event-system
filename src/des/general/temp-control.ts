@@ -1,3 +1,8 @@
+// RUST MIGRATION: Target module `src/des/general/temp_control.rs`.
+// RUST MIGRATION: Convert house/outdoor/controller/simulation/tick/result interfaces to `serde` structs; `ControllerSpec`, fuzzy terms, and output levels should become enums.
+// RUST MIGRATION: Replace `TempControllerBase` inheritance with a controller trait plus shared embedded state; concrete controllers become structs implementing the trait.
+// RUST MIGRATION: Keep physical model and controller helper functions as free functions, or wrap controller steps as `PureTransform` when graph-visible.
+// RUST MIGRATION: Inject RNG for outdoor noise, represent BigNumber-free values as `f64`, and return `Result` for invalid time steps, gains, or controller specs.
 'use strict';
 
 // =============================================================================

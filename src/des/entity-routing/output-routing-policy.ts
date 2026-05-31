@@ -1,5 +1,16 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/entity_routing/output_routing_policy.rs
+// - OutputRoutingPolicy should be a Rust enum; HasOutputRoutingPolicy becomes
+//   either a trait with `output_routing()` or a config struct embedded by
+//   stations that route to one downstream target.
+// - OutputConnectionRouter<C> maps cleanly to a generic struct with cursor state
+//   and impl methods; `order` can return Vec<C> or ordered indices to avoid
+//   cloning heavy connection handles.
+// - `random` currently delegates to fisherYatesShuffle/Math.random; inject an
+//   RNG trait so deterministic tests and Rust rand usage are explicit.
+
 // =============================================================================
 // entity-routing/output-routing-policy.ts
 //
@@ -20,7 +31,10 @@ export interface HasOutputRoutingPolicy {
 export class OutputConnectionRouter<C> {
   private cursor = 0;
 
-  constructor(readonly policy: OutputRoutingPolicy = 'random') {}
+  constructor(
+    readonly policy: OutputRoutingPolicy = 'random',
+    private readonly rng: () => number = Math.random,
+  ) {}
 
   order(connections: readonly C[]): C[] {
     if (connections.length <= 1) return connections.slice();
@@ -33,7 +47,7 @@ export class OutputConnectionRouter<C> {
       }
       case 'random':
       default:
-        return Array.from(fisherYatesShuffle(connections.slice()));
+        return Array.from(fisherYatesShuffle(connections.slice(), this.rng));
     }
   }
 

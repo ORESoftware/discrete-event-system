@@ -1,4 +1,7 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION: Port file-for-file to `tests/queue_bias_test.rs` if the linked-queue behavior remains an external compatibility target.
+// Test-port notes: translate bias/correctness checks into `#[test]` functions returning `Result<()>`; replace ad hoc helpers with `assert!`, `assert_eq!`, approximate helpers where needed, and deterministic seeds.
+
 'use strict';
 
 // =============================================================================

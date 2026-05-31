@@ -1,3 +1,8 @@
+// RUST MIGRATION:
+// - Target: src/bin/validate_factmachine_math.rs.
+// - Keep this as a CLI validation binary with Result-returning main; map FACTMACHINE_TRADING_PATH through clap/std::env.
+// - Convert scenario/check data to nominal structs and keep math comparisons as private pure functions over f64/decimal types.
+// - Use explicit Result errors for missing external fixtures or invalid numeric domains instead of process.exit-style fallthrough.
 'use strict';
 
 // =============================================================================

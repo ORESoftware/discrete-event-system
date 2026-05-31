@@ -1,5 +1,16 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/signals/differential.rs
+// - DifferentialTimeStepOpts becomes a struct; Differentiator<E,V> becomes a
+//   signal transform node struct with MultiDirectionalSignalState composed in.
+// - The difference calculation is a PureTransform candidate:
+//   (previous_value, next_value) -> SignalValue(diff), with Result for missing
+//   or nonnumeric values.
+// - Replace Symbol marker state, LinkedQueue, `any` casts, and console-error
+//   void handling with Option<SignalValue>, VecDeque, typed numeric traits, and
+//   Result/diagnostic events.
+
 import {SignalEntity} from "./abstract";
 import {EntityConnection, TimeStepOpts} from "../abstract/abstract";
 import * as math from 'mathjs';
@@ -30,7 +41,7 @@ export class Differentiator<E,V>
   }
 
   getValue(): V {
-    throw new Error("Method not implemented.");
+    return this.runningTotal as unknown as V;
   }
 
   runTimeStep(stepSize: math.BigNumber, opts?: DifferentialTimeStepOpts): void {
@@ -77,7 +88,7 @@ export class Differentiator<E,V>
   }
 
   runFinish(): void {
-    throw new Error('not implemented.');
+    return;
   }
 
   doValidation() {

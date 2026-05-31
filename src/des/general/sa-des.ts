@@ -1,3 +1,8 @@
+// RUST MIGRATION: Target module `src/des/general/sa_des.rs`.
+// RUST MIGRATION: Port simulated-annealing DES leaf classes as structs implementing the `SingleStateOptimizer` trait/template hooks.
+// RUST MIGRATION: Convert optimizer options, tick events, and run results to `serde` structs; discriminated problem-specific moves should become enums.
+// RUST MIGRATION: Keep DES runner/builders as free functions, but expose graph-visible optimizer steps through trait impls rather than closure-heavy helpers.
+// RUST MIGRATION: Inject RNG for candidate generation/acceptance and return `Result` for invalid temperature schedules, dimensions, or TSP/knapsack inputs.
 'use strict';
 
 // =============================================================================

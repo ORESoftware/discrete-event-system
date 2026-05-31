@@ -1,5 +1,12 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/animation/scenes/computer_network_scene.rs
+// - buildComputerNetworkAnimation can remain a module helper returning Animation with Vec<Frame> and ChartSpec serde data.
+// - Point and network layout records become private structs; Map<string, Point> should become HashMap<String, Point> or BTreeMap for stable order.
+// - Protocol/color dictionaries should become enums plus match expressions where the domain model allows it.
+// - If packet rendering becomes graph-visible, wrap NetworkTimeSample -> Frame in a PureTransform implementor.
+
 // =============================================================================
 // Computer-network scene: packet motion, queue buildup, bottlenecks, and
 // fan-out policy semantics.

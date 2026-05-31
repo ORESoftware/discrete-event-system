@@ -1,3 +1,8 @@
+// RUST MIGRATION: target module src/des/general/collaborative_inference.rs.
+// RUST MIGRATION: CollaborativeInferenceScenario becomes an enum; all public params/items/responses/results become serde structs.
+// RUST MIGRATION: Internal preset/config/stat interfaces should become private structs, with Record-like respondent/item tables mapped to HashMap<String, _>.
+// RUST MIGRATION: Respondent/evidence/ranking tokens and station classes become Token and Station trait impls; runCollaborativeInference should be a PureTransform entry struct.
+// RUST MIGRATION: Convert validation throws to Result and keep scoring helpers as private free functions.
 'use strict';
 
 // =============================================================================

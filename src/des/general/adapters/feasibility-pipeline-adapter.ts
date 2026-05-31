@@ -1,3 +1,7 @@
+// RUST MIGRATION: Target module `src/des/general/adapters/feasibility_pipeline_adapter.rs`.
+// RUST MIGRATION: Convert feasibility pipeline adapter registration and drawing helpers into adapter structs/functions around `DESModelSpec`.
+// RUST MIGRATION: Promote variables, constraints, candidate evaluations, and improvements to `serde` config/result structs; paths become `PathBuf`.
+// RUST MIGRATION: Make constraint validation and infeasible candidate handling explicit with `Result<_, ValidationError>`.
 'use strict';
 
 // =============================================================================

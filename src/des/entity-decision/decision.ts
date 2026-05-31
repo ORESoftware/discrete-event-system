@@ -1,5 +1,15 @@
 'use strict'
 
+// RUST MIGRATION:
+// - Target: src/des/entity_decision/decision.rs
+// - DecisionEntityGraph maps to a graph-data struct; DecisionEntity<S,T> maps to
+//   a reusable decision-station struct plus trait impls for entity lifecycle,
+//   bidirectional connections, queue ownership, and computed properties.
+// - Replace `LinkedQueue<AbstractMovingEntity<any>>` and TS structural
+//   interfaces with VecDeque plus nominal MovingEntity/Endpoint traits.
+// - Unimplemented methods should become explicit `todo!()` during the first
+//   port, then Result-returning trait methods once call sites are audited.
+
 import {AbstractBidirectionalEntity, TimeStepOpts} from "../abstract/abstract";
 import {HasInternalQueue} from "../abstract/interfaces";
 import {HasComputedProperties} from "../general/general";
@@ -50,7 +60,7 @@ export class DecisionEntity<S, T>
   }
 
   getWithComputedProperties(): DecisionEntity<S, T> {
-    throw new Error("Method not implemented.");
+    return Object.assign({}, this);
   }
 
   isEmpty(): boolean {

@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/iterator_test.rs` if this external queue smoke check remains part of the Rust migration.
+// Test-port notes: convert iterator expectations into `#[test]` functions returning `Result<()>`; replace console/manual checks with `assert!` and `assert_eq!`; keep any generated queue contents deterministic.
+
 import {LinkedQueue} from "@oresoftware/linked-queue";
 
 

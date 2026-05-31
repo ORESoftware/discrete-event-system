@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/argmax_tiebreak_test.rs` so randomized tie-breaking stays verified across optimizers and planners.
+// Test-port notes: translate top-level scenarios into `#[test]` functions returning `Result<()>`; replace helper checks with `assert!`, `assert_eq!`, approximate-float helpers, and explicitly seeded PRNG fixtures.
+
 'use strict';
 
 // =============================================================================

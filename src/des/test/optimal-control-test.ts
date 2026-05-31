@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/optimal_control_test.rs` as integration coverage for entity-based optimal-control models.
+// Test-port notes: translate control scenarios into `#[test]` functions returning `Result<()>`; replace helper checks with `assert!`, `assert_eq!`, and approximate-float helpers; keep seeded/numeric fixtures deterministic.
+
 'use strict';
 
 // =============================================================================

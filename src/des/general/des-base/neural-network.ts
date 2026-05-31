@@ -1,5 +1,16 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/neural_network.rs
+// - Keep file-for-file. NumericVector aliases map to Vec<f64>; neural network
+//   interfaces become behavior traits for predict/train/snapshot.
+// - Neural token classes become token structs. NeuralNetworkStation and
+//   SupervisedNeuralNetworkStation become structs implementing DESStation over a
+//   generic network trait object or type parameter.
+// - Pure inference/training adapters can stay methods; graph-level inference
+//   should be represented as PureTransform/PureTransformEntity.
+// - Convert invalid sample shapes and backend failures to Result.
+
 // =============================================================================
 // general/des-base/neural-network.ts — DES base classes for neural networks.
 //

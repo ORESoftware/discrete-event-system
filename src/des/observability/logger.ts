@@ -1,5 +1,15 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/observability/logger.rs
+// - LogLevel becomes an enum with Ord; BaseEvent becomes a trait or enum-backed
+//   event struct serialized with serde_json.
+// - JsonlLogger maps to a struct owning a BufWriter<File>, min-level, counters,
+//   and HashMap<String, usize>; close should be Drop/flush plus explicit Result.
+// - readEvents is a pure IO transform from path -> Vec<Event>; replace
+//   Record<string, any>, synchronous Node fs calls, and thrown parse errors with
+//   serde_json::Value/typed events and anyhow/thiserror Results.
+
 // =============================================================================
 // JSONL file logger for the DES simulator.
 //

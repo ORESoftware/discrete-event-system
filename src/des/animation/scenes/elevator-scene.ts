@@ -1,5 +1,12 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/animation/scenes/elevator_scene.rs
+// - Keep buildElevatorFrame/buildElevatorChart as module helpers over a typed Building struct imported from main_elevator.
+// - Direction/state string unions should become enums; color selection becomes match expressions.
+// - Shape/ChartSpec outputs are serde structs/enums and private drawing helpers should push into Vec<Shape>.
+// - If the elevator scene participates in the DES graph, wrap Building -> Frame generation as a PureTransform implementor.
+
 // =============================================================================
 // Elevator scene builder.
 //

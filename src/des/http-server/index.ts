@@ -1,3 +1,10 @@
+// RUST MIGRATION:
+// - Target: src/des/http_server/mod.rs
+// - Replace Node http singleton with an axum Router plus a tokio listener; handlers should return Result<impl IntoResponse, ServerError>.
+// - Replace program:any with a typed ProgramState/ProgramHandle, likely Arc-owned if shared across async handlers.
+// - Template loading should use include_str! for static HTML or PathBuf/std::fs at startup, not per-request loose fs reads.
+// - JSON formation payload should become serde structs; send_raw/get_entities boundaries need explicit Rust traits or typed functions.
+
 import * as http from 'http';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -47,4 +54,3 @@ export const getHTTPServer = (program: any) => {
   return server;
 
 }
-

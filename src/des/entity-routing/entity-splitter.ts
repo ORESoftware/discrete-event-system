@@ -1,5 +1,16 @@
 'use strict'
 
+// RUST MIGRATION:
+// - Target: src/des/entity_routing/entity_splitter.rs
+// - DecisionEntityGraph becomes a graph-data struct; EntitySplitter<S,T>
+//   becomes a broadcast-routing station with queue state and bidirectional
+//   endpoint trait impls.
+// - Broadcast fan-out is a PureTransform-style operation over one queued item
+//   and all out-connections; model partial acceptance as Result or an enum so
+//   Rust callers can choose rollback/retry behavior.
+// - Replace LinkedQueue<AbstractMovingEntity<any>>, `any` targets, and
+//   makeError throws with VecDeque plus typed MovingEntity/Endpoint traits.
+
 import {AbstractBidirectionalEntity, TimeStepOpts} from "../abstract/abstract";
 import { HasInternalQueue} from "../abstract/interfaces";
 import {HasComputedProperties, makeError} from "../general/general";

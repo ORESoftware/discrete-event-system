@@ -1,3 +1,7 @@
+// RUST MIGRATION: target module src/des/general/cartesian_state_space.rs.
+// RUST MIGRATION: CartesianDimension, CoordinateTransition, and CoordinateMDPSpec become serde structs; optional fields become Option<T>.
+// RUST MIGRATION: CartesianStateSpace becomes a nominal struct with impl methods for coordinate/index conversion; preserve checked conversions with Result.
+// RUST MIGRATION: coordinateMDPToSpec is a pure adapter and can stay a free function unless exposed as a PureTransform in the Rust graph API.
 'use strict';
 
 // =============================================================================

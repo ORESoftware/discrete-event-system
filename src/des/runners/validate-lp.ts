@@ -1,3 +1,8 @@
+// RUST MIGRATION:
+// - Target: src/bin/validate_lp.rs.
+// - Keep this as a CLI validation binary with Result-returning main; replace LP_SOLVER env mutation with scoped config values.
+// - Convert LP/MDP test cases and solver outputs to nominal structs, using Vec<f64> for vector math.
+// - Keep approximation/check helpers private and route internal/external solver choices through traits or enum-backed adapters.
 'use strict';
 
 // =============================================================================

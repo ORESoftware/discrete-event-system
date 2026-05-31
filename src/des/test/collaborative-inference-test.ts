@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/collaborative_inference_test.rs` for sparse preference inference and registry-driven DES execution.
+// Test-port notes: convert scenarios into `#[test]` functions returning `Result<()>`; replace ad hoc check helpers with `assert!`, `assert_eq!`, and approximate-float helpers; preserve deterministic fixtures.
+
 'use strict';
 
 // =============================================================================

@@ -1,4 +1,8 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION: target src/des/parent.rs.
+// RUST MIGRATION: Keep this as a library-ish orchestration module; if runnable behavior remains, add a thin src/bin/parent.rs wrapper.
+// RUST MIGRATION: Map classes/interfaces to structs/traits and keep websocket/process effects behind explicit ports returning Result.
+// RUST MIGRATION: Use clap/std::env/PathBuf only at wrapper boundaries and keep JSON examples/config as serde-deserialized structs.
 'use strict';
 
 
@@ -63,4 +67,3 @@ const run = (c: WebSocket) => {
   });
 
 }
-

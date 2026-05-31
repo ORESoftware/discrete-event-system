@@ -1,3 +1,13 @@
+// RUST MIGRATION:
+// - Target: src/des/abstract/composers.rs
+// - DoesFanOut<V> becomes a small struct holding a boxed/generic output-endpoint
+//   trait object; the fan-out behavior can implement a PureTransform-like trait
+//   with `transform(entity) -> FanOutResult`.
+// - Replace `HasManyOutputConnections<any, any>` and `AbstractMovingEntity<any>`
+//   with explicit endpoint and moving-entity traits. Rust should make the
+//   accepted/rejected branch a Result or enum instead of console/error side
+//   effects.
+
 import {AbstractMovingEntity, BasicMovingEntity} from "../entity-moving/moving";
 import {StationaryEntity} from "./abstract";
 import {HasManyOutputConnections} from "./interfaces";

@@ -1,5 +1,16 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/environment.rs
+// - Keep file-for-file. PureEnvironment is a behavior trait returning next-state,
+//   reward, and done data; EnvironmentStationOptions becomes a config struct.
+// - EnvironmentStation becomes a concrete wrapper struct implementing DESStation
+//   over an environment trait object or generic environment type.
+// - Keep pure environment stepping as trait methods; if a pure transition model
+//   is exposed as a DES graph node, make it a PureTransform/PureTransformEntity.
+// - Convert invalid actions, terminal-step misuse, and validation failures to
+//   Result instead of thrown errors.
+
 // =============================================================================
 // general/des-base/environment.ts — generic Environment Station for RL.
 //

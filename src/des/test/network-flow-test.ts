@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/network_flow_test.rs` for network-flow, traffic-flow, and stochastic-flow DES integration coverage.
+// Test-port notes: translate flow scenarios into `#[test]` functions returning `Result<()>`; replace ad hoc check helpers with `assert!`, `assert_eq!`, and approximate-float helpers; keep JSON/seed fixtures deterministic.
+
 'use strict';
 
 // =============================================================================

@@ -1,3 +1,8 @@
+// RUST MIGRATION:
+// - Target: src/des/runners/difference_runner.rs.
+// - Keep file-for-file as a library runner; export run_difference_once, analytical_steady_state, max_stable_step, and SteadyState.
+// - Convert State and MeanResidences to private structs, preserving COMPARTMENT_ORDER indexing with typed keys or small enums.
+// - Pure numerical helpers stay private module functions unless promoted into a PureTransform-style trait implementation.
 'use strict';
 
 // =============================================================================

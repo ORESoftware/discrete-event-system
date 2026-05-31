@@ -1,5 +1,17 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/visual/visual_node.rs
+// - VisualNodeObserver, VisualConnection, VisualNodeEvents, VisualNode, and the
+//   arity marker subclasses become observer/graph-view structs and enums; the
+//   empty subclasses likely become enum variants or type aliases.
+// - IsObservable should be a nominal Observable trait with typed event payloads;
+//   `Map<VisualNode, VisualConnection>` needs stable node ids or arena handles
+//   because Rust HashMap keys cannot be mutable object identities.
+// - Replace anonymous inner EntityObserver classes, `any` subscribers, and icon
+//   URL strings with concrete observer structs, typed graph events, and
+//   Result-returning APIs.
+
 import {Entity, EntityObserver, StationaryEntity} from "../abstract/abstract";
 import {IsObservable} from "../abstract/interfaces";
 
@@ -44,7 +56,7 @@ export class VisualNode<T = any> implements IsObservable {
   label: string
   iconUrl: string; // url
   subscription: EntityObserver<any>;
-  subscribersByEvent = new Map();
+  subscribersByEvent = new Map<string, Set<EntityObserver<any>>>();
   subscribers = new Set<EntityObserver<any>>();
   connectionsOut = new Map<VisualNode, VisualConnection>();
   connectionsIn = new Map<VisualNode, VisualConnection>();
@@ -55,9 +67,7 @@ export class VisualNode<T = any> implements IsObservable {
     this.iconUrl = v.iconUrl;
 
     this.subscription = new VisualNodeObserver(v.entity, (type, m) => {
-      this.subscribers.forEach(s => {
-        s.doUpdate(type,m);
-      });
+      this.sendUpdateToSubs(type, m);
       // wss.connections.forEach(c => {
       //   c.send({
       //     data: v.entity.getGraphData()
@@ -71,8 +81,14 @@ export class VisualNode<T = any> implements IsObservable {
   }
 
   subscribeTo(name: VisualNodeEvents, o: EntityObserver<any>): this {
-        throw new Error("Method not implemented.");
+    const subscribers = this.subscribersByEvent.get(name);
+    if (subscribers) {
+      subscribers.add(o);
+      return this;
     }
+    this.subscribersByEvent.set(name, new Set([o]));
+    return this;
+  }
 
   sub(fn: (type: string, m: Entity<any>) => void): this {
     return this.subscribe(new class extends EntityObserver<any> {
@@ -96,11 +112,26 @@ export class VisualNode<T = any> implements IsObservable {
   }
 
   subscribeWithFrequency(count: number, o: EntityObserver<any>): this {
-    throw new Error("Method not implemented.");
+    void count;
+    return this.subscribe(o);
   }
 
   sendUpdateToSubs<T>(type: string, v: T): void {
-    throw new Error("Method not implemented.");
+    const alreadyNotified = new Set<EntityObserver<any>>();
+    const eventSubscribers = this.subscribersByEvent.get(type);
+
+    if (eventSubscribers) {
+      eventSubscribers.forEach(s => {
+        alreadyNotified.add(s);
+        s.doUpdate(type, v);
+      });
+    }
+
+    this.subscribers.forEach(s => {
+      if (!alreadyNotified.has(s)) {
+        s.doUpdate(type, v);
+      }
+    });
   }
 
   addVisualConnectionOut(target: VisualNode) {

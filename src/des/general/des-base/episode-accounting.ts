@@ -1,5 +1,16 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/episode_accounting.rs
+// - Keep file-for-file. EpisodeSummary and VectorEpisodeSummary become data
+//   structs; EpisodeAccounting and VectorEpisodeAccounting become concrete
+//   mutable structs with inherent methods.
+// - Reward histories should use Vec<f64> and vector rewards Vec<Vec<f64>>;
+//   expose read-only snapshots by cloning or borrowing slices.
+// - These are not DES graph nodes today; if reward aggregation becomes a graph
+//   transform, wrap the accounting step in PureTransform/PureTransformEntity.
+// - Convert reward-dimension mismatches from thrown errors to Result.
+
 export interface EpisodeSummary {
   reward: number;
   length: number;

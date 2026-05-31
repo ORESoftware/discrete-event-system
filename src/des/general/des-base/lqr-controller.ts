@@ -1,5 +1,15 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/lqr_controller.rs
+// - Keep file-for-file. Vec/Mat aliases become Vec<f64>/Vec<Vec<f64>> or a
+//   linear-algebra crate type; LQRSpec becomes a config struct.
+// - LQRController becomes a struct implementing the ControllerStation trait with
+//   precomputed gain/history state in impl blocks.
+// - Matrix helpers can stay private module functions or become associated
+//   functions; if a matrix operation is lifted into the graph, use PureTransform.
+// - Convert shape mismatches and singular-matrix throws to Result.
+
 // =============================================================================
 // general/des-base/lqr-controller.ts — base class for the LINEAR QUADRATIC
 // REGULATOR, the canonical "stochastic control = MDP" example.

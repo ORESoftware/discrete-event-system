@@ -1,3 +1,8 @@
+// RUST MIGRATION: target module src/des/general/dispatch.rs.
+// RUST MIGRATION: DispatchProblem/State/Result and policy option/result interfaces become serde structs; PendingJob and MCTSDispatchState are private structs.
+// RUST MIGRATION: DispatchPolicy is behavior and should become a trait or enum of policy implementations rather than a structural interface.
+// RUST MIGRATION: simulateDispatch, policy builders, LP/MDP/MCTS builders, evaluatePolicy, and welchT can remain free functions unless registered, then wrap in PureTransform.
+// RUST MIGRATION: RNG is already passed as seed/functions; port to injected rand::Rng and use VecDeque/HashMap for queues, tables, and memoized MDP state.
 'use strict';
 
 // =============================================================================

@@ -1,3 +1,8 @@
+// RUST MIGRATION: Target module `src/des/general/soccer_rotation.rs`.
+// RUST MIGRATION: Convert problem, schedule, evaluation, LP/IP/MIP, POMDP feature, match-event, and aggregate interfaces to `serde` structs.
+// RUST MIGRATION: Discriminated event/position/action concepts should become enums; use typed IDs/newtypes for players, periods, positions, and benches.
+// RUST MIGRATION: Keep policy builders/solvers as free functions unless exposed as graph-visible transforms; LP/MIP vector translators should return `Result`.
+// RUST MIGRATION: Replace map-like object keys and bench caches with `HashMap`/`HashSet`, inject RNG for randomized schedules/matches, and preserve deterministic ordering for reproducible reports.
 'use strict';
 
 // =============================================================================

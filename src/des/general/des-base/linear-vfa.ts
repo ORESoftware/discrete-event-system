@@ -1,5 +1,15 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/linear_vfa.rs
+// - Keep file-for-file. LinearVFAOptions becomes a config struct and
+//   LinearVFAStation becomes a trait plus shared RL-agent state struct.
+// - Feature extraction and value approximation hooks should become trait
+//   methods; weights map to Vec<Vec<f64>> or a flat Vec<f64> with indexing.
+// - Pure feature functions can stay associated/private helpers, or become
+//   PureTransform/PureTransformEntity if represented as DES graph nodes.
+// - Convert feature dimension, action count, and feature-shape throws to Result.
+
 // =============================================================================
 // general/des-base/linear-vfa.ts — base class for APPROXIMATE DYNAMIC
 // PROGRAMMING with LINEAR FUNCTION APPROXIMATION (linear value-function

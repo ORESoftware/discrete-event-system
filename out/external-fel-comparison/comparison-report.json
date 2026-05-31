@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-27T16:59:19.547Z",
+  "generatedAt": "2026-05-30T03:25:13.256Z",
   "sharedInputContract": "Internal and external runs read the same JSON scenario files from out/external-fel-comparison.",
   "reports": [
     {
@@ -7,7 +7,7 @@
       "scenario": "five-intersection-scheduled-trips",
       "engine": "source/sink input",
       "status": "passed",
-      "inputPath": "/Users/maca5/codes/ores/des/uta-phd/courses/hdm-fall-2022/des/out/external-fel-comparison/traffic-shared-input.json",
+      "inputPath": "/Users/alexandermills/codes/ores/discrete-event-system/out/external-fel-comparison/traffic-shared-input.json",
       "checks": [
         {
           "name": "has source entities",
@@ -559,8 +559,8 @@
       "scenario": "five-intersection-scheduled-trips",
       "engine": "Python traffic FEL",
       "status": "passed",
-      "inputPath": "/Users/maca5/codes/ores/des/uta-phd/courses/hdm-fall-2022/des/out/external-fel-comparison/traffic-shared-input.json",
-      "outputPath": "/Users/maca5/codes/ores/des/uta-phd/courses/hdm-fall-2022/des/out/external-fel-comparison/python-traffic-fel.json",
+      "inputPath": "/Users/alexandermills/codes/ores/discrete-event-system/out/external-fel-comparison/traffic-shared-input.json",
+      "outputPath": "/Users/alexandermills/codes/ores/discrete-event-system/out/external-fel-comparison/python-traffic-fel.json",
       "checks": [
         {
           "name": "generated demand matches internal scheduled input",
@@ -606,45 +606,51 @@
     {
       "domain": "traffic",
       "scenario": "five-intersection-scheduled-trips",
-      "engine": "SUMO",
-      "status": "passed",
-      "inputPath": "/Users/maca5/codes/ores/des/uta-phd/courses/hdm-fall-2022/des/out/external-fel-comparison/traffic-shared-input.json",
-      "outputPath": "/Users/maca5/codes/ores/des/uta-phd/courses/hdm-fall-2022/des/out/external-fel-comparison/sumo.json",
+      "engine": "SimPy",
+      "status": "skipped",
+      "inputPath": "/Users/alexandermills/codes/ores/discrete-event-system/out/external-fel-comparison/traffic-shared-input.json",
+      "outputPath": "/Users/alexandermills/codes/ores/discrete-event-system/out/external-fel-comparison/simpy.json",
       "checks": [
         {
-          "name": "generated demand matches internal scheduled input",
+          "name": "external dependency reported unavailable cleanly",
           "passed": true,
-          "detail": "actual=21 expected=21"
-        },
+          "detail": "SimPy is not installed for this Python interpreter: No module named 'simpy'"
+        }
+      ],
+      "notes": [
+        "external command status=0"
+      ]
+    },
+    {
+      "domain": "traffic",
+      "scenario": "five-intersection-scheduled-trips",
+      "engine": "Ciw",
+      "status": "skipped",
+      "inputPath": "/Users/alexandermills/codes/ores/discrete-event-system/out/external-fel-comparison/traffic-shared-input.json",
+      "outputPath": "/Users/alexandermills/codes/ores/discrete-event-system/out/external-fel-comparison/ciw.json",
+      "checks": [
         {
-          "name": "departures align with internal entered count",
+          "name": "external dependency reported unavailable cleanly",
           "passed": true,
-          "detail": "actual=21 expected=21 rel=0.000 tol=0.2"
-        },
+          "detail": "Ciw is not installed for this Python interpreter: No module named 'ciw'"
+        }
+      ],
+      "notes": [
+        "external command status=0"
+      ]
+    },
+    {
+      "domain": "traffic",
+      "scenario": "five-intersection-scheduled-trips",
+      "engine": "SUMO",
+      "status": "skipped",
+      "inputPath": "/Users/alexandermills/codes/ores/discrete-event-system/out/external-fel-comparison/traffic-shared-input.json",
+      "outputPath": "/Users/alexandermills/codes/ores/discrete-event-system/out/external-fel-comparison/sumo.json",
+      "checks": [
         {
-          "name": "arrivals align with internal exited count",
+          "name": "external dependency reported unavailable cleanly",
           "passed": true,
-          "detail": "actual=19 expected=21 rel=0.095 tol=0.45"
-        },
-        {
-          "name": "active-at-end aligns with internal final cars",
-          "passed": true,
-          "detail": "actual=2 expected=0 diff=2.000e+0 tol=2"
-        },
-        {
-          "name": "external mean travel time is finite",
-          "passed": true,
-          "detail": "actual=61.5"
-        },
-        {
-          "name": "external mean speed is finite",
-          "passed": true,
-          "detail": "actual=8.334545"
-        },
-        {
-          "name": "mean travel time same order of magnitude",
-          "passed": true,
-          "detail": "actual=61.5 expected=54.3 ratio=1.133"
+          "detail": "SUMO external simulator is not installed or not on PATH; set SUMO_BIN/sumo and SUMO_NETCONVERT_BIN/netconvert to enable this validator."
         }
       ],
       "notes": [
@@ -656,8 +662,8 @@
       "scenario": "small-enterprise",
       "engine": "Python computer-network FEL",
       "status": "passed",
-      "inputPath": "/Users/maca5/codes/ores/des/uta-phd/courses/hdm-fall-2022/des/out/external-fel-comparison/computer-network-small-enterprise.json",
-      "outputPath": "/Users/maca5/codes/ores/des/uta-phd/courses/hdm-fall-2022/des/out/external-fel-comparison/computer-network-small-enterprise-python-fel-reference.json",
+      "inputPath": "/Users/alexandermills/codes/ores/discrete-event-system/out/external-fel-comparison/computer-network-small-enterprise.json",
+      "outputPath": "/Users/alexandermills/codes/ores/discrete-event-system/out/external-fel-comparison/computer-network-small-enterprise-python-fel-reference.json",
       "checks": [
         {
           "name": "generated packets",
@@ -717,7 +723,7 @@
         {
           "name": "total cost",
           "passed": true,
-          "detail": "actual=0.010177 expected=0.010177 diff=0.000e+0 tol=1e-9"
+          "detail": "actual=0.010177 expected=0.010177 diff=4.684e-17 tol=1e-9"
         },
         {
           "name": "top bottleneck agrees",
@@ -734,8 +740,8 @@
       "scenario": "bottleneck-lab",
       "engine": "Python computer-network FEL",
       "status": "passed",
-      "inputPath": "/Users/maca5/codes/ores/des/uta-phd/courses/hdm-fall-2022/des/out/external-fel-comparison/computer-network-bottleneck-lab.json",
-      "outputPath": "/Users/maca5/codes/ores/des/uta-phd/courses/hdm-fall-2022/des/out/external-fel-comparison/computer-network-bottleneck-lab-python-fel-reference.json",
+      "inputPath": "/Users/alexandermills/codes/ores/discrete-event-system/out/external-fel-comparison/computer-network-bottleneck-lab.json",
+      "outputPath": "/Users/alexandermills/codes/ores/discrete-event-system/out/external-fel-comparison/computer-network-bottleneck-lab-python-fel-reference.json",
       "checks": [
         {
           "name": "generated packets",
@@ -795,7 +801,7 @@
         {
           "name": "total cost",
           "passed": true,
-          "detail": "actual=0.022153 expected=0.022153 diff=0.000e+0 tol=1e-9"
+          "detail": "actual=0.022153 expected=0.022153 diff=1.076e-16 tol=1e-9"
         },
         {
           "name": "top bottleneck agrees",

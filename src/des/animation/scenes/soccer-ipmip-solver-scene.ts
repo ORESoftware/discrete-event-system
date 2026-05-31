@@ -1,5 +1,12 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/animation/scenes/soccer_ipmip_solver_scene.rs
+// - Keep frame count, frame builder, and chart builder as module helpers over typed IPMIP solution/event structs.
+// - NodeBox and Edge become private structs; NODE_BY_ID should become a lazy static map or a small lookup helper.
+// - Shape/ChartSpec outputs map directly to serde data; nullable trace events become Option<IPMIPTraceEvent>.
+// - If solver animation is graph-visible, wrap the event-to-frame logic in a PureTransform implementor.
+
 // =============================================================================
 // Soccer IP/MIP solver-entity animation.
 //

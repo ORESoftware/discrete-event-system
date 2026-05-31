@@ -1,5 +1,16 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/fixed_point.rs
+// - Keep file-for-file. FixedPointOptions becomes a config struct and
+//   FixedPointIterationStation becomes a trait plus shared state struct.
+// - Preserve residual/history fields as Vec<f64>; abstract iteration hooks map
+//   to trait methods with default stopping/instrumentation impls.
+// - Pure contraction/update operators can stay private/associated functions, or
+//   become PureTransform/PureTransformEntity if lifted into a DES graph.
+// - Convert invalid tolerance/iteration settings and convergence failures to
+//   Result-returning constructors or methods.
+
 // =============================================================================
 // general/des-base/fixed-point.ts — base class for FIXED-POINT iteration:
 // value iteration (Bellman backups), policy iteration, Jacobi / Gauss-Seidel

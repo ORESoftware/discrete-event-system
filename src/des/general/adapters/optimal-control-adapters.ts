@@ -1,3 +1,7 @@
+// RUST MIGRATION: Target module `src/des/general/adapters/optimal_control_adapters.rs`.
+// RUST MIGRATION: Convert LQR/MPC/optimal-control adapter registrations and render helpers into structs/functions around `DESModelSpec`.
+// RUST MIGRATION: Encode state-space configs, trajectories, controls, costs, and solver results as `serde` config/result structs; paths become `PathBuf`.
+// RUST MIGRATION: Return `Result<_, ValidationError>` for matrix dimensions, horizon bounds, and controller validation.
 'use strict';
 
 // =============================================================================

@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/domain_application_test.rs` as registry-driven integration coverage for the applied domain model pack.
+// Test-port notes: convert model specs into `#[test]` functions returning `Result<()>`; replace ad hoc check helpers with `assert!`, `assert_eq!`, and approximate-float helpers; keep fixtures deterministic.
+
 'use strict';
 
 // Tests for the applied domain model pack.

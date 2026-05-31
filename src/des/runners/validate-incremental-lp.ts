@@ -1,3 +1,8 @@
+// RUST MIGRATION:
+// - Target: src/bin/validate_incremental_lp.rs.
+// - Keep this as a CLI validation binary with Result-returning main; replace process.exit with ExitCode.
+// - Convert State and LP scenario data to nominal structs, with arrays mapped to Vec<f64> or fixed-size arrays where stable.
+// - Keep close/arrayClose/check as private validation helpers and route solver calls through migrated LP traits/modules.
 'use strict';
 
 // =============================================================================

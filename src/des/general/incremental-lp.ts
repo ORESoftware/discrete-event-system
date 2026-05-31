@@ -1,3 +1,7 @@
+// RUST MIGRATION: target module src/des/general/incremental_lp.rs.
+// RUST MIGRATION: LPEvent is a discriminated union and should become an enum with variants; PivotEvent, IncrementalLPInit, and LPSnapshot become serde structs.
+// RUST MIGRATION: IncrementalLP becomes a stateful struct with impl methods for stepping/pivoting; expose graph-visible use as a Station/PureTransform wrapper.
+// RUST MIGRATION: Tableau arrays map to Vec<Vec<f64>>, and invalid pivots/unbounded states should be Result or enum status values instead of throws.
 'use strict';
 
 // =============================================================================

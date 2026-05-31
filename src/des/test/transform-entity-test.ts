@@ -1,3 +1,6 @@
+// RUST MIGRATION: Prefer moving these focused checks into `src/des/general/des_base/transform_entity.rs` under `#[cfg(test)] mod tests`.
+// Test-port notes: translate entity-transform scenarios into `#[test]` functions returning `Result<()>`; replace helper checks with `assert!`, `assert_eq!`, and approximate-float helpers; keep token fixtures deterministic.
+
 'use strict';
 
 import {ChannelName, DESStation, Token} from '../general/des-base/station';

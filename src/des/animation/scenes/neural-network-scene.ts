@@ -1,5 +1,12 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/animation/scenes/neural_network_scene.rs
+// - Exported buildNeural*Animation functions can remain module helpers returning Animation serde structs with Vec<Frame>.
+// - BuiltFrame and result imports should become nominal Rust structs/enums; avoid structural intersections by defining frame sample structs.
+// - Local frame/chart/metric helpers stay private; maps/sets should be HashMap/HashSet only where lookup semantics matter.
+// - If a neural scene builder becomes DES graph-visible, lift it into a PureTransform struct with transform(result_sample) -> Frame.
+
 // =============================================================================
 // Neural-network animation scenes.
 //

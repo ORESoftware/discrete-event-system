@@ -1,5 +1,16 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/actor_critic.rs
+// - Keep file-for-file. ActorCriticOptions becomes a config struct and
+//   TabularActorCritic becomes a state-owning struct implementing the RL agent
+//   and actor-critic update traits.
+// - Preserve the tabular value/logit matrices as Vec<Vec<f64>>; overrideable
+//   policy/value hooks should become trait methods with default impls.
+// - Keep argmax as a private/module helper dependency; if this update is lifted
+//   into a graph node later, expose it through PureTransform/PureTransformEntity.
+// - Convert constructor validation and impossible transition paths to Result.
+
 // =============================================================================
 // general/des-base/actor-critic.ts — base class for ONE-STEP ACTOR-CRITIC
 // (Sutton & Barto §13.5). The agent simultaneously learns:

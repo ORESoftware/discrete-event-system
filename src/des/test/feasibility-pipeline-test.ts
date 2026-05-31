@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/feasibility_pipeline_test.rs` for optimization feasibility checker and JSON/spec registry coverage.
+// Test-port notes: convert pipeline checks into `#[test]` functions returning `Result<()>`; use `assert!`, `assert_eq!`, approximate-float helpers, and `tempfile` for JSON fixtures.
+
 'use strict';
 
 // =============================================================================

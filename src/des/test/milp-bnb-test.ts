@@ -1,3 +1,6 @@
+// RUST MIGRATION: Prefer moving these focused checks into `src/des/general/milp_bnb.rs` under `#[cfg(test)] mod tests`.
+// Test-port notes: translate branch-and-bound cases into `#[test]` functions returning `Result<()>`; replace ad hoc helpers with `assert!`, `assert_eq!`, and approximate-float helpers; keep MILP fixtures deterministic.
+
 'use strict';
 
 // =============================================================================

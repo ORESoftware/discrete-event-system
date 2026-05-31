@@ -1,4 +1,7 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION: Port file-for-file to `tests/calculus_test.rs` as cross-module integration coverage for expression parsing, quadrature, ODE, and equation-to-station adapters.
+// Test-port notes: translate checks into `#[test]` functions returning `Result<()>`; replace ad hoc assertion helpers with `assert!`, `assert_eq!`, and approximate-float helpers; keep numeric tolerances explicit.
+
 'use strict';
 
 // =============================================================================

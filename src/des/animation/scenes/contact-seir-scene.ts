@@ -1,5 +1,12 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/animation/scenes/contact_seir_scene.rs
+// - PersonView becomes a Rust struct and layoutGrid/buildContactFrame/buildContactChart remain module helpers.
+// - State/color dictionaries should become enums plus match expressions where possible; arrays become Vec<f64>/Vec<PersonView>.
+// - Frame/Shape/ChartSpec outputs map to serde structs/enums from animation::types.
+// - If contact rendering becomes DES graph-visible, expose a PureTransform that maps epidemic snapshot -> Frame fragment.
+
 // =============================================================================
 // Contact-SEIR scene builder. Each person is a small dot in a 2-D
 // phyllotaxis grid (golden-angle spiral); state is encoded in fill

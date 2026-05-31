@@ -1,3 +1,8 @@
+// RUST MIGRATION:
+// - Target: src/des/runners/ode_runner.rs.
+// - Keep file-for-file as a library runner exposing run_ode_once; State becomes a fixed-field struct or indexed compartment vector.
+// - Keep RK/linear-combination helpers private pure functions unless lifted into a numerical Integrator trait.
+// - Convert logging/output construction to Result-capable boundaries while preserving RunResult compatibility with other kernels.
 'use strict';
 
 // =============================================================================

@@ -1,5 +1,12 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/animation/scenes/factmachine_scene.rs
+// - Keep buildFactMachineFrame/buildFactMachineCharts as module helpers that return Frame/ChartSpec serde structs.
+// - ArchitectureFrameArgs, FactMachineParams, and FactMachineResult should be nominal Rust structs instead of structural object shapes.
+// - If a scene builder is wired into the DES graph, introduce a FactMachineSceneTransform implementing PureTransform::transform.
+// - Local color/draw helpers stay private; arrays of Shape become Vec<Shape> and optional labels become Option<String>.
+
 // =============================================================================
 // FactMachine animation scene — REWRITTEN to put the DES ARCHITECTURE
 // front-and-centre.

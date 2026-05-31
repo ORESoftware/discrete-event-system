@@ -1,5 +1,17 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/mdp/usacc_mdp.rs
+// - The const arrays/types should become Rust enums plus `TryFrom<usize>` or
+//   fixed lookup tables; CaseState and Outcome become Copy/Clone structs.
+// - encode/decode/quality/reward/outcomes/sampleInitialState are pure functions;
+//   if keeping the TS migration pattern, group them behind PureTransform-style
+//   structs before porting, then translate to trait impls or associated fns.
+// - Replace TS union-string action types, Record<Action, number>, non-null
+//   assertions, and floating probability checks with enums, arrays indexed by
+//   discriminants, Option/Result, and deterministic f64/decimal tolerances.
+// - Inject RNG for sampleInitialState instead of accepting an untyped closure.
+
 // =============================================================================
 // MDP for the USACC (US Anti-Corruption Court) project.
 //

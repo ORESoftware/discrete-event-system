@@ -1,3 +1,8 @@
+// RUST MIGRATION: target module src/des/general/multistage_stochastic.rs.
+// RUST MIGRATION: DemandOutcome, MultiStageInventoryProblem, StageDecision, trace/result/options/tree structs become serde structs.
+// RUST MIGRATION: SDDPStation becomes a struct implementing FixedPointIterationStation<SDDPState>; MODEL can be an associated const.
+// RUST MIGRATION: solveStageDecision, expectedStageValue, solveExactScenarioTree, and evaluatePolicyExact are solver free functions; solveMultiStageSDDP/runMultiStageInventoryDemo can be PureTransform entry structs when graph-visible.
+// RUST MIGRATION: Scenario tree and SDDP cut collections should use Vec-backed structs; demand sampling takes injected rand::Rng and validation returns Result.
 'use strict';
 
 // =============================================================================

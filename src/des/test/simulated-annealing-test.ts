@@ -1,3 +1,6 @@
+// RUST MIGRATION: Prefer moving these focused checks into `src/des/general/simulated_annealing.rs` under `#[cfg(test)] mod tests`.
+// Test-port notes: translate annealing/TSP assertions into `#[test]` functions returning `Result<()>`; replace ad hoc helpers with `assert!`, `assert_eq!`, approximate helpers, and deterministic seeds.
+
 'use strict';
 
 // =============================================================================

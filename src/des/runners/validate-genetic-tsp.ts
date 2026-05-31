@@ -1,3 +1,8 @@
+// RUST MIGRATION:
+// - Target: src/bin/validate_genetic_tsp.rs.
+// - Keep this as a CLI validation binary with Result-returning main; replace process.exit with ExitCode.
+// - Convert TSP instances/results/checks to nominal structs and keep precedence validation as private pure helpers.
+// - Optimization algorithm calls should remain calls into migrated ga_des modules rather than embedding runner-specific logic.
 'use strict';
 
 // =============================================================================

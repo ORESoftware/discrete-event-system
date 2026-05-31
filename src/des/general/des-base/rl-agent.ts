@@ -1,5 +1,16 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/rl_agent.rs
+// - Keep file-for-file. RLAgentStation becomes the core RL-agent trait plus a
+//   shared state struct for RNG, episode accounting, and channel behavior.
+// - pickAction/update/endOfEpisode hooks should become trait methods, with
+//   run_time_step implemented once over the shared state.
+// - State/action/transition tokens come from rl_tokens.rs as structs; channel
+//   strings can become pub consts or small enums.
+// - Pure policy/value functions used as graph nodes should implement
+//   PureTransform/PureTransformEntity. Convert invalid transitions to Result.
+
 // =============================================================================
 // general/des-base/rl-agent.ts — base class for ONLINE TEMPORAL-DIFFERENCE
 // agents: Q-learning, SARSA, expected SARSA, Double-Q, Q(λ), …

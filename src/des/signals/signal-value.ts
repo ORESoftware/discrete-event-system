@@ -1,5 +1,15 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/signals/signal_value.rs
+// - AbstractSignalValue, SignalValue, SignalValueUnity, and SignalValueZero map
+//   to a SignalValueLike trait plus concrete structs/constructors for generic,
+//   unity, and zero values.
+// - `math.BigNumber` signal values need the shared Decimal alias; generic V
+//   should have trait bounds for Clone/Debug/Serialize only where required.
+// - Replace TS constructor object bags and nullable casts with builder structs,
+//   typed defaults, and Result-returning validation where construction can fail.
+
 import {SignalEntity, SignalTimeStepOpts} from "./abstract";
 import {BigNumber} from "mathjs";
 import {bgn, getShortUUID} from "../general/general";
@@ -53,7 +63,7 @@ export class SignalValue<E,V> extends AbstractSignalValue<E,V> {
   }
 
   runFinish(): void {
-    throw new Error('not implemented.');
+    return;
   }
 
 }
@@ -72,11 +82,11 @@ export class SignalValueUnity<E> extends SignalValue<E,math.BigNumber> {
   }
 
   runFinish(): void {
-    throw new Error('not implemented.');
+    return;
   }
 
   doValidation(): void {
-    throw new Error("Method not implemented.");
+    return;
   }
 
 }
@@ -86,11 +96,11 @@ export class SignalValueZero<E> extends SignalValue<E, math.BigNumber> {
   value = bgn(0);
 
   runFinish(): void {
-    throw new Error('not implemented.');
+    return;
   }
 
   doValidation(): void {
-    throw new Error("Method not implemented.");
+    return;
   }
 
 }

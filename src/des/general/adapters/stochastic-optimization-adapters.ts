@@ -1,3 +1,7 @@
+// RUST MIGRATION: Target module `src/des/general/adapters/stochastic_optimization_adapters.rs`.
+// RUST MIGRATION: Convert stochastic LP and multi-stage optimization adapter registrations into structs/functions around `DESModelSpec`.
+// RUST MIGRATION: Promote pair schemas, demand outcomes, stochastic configs, cuts, and run results to `serde` config/result structs; paths become `PathBuf`.
+// RUST MIGRATION: Use `Result<_, ValidationError>` for probability, scenario, vector-shape, and solver input validation.
 'use strict';
 
 // =============================================================================

@@ -1,4 +1,9 @@
 #!/usr/bin/env ts-node
+// RUST MIGRATION:
+// - Target: src/bin/compare_elevator_dispatch.rs.
+// - Keep this as a CLI runner with a Result-returning main; map SEEDS/LAMBDAS/SIM_T parsing to clap or std::env.
+// - Convert TrialAggregate to a serde-serializable struct and keep JSON output behind serde_json plus std::fs/std::path.
+// - Preserve the elevator comparison loop as plain orchestration over the migrated build_schedule/run_elevator APIs.
 'use strict';
 
 // Sweep across seeds and arrival rates to quantify the value of coordinated

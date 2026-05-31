@@ -1,63 +1,9 @@
 {
-  "commands": [
-    {
-      "args": [
-        "/Users/maca5/Library/Python/3.9/bin/netconvert",
-        "--node-files",
-        "/var/folders/qr/l0klf0r566z1qdsfgcg9j7s00000gn/T/des-sumo-traffic-dkikc5y8/des.nodes.nod.xml",
-        "--edge-files",
-        "/var/folders/qr/l0klf0r566z1qdsfgcg9j7s00000gn/T/des-sumo-traffic-dkikc5y8/des.edges.edg.xml",
-        "--output-file",
-        "/var/folders/qr/l0klf0r566z1qdsfgcg9j7s00000gn/T/des-sumo-traffic-dkikc5y8/des.net.xml",
-        "--no-turnarounds",
-        "true",
-        "--junctions.join",
-        "false"
-      ],
-      "status": 0,
-      "stderr": "",
-      "stdout": "Success.\n"
-    },
-    {
-      "args": [
-        "/Users/maca5/Library/Python/3.9/bin/sumo",
-        "-c",
-        "/var/folders/qr/l0klf0r566z1qdsfgcg9j7s00000gn/T/des-sumo-traffic-dkikc5y8/des.sumocfg",
-        "--no-step-log",
-        "true",
-        "--duration-log.disable",
-        "true"
-      ],
-      "status": 0,
-      "stderr": "",
-      "stdout": ""
-    }
-  ],
-  "message": "SUMO simulation completed.",
+  "message": "SUMO external simulator is not installed or not on PATH; set SUMO_BIN/sumo and SUMO_NETCONVERT_BIN/netconvert to enable this validator.",
   "module": "traffic-sumo-reference",
-  "result": {
-    "activeAtEnd": 2,
-    "arrived": 19,
-    "collisionCount": 0,
-    "departed": 21,
-    "generatedDemand": 21,
-    "meanSpeedMps": 8.334544713483137,
-    "meanTravelTimeSec": 61.499999999999986,
-    "meanWaitingTimeSec": 14.421052631578947,
-    "summary": {
-      "arrived": 19,
-      "collisions": 0,
-      "ended": 19,
-      "inserted": 21,
-      "loaded": 21,
-      "running": 13,
-      "waiting": 0
-    }
-  },
   "simulator": {
-    "netconvert": "/Users/maca5/Library/Python/3.9/bin/netconvert",
-    "sumo": "/Users/maca5/Library/Python/3.9/bin/sumo"
+    "netconvert": null,
+    "sumo": null
   },
-  "status": "ok",
-  "workdir": "/var/folders/qr/l0klf0r566z1qdsfgcg9j7s00000gn/T/des-sumo-traffic-dkikc5y8"
+  "status": "unavailable"
 }

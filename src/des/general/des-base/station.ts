@@ -1,5 +1,16 @@
 'use strict';
 
+// RUST MIGRATION:
+// - Target: src/des/general/des_base/station.rs
+// - Keep file-for-file. Token and DESRunLoopEntity become traits; ChannelName
+//   can be a String newtype or enum-backed identifier.
+// - DESStation becomes the foundational shared state struct plus station trait
+//   impls for inboxes, outgoing edges, validators, and lifecycle hooks.
+// - Map fields map to HashMap/BTreeMap of channel names to token queues/edges;
+//   structural typing must become explicit trait bounds and boxed trait objects.
+// - Pure station-graph adapters should derive from PureTransform/PureTransformEntity
+//   in transform_entity.rs. Convert thrown validation/connection errors to Result.
+
 // =============================================================================
 // general/des-base/station.ts — DESStation, the foundation for the
 // "iterative algorithm as DES" hierarchy in des-base/.

@@ -1,3 +1,8 @@
+// RUST MIGRATION:
+// - Target: src/bin/validate_simulated_annealing.rs.
+// - Keep this as a CLI validation binary with Result-returning main; replace process.exitCode with ExitCode.
+// - Convert optimization scenarios and check rows to nominal structs and keep tolerance helpers private.
+// - Route TSP/knapsack/SA calls through migrated algorithm modules; random behavior should be injected through RNG traits.
 'use strict';
 
 // =============================================================================

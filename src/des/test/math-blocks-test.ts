@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/math_blocks_test.rs` for stationary math blocks, ODE block systems, and heat PDE grid coverage.
+// Test-port notes: translate model scenarios into `#[test]` functions returning `Result<()>`; replace ad hoc checks with `assert!`, `assert_eq!`, and approximate-float helpers; use `tempfile` for file fixtures.
+
 'use strict';
 
 // =============================================================================

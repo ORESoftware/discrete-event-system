@@ -1,3 +1,6 @@
+// RUST MIGRATION: Port file-for-file to `tests/lp_test.rs` as integration coverage for internal simplex, DES LP solving, and MDP-as-LP transforms.
+// Test-port notes: translate solver cases into `#[test]` functions returning `Result<()>`; replace ad hoc checks with `assert!`, `assert_eq!`, and approximate-float helpers; keep LP fixtures deterministic.
+
 'use strict';
 
 // =============================================================================

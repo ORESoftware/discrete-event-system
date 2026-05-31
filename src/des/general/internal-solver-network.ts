@@ -1,3 +1,9 @@
+// RUST MIGRATION: target module src/des/general/internal_solver_network.rs.
+// RUST MIGRATION: InternalSolverKind becomes an enum; progress/node/edge/result/params structs become serde structs.
+// RUST MIGRATION: SolverSolutionToken, StopSignalToken, WallClockCheckerStation, SolutionSinkStation, and solver station classes become Token/Station trait impl structs.
+// RUST MIGRATION: SnapshotProvider is behavior and should be a Rust trait implemented by each observable solver station.
+// RUST MIGRATION: runInternalSolverNetwork is graph-visible orchestration and should be a PureTransform entry struct; buildSolverStation returns boxed trait objects or an enum of station variants.
+// RUST MIGRATION: Graph/TSP/knapsack maps and tables should use HashMap/Vec as appropriate, with all validation and required() lookups returning Result.
 'use strict';
 
 // =============================================================================

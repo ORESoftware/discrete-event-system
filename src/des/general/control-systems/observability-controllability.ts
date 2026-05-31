@@ -1,3 +1,7 @@
+// RUST MIGRATION: Target module `src/des/general/control_systems/observability_controllability.rs`.
+// RUST MIGRATION: Convert state-space, MDP, POMDP, source/sink stations, and evaluator stations into structs plus model/controller/evaluator traits.
+// RUST MIGRATION: Use `f64` matrices/vectors for dynamics, transitions, beliefs, and metrics; inject model config/RNG rather than reading ambient state.
+// RUST MIGRATION: Graph-visible controllability/observability evaluators should become PureTransform-style structs with typed `transform` results.
 'use strict';
 
 // =============================================================================
