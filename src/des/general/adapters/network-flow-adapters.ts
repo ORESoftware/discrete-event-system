@@ -5,6 +5,32 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/adapters/network-flow-adapters.rs
+//   (module des::general::adapters::network_flow_adapters)
+// 1:1 file move. Registers max-flow / stochastic-flow-MDP / traffic JSON adapters.
+//
+// Declarations → Rust:
+//   interface MaxFlowParams / StochasticFlowMDPParams / TrafficParams -> struct
+//             (#[derive(Deserialize)]; optional fields -> Option<T>)
+//   const *Schema: ParamSchema (JSON param schemas) -> serde + a validator schema
+//             (data, not code: build once as a `static`/`Lazy` or via derive)
+//   const *Adapter: DESModelRegistration<P,R> (object w/ run/summarize/writeCsv methods)
+//                                        -> a struct implementing a ModelAdapter trait
+//   registerModel(adapter) (top-level side effect) -> explicit registration call
+//             (inventory/linkme, or a register fn invoked at startup)
+//
+// Conversion notes (file-specific):
+//   - These are SPEC SHAPES decoded from JSON -> serde Deserialize on the *Params
+//     structs; ParamSchema is the validation metadata (serde + `validator`).
+//   - `params.problem ?? buildDefault…()` / `runtime.seed ?? params.seed ?? 7` ->
+//     Option::unwrap_or / or_else chains.
+//   - Adapter methods are closures captured in an object literal -> trait methods on
+//     a unit struct per model; `run/summarize/writeCsv` map directly.
+//   - String-literal `builtin` enums ('textbook', 'five-intersection', …) ->
+//     #[serde] enums; summarize/writeCsv build CSV via the adapter-utils helpers.
+// =============================================================================
+
+// =============================================================================
 // JSON adapters for network-flow models:
 //   - max-flow: Edmonds-Karp augmenting paths as fixed-point DES ticks
 //   - traffic-flow: small continuous-position traffic simulation on a grid

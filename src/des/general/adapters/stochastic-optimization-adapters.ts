@@ -5,6 +5,32 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/adapters/stochastic-optimization-adapters.rs
+//   (module des::general::adapters::stochastic_optimization_adapters)
+// 1:1 file move. Registers two-stage stochastic-LP (SAA/Benders) + multistage-SDDP adapters.
+//
+// Declarations → Rust:
+//   interface StochasticLPParams / StochasticLPRunResult / MultiStageParams -> struct
+//             (#[derive(Deserialize)]; optional fields -> Option<T>)
+//   const pairSchema / *Schema: ParamSchema    -> serde + validator metadata
+//   const stochasticLPAdapter / multiStageAdapter: DESModelRegistration<P,R> ->
+//             struct + impl ModelAdapter trait; registerModel(...) -> explicit calls
+//   fn fmtVec(x: readonly number[])             -> plain `fn` formatting helper
+//
+// Conversion notes (file-specific):
+//   - GotChA: `closedForm?: ReturnType<typeof solveProductionClosedForm>` derives a
+//     type from a function's return — name that result type explicitly in Rust
+//     (Option<ClosedFormResult>); TS `ReturnType<>` has no analogue.
+//   - `ranges: Array<[number, number]>` -> Vec<(f64, f64)>; validated to equal-length
+//     c/p/ranges with `throw new Error` (invariant -> Result/validation).
+//   - The `evalX` closure captures `params`/`oos` -> a closure or local fn; watch
+//     borrow of captured slices.
+//   - `params.N ?? 200`, `gapToExact?.toExponential(3) ?? 'n/a'` -> unwrap_or chains;
+//     `tr.policyValue ?? ''` in CSV -> Option formatting.
+//   - `params.budget === undefined` gates the closed-form branch -> Option::is_none.
+// =============================================================================
+
+// =============================================================================
 // JSON adapters for stochastic-optimisation models:
 //   - stochastic-lp: existing two-stage SAA + Benders model, now first-class
 //   - multistage-sddp: multi-stage inventory/storage SDDP model

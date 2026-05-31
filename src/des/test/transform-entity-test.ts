@@ -3,6 +3,21 @@
 
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: tests/transform_entity_test.rs   (integration test crate)
+// 1:1 file move. Exercises the transform-entity bases through the des-base
+// runner, so it is an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - local `class X extends PureTransformEntity/MemoryTransformEntity` ->
+//     test structs implementing the corresponding transform trait (no `extends`;
+//     MemoryTransform carries its state as a struct field).
+// =============================================================================
+
 import {ChannelName, DESStation, Token} from '../general/des-base/station';
 import {runIterativeDES} from '../general/des-base/runner';
 import {SingleTokenSourceStation} from '../general/des-base/learning-optimization';

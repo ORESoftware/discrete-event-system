@@ -4,6 +4,23 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/internal_solver_network_test.rs   (integration test crate)
+// 1:1 file move. Tests internal solver networks (GA/SA/knapsack/shortest-path/
+// TSP + wall-clock checker), so it is an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - close(a,b,tol) relative float comparison -> approx::assert_relative_eq!.
+//   - GA/SA solvers are stochastic -> a seeded rand::Rng.
+//   - runFromJsonFile / fs + JSON -> serde_json + std::fs (or `tempfile`).
+//   - `bestState as any` casts -> a concrete result enum/struct in Rust.
+//   - async main()/await -> a plain sync #[test].
+// =============================================================================
+
+// =============================================================================
 // Tests for internal solver networks: GA, SA, knapsack, shortest path, TSP, and
 // the wall-clock checker station.
 // =============================================================================

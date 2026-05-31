@@ -6,6 +6,20 @@
 // - File I/O should use std::fs/std::path; external backpropagation output remains an adapter-produced fixture.
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-backpropagation.rs  (a `fn main`
+//                    binary; an `examples/…rs` also works)
+// 1:1 file move. Compares the framework backprop output against the numpy-style
+// reference (per-tensor max-abs error, loss history, XOR predictions).
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - `__dirname`-relative `path.join` -> `std::path` (`CARGO_MANIFEST_DIR` / cwd).
+//   - `fs`/`JSON.parse` -> `std::fs` + serde structs.
+//   - `as any` on weight tensors -> typed `Vec<Vec<f64>>`.
+//   - `process.exit(code)` -> `std::process::exit(code)`.
+// =============================================================================
+
 // Compares the framework's backprop output (out/backprop-framework.json)
 // against the numpy-style nested-loop reference (out/external/backpropagation/numpy.json).
 //

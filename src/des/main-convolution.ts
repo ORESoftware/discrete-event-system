@@ -6,6 +6,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-convolution.rs   (fn main)
+// 1:1 file move. 1-D convolution as a streaming DES pipeline (SignalSource ->
+// ConvolutionStation -> CollectorSink).
+//
+// Conversion notes (file-specific):
+//   - mulberry32 / withSeed -> SeededRandom (shared::capabilities); the
+//     fisherYatesShuffle tick ordering must use the injected Rng.
+//   - classes (Sample, SignalSource extends RoutedTimeSteppedStation) -> struct
+//     + impl trait.
+//   - fs/path output -> std::fs; top-level run -> fn main.
+// =============================================================================
+
+// =============================================================================
 // 1-D convolution as a discrete-event system (a streaming arithmetic
 // pipeline rather than a probabilistic simulation, but the same DES
 // substrate — stations and movables on a tick clock).

@@ -1,14 +1,22 @@
 'use strict';
 
-// RUST MIGRATION:
-// - Target: src/des/general/des_base/smart_movable.rs
-// - Keep file-for-file. SmartMovable becomes a trait plus shared state struct
-//   carrying id/token identity and run-loop hooks.
-// - Token and IterativeDESParticipant implementations map to trait impls; any
-//   subclass-specific mutable behavior should live in concrete structs.
-// - ValidationCheck lists should use Vec<ValidationCheck> from validation.rs.
-// - No free helpers here; pure behavior lifted into the DES graph should use
-//   PureTransform/PureTransformEntity. Convert validation failures to Result.
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/smart_movable.rs  (module des::general::des_base::smart_movable)
+// 1:1 file move. SmartMovable — a token that is ALSO a run-loop participant
+// (it moves through the graph yet advances itself each tick).
+//
+// Declarations → Rust:
+//   abstract class SmartMovable (implements Token, IterativeDESParticipant)
+//     -> trait SmartMovable: Token + DESRunLoopEntity
+//        (provided activate/deactivate/isActive/hasWork over an `active: bool` field;
+//         required `run_time_step`)
+//
+// Conversion notes (file-specific):
+//   - Multi-interface implements (Token + IterativeDESParticipant) -> trait bounds /
+//     supertraits; write explicit impls (no structural satisfaction).
+//   - Only `runTimeStep` is abstract -> the one required trait method; the rest are
+//     provided defaults backed by the `active` flag.
+// =============================================================================
 
 import {Token} from './station';
 import {IterativeDESParticipant} from './runner';

@@ -6,6 +6,25 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/runners/framework_runner.rs
+//                    (module des::runners::framework_runner — hyphen → underscore)
+// 1:1 file move. The framework SEIR-with-hospitalization kernel as a callable fn.
+//
+// Declarations → Rust:
+//   fn runFrameworkOnce(config, opts) -> RunResult
+//        -> fn run_framework_once(config: &SimConfig, opts: &RunOpts) -> RunResult
+//
+// Conversion notes (file-specific):
+//   - Helper module imported by the binaries (replicate/stepsize-sweep/...), not
+//     itself a `fn main()`.
+//   - `withSeed(seed, fn)` + `opts.seed ?? Date.now()` -> take an injected
+//     `SeededRandom`/`Clock` (shared::capabilities); `opts.seed.unwrap_or_else(||
+//     clock.now())`. Do NOT call a global RNG/clock inside.
+//   - Builds the EntitySource/Processor/Sink graph -> use those structs' impls;
+//     mutual entity references need `Rc<RefCell<..>>` or an arena (borrow checker).
+// =============================================================================
+
+// =============================================================================
 // Framework kernel as a callable function. Wires up the same SEIR-with-
 // hospitalization graph the live demo uses, but every parameter (stepSize,
 // horizon, residence intervals, branching probabilities) is supplied via

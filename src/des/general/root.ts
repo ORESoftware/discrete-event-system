@@ -5,6 +5,17 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/root.rs  (module des::general::root)
+// 1:1 file move. Scalar root finding: bisection, Newton, secant.
+//
+// Declarations → Rust:
+//   interface RootResult                 -> struct (#[derive(Clone, Copy)])
+//   fn bisection / newton / secant       -> free fns or PureTransform classes (per §3.1)
+//
+// Conversion notes (file-specific):
+//   - `f`/`df` are `(x: number) => number` closures -> generic `F: Fn(f64) -> f64` params.
+//   - all numerics `f64`; iteration count `u32`/`usize`; fully deterministic (no RNG/clock).
+// =============================================================================
 // Root finding for f: R → R.
 //
 // Methods:

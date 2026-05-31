@@ -12,6 +12,26 @@
 //   Result-returning constructors or methods.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/fixed_point.rs  (module des::general::des_base::fixed_point)
+// 1:1 file move. Template-method base for fixed-point iteration (value/policy
+// iteration, Jacobi/Gauss-Seidel, belief backups, Benders) over a state `S`.
+//
+// Declarations → Rust:
+//   interface FixedPointOptions     -> struct (#[derive(Default)])
+//   abstract class FixedPointIterationStation<S> -> trait FixedPointIterationStation<S>: DESStation
+//
+// Conversion notes (file-specific):
+//   - TEMPLATE METHOD: `runTimeStep` is final; required hooks
+//     initialState/applyOperator/delta -> required trait fns; shouldStop/
+//     onIteration/onConverged/onMaxIter -> provided defaults.
+//   - `convergenceReason: 'converged'|'maxiter'|'running'` -> enum ConvergenceReason.
+//   - `current!: S` definite-assignment -> `Option<S>` / two-phase init.
+//   - `applyOperator` must return a NEW state (no mutate) -> takes `&S` returns `S`
+//     (`S: Clone` if reuse needed).
+//   - No RNG/clock; `maxIter`/`maxHistoryLen` default Infinity -> `usize::MAX` or `Option`.
+// =============================================================================
+
+// =============================================================================
 // general/des-base/fixed-point.ts — base class for FIXED-POINT iteration:
 // value iteration (Bellman backups), policy iteration, Jacobi / Gauss-Seidel
 // for linear systems, alpha-vector / belief-state backups in POMDPs, Benders

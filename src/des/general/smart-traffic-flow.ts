@@ -6,6 +6,26 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/smart-traffic-flow.rs  (module des::general::smart_traffic_flow)
+// 1:1 file move. Traffic flow where cars are self-stepping smart movables (faults/accidents).
+//
+// Declarations → Rust:
+//   type SmartTrafficParams = TrafficParams & {...} -> struct composing/extending TrafficParams (no `&`)
+//   type SmartTrafficFaultMode = 'accelerate-too-fast'|... -> enum
+//   interface SmartTraffic* (CarSnapshot/TraceRow/Accident/CellStats/ExecutionStats/Result/...) -> structs
+//   class SmartTrafficCellStation/SmartTrafficWorldStation extends DESStation -> structs + impl trait
+//   class SmartTrafficCar extends SmartMovable      -> struct + impl SmartMovable trait
+//   fn runSmartTrafficFlow + private validators/helpers -> fns
+//
+// Conversion notes (file-specific):
+//   - INTERSECTION TYPE `TrafficParams & {...}`: Rust has no `&` on structs — embed TrafficParams
+//     as a field or duplicate the fields in a new struct.
+//   - INJECT RNG: `mulberry32` seeds car behaviour/fault injection -> `RandomSource` (SeededRandom).
+//   - reuses network-flow.ts types (TrafficNetwork/Lane/Node/Signal/Params/...) -> use crate::...::network_flow.
+//   - world owns a string-keyed grid (cells/lanes/cars) -> `HashMap<String, _>` + car ids `u64`;
+//     cars propose moves committed at a tick barrier — model with a proposal buffer `Vec`.
+//   - `logger?: OptimizationLogger` -> `Option<&dyn OptimizationLogger>`; validators throw -> panic/Result.
+// =============================================================================
 // Smart-movable traffic flow.
 //
 // This variant keeps cars as movables, not stations, but gives each car its own

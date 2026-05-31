@@ -13,6 +13,33 @@
 // - Convert validation and runner failures from thrown errors to Result.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/adversarial_control.rs  (module des::general::des_base::adversarial_control)
+// 1:1 file move. Station/token bases for closed-loop adversarial control
+// (plant vs controller vs disturbance) + wiring/run helpers.
+//
+// Declarations → Rust:
+//   const CH_OBSERVATION/CH_CONTROL/CH_DISTURBANCE -> const &str
+//   class StateObservationToken / ControlMoveToken / DisturbanceMoveToken -> struct + impl Token
+//   interface ClosedLoopGameTraceRow / ClosedLoopPlantOptions / ClosedLoopGameRunOptions -> structs
+//   abstract class ClosedLoopPlantStation -> trait/struct: DESStation (required dynamics hook;
+//                                            provided stageCost/terminal defaults)
+//   abstract class FeedbackPolicyStation / DisturbancePolicyStation -> trait/struct: DESStation
+//                                            (required policy hook)
+//   fn wireClosedLoopGame / runClosedLoopGame -> free fns
+//
+// Conversion notes (file-specific):
+//   - TEMPLATE METHOD: plant `runTimeStep` is final; required `dynamics` hook ->
+//     required trait fn; `stageCost`/`terminal` -> provided defaults. Policy stations
+//     expose a single required `policy` hook.
+//   - vectors `number[]` -> `Vec<f64>`; `.slice()` defensive copies -> `.clone()`.
+//   - `runClosedLoopGame` uses `shuffle: false` + maxTicks -> pass via IterativeRunOptions;
+//     no RNG needed (deterministic order).
+//   - Preconditions.* throws (dims, finiteness) -> `Result`/`panic!`; reuse preconditions.rs.
+//   - `this.constructor.name` for error model names -> a `&'static str` const per impl
+//     (no runtime class name in Rust).
+// =============================================================================
+
+// =============================================================================
 // Shared station/token bases for closed-loop adversarial and stochastic control.
 //
 // Topology:

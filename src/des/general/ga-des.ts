@@ -6,6 +6,26 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/ga-des.rs  (module des::general::ga_des)
+// 1:1 file move. GA-for-TSP as a DES on the PopulationOptimizer<I> template-method base.
+//
+// Declarations → Rust:
+//   interface TSPGAOptions / GADESResult -> structs (Default; optionals -> Option<T>)
+//   class TSPGAOptimizer extends PopulationOptimizer<Tour> -> struct + impl PopulationOptimizer trait
+//   fn runTSPGADES               -> free fn (or StatefulTransform)
+//   fn initialTourPopulation / nearestNeighborTour / randomTour / validateInitialTourPopulation -> assoc fns
+//
+// Conversion notes (file-specific):
+//   - PopulationOptimizer is a TEMPLATE-METHOD base; `protected` hooks (initialPopulation/
+//     evaluate/select/recombine/mutate/clone/shouldStop/eliteCount) -> trait methods (some with defaults).
+//   - `mulberry32(seed)` RNG closures everywhere -> inject `RandomSource`.
+//   - init mode `'random'|'nearest-neighbor'` -> enum; `Set<number>` seen -> `HashSet<usize>`.
+//   - `fitness as number[]` / `lengths as ...` casts -> typed slices, drop the casts.
+//   - validators are closures over state -> trait objects / `Fn`; `throw` -> `Result`/`panic!`.
+//   - Reuses genetic-tsp ops (tourLength/tournamentSelect/orderCrossover/...); see that header.
+// =============================================================================
+
+// =============================================================================
 // general/ga-des.ts — Genetic Algorithm as a DES, built on the
 // PopulationOptimizer<I> base class. Concrete leaf implements ONLY the
 // hooks; the per-generation breeding loop is the base's template method.

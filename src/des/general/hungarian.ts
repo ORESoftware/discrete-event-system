@@ -5,6 +5,20 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/hungarian.rs  (module des::general::hungarian)
+// 1:1 file move. Hungarian (Jonker-Volgenant) O(n^3) bipartite assignment solver.
+//
+// Declarations → Rust:
+//   type AssignmentDirection = 'min' | 'max'  -> enum AssignmentDirection { Min, Max }
+//   interface AssignmentResult                -> struct AssignmentResult (#[derive(Clone)])
+//   fn hungarian(matrix, dir)                 -> PureTransform<AssignmentInput, AssignmentResult> (vanilla algorithm)
+//
+// Conversion notes (file-specific):
+//   - `number[][]` cost matrix -> `Vec<Vec<f64>>` (or an (n,m) matrix type); pure & deterministic.
+//   - `-1` sentinel in rows/cols (unmatched) -> `Option<usize>` (or keep `i64` if mirroring exactly).
+// =============================================================================
+
+// =============================================================================
 // general/hungarian.ts — Hungarian algorithm for square / rectangular
 // bipartite assignment.
 //

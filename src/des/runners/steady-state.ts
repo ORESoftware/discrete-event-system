@@ -7,6 +7,22 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/steady-state.rs  (a `fn main` binary; an
+//                    `examples/steady-state.rs` also works)
+// 1:1 file move. Verifies the closed-form steady state against four numerical
+// kernels (difference, ODE-RK4, Gillespie, FEL-individual) run as open systems.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - env vars `N` / `HORIZON` / `WARMUP` -> `std::env::var(..)` parsed with
+//     defaults (no `process.env`).
+//   - seeds the stochastic kernels via `withSeed`/`Date.now()` -> inject
+//     `SeededRandom`/`Clock` (shared::capabilities).
+//   - any `as any` on kernel results -> the typed `RunResult` struct (types.rs).
+//   - `console.log` comparison tables -> `println!`.
+// =============================================================================
+
+// =============================================================================
 // Mathematical verification: closed-form steady state from the difference
 // equations vs four numerical kernels run as open systems.
 //

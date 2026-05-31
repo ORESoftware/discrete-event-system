@@ -5,6 +5,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-empirical-control.rs   (fn main)
+// 1:1 file move. Measures the DEGREE of controllability/observability via
+// Gramians and Monte-Carlo trials (not the binary Kalman verdict).
+//
+// Conversion notes (file-specific):
+//   - Monte-Carlo trials (random controls / measurement noise) -> inject
+//     RandomSource/SeededRandom (Mulberry32 here).
+//   - Gramian eigenvalue spread -> shared::linalg (SymmetricEigen).
+//   - many station/token types imported -> use crate::des::general::
+//     control_systems::...; top-level run -> fn main.
+// =============================================================================
+
+// =============================================================================
 // main-empirical-control.ts — measure the DEGREE of controllability /
 // observability numerically (Gramians) and empirically (Monte-Carlo trials),
 // rather than the binary Kalman rank verdict.

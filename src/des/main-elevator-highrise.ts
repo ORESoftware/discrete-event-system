@@ -6,6 +6,20 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-elevator-highrise.rs   (fn main)
+// 1:1 file move. 50-floor, 6-shaft elevator model exploring dispatch policies;
+// emits one HTML animation with a policy selector.
+//
+// Conversion notes (file-specific):
+//   - HighrisePolicy string union -> enum.
+//   - mulberry32 / withSeed PRNG -> SeededRandom (shared::capabilities).
+//   - LARGE file: station classes -> struct + impl trait; MDP valueIteration ->
+//     use crate::des::general::value_iteration.
+//   - exported types make this both a model module and a bin; fs HTML write ->
+//     std::fs; top-level run -> fn main.
+// =============================================================================
+
+// =============================================================================
 // High-rise elevator model.
 //
 // This is intentionally separate from main-elevator.ts. The smaller model stays

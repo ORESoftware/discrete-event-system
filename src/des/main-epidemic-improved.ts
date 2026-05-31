@@ -6,6 +6,20 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-epidemic-improved.rs   (fn main)
+// 1:1 file move. SEIR-with-hospitalization epidemic over the entity graph;
+// samples compartment populations to CSV and prints an empirical transition
+// matrix.
+//
+// Conversion notes (file-specific):
+//   - imports many des entity modules -> use crate::des::...
+//   - mathjs bgn -> f64 / decimal; fisherYatesShuffle ordering -> injected Rng;
+//     residence-time draws -> SeededRandom.
+//   - per-step CSV write -> std::fs; empirical transition matrix -> HashMap.
+//   - top-level run -> fn main.
+// =============================================================================
+
+// =============================================================================
 // SEIR-with-hospitalization epidemic simulator (improved version of main-epidemic.ts)
 //
 // Improvements over the original:

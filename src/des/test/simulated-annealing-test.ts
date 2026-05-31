@@ -4,6 +4,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: #[cfg(test)] mod tests in src/des/general/simulated_annealing.rs
+// 1:1 file move. Unit tests one module (simulated-annealing), so prefer that
+// module's `#[cfg(test)] mod tests` over a separate `tests/` file.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - close(a,b,tol) relative float comparison -> approx::assert_relative_eq!.
+//   - SA acceptance is stochastic -> drive runs from a seeded rand::Rng so
+//     the asserted outcomes are reproducible.
+// =============================================================================
+
+// =============================================================================
 // Unit tests for general/simulated-annealing.ts.
 // Run with: node dist/des/test/simulated-annealing-test.js
 // =============================================================================

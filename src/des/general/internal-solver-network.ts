@@ -7,6 +7,27 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/internal-solver-network.rs  (module des::general::internal_solver_network)
+// 1:1 file move. Runnable DES station networks for SP/knapsack/TSP solvers with a wall-clock cap.
+//
+// Declarations → Rust:
+//   const SOLUTION_CHANNEL/STOP_CHANNEL -> `const &str` (or ChannelId enum)
+//   type InternalSolverKind = ... -> enum; interface Solver*/Snapshot*/*Params/*Result -> structs
+//   class SolverSolutionToken/StopSignalToken (impl Token) -> structs `impl Token`
+//   class WallClockCheckerStation/SolutionSinkStation/ShortestPathSolverStation/KnapsackDPStation/
+//         KnapsackSAStation/ObservableTSP{SA,GA}Optimizer/TSPHeldKarpStation -> structs `impl` station traits
+//   interface SnapshotProvider     -> trait SnapshotProvider
+//   fn runInternalSolverNetwork    -> fn (or StatefulTransform)
+//
+// Conversion notes (file-specific):
+//   - `WallClockCheckerStation` uses wall-clock time (Date.now) -> inject a `Clock` (shared/capabilities),
+//     do NOT call the system clock directly; this makes the 3-min cap deterministic/testable.
+//   - `mulberry32(seed)` in SA/GA solvers -> inject `RandomSource`.
+//   - `extends X implements SnapshotProvider` (e.g. KnapsackSAStation) -> struct + multiple trait impls.
+//   - `InternalSolverKind` union -> enum; tokens are nominal `impl Token`; channels -> typed queues.
+// =============================================================================
+
+// =============================================================================
 // Internal solver networks.
 //
 // These are runnable DES station networks for common optimization/search

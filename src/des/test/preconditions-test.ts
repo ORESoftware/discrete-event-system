@@ -4,6 +4,23 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/preconditions_test.rs   (integration test crate)
+// 1:1 file move. Verifies pre-run guards fire on bad inputs across many models.
+// Keep the doc-block below; this header sits above it.
+//
+// Test harness → Rust:
+//   ad-hoc check()/CheckRow + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual rows and PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - the central pattern is "bad input throws PreconditionError naming a param"
+//     -> map PreconditionError to a Result::Err (assert the message), or use
+//     `#[should_panic(expected = "<param>")]` if the Rust port panics.
+//   - Preconditions.* edge cases (NaN, non-PSD, prob vector ≠ 1) -> assert on the
+//     guard's Result; float checks use approx tolerances.
+// =============================================================================
+
+// =============================================================================
 // test/preconditions-test.ts — verifies that the new pre-run guards
 // (Preconditions.* + each model's `assertPreconditions()` override + each
 // public `runX(opts)` parameter validator) actually FIRE on bad inputs.

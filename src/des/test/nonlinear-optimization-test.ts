@@ -4,6 +4,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/nonlinear_optimization_test.rs   (integration test crate)
+// 1:1 file move. Tests Newton / quasi-Newton / nonlinear-least-squares models
+// via the des-registry, so it is an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/CheckRow + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual rows and PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - close(a,b,tol) relative float comparison -> approx::assert_relative_eq!.
+//   - throws(fn) -> assert on Result::Err / #[should_panic].
+//   - async main()/await -> a plain sync #[test].
+// =============================================================================
+
+// =============================================================================
 // Tests for Newton/quasi-Newton and nonlinear least-squares DES models.
 // =============================================================================
 

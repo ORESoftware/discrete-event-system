@@ -5,6 +5,18 @@
 // - Avoid panics for empty/degenerate inputs if callers need recoverability; otherwise preserve current NaN/zero semantics explicitly.
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/runners/stats.rs   (module des::runners::stats)
+// 1:1 file move. Tiny statistics helpers (mean, sample variance, Welch t-test).
+//
+// Conversion notes (file-specific):
+//   - These are leaf math utilities: keep as plain `pub fn`s (no transform class
+//     needed) or fold into a `Stats` impl — either maps cleanly.
+//   - `number[]` inputs -> `&[f64]`.
+//   - `NaN` sentinel returns (empty input) -> `f64::NAN`, or return `Option<f64>`
+//     if the caller should handle the empty case explicitly.
+// =============================================================================
+
 // Tiny stats helpers: mean, sample variance, Welch's t-test, and a normal-
 // approximation two-sided p-value good enough for n=30.
 

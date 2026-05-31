@@ -1,18 +1,41 @@
-// RUST MIGRATION:
-// - Target: src/des/random_variables/rv.rs
-// - RandomVariable becomes a trait with rate/event-count/event-stream methods;
-//   Bernoulli/Poisson/Exponential/Uniform variants become structs implementing
-//   that trait, optionally wrapped by an enum for serde and dynamic dispatch.
-// - Event-count generation is a PureTransform boundary over RNG + time step;
-//   inject an RNG trait instead of calling math.random/Math.random directly.
-// - `math.BigNumber` should use the project-wide Decimal/time alias; generator
-//   methods map to Iterator implementations; thrown parameter checks become
-//   Result<Self, RandomVariableError>.
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/random-variables/rv.rs  (module des::random_variables::rv)
+// 1:1 file move. The RandomVariable family (inter-event sampling distributions).
+//
+// Declarations → Rust:
+//   abstract class RandomVariable extends Serializable -> trait RandomVariable
+//   type RT = ReturnType<...>                            -> no analogue (use a named DTO)
+//   class BernoulliRandomVariable / PoissonRandomVariable / ExponentialRandomVariable
+//         / ExponentialRandomVariable2 / ExponentialRandomVariable3
+//         / UniformRandomVariable / UniformRandomVariable2
+//                                                        -> structs + impl RandomVariable
+//
+// Conversion notes (file-specific):
+//   - DETERMINISM (the key point): `math.random()` / `Math.random()` and
+//     `getReasonableU()/getReasonableUNative()` are called directly throughout ->
+//     every RV must hold an injected `RandomSource` (shared/capabilities) so the
+//     Rust port (and seeded sims) are reproducible. Do NOT keep ambient randomness.
+//   - `getNextEvents(): Generator<number>` -> `impl Iterator<Item = f64>` (or a
+//     generator). NOTE several impls `return undefined` from a generator — they are
+//     non-functional stubs; in Rust an empty iterator.
+//   - `math.BigNumber` + `as math.BigNumber` casts everywhere -> decimal/f64 + ops
+//     (`math.exp/log/multiply/divide/larger/smaller` -> `f64`/decimal methods).
+//   - UNREACHABLE CODE: `UniformRandomVariable2.getNextEventQuantity` starts with
+//     `return 1;` (rest is dead); preserve the live behaviour, drop the dead body.
+//   - `getSerializableData()` returns ad-hoc objects (`{lambda}`, `{a,b}`, or `this`)
+//     -> a per-RV `#[derive(Serialize)]` DTO; `type RT` should become that named type.
+//   - `nextU = bgn(Math.random())` FIELD INITIALIZER is impure -> initialize from the
+//     injected RandomSource in the constructor, not at field-declaration time.
+//   - The five near-duplicate Exponential/Uniform variants -> consolidate into one
+//     family (enum or generic struct) in Rust rather than copy-paste structs.
+//   - `throw new Error(..)`/`makeError(..)` on bad params -> `Result` (or `panic!`).
+// =============================================================================
 
 import * as math from "mathjs";
 import {BigNumber, number} from "mathjs";
 import {bgn, getReasonableU, getReasonableUNative, makeError} from "../general/general";
 import {Serializable} from "../abstract/abstract";
+import {RandomSource, DEFAULT_RANDOM} from "../shared/capabilities";
 
 export abstract class RandomVariable extends Serializable<any> {
 
@@ -175,11 +198,12 @@ export class ExponentialRandomVariable3 extends RandomVariable {
   lambda = bgn(-1)
   first = true;
   timeStep = bgn(-1);
-  nextU = bgn(Math.random())
+  nextU: math.BigNumber;
   precomputedRHS: math.BigNumber = bgn(-1);
 
-  constructor(v: { lambda: math.BigNumber, timeStep: math.BigNumber }) {
+  constructor(v: { lambda: math.BigNumber, timeStep: math.BigNumber }, private readonly rng: RandomSource = DEFAULT_RANDOM) {
     super();
+    this.nextU = bgn(this.rng.nextFloat());
     this.timeStep = v.timeStep;
     this.lambda = v.lambda;
     this.precomputedRHS = math.exp(   //  U(0,1) = e^(-lambda*t)
@@ -209,7 +233,7 @@ export class ExponentialRandomVariable3 extends RandomVariable {
 
     if (this.first) {
       this.first = false;
-      this.nextU = bgn(Math.random());
+      this.nextU = bgn(this.rng.nextFloat());
     } else {
       this.nextEvent = math.subtract(this.nextEvent, timeStep);
     }

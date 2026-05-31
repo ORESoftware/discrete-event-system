@@ -6,6 +6,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-factmachine-markets.rs   (fn main)
+// 1:1 file move. Platform-level multi-market scheduler above the single-market
+// factmachine model (which markets to open, when, how, for how long).
+//
+// Conversion notes (file-specific):
+//   - scheduler policy union (fixed-daily/greedy-buzz/mdp-oracle/pomdp-belief)
+//     -> enum.
+//   - the operator action is multi-field (schedule/contract/duration/pricing/
+//     rewards/verification) -> a struct of enums.
+//   - Math.random (buzz/votes/belief) -> inject RandomSource/SeededRandom.
+//   - LARGE file: many station classes -> struct + impl trait; top-level run
+//     -> fn main.
+// =============================================================================
+
+// =============================================================================
 // FactMachine multi-market simulator.
 //
 // This is a platform-level layer above the existing single-market

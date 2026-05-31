@@ -1,14 +1,27 @@
 'use strict';
 
-// RUST MIGRATION:
-// - Target: src/des/entity_processing/value_adder.rs
-// - EntityNumericProcessor<S,T> becomes a small station struct with queue state
-//   and ProcessorLike/QueueLike impls; DoesFanOut can stay as a composed helper
-//   or PureTransform-style routing strategy.
-// - Basic numeric reduction (`k.value + p.value`) should move into a typed
-//   transform over BasicQuantityMovingEntity values instead of `any` casts.
-// - Replace LinkedQueue, Symbol marker fields, util.inspect customization, and
-//   thrown queue invariant errors with VecDeque/typed markers/Debug impls/Result.
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/entity-processing/value-adder.rs  (module des::entity_processing::value_adder)
+// 1:1 file move. A processor that pops two queued items and emits their numeric sum.
+//
+// Declarations → Rust:
+//   const isProcessor (fn)                 -> free fn / trait-tag check
+//   interface GraphData                    -> struct (composes QueueEntityGraphData)
+//   class EntityNumericProcessor<S,T>      -> struct + impl (+ impl QueueEntity, HasEntityValidation)
+//
+// Conversion notes (file-specific):
+//   - `[processorSymbol] = true` + `['isProcessor'] = true` brand + `isProcessor(v)`
+//     -> a real trait/enum tag. NOTE: processorSymbol/isProcessor are ALSO defined
+//     in processing.ts — unify to a single marker in Rust (don't define twice).
+//   - `doesFanOut = new DoesFanOut({entity: this})` -> a composed field holding the
+//     fan-out helper (see abstract/composers.rs); `this`-as-entity needs `Rc<RefCell>`/index.
+//   - `LinkedQueue` `dequeue()`/`peek()` returning `[k,v]`/`[p]` + `IsVoid.check` ->
+//     `VecDeque<_>` with `Option` returns; no void-sentinel.
+//   - `k.value + p.value` is plain `number` addition here (NOT BigNumber) -> `f64`.
+//   - `throw new Error(..)` / `throw makeError(..)` invariants -> `panic!`
+//     (recoverable cases -> `Result`).
+//   - `[util.inspect.custom]` -> `impl fmt::Debug`; `getSerializableData` spread -> serde DTO.
+// =============================================================================
 
 import * as math from "mathjs";
 import {QueueEntity, QueueEntityGraphData} from "../entity-queue/queue";

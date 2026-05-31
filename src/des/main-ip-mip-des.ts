@@ -6,6 +6,17 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-ip-mip-des.rs   (fn main)
+// 1:1 file move. Thin runner: integer/MIP solver-as-DES on a binary knapsack.
+//
+// Conversion notes (file-specific):
+//   - top-level main() -> fn main(); process.env params -> std::env::var.
+//   - string casts `as LPRelaxationAlgorithm` / `as 'dfs'|'best-bound'` -> parse
+//     into enums.
+//   - delegates to general/ip-mip-des -> use crate::des::general::ip_mip_des.
+// =============================================================================
+
+// =============================================================================
 // main-ip-mip-des.ts -- integer/MIP solver graph demo.
 // =============================================================================
 

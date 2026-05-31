@@ -6,6 +6,23 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/value-iteration.rs  (module des::general::value_iteration)
+// 1:1 file move. Generic value iteration for finite MDPs, driven as a fixed-point DES.
+//
+// Declarations → Rust:
+//   interface Outcome / MDPSpec / VIOptions / VIResult -> structs (#[derive(Clone)])
+//   class ValueIterationStation extends FixedPointIterationStation<Float64Array> -> struct + impl trait
+//   fn valueIteration / qValue / qValuesAll            -> free fns / assoc fns
+//
+// Conversion notes (file-specific):
+//   - MDPSpec's `outcomes(s, a)` is a CALLBACK returning {prob, reward, nextState} triples ->
+//     either a `Fn(usize, usize) -> Vec<Outcome>` trait bound or a precomputed table; pick one.
+//   - INJECT RNG: argmax tie-breaking defaults to `Math.random` (`opts.rng ?? Math.random`) ->
+//     take a `RandomSource` (shared/capabilities) for deterministic ties.
+//   - `Float64Array` value vectors -> `Vec<f64>` (or `ndarray`); states/actions are `usize`.
+//   - FixedPointIterationStation is a template-method base -> trait with default `run_time_step`;
+//     hooks initialState/applyOperator/delta become required methods.
+// =============================================================================
 // Generic value iteration for finite-state, finite-action MDPs.
 //
 // Bellman optimality equation:

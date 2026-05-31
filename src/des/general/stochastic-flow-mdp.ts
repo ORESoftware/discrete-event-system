@@ -6,6 +6,24 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/stochastic-flow-mdp.rs  (module des::general::stochastic_flow_mdp)
+// 1:1 file move. Max-flow recast as a finite-horizon stochastic-control MDP (backward Bellman).
+//
+// Declarations → Rust:
+//   interface StochasticFlowEdge/StochasticFlowMDPProblem/FlowMDPState/FlowMDPAction/
+//             FlowMDPDecision/FlowMDPSimStep/StochasticFlowMDPResult -> structs (#[derive(Clone)])
+//   interface IndexedAction extends FlowMDPAction          -> struct (compose, no inheritance)
+//   class StochasticFlowMDPStation extends FiniteHorizonDPStation -> struct + impl DP-station trait
+//   fn validateStochasticFlowMDPProblem/solveStochasticFlowMDP/simulateStochasticFlowPolicy/
+//      buildDefaultStochasticFlowMDPProblem/stateKey/cloneState -> free/private fns
+//
+// Conversion notes (file-specific):
+//   - `stateKey(s): string` builds a STRING key for the DP value/policy maps -> implement
+//     `Hash + Eq` on `FlowMDPState` (node + remaining capacities) and key a `HashMap` directly.
+//   - INJECT RNG: `simulateStochasticFlowPolicy` samples edge availability -> `RandomSource`.
+//   - node/edge indices `usize`; capacities/flow/reward `f64`; DPOutcome from des-base.
+//   - validate* throws -> `panic!` (invariant) or `Result`.
+// =============================================================================
 // general/stochastic-flow-mdp.ts -- max-flow as stochastic sequential control.
 //
 // Deterministic max-flow asks for a static feasible circulation certificate.

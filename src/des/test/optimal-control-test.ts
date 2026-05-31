@@ -4,6 +4,22 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/optimal_control_test.rs   (integration test crate)
+// 1:1 file move. End-to-end tests of the entity-based optimal-control models
+// (PMP, Kalman, SMC, MRAC, ILC, feedback-lin, MPC). Keep the doc-block below.
+//
+// Test harness → Rust:
+//   ad-hoc check()/CheckRow + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual rows and PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - each algorithm's theoretical invariant is a float comparison -> the
+//     `approx` crate (assert_relative_eq! / assert_abs_diff_eq!).
+//   - the control-blocks entity framework -> StationaryEntity-style trait + the
+//     VectorSignal token struct; no inheritance.
+// =============================================================================
+
+// =============================================================================
 // test/optimal-control-test.ts — end-to-end tests for the entity-based
 // optimal-control models added in this batch:
 //

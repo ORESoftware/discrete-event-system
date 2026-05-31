@@ -3,6 +3,24 @@
 
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: examples/rv_sampling_bench.rs   (example binary)
+// 1:1 file move. Ad-hoc throughput/distribution probe for the exponential RVs;
+// it PRINTS buckets + timings and has no assertions, so it fits an `examples/`
+// binary (a fn main) rather than a `#[test]` — add asserts if it becomes a test.
+//
+// Test harness → Rust:
+//   no PASS/FAIL harness here — console.log bucket dumps -> if promoted to a
+//   #[test], turn the histogram expectations into assert!/assert_eq!.
+//
+// Conversion notes (file-specific):
+//   - Date.now() timing -> std::time::Instant (a bench, not an assertion).
+//   - mathjs bgn()/BigNumber -> a decimal crate or f64 (pick ONE engine-wide).
+//   - Map<number,number> buckets -> HashMap<i64, i64>; `... as any` casts drop.
+//   - process.exit(0) mid-file -> the dead tail code below it is unreachable;
+//     port only the reachable part (or delete the post-exit block).
+// =============================================================================
+
 import {IterableInt} from 'iterable.int';
 import {bgn, makeError} from "../general/general";
 import * as math from "mathjs";

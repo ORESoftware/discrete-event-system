@@ -4,6 +4,22 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/empirical_control_test.rs   (integration test crate)
+// 1:1 file move. Spans control-systems/empirical-control (Gramians, Monte Carlo
+// controllability/observability) with shared linalg, so it is an integration
+// test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/close()/pass-fail counters + console.log  ->  #[test] fns
+//   using assert!/assert_eq!; drop the manual tally and PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - close(a,b,tol) absolute float comparison -> approx::assert_abs_diff_eq!.
+//   - Monte Carlo estimators use Mulberry32 -> a seeded rand::Rng so the
+//     sampled controllability/observability degrees are reproducible.
+// =============================================================================
+
+// =============================================================================
 // Unit tests for general/control-systems/empirical-control.ts.
 // Run with:
 //   ./node_modules/.bin/ts-node src/des/test/empirical-control-test.ts

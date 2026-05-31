@@ -1,15 +1,20 @@
 'use strict';
 
-// RUST MIGRATION:
-// - Target: src/des/signals/incrementer.rs
-// - IncrementorTimeStepOpts becomes a struct; SignalIncrementor<E,V> becomes a
-//   concrete signal transform node with composed multidirectional signal state.
-// - Constructor currently passes `null as any` to the parent id; Rust should use
-//   an explicit id parameter or generated id constructor.
-// - Current runTimeStep is intentionally inert until increment semantics are
-//   specified; port it as a typed Result/todo! method if behavior is still open.
-// - Queue intake and runningTotal mirror the other signal transforms; in Rust
-//   use VecDeque<SignalValue<E,V>> plus a numeric Decimal/trait bound.
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/signals/incrementer.rs  (module des::signals::incrementer)
+// 1:1 file move. A signal incrementer node (currently an unimplemented stub).
+//
+// Declarations → Rust:
+//   interface IncrementorTimeStepOpts -> struct (currently empty)
+//   class SignalIncrementor<E,V>      -> struct + impl (+ impl MultiDirectionalSignalEntity)
+//
+// Conversion notes (file-specific):
+//   - ctor calls `super(null as any)` (null id) -> require/generate a real id (uuid) in Rust.
+//   - `runTimeStep` is empty, `acceptItem` returns false, `takeItem` is a no-op ->
+//     not-yet-implemented; port the shape with `todo!()` bodies.
+//   - `getValue()/runFinish()` `throw` -> `unimplemented!()`.
+//   - `runningTotal: BigNumber` -> decimal/f64 if kept; `queue: LinkedQueue` -> `VecDeque`.
+// =============================================================================
 
 import {SignalEntity} from "./abstract";
 import {EntityConnection, TimeStepOpts} from "../abstract/abstract";

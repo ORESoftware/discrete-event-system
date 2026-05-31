@@ -13,6 +13,39 @@
 // - Replace dt/connection validation throws with Result-returning constructors.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/control_blocks.rs  (module des::general::des_base::control_blocks)
+// 1:1 file move. Block-diagram control on the HEAVYWEIGHT StationaryEntity /
+// AbstractMovingEntity framework (plant / controller / estimator + a closed-loop driver).
+//
+// Declarations → Rust:
+//   class VectorSignal              -> struct VectorSignal: SignalValue (moving entity)
+//   abstract class PlantBlock       -> trait PlantBlock: MultiDirectionalSignalEntity
+//                                       (required dynamics; provided observe/runTimeStep/...)
+//   abstract class ControllerBlock  -> trait ControllerBlock (required controlLaw; provided rest)
+//   abstract class EstimatorBlock   -> trait EstimatorBlock (required update/getEstimate)
+//   interface ClosedLoopOpts / ClosedLoopResult -> structs
+//   fn runClosedLoop                -> fn run_closed_loop(...) -> ClosedLoopResult
+//   fn ensureConnected (private)    -> fn ensure_connected(...)
+//
+// Conversion notes (file-specific):
+//   - DIFFERENT BASE than the rest of des-base: these extend the abstract/ queueing
+//     entity tree (StationaryEntity + AbstractMovingEntity), NOT DESStation. Port
+//     those base traits (see abstract/*.rs headers) first.
+//   - `mathjs.BigNumber` step size (`bgn(dt)`, `runTimeStep(stepSize: BigNumber)`) ->
+//     pick ONE engine-wide numeric type (decimal crate or `f64`); `dt` is plain f64 here.
+//   - `(this as any).id = id` writes a base field via a cast -> in Rust the id lives
+//     on the embedded entity-core struct; set it normally, no cast.
+//   - `item as unknown as VectorSignal` downcasts of queue items -> `dyn Any`
+//     downcast or a typed signal enum; `sig.kind` string tag -> an enum.
+//   - `connectionsOut`/`addOutConnection`/`addInConnection` graph edges ->
+//     `Rc<RefCell<..>>` / arena (see abstract/interfaces.rs notes).
+//   - `uMin/uMax: number[] | null` -> `Option<Vec<f64>>`.
+//   - History `number[][]` -> `Vec<Vec<f64>>`; `.slice()` copies -> `.clone()`.
+//   - `throw new Error` (dt<=0, shape) + Preconditions.* -> `Result`/`panic!`.
+//   - non-ASCII `x̂`, `λ` in docs only; identifiers stay ASCII (`xhat`).
+// =============================================================================
+
+// =============================================================================
 // general/des-base/control-blocks.ts — control-systems block diagrams that
 // USE the queueing-style StationaryEntity + AbstractMovingEntity framework
 // (the "heavyweight" branch of the codebase) instead of the lightweight

@@ -1,13 +1,20 @@
 'use strict';
 
-// RUST MIGRATION:
-// - Target: src/des/entity_conn_ts/conn.rs
-// - ConnectionOpts becomes a plain struct with typed fields. The odd
-//   `entity-conn.ts` directory name should be normalized to a Rust-safe module
-//   name during the file-for-file move.
-// - Imported Entity/graph endpoint types are unused here today; decide whether
-//   this module owns connection configuration only or should fold into
-//   abstract/entity_connection.rs before adding Rust APIs.
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/entity-conn.ts/conn.rs  (module des::entity_conn::conn)
+// 1:1 file move. Connection configuration options for graph edges.
+//
+// Declarations → Rust:
+//   interface ConnectionOpts -> struct ConnectionOpts { travel_time: f64, is_bidirectional: bool }
+//                               (#[derive(Clone, Default)])
+//
+// Conversion notes (file-specific):
+//   - The parent directory name `entity-conn.ts` contains a DOT, which is not a
+//     valid Rust module path — rename it to `entity-conn`/`entity_conn` (module
+//     `des::entity_conn`) when moving.
+//   - `isBidirectional: false` is typed as the literal `false` -> a plain `bool`.
+//   - `travelTime: number` -> `f64`.
+// =============================================================================
 
 import {Entity} from "../abstract/abstract";
 import * as math from "mathjs";

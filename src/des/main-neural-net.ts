@@ -5,6 +5,17 @@
 // RUST MIGRATION: Keep JSON examples/config as serde-deserialized structs instead of ad-hoc JS objects.
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-neural-net.rs   (fn main)
+// 1:1 file move. Thin runner: XOR net, neural Q-learning, and neural-ODE demos.
+//
+// Conversion notes (file-specific):
+//   - top-level main() -> fn main(); process.env (SEED, XOR_EPOCHS, XOR_LR)
+//     -> std::env::var; seed -> SeededRandom.
+//   - delegates to general/neural-network + rl-environments -> use crate::des::
+//     general::{neural_network, rl_environments}.
+// =============================================================================
+
 import {
   FeedForwardNetwork,
   runNeuralQLearningDES,

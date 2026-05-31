@@ -6,6 +6,20 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-court-mdp.rs   (fn main)
+// 1:1 file move. USACC case-flow MDP: cases flow through stage stations, each
+// applying an interchangeable Policy.
+//
+// Conversion notes (file-specific):
+//   - the policy set (AlwaysEscalate/RejectAll/NaiveThreshold/Optimal) -> trait
+//     Policy with one struct impl each (not subclasses).
+//   - stochastic factor updates / stage transitions -> inject RandomSource/
+//     SeededRandom.
+//   - imports mdp/usacc-mdp + entity modules -> use crate::des::...
+//   - top-level run -> fn main.
+// =============================================================================
+
+// =============================================================================
 // USACC MDP simulation in the framework.
 //
 // Architecture:

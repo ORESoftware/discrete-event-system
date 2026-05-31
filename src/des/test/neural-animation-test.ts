@@ -4,6 +4,22 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/neural_animation_test.rs   (integration test crate)
+// 1:1 file move. Smoke-tests neural animation scenes built from neural-network
+// runs, so it is an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - fs/os/path temp dirs -> the `tempfile` crate; JSONL roundtrip -> serde_json.
+//   - async writeAnim/await -> plain sync #[test] unless the recorder is async.
+//   - neural net weight init is stochastic -> a seeded rand::Rng for reproducible
+//     scenes.
+// =============================================================================
+
+// =============================================================================
 // test/neural-animation-test.ts — smoke tests for neural animation scenes.
 // =============================================================================
 

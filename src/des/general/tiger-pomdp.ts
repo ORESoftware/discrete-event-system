@@ -6,6 +6,24 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/tiger-pomdp.rs  (module des::general::tiger_pomdp)
+// 1:1 file move. The classic Tiger POMDP solved via QMDP / one-step lookahead belief stations.
+//
+// Declarations → Rust:
+//   interface TigerOpts / TigerSimResult / TigerSimOpts -> structs (Default where sensible)
+//   fn buildTigerSpec -> ClassicPOMDPSpec<string,string,string> / specToCore -> POMDPCore<num,num> -> fns
+//   class QMDPStation extends BeliefStateStation<number, number> -> struct + impl belief-station trait
+//   class OneStepLookAheadStation extends QMDPStation            -> struct reusing QMDP (see note)
+//   fn simulateTiger -> free fn / assoc fn
+//
+// Conversion notes (file-specific):
+//   - states/actions/observations are STRING-keyed sets ({tiger-left,...}, {listen,...},
+//     {hear-left,...}) -> `enum`s; `specToCore` maps them to numeric indices, which Rust keeps.
+//   - INHERITANCE: OneStepLookAheadStation EXTENDS QMDPStation (class-on-class). Rust has no
+//     inheritance: share the QMDP logic via a trait/base struct and override only the lookahead.
+//   - INJECT RNG: `simulateTiger` samples the latent door + noisy observations -> `RandomSource`.
+//   - BeliefStateStation is a template-method base -> trait with default fns; belief is `Vec<f64>`.
+// =============================================================================
 // general/tiger-pomdp.ts — the canonical TIGER PROBLEM (Cassandra,
 // Kaelbling, Littman 1994) wrapped on the new BeliefStateStation base.
 //

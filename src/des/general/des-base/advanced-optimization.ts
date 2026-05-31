@@ -15,6 +15,45 @@
 //   or PureTransformEntity implementations. Replace thrown errors with Result.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/advanced_optimization.rs  (module des::general::des_base::advanced_optimization)
+// 1:1 file move. Station/token bases for advanced optimization families: numeric
+// PSO swarm, ant-colony graph search, CSP tree search, Pareto archive, and a
+// rank-constrained SDP / unit-vector relaxation.
+//
+// Declarations → Rust:
+//   class OptimizationCandidate/GraphWalk/ConstraintAssignment/ParetoCandidate Token -> struct + impl Token
+//   interface OptimizationTraceRow / *Options / *TraceRow / NumericSwarmParticle /
+//             ConstraintSearchNode / ParetoArchiveRow / UnitVectorRelaxation* -> structs
+//   abstract class NumericSwarmOptimizerStation -> trait/struct: DESStation (objective/updateParticle hooks)
+//   abstract class PheromoneGraphSearchStation  -> trait/struct: DESStation (pathCost/heuristic hooks)
+//   abstract class ConstraintSatisfactionSearchStation<D> -> trait/struct: TreeSearchStation<ConstraintSearchNode<D>>
+//   abstract class SourceDrivenConstraintSatisfactionSearchStation<D,Start,Result> -> trait/struct extending above
+//   class ParetoArchiveStation<T>   -> struct + impl DESStation
+//   abstract class UnitVectorRelaxationStation -> trait/struct: DESStation (objective/gradient hooks)
+//   fn dominates / sameObjectives / normalize / vectorDot / gram -> free fns
+//
+// Conversion notes (file-specific):
+//   - TEMPLATE METHOD throughout: bases own `runTimeStep`; required hooks
+//     (objective/updateParticle, pathCost/heuristic, isConsistent, objective/gradient,
+//     acceptStartToken/makeResultToken) -> required trait fns; CSP overrides
+//     pickNext/evaluate/expand/pushChildren/currentBestBound/shouldPrune/onIncumbentUpdate
+//     of TreeSearchStation.
+//   - `rng: () => number` (PSO/ACO/SDP roulette + random init) -> inject `RandomSource`
+//     (shared/capabilities); ACO `pickNext` is roulette-wheel selection on it.
+//   - `assignment: Record<string, D>` -> `HashMap<String, D>` (D: Clone + Eq); spread
+//     `{...assignment, [v]: val}` -> clone + insert.
+//   - `domains: Record<string, D[]>` -> `HashMap<String, Vec<D>>`.
+//   - matrices `number[][]` (pheromone, vectors, gram) -> `Vec<Vec<f64>>` (or ndarray);
+//     `.slice()`/`.map(r=>r.slice())` -> `.clone()`.
+//   - `solution: Record<string,D> | null` -> `Option<HashMap<String, D>>`.
+//   - `Start extends Token, Result extends Token` generics -> `Start: Token, Result: Token`.
+//   - GENERIC vector helpers (normalize/vectorDot/gram) overlap shared/linalg — prefer
+//     `crate::des::shared::linalg`/`VecOps` and drop local copies where equivalent.
+//   - Preconditions.* throws everywhere -> `Result`/`panic!`; `this.constructor.name`
+//     model names -> a `&'static str` const per impl.
+// =============================================================================
+
+// =============================================================================
 // Shared station/token bases for advanced optimization families.
 //
 // These are deliberately framework-level pieces: concrete algorithms plug into

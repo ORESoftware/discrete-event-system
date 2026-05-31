@@ -5,6 +5,20 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/calculus_test.rs   (integration test crate)
+// 1:1 file move. Spans expr / quadrature / ode / equation-to-stations, so it is
+// an integration test under `tests/`, not one module's `#[cfg(test)] mod`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - approx(a,b,tol) comparisons (down to 1e-15) -> approx::assert_relative_eq!
+//     with an explicit epsilon; convergence-order checks compare ratios.
+// =============================================================================
+
+// =============================================================================
 // Unit tests for the calculus pipeline:
 //
 //   T1  Expression engine: parse, evaluate, stringify, diff

@@ -6,6 +6,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/runners/gillespie_runner.rs
+//                    (module des::runners::gillespie_runner — hyphen → underscore)
+// 1:1 file move. Gillespie SSA (direct method) compartment-level kernel.
+//
+// Conversion notes (file-specific):
+//   - Helper module imported by the binaries, not a `fn main()`.
+//   - `Math.random()` (exponential dt draw + reaction selection) + `withSeed`
+//     -> inject `RandomSource` / `SeededRandom`; no ambient RNG.
+//   - `interface Reaction { propensity: () => number; fire: () => void }` closures
+//     -> a `struct Reaction` holding `Box<dyn Fn() -> f64>` / `Box<dyn FnMut()>`,
+//     or (cleaner) an enum of reactions + a `match`; mind the borrow checker on
+//     the shared population state captured by `fire`.
+// =============================================================================
+
+// =============================================================================
 // Gillespie Stochastic Simulation Algorithm (direct method) as a third
 // independent validator. Operates ONLY at the compartment level - no entity
 // objects, no event list, just N_c counts and per-reaction propensities.
@@ -26,6 +41,7 @@
 
 import {SimConfig, RunOpts, RunResult, COMPARTMENT_ORDER, Kernel} from './types';
 import {withSeed} from '../general/prng';
+import {RandomSource, DEFAULT_RANDOM} from '../shared/capabilities';
 import {JsonlLogger} from '../observability/logger';
 import {
   averageRecord,
@@ -48,7 +64,7 @@ export function runGillespieOnce(config: SimConfig, opts: RunOpts = {}): RunResu
   return withSeed(seed, () => runGillespieInner(config, {...opts, seed}));
 }
 
-function runGillespieInner(config: SimConfig, opts: RunOpts): RunResult {
+function runGillespieInner(config: SimConfig, opts: RunOpts, rng: RandomSource = DEFAULT_RANDOM): RunResult {
   const sampleEvery = opts.sampleEveryDays ?? 1;
   const logger = opts.logEvents && opts.logPath
     ? new JsonlLogger(opts.logPath, 'info') : null;
@@ -167,7 +183,7 @@ function runGillespieInner(config: SimConfig, opts: RunOpts): RunResult {
       break;
     }
 
-    const dt = -Math.log(Math.random()) / total;
+    const dt = -Math.log(rng.nextFloat()) / total;
     for (const c of COMPARTMENT_ORDER) popSums[c] += N[c] * dt;
     while (nextSampleAt <= t + dt && nextSampleAt <= config.horizonDays) {
       sampleAt(nextSampleAt);
@@ -176,7 +192,7 @@ function runGillespieInner(config: SimConfig, opts: RunOpts): RunResult {
     t += dt;
     if (t > config.horizonDays) break;
 
-    const u = Math.random() * total;
+    const u = rng.nextFloat() * total;
     let cum = 0, fired = reactions.length - 1;
     for (let i = 0; i < reactions.length; i++) {
       cum += props[i];

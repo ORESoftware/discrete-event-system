@@ -5,6 +5,35 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/control-systems/observability-controllability.rs
+//   (module des::general::control_systems::observability_controllability)
+// 1:1 file move. Structural controllability/observability for LTI, MDP and POMDP.
+//
+// Declarations → Rust:
+//   interface StateSpaceSpec / MdpSpec / PomdpSpec(extends MdpSpec) -> struct
+//             (PomdpSpec: flatten/compose MdpSpec fields, no inheritance)
+//   class StateSpaceModel / MarkovDecisionProcess /
+//         PartiallyObservableProcess              -> struct + impl
+//   type EvaluationKind = 'controllability' | ... -> enum EvaluationKind
+//             (#[serde(rename_all = "kebab-case")])
+//   class StateSpaceToken / MdpToken / PomdpToken /
+//         EvaluationToken (implements Token)       -> struct + impl Token
+//   class *SourceStation / *EvaluatorStation extends DESStation /
+//         PureTransformEntity<In,Out>              -> struct + impl trait
+//   class ObsCtrlChannels (static consts)          -> associated consts
+//
+// Conversion notes (file-specific):
+//   - Mat = number[][] -> Vec<Vec<f64>> (or an ndarray type); LinAlg/MatrixRank
+//     come from shared::linalg (imported here via the linear-algebra shim).
+//   - Partition refinement uses `Map<string,number>` + string signatures
+//     (quantise -> join('|')) -> HashMap<String, usize>; the stringly-typed key
+//     is a hashable surrogate, fine to keep as String in Rust.
+//   - `new Set(labels).size` -> labels.iter().collect::<HashSet<_>>().len().
+//   - transition: number[][][] -> Vec<Vec<Vec<f64>>>; pmf rows validated by
+//     Preconditions (invariant -> panic, not Result).
+// =============================================================================
+
+// =============================================================================
 // control-systems/observability-controllability.ts — a general evaluator for
 // the two structural properties of dynamical systems:
 //

@@ -1,14 +1,23 @@
 'use strict'
 
-// RUST MIGRATION:
-// - Target: src/des/entity_decision/decision.rs
-// - DecisionEntityGraph maps to a graph-data struct; DecisionEntity<S,T> maps to
-//   a reusable decision-station struct plus trait impls for entity lifecycle,
-//   bidirectional connections, queue ownership, and computed properties.
-// - Replace `LinkedQueue<AbstractMovingEntity<any>>` and TS structural
-//   interfaces with VecDeque plus nominal MovingEntity/Endpoint traits.
-// - Unimplemented methods should become explicit `todo!()` during the first
-//   port, then Result-returning trait methods once call sites are audited.
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/entity-decision/decision.rs  (module des::entity_decision::decision)
+// 1:1 file move. Base decision/branching node (mostly a stub here).
+//
+// Declarations → Rust:
+//   interface DecisionEntityGraph (empty) -> marker struct / `()`
+//   class DecisionEntity<S,T>             -> struct + impl (+ impl AbstractBidirectionalEntity,
+//                                            HasComputedProperties, HasInternalQueue)
+//
+// Conversion notes (file-specific):
+//   - `DecisionEntityGraph` is an empty interface duplicated in
+//     probability-decision.ts and binary-decision.ts — define ONCE in Rust.
+//   - `getWithComputedProperties()` is `throw new Error("Method not implemented.")`
+//     -> `unimplemented!()`.
+//   - `queue: LinkedQueue<AbstractMovingEntity>` -> `VecDeque<_>` (entities behind Rc<RefCell>/index).
+//   - `math.BigNumber` stepSize -> decimal/f64; `getGraphData()` is a hardcoded stub.
+//   - `opts: { xx: boolean }` is a placeholder -> trim / small config struct.
+// =============================================================================
 
 import {AbstractBidirectionalEntity, TimeStepOpts} from "../abstract/abstract";
 import {HasInternalQueue} from "../abstract/interfaces";

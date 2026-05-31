@@ -8,6 +8,24 @@
 // - Local draw helpers remain private functions that push into Vec<Shape>.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/animation/scenes/genetic-tsp-scene.rs   (module des::animation::scenes::genetic_tsp_scene)
+// 1:1 file move. Builds frames + charts for the genetic-algorithm TSP animation.
+//
+// Declarations → Rust:
+//   const STAGE_W/H, ARCH_*/VIEW_*/META_* consts        -> `pub const`/`const`
+//   const STATION_NAMES / STATION_* color consts        -> `&[&str]` / `&str`
+//   function drawStation                                -> fn(&mut Vec<Shape>, ..)
+//   interface ArchitectureFrameArgs                     -> struct
+//   function buildGeneticTSPFrame / buildGeneticTSPCharts -> pub fns
+//
+// Conversion notes (file-specific):
+//   - Frame data (Shape[]/Frame/ChartSpec) is serialized for JSON -> serde structs (see types.rs).
+//   - `drawStation(shapes: Shape[], ..)` pushes into a shared array -> `&mut Vec<Shape>`.
+//   - `STATION_NAMES` fixed table -> `const`/`static` slice.
+//   - all coords are `number` -> `f64`.
+// =============================================================================
+
+// =============================================================================
 // Genetic-TSP scene — REWRITTEN to put the DES architecture (the GA
 // station chain) on the LEFT and analytics on the RIGHT.
 //

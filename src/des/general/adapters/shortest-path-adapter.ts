@@ -5,6 +5,26 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/adapters/shortest-path-adapter.rs
+//   (module des::general::adapters::shortest_path_adapter)
+// 1:1 file move. JSON adapter registering the Bellman-Ford / Dijkstra DES solver.
+//
+// Declarations → Rust:
+//   interface SPParams                         -> struct (#[derive(Deserialize)];
+//             graph?/randomGraph?/builtin? -> Option fields; nested graph -> struct)
+//   const spSchema: ParamSchema                -> serde + validator metadata
+//   const adapter: DESModelRegistration<SPParams, SPResult> -> struct + impl trait
+//   registerModel(adapter)                     -> explicit registration call
+//
+// Conversion notes (file-specific):
+//   - `algorithm: 'bellman-ford' | 'dijkstra'` -> enum; dispatch via match (not ternary).
+//   - GotChA: distances use JS `Infinity` for unreachable + `Number.isFinite` checks
+//     -> f64::INFINITY / .is_finite() (or model as Option<f64>).
+//   - `throw new Error` when none of {builtin, graph, randomGraph} given -> Result/validation.
+//   - Graph.edges is `Array<Array<{to,weight}>>` (adjacency list) -> Vec<Vec<Edge>>.
+// =============================================================================
+
+// =============================================================================
 // general/adapters/shortest-path-adapter.ts — JSON adapter for the
 // Bellman-Ford-DES / Dijkstra-DES shortest-path solver.
 //

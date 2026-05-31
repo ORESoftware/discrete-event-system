@@ -11,6 +11,29 @@
 //   serde_json::Value/typed events and anyhow/thiserror Results.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/observability/logger.rs  (module des::observability::logger)
+// 1:1 file move. Append-only JSONL event logger + reader.
+//
+// Declarations → Rust:
+//   type LogLevel = 'trace'|'debug'|'info'|'warn'|'error'
+//                              -> enum LogLevel (#[serde(rename_all="lowercase")]; derive PartialOrd)
+//   const LEVEL_ORDER          -> rank via `as u8` on the enum / a match fn
+//   interface BaseEvent        -> struct BaseEvent { kind, level: Option<LogLevel>, t: Option<f64> }
+//   class JsonlLogger          -> struct + impl
+//   function readEvents        -> free fn `fn read_events(path) -> Result<Vec<Value>, E>`
+//
+// Conversion notes (file-specific):
+//   - `fs.createWriteStream(.., {flags:'w'})` + `mkdirSync` + sync `.write` ->
+//     `std::fs::File`/`BufWriter` (truncating); `create_dir_all`. No streams.
+//   - `BaseEvent & Record<string, any>` is an OPEN shape -> `serde_json::Value`
+//     or a struct with `#[serde(flatten)] extra: Map<String, Value>`.
+//   - `JSON.stringify` / `JSON.parse` -> `serde_json`.
+//   - `byKind: Map<string, number>` -> `HashMap<String, u64>`; `getKindCounts` -> clone.
+//   - `close(): Promise<void>` -> `Drop`/explicit `flush()`; no async needed.
+//   - `readEvents` throws on malformed line -> return `Result` with line number.
+// =============================================================================
+
+// =============================================================================
 // JSONL file logger for the DES simulator.
 //
 // Design goals (matched to the user's request "just logging tools, this is a

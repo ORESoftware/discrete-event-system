@@ -6,6 +6,28 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/sa-des.rs  (module des::general::sa_des)
+// 1:1 file move. Simulated annealing (and hill-climbing) over TSP tours as a DES.
+//
+// Declarations → Rust:
+//   type CoolingSchedule = {kind:'geometric'|...}  -> enum CoolingSchedule { Geometric{..}, ... }
+//   fn temperatureAt(s, k)                          -> match on the CoolingSchedule enum
+//   interface TSPSAOptions / SADESResult            -> structs
+//   class TSPSAOptimizer extends SingleStateOptimizer<Tour> -> struct + impl optimizer trait
+//   class TSPHillClimber extends TSPSAOptimizer     -> struct reusing the SA struct (see note)
+//   fn runTSPSADES / runTSPHillClimberDES / initialTour / validateInitialTour -> fns
+//
+// Conversion notes (file-specific):
+//   - CoolingSchedule is a DISCRIMINATED UNION on `kind` -> `enum` with per-variant fields,
+//     matched in `temperatureAt`.
+//   - INHERITANCE: TSPHillClimber EXTENDS TSPSAOptimizer (class-on-class). Rust has no
+//     inheritance: factor the shared SA template into a trait/base struct and have HillClimber
+//     override only the `accept` rule (compose, don't extend).
+//   - INJECT RNG: `mulberry32` + initialTour('random') + Metropolis accept -> `RandomSource`.
+//   - SingleStateOptimizer is a template-method base -> trait with default driver fn.
+//   - depends on genetic-tsp.ts (Tour/TSPInstance/tourLength/...) -> use crate::...::genetic_tsp.
+//   - validateInitialTour throws -> `panic!` (invariant) or `Result`.
+// =============================================================================
 // general/sa-des.ts — Simulated Annealing as a DES, built on the
 // SingleStateOptimizer<S> base class. Concrete leaf classes implement
 // ONLY the hooks; the iteration loop is the base's template method.

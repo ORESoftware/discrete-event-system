@@ -11,6 +11,25 @@
 // - Convert invalid dimensions or envelope misuse to Result-returning methods.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/cut_pool.rs  (module des::general::des_base::cut_pool)
+// 1:1 file move. Affine cut pools (upper/lower envelopes) for decomposition
+// algorithms (Benders / SDDP / Kelley / outer approximation).
+//
+// Declarations → Rust:
+//   type CutEnvelopeSense = 'upper' | 'lower' -> enum CutEnvelopeSense { Upper, Lower }
+//   interface AffineCut             -> struct AffineCut { alpha, beta: Vec<f64>, source: Option<String> }
+//   class AffineCutPool             -> struct AffineCutPool (private cuts: Vec<AffineCut>)
+//
+// Conversion notes (file-specific):
+//   - Plain numeric class (NOT a DESStation); no template-method here.
+//   - `beta.slice()` defensive copies on add/all/activeCut -> `.clone()`.
+//   - `evaluate` empty-pool returns ±Infinity -> `f64::INFINITY`/`NEG_INFINITY`.
+//   - `activeCut(): AffineCut | null` -> `Option<AffineCut>`.
+//   - `source?: string` -> `Option<String>`.
+//   - Preconditions.* throw -> `Result`/`panic!`; reuse preconditions.rs.
+// =============================================================================
+
+// =============================================================================
 // general/des-base/cut-pool.ts -- reusable affine cut pools for decomposition
 // algorithms: Benders/L-shaped, SDDP, Kelley cutting planes, outer
 // approximation, and other value-function approximation schemes.

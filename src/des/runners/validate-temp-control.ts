@@ -6,6 +6,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-temp-control.rs  (a `fn main`
+//                    binary; an `examples/…rs` also works)
+// 1:1 file move. Verifies the temperature-control DES (energy balance, controller
+// stability/tracking, MDP-MPC monotonicity, reproducibility).
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - reproducibility study reseeds runs -> inject `SeededRandom` so "same seed →
+//     same trajectory" is explicit, not ambient.
+//   - `console.log` PASS/FAIL + `process.exit` -> `println!` / `std::process::exit`.
+// =============================================================================
+
+// =============================================================================
 // runners/validate-temp-control.ts — verify the temperature-control DES
 // against energy balance, controller stability, and qualitative tradeoff
 // expectations.

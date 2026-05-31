@@ -4,6 +4,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/dc_motor_test.rs   (integration test crate)
+// 1:1 file move. Drives control-systems/dc-motor (back-EMF ODE) through the
+// des-base runner, so it is an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/close()/pass-fail counters + console.log  ->  #[test] fns
+//   using assert!/assert_eq!; drop the manual tally and PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - close(a,b,tol) relative float comparison -> approx::assert_relative_eq!.
+//   - the analytic steady-state-speed helper stays a free fn checked vs the
+//     simulated open-loop value.
+// =============================================================================
+
+// =============================================================================
 // Unit tests for general/control-systems/dc-motor.ts (back-EMF ODE system).
 // Run with: ./node_modules/.bin/ts-node src/des/test/dc-motor-test.ts
 // =============================================================================

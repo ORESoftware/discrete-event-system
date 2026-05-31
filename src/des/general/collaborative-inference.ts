@@ -6,6 +6,27 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/collaborative-inference.rs  (module des::general::collaborative_inference)
+// 1:1 file move. Sparse subjective preference learning (ratings+pairwise -> global rank) as a DES station graph.
+//
+// Declarations → Rust:
+//   type CollaborativeInferenceScenario = ... -> enum
+//   interface CollaborativeInference{Item,Response,Params,Coverage,Result}/CollaborativeItemScore/
+//             CredibilityWeightSummary/ScenarioPreset/NormalizedConfig/... -> structs
+//   class RespondentToken/RatingEvidenceToken/PairwisePreferenceToken/EvidenceSnapshotToken/RankingToken
+//                                    -> structs `impl Token`
+//   class RespondentSource/SurveyEncoder/EvidenceAggregator/RankingInference/InferenceResultSink Station
+//                                    -> structs `impl` the station trait
+//   fn runCollaborativeInference   -> fn (or StatefulTransform)
+//
+// Conversion notes (file-specific):
+//   - HEAVY `Map`/`Set` usage (evidence keyed by item id, pairwise counts) -> `HashMap`/`HashSet`
+//     (item-id keys need `Hash + Eq`; iteration order is N/A — sort explicitly where output order matters).
+//   - `CollaborativeInferenceScenario` string union -> enum; empirical-Bayes shrinkage math stays f64.
+//   - Tokens/stations are nominal `impl Trait`; channels -> typed queues; `Preconditions` throw -> `Result`.
+// =============================================================================
+
+// =============================================================================
 // general/collaborative-inference.ts
 //
 // Sparse subjective preference learning as a DES station graph.

@@ -6,6 +6,25 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/dispatch.rs  (module des::general::dispatch)
+// 1:1 file move. Multi-class parallel-server dispatch problem + six policies + evaluation.
+//
+// Declarations → Rust:
+//   interface DispatchProblem/Policy/State/PendingJob/Result/FluidLPPolicyResult/
+//             MDPVIPolicyOptions/Result/MCTSPolicyOptions/EvaluationResult -> structs
+//   interface DispatchPolicy      -> trait DispatchPolicy { fn choose(&self, state) -> usize }
+//   fn simulateDispatch / evaluatePolicy -> free fns (or StatefulTransform for the sim)
+//   fn policyRandom/RoundRobin/ShortestQueue/SECT/FluidLP/MDPVI/MCTS -> constructors returning
+//                                    distinct structs that `impl DispatchPolicy`
+//   fn expSample / categorical / welchT / buildDispatchFluidLP -> assoc fns
+//
+// Conversion notes (file-specific):
+//   - Policies are objects implementing DispatchPolicy -> one struct per policy + `impl` (no closures-as-objects).
+//   - `mulberry32(seed)` + `expSample`/`categorical(rng)` -> inject `RandomSource`; same seed = fair compare.
+//   - Builds on lp/value-iteration/mcts (see their headers); priority queue of jobs -> `BinaryHeap`.
+// =============================================================================
+
+// =============================================================================
 // general/dispatch.ts — multi-class parallel-server dispatch problem.
 //
 // THE PROBLEM (canonical "size-and-skill" parallel-server)
@@ -49,6 +68,7 @@ import {LPProblem, solveLP} from './lp';
 import {mulberry32} from './prng';
 import {valueIteration, MDPSpec} from './value-iteration';
 import {mcts} from './mcts';
+import {PureTransform} from '../shared/transform';
 
 export interface DispatchProblem {
   M: number;                            // # machines
@@ -133,13 +153,21 @@ export interface DispatchResult {
  * @param warmup   discard sojourn samples from the first `warmup` arrivals
  *                 to remove startup transient bias
  */
-export function simulateDispatch(
-  problem: DispatchProblem,
-  policy: DispatchPolicy,
-  numArrivals: number,
-  seed: number,
-  warmup = 0,
-): DispatchResult {
+export interface SimulateDispatchInput { problem: DispatchProblem; policy: DispatchPolicy; }
+
+/** Single DES replication. Configuration (run length, seed, warmup) lives on
+ *  the constructor; the (problem, policy) pair being simulated is the input.
+ *  Note: like any simulator it DRIVES the injected `policy` (calling
+ *  `reset`/`pick`), so the policy object may carry its own mutable state. */
+export class SimulateDispatch extends PureTransform<SimulateDispatchInput, DispatchResult> {
+  constructor(
+    private readonly numArrivals: number,
+    private readonly seed: number,
+    private readonly warmup = 0,
+  ) { super(); }
+
+  transform({problem, policy}: SimulateDispatchInput): DispatchResult {
+  const {numArrivals, seed, warmup} = this;
   const {M, K, arrivalRate, classProb, serviceRate} = problem;
   const rng = mulberry32(seed);
   policy.reset?.();
@@ -222,6 +250,18 @@ export function simulateDispatch(
     perMachineJobs,
     perMachineUtilisation: perMachineBusy.map(b => b / now),
   };
+  }
+}
+
+/** @deprecated Use `new SimulateDispatch(numArrivals, seed, warmup).transform({problem, policy})`. */
+export function simulateDispatch(
+  problem: DispatchProblem,
+  policy: DispatchPolicy,
+  numArrivals: number,
+  seed: number,
+  warmup = 0,
+): DispatchResult {
+  return new SimulateDispatch(numArrivals, seed, warmup).transform({problem, policy});
 }
 
 // =============================================================================
@@ -289,7 +329,8 @@ export function policySECT(problem: DispatchProblem): DispatchPolicy {
 // in-process simplex / DES-engine simplex per the LP_SOLVER env var).
 // -----------------------------------------------------------------------------
 
-export function buildDispatchFluidLP(problem: DispatchProblem): LPProblem {
+export class BuildDispatchFluidLP extends PureTransform<DispatchProblem, LPProblem> {
+  transform(problem: DispatchProblem): LPProblem {
   const {M, K, arrivalRate, classProb, serviceRate} = problem;
   const N = K * M + 1;            // x_{c,m} for c×m, plus t
   const tIdx = K * M;
@@ -325,6 +366,12 @@ export function buildDispatchFluidLP(problem: DispatchProblem): LPProblem {
       ...Array.from({length: M}, (_, m) => `machine-${m + 1} ≤ t`),
     ],
   };
+  }
+}
+
+/** @deprecated Use `new BuildDispatchFluidLP().transform(problem)`. */
+export function buildDispatchFluidLP(problem: DispatchProblem): LPProblem {
+  return new BuildDispatchFluidLP().transform(problem);
 }
 
 export interface FluidLPPolicyResult {
@@ -337,7 +384,11 @@ export interface FluidLPPolicyResult {
 
 /** Solve the fluid LP and return a randomized policy that dispatches
  *  class c to machine m with probability x*_{c,m}. */
-export function policyFluidLP(problem: DispatchProblem, seed: number = 12345): FluidLPPolicyResult {
+export class PolicyFluidLP extends PureTransform<DispatchProblem, FluidLPPolicyResult> {
+  constructor(private readonly seed: number = 12345) { super(); }
+
+  transform(problem: DispatchProblem): FluidLPPolicyResult {
+  const seed = this.seed;
   const lp = buildDispatchFluidLP(problem);
   const sol = solveLP(lp);
   if (sol.status !== 'optimal') {
@@ -362,6 +413,12 @@ export function policyFluidLP(problem: DispatchProblem, seed: number = 12345): F
     reset() { rng = mulberry32(seed); },
   };
   return {policy, x, bottleneckLoad: sol.x[K * M], solver: sol.solver, iters: sol.iters ?? 0};
+  }
+}
+
+/** @deprecated Use `new PolicyFluidLP(seed).transform(problem)`. */
+export function policyFluidLP(problem: DispatchProblem, seed: number = 12345): FluidLPPolicyResult {
+  return new PolicyFluidLP(seed).transform(problem);
 }
 
 // -----------------------------------------------------------------------------
@@ -398,7 +455,11 @@ export interface MDPVIPolicyResult {
 
 /** Build & solve a tabular MDP whose transition probabilities and rewards
  *  are estimated by running the DES R times from each (s, a). */
-export function policyMDPVI(problem: DispatchProblem, opts: MDPVIPolicyOptions = {}): MDPVIPolicyResult {
+export class PolicyMDPVI extends PureTransform<DispatchProblem, MDPVIPolicyResult> {
+  constructor(private readonly opts: MDPVIPolicyOptions = {}) { super(); }
+
+  transform(problem: DispatchProblem): MDPVIPolicyResult {
+  const opts = this.opts;
   const qMax = opts.qMax ?? 5;
   const gamma = opts.gamma ?? 0.95;
   const R = opts.rolloutsPerSA ?? 60;
@@ -515,6 +576,12 @@ export function policyMDPVI(problem: DispatchProblem, opts: MDPVIPolicyOptions =
     },
   };
   return {policy, V: vi.V, Q: QTable, qMax, numStates};
+  }
+}
+
+/** @deprecated Use `new PolicyMDPVI(opts).transform(problem)`. */
+export function policyMDPVI(problem: DispatchProblem, opts: MDPVIPolicyOptions = {}): MDPVIPolicyResult {
+  return new PolicyMDPVI(opts).transform(problem);
 }
 
 // -----------------------------------------------------------------------------
@@ -681,15 +748,25 @@ export interface EvaluationResult {
   utilisation: number[]; // per-replication, per-machine averaged
 }
 
-export function evaluatePolicy(
-  problem: DispatchProblem,
-  factory: () => DispatchPolicy,
-  policyName: string,
-  numReplications: number,
-  numArrivalsPerRep: number,
-  seedBase: number,
-  warmup = 0,
-): EvaluationResult {
+export interface EvaluatePolicyInput {
+  problem: DispatchProblem;
+  factory: () => DispatchPolicy;
+}
+
+export interface EvaluatePolicyConfig {
+  policyName: string;
+  numReplications: number;
+  numArrivalsPerRep: number;
+  seedBase: number;
+  warmup?: number;
+}
+
+export class EvaluatePolicy extends PureTransform<EvaluatePolicyInput, EvaluationResult> {
+  constructor(private readonly config: EvaluatePolicyConfig) { super(); }
+
+  transform({problem, factory}: EvaluatePolicyInput): EvaluationResult {
+  const {policyName, numReplications, numArrivalsPerRep, seedBase} = this.config;
+  const warmup = this.config.warmup ?? 0;
   const waits: number[] = [];
   const utils: number[][] = [];
   for (let r = 0; r < numReplications; r++) {
@@ -705,13 +782,37 @@ export function evaluatePolicy(
   const utilMean = new Array(M).fill(0);
   for (const u of utils) for (let m = 0; m < M; m++) utilMean[m] += u[m] / utils.length;
   return {policyName, meanWait: mean, sdWait: sd, rawWaits: waits, utilisation: utilMean};
+  }
+}
+
+/** @deprecated Use `new EvaluatePolicy({policyName, numReplications, numArrivalsPerRep, seedBase, warmup}).transform({problem, factory})`. */
+export function evaluatePolicy(
+  problem: DispatchProblem,
+  factory: () => DispatchPolicy,
+  policyName: string,
+  numReplications: number,
+  numArrivalsPerRep: number,
+  seedBase: number,
+  warmup = 0,
+): EvaluationResult {
+  return new EvaluatePolicy({policyName, numReplications, numArrivalsPerRep, seedBase, warmup})
+    .transform({problem, factory});
 }
 
 /** Welch's t-test for difference of means. */
+export interface WelchTInput { a: number[]; b: number[]; }
+
+export class WelchT extends PureTransform<WelchTInput, number> {
+  transform({a, b}: WelchTInput): number {
+    const ma = a.reduce((s, v) => s + v, 0) / a.length;
+    const mb = b.reduce((s, v) => s + v, 0) / b.length;
+    const va = a.reduce((s, v) => s + (v - ma) ** 2, 0) / Math.max(1, a.length - 1);
+    const vb = b.reduce((s, v) => s + (v - mb) ** 2, 0) / Math.max(1, b.length - 1);
+    return (ma - mb) / Math.sqrt(va / a.length + vb / b.length + 1e-30);
+  }
+}
+
+/** @deprecated Use `new WelchT().transform({a, b})`. */
 export function welchT(a: number[], b: number[]): number {
-  const ma = a.reduce((s, v) => s + v, 0) / a.length;
-  const mb = b.reduce((s, v) => s + v, 0) / b.length;
-  const va = a.reduce((s, v) => s + (v - ma) ** 2, 0) / Math.max(1, a.length - 1);
-  const vb = b.reduce((s, v) => s + (v - mb) ** 2, 0) / Math.max(1, b.length - 1);
-  return (ma - mb) / Math.sqrt(va / a.length + vb / b.length + 1e-30);
+  return new WelchT().transform({a, b});
 }

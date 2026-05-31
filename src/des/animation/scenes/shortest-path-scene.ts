@@ -8,6 +8,25 @@
 // - If this scene is exposed as a DES graph node, lift it into a PureTransform struct with transform(result_snapshot) -> Frame.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/animation/scenes/shortest-path-scene.rs   (module des::animation::scenes::shortest_path_scene)
+// 1:1 file move. Builds frames + charts for the shortest-path-DES relaxation animation.
+//
+// Declarations → Rust:
+//   const STAGE_W/H, VIEW_*/META_* consts  -> `pub const`/`const` (f64)
+//   function distanceColor                 -> fn -> String
+//   function buildShortestPathFrame        -> pub fn -> FrameParts
+//   function buildShortestPathCharts       -> pub fn -> Vec<ChartSpec>
+//
+// Conversion notes (file-specific):
+//   - Frame data (Shape[]/Frame/ChartSpec) is serialized for JSON -> serde structs (see types.rs).
+//   - the `project = (i) => [x, y]` closure -> a local closure / fn.
+//   - infinite distances use `Infinity` / `isFinite` -> `f64::INFINITY` + `is_finite()`.
+//   - `coords[i] ?? [50, 50]` nullish default -> `unwrap_or(...)`.
+//   - `distanceColor` builds `rgb(..)` -> `format!`.
+//   - imports Graph/SPResult from ../../general/shortest-path-des -> `use crate::des::general::shortest_path_des::*`.
+// =============================================================================
+
+// =============================================================================
 // Shortest-path-DES scene: graph nodes, directed edges, propagating
 // "wave" of distance updates per tick. Each node is colored by its
 // current distance estimate (cool/blue = far, hot/yellow = close to source);

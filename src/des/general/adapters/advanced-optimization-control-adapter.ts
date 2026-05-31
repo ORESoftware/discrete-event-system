@@ -5,7 +5,30 @@
 'use strict';
 
 // =============================================================================
-// JSON adapters for advanced optimization and decision/control station graphs.
+// RUST MIGRATION  —  target: src/des/general/adapters/advanced-optimization-control-adapter.rs
+//   (module des::general::adapters::advanced_optimization_control_adapter)
+// 1:1 file move. Registers PSO / ACO-TSP / CSP / MAX-SAT / SDP-maxcut / Pareto /
+// H-infinity / pursuit-evasion JSON adapters (7 models in one barrel).
+//
+// Declarations → Rust:
+//   const numberVectorSchema/pointSchema/stringPairSchema/weightedEdgeSchema/
+//         portfolioAssetSchema: ParamSchema   -> reusable serde+validator schema consts
+//   registerModel<P,R>({ id, schema, run, summarize, writeCsv }) (x7) -> one struct +
+//             impl ModelAdapter trait per model; register each explicitly
+//
+// Conversion notes (file-specific):
+//   - Params/Result types are imported from sibling model modules; here they only
+//     need #[derive(Deserialize)] on the *Params shapes (these adapters decode JSON).
+//   - GotChA: object-spread normalisation `{...params, edges: params.edges as
+//     Array<[string,string]> }` and `params.edges as WeightedEdge[]` casts — in Rust
+//     deserialize directly into the concrete type; the empty-array→undefined guard
+//     becomes `Option`/`is_empty()` defaulting.
+//   - `Object.entries(result.assignment)` (string-keyed map) -> iterate a
+//     HashMap<String, _>; ordering is not guaranteed.
+//   - `result.captureTick === null` -> Option<u64>; `JSON.stringify(point.weights)`
+//     in CSV -> serde_json::to_string.
+//   - Many numeric defaults live in the schema (`default:`) — those are validator
+//     defaults applied during decode, not in `run`.
 // =============================================================================
 
 import {ParamSchema} from '../des-spec';

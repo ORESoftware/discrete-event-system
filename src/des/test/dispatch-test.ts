@@ -4,6 +4,22 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/dispatch_test.rs   (integration test crate)
+// 1:1 file move. Spans dispatch / lp / lp-des / mcts, so it is an integration
+// test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc eq()/expect()/close()/pass-fail counters + console.log  ->  #[test]
+//   fns using assert!/assert_eq!; drop the manual tally and PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - eq() compares via JSON.stringify -> derive PartialEq and use assert_eq!.
+//   - close(a,b,tol) float comparison -> approx::assert_relative_eq!.
+//   - policies use mulberry32 / MCTS rollouts -> a seeded rand::Rng so the
+//     simulated dispatch outcomes are reproducible.
+// =============================================================================
+
+// =============================================================================
 // test/dispatch-test.ts — unit tests for the multi-class dispatch combo.
 // =============================================================================
 

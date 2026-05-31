@@ -5,6 +5,34 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/adapters/mdp-adjacent-adapters.rs
+//   (module des::general::adapters::mdp_adjacent_adapters)
+// 1:1 file move. Registers nine MDP-adjacent JSON adapters (inventory-DP,
+// mountain-car, tiger/grid POMDPs, four-rooms SMDP, actor-critic, blackjack-MC,
+// stag-hunt, double-integrator LQR).
+//
+// Declarations → Rust:
+//   const inventorySchema/mountainCarSchema/tigerSchema/gridLocalizationSchema/
+//         fourRoomsSchema/actorCriticSchema/blackjackSchema/stagHuntSchema/lqrSchema:
+//         ParamSchema                          -> serde + validator metadata
+//   registerModel<P,R>(...) x9                 -> one struct + impl ModelAdapter trait
+//             each; some P are intersection types (e.g. `TigerOpts & {solver; …}`,
+//             `InventoryProblem & {seed?}`) -> a struct with the extra fields added
+//   fn countActions / normalizeGridLocalizationParams -> plain `fn` helpers
+//
+// Conversion notes (file-specific):
+//   - GotChA: several `run` bodies cast `p as FourRoomsTrainOpts` / `(p as
+//     DoubleIntegratorOpts).x0` and use numberPair() to coerce a decoded `number[]`
+//     back to `[number, number]` — in Rust deserialize directly into `[f64; 2]`
+//     (or a Pos struct), no cast/coercion needed.
+//   - `solver: 'qmdp'|'one-step-lookahead'` literal union -> enum.
+//   - `uSat` default is `Infinity` in the schema -> f64::INFINITY default.
+//   - intersection-typed P shapes have no Rust analogue: flatten the extra fields
+//     (seed/solver/numSteps/evalEpisodes) into one #[derive(Deserialize)] struct.
+//   - `hiddenTarget`/`x0` fixed-length tuples decoded as arrays -> `[i64;2]`/`[f64;2]`.
+// =============================================================================
+
+// =============================================================================
 // general/adapters/mdp-adjacent-adapters.ts — JSON adapters for the
 // nine MDP-adjacent models added in this batch:
 //

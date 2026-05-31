@@ -5,6 +5,18 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-dc-motor.rs   (fn main)
+// 1:1 file move. Runnable demo of the back-EMF DC-motor ODE system (open-loop
+// step vs closed-loop PI speed control).
+//
+// Conversion notes (file-specific):
+//   - class DcMotorDemo -> struct + impl; process.env.MODE -> std::env + enum.
+//   - imports general/control-systems/dc-motor -> use crate::des::general::
+//     control_systems::dc_motor.
+//   - top-level run -> fn main.
+// =============================================================================
+
+// =============================================================================
 // main-dc-motor.ts — runnable demo of the back-EMF DC-motor ODE system.
 //
 //   npm run dc-motor             # closed-loop PI speed control (default)

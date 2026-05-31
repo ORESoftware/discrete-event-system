@@ -5,6 +5,18 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-wind-mppt.rs   (fn main)
+// 1:1 file move. Runnable MPPT demo for a PMSG wind-energy system (optimal-
+// torque vs PI speed-loop controller).
+//
+// Conversion notes (file-specific):
+//   - class WindMpptDemo -> struct + impl; top-level run -> fn main.
+//   - process.env.CONTROLLER -> std::env + enum.
+//   - imports general/control-systems/wind-mppt -> use crate::des::general::
+//     control_systems::wind_mppt.
+// =============================================================================
+
+// =============================================================================
 // main-wind-mppt.ts — runnable demo of MPPT for a PMSG wind-energy conversion
 // system. Wires the self-clocking turbine plant to an MPPT controller and a
 // trajectory sink, runs the lightweight DES loop, and prints convergence to

@@ -4,6 +4,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/feasibility_pipeline_test.rs   (integration test crate)
+// 1:1 file move. Tests the optimization feasibility-checker pipeline, so it is
+// an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - async checkThrows()/await -> assert on Result::Err / #[should_panic].
+//   - runFromJsonFile / fs + JSON -> serde_json + std::fs (or `tempfile`).
+//   - variable-type union ('binary'|...) -> a Rust enum.
+// =============================================================================
+
+// =============================================================================
 // Tests for the general optimization feasibility checker pipeline.
 // =============================================================================
 

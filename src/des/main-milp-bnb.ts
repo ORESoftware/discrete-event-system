@@ -5,6 +5,16 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-milp-bnb.rs   (fn main)
+// 1:1 file move. CLI driver for MILP via Branch-and-Bound (knapsack with B&B
+// trace, brute-force sanity check, generic MILP, pure-LP fallback, scaling).
+//
+// Conversion notes (file-specific):
+//   - bitmask brute enumeration (1 << n) -> u64/usize bitsets.
+//   - use crate::des::general::milp_bnb; top-level run -> fn main.
+// =============================================================================
+
+// =============================================================================
 // main-milp-bnb.ts — CLI driver for MILP via Branch-and-Bound.
 //
 // Demonstrates:

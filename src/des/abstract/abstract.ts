@@ -1,26 +1,37 @@
 'use strict';
 
-// RUST MIGRATION:
-// - Target: src/des/abstract/abstract.rs
-// - Keep this file as the legacy queueing-network foundation module. The newer
-//   algorithm-as-DES foundation lives in general/des_base/station.rs; do not
-//   merge them during the first Rust port.
-// - EntityObserver<T> becomes an Observer<T> trait with `do_update`. Use
-//   trait objects (`Box<dyn Observer<T>>` or Rc/Arc wrappers) only where runtime
-//   subscription polymorphism is truly needed.
-// - IsSerializable<T> becomes a trait bounded by serde Serialize where possible.
-//   Serializable<T> should not be a Rust superclass; move its default JSON
-//   helpers into trait default methods or free helper functions.
-// - Entity<E, V> should become a shared EntityState struct plus an EntityLike
-//   trait. Concrete entities own EntityState and implement the behavioral hooks.
-// - EntityConnection<S, T> maps to a struct containing typed source/target ids
-//   or graph handles. Avoid storing arbitrary `any`-like source/target objects;
-//   Rust will want explicit traits for input and output endpoints.
-// - StationaryEntity and AbstractBidirectionalEntity are trait layers in Rust:
-//   StationaryEntityLike + BidirectionalEntityLike, backed by reusable connection
-//   sets. Methods that now warn/throw should return Result where callers can act.
-// - `mathjs.BigNumber` is a migration decision point. Preserve the type boundary
-//   here, then choose `rust_decimal`, `bigdecimal`, or f64 after numerical tests.
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/abstract/abstract.rs  (module des::abstract_::abstract_)
+// 1:1 file move. The root entity hierarchy for the queueing-network model.
+// (`abstract` is a Rust keyword — name the module `abstract_` or `core`.)
+//
+// Declarations → Rust:
+//   abstract class Entity<E,V>            -> trait Entity (default fns) + a base
+//                                            struct holding id/timeStepCount/subs
+//   abstract class EntityObserver<T>      -> trait EntityObserver { fn do_update(..) }
+//   interface IsSerializable<T>           -> trait IsSerializable (or just #[derive(Serialize)])
+//   abstract class Serializable<T>        -> trait via serde; drop bespoke serialize()
+//   abstract class StationaryEntity<E>    -> trait extending Entity
+//   abstract class AbstractBidirectionalEntity -> struct + impls of the Has* traits
+//   class EntityConnection<S,T>           -> struct EntityConnection { source, target, opts }
+//   interface TimeStepOpts / HasNumericValue -> struct (Default-derivable)
+//
+// Conversion notes (file-specific):
+//   - INHERITANCE: Entity -> StationaryEntity -> AbstractBidirectional is a
+//     3-level chain. In Rust: a `trait Entity` with default methods, then
+//     concrete structs compose a shared `EntityCore { id, time_step_count,
+//     subscribers }` field and `impl Entity`. Do NOT try to mirror `extends`.
+//   - `subscribers: Set<EntityObserver>` -> `Vec<Rc<RefCell<dyn EntityObserver>>>`
+//     (trait objects); `subscribersByEvent: Map<string, Set<..>>` ->
+//     `HashMap<String, Vec<...>>`.
+//   - `math.BigNumber` (stepSize) -> a decimal crate or `f64`; pick ONE engine-wide.
+//   - `uuid.v4()` -> `uuid::Uuid::new_v4()`.
+//   - The `<unknown>null as HasOutput` casts are placeholder-null; in Rust make
+//     `source`/`target` `Option<...>` instead of nullable-with-cast.
+//   - `getSerializableData(): Partial<this>` has no Rust analogue; replace with a
+//     dedicated `#[derive(Serialize)]` DTO struct per entity.
+//   - DESSet/DESMap come from general.ts (see that file's header).
+// =============================================================================
 
 import * as safe from "@oresoftware/safe-stringify";
 import * as math from "mathjs";

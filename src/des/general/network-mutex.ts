@@ -6,6 +6,28 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/network-mutex.rs  (module des::general::network_mutex)
+// 1:1 file move. A distributed-mutex DES: workers spawn lock request/release child tokens.
+//
+// Declarations → Rust:
+//   type MutexWorkState / MutexChildState (string-literal unions) -> enums (match on variant)
+//   interface MutexWorkItem/MutexChildToken/LockRequest/Grant/ReleaseToken extends StatefulToken<S>
+//                                       -> structs carrying a state enum + impl Token (no inheritance)
+//   interface NetworkMutex*Opts/*Stats/*Result/TraceEvent/MutexSourceSpec -> structs
+//   class MutexWorkSourceStation/NetworkMutexLockServiceStation/MutexCompletionSinkStation
+//         extends DESStation                            -> structs + impl DESStation trait
+//   class NetworkMutexWorkerStation extends CompositeDESStation -> struct + impl composite trait
+//   class MutexQueueSubstation/MutexProcessorSubstation (private) -> structs + impl
+//   fn buildNetworkMutexStations / runNetworkMutexSimulation + helpers -> fns
+//
+// Conversion notes (file-specific):
+//   - StatefulToken<S> + transitionToken/makeStatefulToken/spawnStatefulChildToken model an
+//     explicit state machine -> in Rust the token holds a state enum and transitions are
+//     `self.state = NewState` (validate with match); the string `*_CHANNEL` consts -> &'static str or enum.
+//   - the FIFO of held work + pending grants/queue -> `VecDeque<_>` struct fields.
+//   - `new Set(...).size === len` dedupe check in a validator -> `HashSet` cardinality compare.
+//   - CompositeDESStation (sub-stations) -> a struct owning child station structs + impl trait.
+// =============================================================================
 // general/network-mutex.ts -- a network mutex as DES stations + child tokens.
 //
 // Model:

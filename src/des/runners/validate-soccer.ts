@@ -6,6 +6,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-soccer.rs  (a `fn main` binary; an
+//                    `examples/…rs` also works)
+// 1:1 file move. Validates the 7v7 rotation problem (LP relaxation, MDP-VI,
+// Hungarian bounds, cross-solver agreement, stochastic match).
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - the stochastic-match Welch-t study draws random matches -> inject
+//     `SeededRandom`.
+//   - `console.log` PASS/FAIL + `process.exit` -> `println!` / `std::process::exit`.
+// =============================================================================
+
+// =============================================================================
 // runners/validate-soccer.ts — validate the 7v7 rotation problem.
 //
 // Five studies:

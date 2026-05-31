@@ -6,6 +6,28 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/math-blocks.rs  (module des::general::math_blocks)
+// 1:1 file move. Calculus/control block diagrams (sources/sums/gains/integrators/...) as DES VisualBlocks.
+//
+// Declarations → Rust:
+//   const MATH_IN/MATH_OUT        -> `const &str`
+//   type IntegratorMethod/ComparatorOp/LogicOp = '...'|'...' -> enums
+//   interface MathSignal extends Token / BlockModelLogger / MathSample / MathBlock*/ODE*/Heat1D*/BlockGraph* -> structs/traits
+//   abstract class MathBlock extends VisualBlock -> trait MathBlock (defaults) + structs that compose a VisualBlock core
+//   class Constant/Function/Expression Source / Sink / Sum / Subtract / Product / Gain / Saturation /
+//         Integrator / Derivative / FirstOrderFilter / Comparator / Logic / Expression / Laplacian1D Block
+//                                    -> structs `impl` the MathBlock trait (NO `extends`)
+//   fn runMathBlockDiagram / runODEBlockSystem / runHeat1DBlockGrid -> fns
+//
+// Conversion notes (file-specific):
+//   - DEEP inheritance (MathBlock <- VisualBlock; SubtractBlock <- SumBlock) -> trait + composition, not extends.
+//   - `FunctionSourceBlock` wraps a CLOSURE `(t) => number` -> `Box<dyn Fn(f64) -> f64>` field.
+//   - `IntegratorMethod`/`ComparatorOp`/`LogicOp` string unions -> enums matched with `match`.
+//   - `MathSignal extends Token` + `metadata?: Record<string, unknown>` -> struct `impl Token` + `serde_json::Value`.
+//   - `BlockModelLogger.log(event)` callback -> `&dyn Logger` trait; uses expr.rs (parse/evaluate).
+// =============================================================================
+
+// =============================================================================
 // Math block diagrams as DES stations.
 //
 // Blocks are stationary VisualBlock instances. Numeric MathSignal tokens move

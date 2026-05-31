@@ -7,6 +7,26 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/factory-floor-track3t.rs  (module des::general::factory_floor_track3t)
+// 1:1 file move. Warehouse/forklift QMDP+POMDP comparison model as a DES station graph.
+//
+// Declarations → Rust:
+//   type WarehouseStationKind = 'source'|'storage'|'aisle'|'sink' -> enum
+//   interface Warehouse*/StationDefinition -> structs; const TRACK3T_ARCHIVE_GROUNDING/*_SCENARIO -> `static`/`const`
+//   class WarehousePallet (impl Token) -> struct `impl Token`
+//   class WarehouseStation/Source/Sink (extend DESStation) / WarehouseForklift (extend SmartMovable)
+//                                    -> structs `impl` station/movable traits (bases -> traits)
+//   class WarehouseQMDPSolver / WarehousePlanner -> structs + impl
+//   fn buildWarehousePOMDP/simulateWarehouseScenario/runWarehouseComparison/... -> fns
+//
+// Conversion notes (file-specific):
+//   - `mulberry32(seed)` RNG (noisy observations, sampling) -> inject `RandomSource`.
+//   - `Map`/`Set` over station/pallet ids -> `HashMap`/`HashSet` (String/usize keys: Hash+Eq).
+//   - `WarehouseStationKind` union -> enum; builds on DiscreteBelief + POMDP (see those headers).
+//   - Station/movable inheritance (Source/Sink <- WarehouseStation <- DESStation) -> trait + composition.
+// =============================================================================
+
+// =============================================================================
 // factory-floor-track3t.ts
 //
 // A warehouse/factory-floor comparison model grounded in the archived Track3t

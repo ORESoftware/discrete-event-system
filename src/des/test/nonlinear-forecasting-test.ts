@@ -3,6 +3,23 @@
 
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: tests/nonlinear_forecasting_test.rs   (integration test crate)
+// 1:1 file move. Tests the nonlinear MDP/POMDP forecasting model via the
+// des-registry, so it is an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/CheckRow + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual rows and PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - MSE-improvement comparisons are float inequalities -> assert! on the
+//     relation (use approx tolerances only where exact ties are possible).
+//   - the forecast pipeline is stochastic -> a seeded rand::Rng so state-space
+//     sizes and metrics are reproducible.
+//   - async main()/await -> a plain sync #[test] (no real I/O await).
+// =============================================================================
+
 // Tests for nonlinear MDP/POMDP forecasting.
 
 import {getModel, runFromSpec} from '../general/des-registry';

@@ -3,6 +3,21 @@
 
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: tests/network_mutex_test.rs   (integration test crate)
+// 1:1 file move. Drives the network-mutex stations through the des-base runner,
+// so it is an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/close()/pass-fail counters + console.log  ->  #[test] fns
+//   using assert!/assert_eq!; drop the manual tally and PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - close(actual,expected,tol) float comparison -> approx::assert_relative_eq!.
+//   - channel-name string constants -> `&'static str` consts or an enum; FIFO
+//     completion-order assertions compare Vec<String> with assert_eq!.
+// =============================================================================
+
 import {
   buildNetworkMutexStations,
   MUTEX_DONE_CHANNEL,

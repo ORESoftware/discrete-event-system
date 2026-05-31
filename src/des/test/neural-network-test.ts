@@ -4,6 +4,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/neural_network_test.rs   (integration test crate)
+// 1:1 file move. Tests neural-net support across the hybrid boundary (supervised
+// DES training, neural Q-learning, neural ODE). Keep the doc-block below.
+//
+// Test harness → Rust:
+//   ad-hoc check()/CheckRow + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual rows and PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - net weight init + training are stochastic -> a seeded rand::Rng so the
+//     XOR / Q-learning / ODE results are reproducible.
+//   - mean()/loss comparisons -> approx::assert_relative_eq!.
+// =============================================================================
+
+// =============================================================================
 // test/neural-network-test.ts — neural-net support across the hybrid boundary:
 // supervised DES training, neural Q-learning for MDPs, and neural ODE solves.
 // =============================================================================

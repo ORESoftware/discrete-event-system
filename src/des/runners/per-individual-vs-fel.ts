@@ -7,6 +7,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/per-individual-vs-fel.rs  (a `fn main`
+//                    binary; an `examples/…rs` also works)
+// 1:1 file move. Confirms the framework's PerIndividualProcessor converges to the
+// classical FEL reference (Welch t-tests on every metric).
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - env (`N`) -> `std::env::var`.
+//   - kernel seeding (`withSeed`/`Date.now`) -> `SeededRandom`/`Clock`.
+//   - `console.log` -> `println!`.
+// =============================================================================
+
+// =============================================================================
 // Verification driver: confirm the new PerIndividualProcessor (single queue +
 // per-entity exit clocks) inside the framework's run loop converges to the
 // classical FEL reference's behaviour.

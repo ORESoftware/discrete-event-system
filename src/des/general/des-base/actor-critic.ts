@@ -12,6 +12,27 @@
 // - Convert constructor validation and impossible transition paths to Result.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/actor_critic.rs  (module des::general::des_base::actor_critic)
+// 1:1 file move. One-step tabular actor-critic agent (critic V + softmax actor);
+// extends RLAgentStation.
+//
+// Declarations → Rust:
+//   interface ActorCriticOptions    -> struct (#[derive(Default)] bar `rng`)
+//   class TabularActorCritic        -> struct: RLAgentStation<usize, usize>
+//
+// Conversion notes (file-specific):
+//   - This is CONCRETE (not abstract) but the doc notes subclasses may override
+//     valueOf/pi/valueGradStep/policyGradStep. Model overridable points as
+//     trait methods with provided (tabular) defaults if subclasses are needed.
+//   - Implements RLAgentStation's pickAction/update/endOfEpisode -> required trait fns.
+//   - `V: Float64Array` / `logits: Float64Array` (flat N×A) -> `Vec<f64>` indexed `s*A+a`.
+//   - `pi()` returns a fresh `Float64Array` softmax -> returns `Vec<f64>`.
+//   - `rng: () => number` -> inject `RandomSource`; categorical sampling in
+//     pickAction uses it; greedyAction reuses argmax.rs.
+//   - non-ASCII `δ` -> `delta`. `Math.exp` -> `f64::exp`.
+// =============================================================================
+
+// =============================================================================
 // general/des-base/actor-critic.ts — base class for ONE-STEP ACTOR-CRITIC
 // (Sutton & Barto §13.5). The agent simultaneously learns:
 //

@@ -7,6 +7,22 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-factmachine.rs  (a `fn main` binary;
+//                    an `examples/…rs` also works)
+// 1:1 file move. Validates the FactMachine POMDP (belief filter vs scipy, policy
+// ranking, Tiger POMDP, binary-vs-scalar market comparison).
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - env + `child_process` (scipy/numpy reference) -> `std::env::var` /
+//     `std::process::Command`.
+//   - `JSON.parse` of the reference -> serde struct.
+//   - `as any` on results -> concrete typed structs.
+//   - simulation RNG -> inject `SeededRandom`.
+//   - `process.exit(code)` -> `std::process::exit(code)`.
+// =============================================================================
+
+// =============================================================================
 // Validate the FactMachine POMDP.
 //
 //   STUDY 1: Bayesian belief filter ≡ scipy/numpy reference (bit-level).

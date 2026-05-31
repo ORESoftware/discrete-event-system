@@ -5,6 +5,32 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/adapters/simulated-annealing-adapter.rs
+//   (module des::general::adapters::simulated_annealing_adapter)
+// 1:1 file move. JSON adapter registering the simulated-annealing solver (TSP/knapsack).
+//
+// Declarations → Rust:
+//   interface SAParams / SAAdapterResult       -> struct (#[derive(Deserialize)];
+//             nested optional groups tsp?/knapsack? -> Option<struct>)
+//   const coolingSchema/saSchema: ParamSchema  -> serde + validator metadata; the
+//             `oneOf` cooling variants mirror a discriminated union -> #[serde(tag="kind")]
+//   const adapter: DESModelRegistration<P,R>   -> unit struct + impl ModelAdapter trait
+//   registerModel(adapter)                     -> explicit registration call
+//
+// Conversion notes (file-specific):
+//   - GotChA: `r as SAResult<unknown>` and `r.bestState as number[]` casts — the
+//     SA solver is generic over the state type; in Rust thread the concrete state
+//     type through generics (SAResult<Vec<usize>> for TSP / Vec<u8> for knapsack)
+//     instead of erasing to `unknown` and casting back.
+//   - CoolingSchedule is a discriminated union ('geometric'|'logarithmic'|'linear'|
+//     'exp-restart') -> enum CoolingSchedule matched on `kind`.
+//   - `params.tsp?.builtin === 'pentagon'`, `?? 'nearest-neighbor'` -> Option match
+//     + unwrap_or; `throw new Error` for missing config -> Result/validation.
+//   - writeCsv reads parallel history arrays (temperature/best/current) with
+//     `T[i] ?? ''` -> zip + Option handling.
+// =============================================================================
+
+// =============================================================================
 // general/adapters/simulated-annealing-adapter.ts — JSON adapter for the
 // simulated-annealing solver. Supports built-in TSP and knapsack problem
 // adapters; users can extend by writing TS subclasses for other state types.

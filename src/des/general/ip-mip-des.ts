@@ -7,6 +7,28 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/ip-mip-des.rs  (module des::general::ip_mip_des)
+// 1:1 file move. Integer/mixed-integer programming as a branch-and-cut DES station graph.
+//
+// Declarations → Rust:
+//   type LPRelaxationAlgorithm / ConcreteLPRelaxationAlgorithm -> enums (string-literal unions)
+//   type IPMIPTokenState = ... | ...  -> enum (discriminated union; `match` on kind)
+//   interface IPMIP{Problem,SolveOptions,Solution,ProblemFeatures,SolverTechniquePlan,...} -> structs
+//   class NodeToken/CompleteToken/RelaxationToken/CandidateToken/CutToken (extend PayloadStatefulToken)
+//                                    -> structs `impl Token` carrying a typed payload
+//   class *Station (extend DESStation) / BranchAndCutSolverStation (CompositeDESStation)
+//                                    -> structs `impl` the station traits (bases -> traits)
+//   fn solveIPMIPWithDES / analyzeIPMIPProblem / buildIPMIPSolverTechniquePlan / build* -> fns
+//
+// Conversion notes (file-specific):
+//   - `IPMIPTokenState` and `LPRelaxationAlgorithm` are discriminated/string unions -> Rust enums.
+//   - Pluggable LP backend (incremental/DES/internal/external) -> enum dispatch or `dyn LpBackend` trait.
+//   - `as any` casts + `Partial<Record<algo, number>>` usage counters -> concrete types / `HashMap<Algo,u64>`.
+//   - Stateful tokens flow through the graph mutating payloads -> `Rc<RefCell<..>>` or arena indices.
+//   - `throw`/Preconditions on bad problems -> `Result`/`panic!` per recoverability.
+// =============================================================================
+
+// =============================================================================
 // general/ip-mip-des.ts -- integer / mixed-integer programming as a DES graph.
 //
 // This module is deliberately one level more explicit than `milp-bnb.ts`.

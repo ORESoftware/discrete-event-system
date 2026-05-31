@@ -7,6 +7,20 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/stepsize-sweep.rs  (a `fn main` binary; an
+//                    `examples/stepsize-sweep.rs` also works)
+// 1:1 file move. Sweeps the framework kernel's stepSize vs the (stepSize-free)
+// FEL reference; emits a markdown table, ASCII chart, and CSV/SVG artifacts.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - env (`N`, `STEPSIZES` comma list) -> `std::env::var` + split/parse.
+//   - `fs`/`path` writing CSV/SVG -> `std::fs` / `std::path`; any `JSON` -> serde.
+//   - kernel seeding (`withSeed`/`Date.now`) -> `SeededRandom`/`Clock`.
+//   - `console.log` -> `println!`.
+// =============================================================================
+
+// =============================================================================
 // stepSize sweep: run the framework kernel at a range of step sizes (1.0, 0.5,
 // 0.1, 0.05 days), compare its time-averaged compartment populations against
 // the FEL reference (which is stepSize-independent). Visualises how the

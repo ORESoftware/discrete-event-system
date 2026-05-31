@@ -7,6 +7,27 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/feasibility-pipeline.rs  (module des::general::feasibility_pipeline)
+// 1:1 file move. Runnable DES pipeline: domain/constraint/objective checks + optional local improver.
+//
+// Declarations → Rust:
+//   type VariableKind/ConstraintSense/ObjectiveSense = '...'|'...' -> enums (+#[serde(rename_all)])
+//   const *_CHANNEL                -> `const &str` channel ids (or a ChannelId enum)
+//   interface OptimizationVariable/LinearObjective/LinearConstraint/StructuredOptimizationProblem/
+//             CandidateSolutionInput/Feasibility{ImprovementOptions,PipelineParams,Violation,Evaluation,
+//             PipelineNode,PipelineEdge,PipelineNetwork,PipelineResult}/CandidatePayload -> structs
+//   class *Token (impl Token)      -> structs `impl Token`
+//   class *Station (extend DESStation) -> structs `impl` the station trait
+//   fn runFeasibilityPipeline / evaluateCandidate -> fns
+//
+// Conversion notes (file-specific):
+//   - `ConstraintSense '<='|'>='|'='` / VariableKind / ObjectiveSense -> enums matched with `match`.
+//   - `mulberry32(seed)` in the local improver -> inject `RandomSource`.
+//   - Tokens/stations are nominal `impl Trait`; channels -> typed queues; `Preconditions` throw -> `Result`.
+//   - Depends on internal-solver-network (WallClockCheckerStation/StopSignalToken) — see that header.
+// =============================================================================
+
+// =============================================================================
 // General optimization feasibility checker pipeline.
 //
 // A user supplies a structured optimization problem plus their incumbent

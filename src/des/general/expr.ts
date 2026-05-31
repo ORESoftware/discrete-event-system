@@ -16,36 +16,45 @@
 //   DES graph, wrap them later as PureTransform implementors.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/expr.rs  (module des::general::expr)
+// 1:1 file move. AST `type Expr = ... | ...` -> `enum Expr`; variant constructors
+// (num/v/add/…) -> `Expr::Num(..)` style; algorithm classes (ExprParser,
+// ExprEvaluator, ExprCompiler, ExprPrinter, ExprDifferentiator, ExprSimplifier,
+// Numerical*Derivative/Gradient) -> struct + impl Transform; `switch (e.kind)`
+// -> `match e`. ExprCompiler returns a closure -> return `impl Fn(&[f64]) -> f64`.
+// @deprecated free-fn shims -> drop in Rust.
+// =============================================================================
+
+// =============================================================================
 // Tiny symbolic expression engine.
 //
 // Capabilities
-//   - Parse human strings: "x^2 * sin(x) + exp(-x)"
+//   - Parse human strings: "x^2 * sin(x) + exp(-x)"      (ExprParser)
 //   - Construct AST programmatically: mul(num(2), v('x'))
-//   - Numerically evaluate over an environment: eval(ast, {x: 2})
-//   - Symbolically differentiate w.r.t. any variable: diff(ast, 'x')
-//   - Algebraic simplification (constant folding, x*0=0, x*1=x, …)
-//   - Pretty-print back to a string: stringify(ast)
-//   - Convert to JS function: toFunction(ast, ['x']) → (x) => number
+//   - Numerically evaluate over an environment             (ExprEvaluator)
+//   - Symbolically differentiate w.r.t. any variable       (ExprDifferentiator)
+//   - Algebraic simplification (constant folding, x*0=0, …) (ExprSimplifier)
+//   - Pretty-print back to a string                         (ExprPrinter)
+//   - Convert to JS function: toFunction(ast, ['x'])
 //
-// Supported nodes:
-//   NumNode      a literal number
-//   VarNode      a named variable
-//   BinNode      Add | Sub | Mul | Div | Pow
-//   UnaryNeg     unary minus
-//   FuncNode     sin, cos, tan, asin, acos, atan, sinh, cosh, tanh,
-//                exp, log (natural), sqrt, abs
+// MIGRATION SHAPE
+//   `Expr` is a DISCRIMINATED UNION (`kind: …`) — the idiomatic TypeScript
+//   stand-in for a Rust `enum`, and every algorithm pattern-matches via
+//   `switch (e.kind)`, mapping to a Rust `match`. Each algorithm is a class
+//   (a `PureTransform` where it has a clean single-input shape) so the unit of
+//   behaviour maps to a Rust `struct + impl`. The variant CONSTRUCTORS
+//   (`num`, `v`, `add`, …) stay as small factories — they map to Rust
+//   `Expr::Num(..)` style variant construction. Thin `@deprecated` function
+//   shims preserve the historical free-function API.
 //
-// Differentiation rules cover all of the above. Simplification is
-// conservative (one pass of constant folding + identity rules) to keep
-// derivatives readable; it does not attempt full canonicalisation.
-//
-// This module is the "math language" used by main-calculus.ts and any
-// solver that wants symbolic input (gradients, Jacobians). Every solver
-// also accepts plain JS functions, so the expression layer is optional.
+// Supported function nodes:
+//   sin, cos, tan, asin, acos, atan, sinh, cosh, tanh, exp, log, sqrt, abs
 // =============================================================================
 
+import {PureTransform} from '../shared/transform';
+
 // -----------------------------------------------------------------------------
-// AST
+// AST  (discriminated union ⇒ Rust enum)
 // -----------------------------------------------------------------------------
 
 export type Expr =
@@ -73,7 +82,7 @@ const FUNCS: ReadonlySet<string> = new Set([
 ]);
 
 // -----------------------------------------------------------------------------
-// Construction helpers (programmatic API).
+// Variant constructors (programmatic API ⇒ Rust enum-variant construction).
 // -----------------------------------------------------------------------------
 
 export const num = (v: number): NumNode => ({kind: 'num', value: v});
@@ -89,6 +98,27 @@ export const fn  = (name: FuncName, a: Expr): FuncNode => ({kind: 'func', name, 
 export const ZERO = num(0);
 export const ONE  = num(1);
 
+/** Evaluate a built-in unary math function by name (Rust `match` on FuncName). */
+export class MathFn {
+  static apply(name: FuncName, x: number): number {
+    switch (name) {
+      case 'sin':  return Math.sin(x);
+      case 'cos':  return Math.cos(x);
+      case 'tan':  return Math.tan(x);
+      case 'asin': return Math.asin(x);
+      case 'acos': return Math.acos(x);
+      case 'atan': return Math.atan(x);
+      case 'sinh': return Math.sinh(x);
+      case 'cosh': return Math.cosh(x);
+      case 'tanh': return Math.tanh(x);
+      case 'exp':  return Math.exp(x);
+      case 'log':  return Math.log(x);
+      case 'sqrt': return Math.sqrt(x);
+      case 'abs':  return Math.abs(x);
+    }
+  }
+}
+
 // -----------------------------------------------------------------------------
 // Parser: precedence-climbing recursive descent.
 //   expression → term ('+' term | '-' term)*
@@ -98,139 +128,145 @@ export const ONE  = num(1);
 //   atom       → number | variable | function '(' expression ')' | '(' expression ')'
 // -----------------------------------------------------------------------------
 
-interface Lexer {
-  s: string;
-  i: number;
-}
-
-function peekChar(L: Lexer): string { return L.i < L.s.length ? L.s[L.i] : ''; }
-function skipWS(L: Lexer): void {
-  while (L.i < L.s.length && /\s/.test(L.s[L.i])) L.i++;
-}
-
 interface Token {
   kind: 'num' | 'op' | 'lparen' | 'rparen' | 'ident' | 'comma' | 'eof';
   text: string;
 }
 
-function nextToken(L: Lexer): Token {
-  skipWS(L);
-  if (L.i >= L.s.length) return {kind: 'eof', text: ''};
-  const c = L.s[L.i];
-  if (c === '(') { L.i++; return {kind: 'lparen', text: '('}; }
-  if (c === ')') { L.i++; return {kind: 'rparen', text: ')'}; }
-  if (c === ',') { L.i++; return {kind: 'comma',  text: ','}; }
-  if ('+-*/^'.includes(c)) { L.i++; return {kind: 'op', text: c}; }
-  if (/[0-9.]/.test(c)) {
-    let j = L.i;
-    while (j < L.s.length && /[0-9.]/.test(L.s[j])) j++;
-    if (j < L.s.length && (L.s[j] === 'e' || L.s[j] === 'E')) {
-      j++;
-      if (j < L.s.length && (L.s[j] === '+' || L.s[j] === '-')) j++;
-      while (j < L.s.length && /[0-9]/.test(L.s[j])) j++;
+/**
+ * Stateful recursive-descent parser. Owns the scan position (`i`) and the
+ * current token as instance fields, so the lexer/parser scratch state lives on
+ * `this` rather than in free functions. Maps to a Rust struct + impl.
+ */
+export class ExprParser extends PureTransform<string, Expr> {
+  private s = '';
+  private i = 0;
+  private cur: Token = {kind: 'eof', text: ''};
+
+  transform(src: string): Expr {
+    this.s = src;
+    this.i = 0;
+    this.cur = this.nextToken();
+    const e = this.parseExpression();
+    if (this.cur.kind !== 'eof') {
+      console.warn(`[expr.parse] trailing token "${this.cur.text}" after a complete expression in ${JSON.stringify(src)} — likely a missing operator or extra characters.`);
+      throw new Error(`unexpected trailing token "${this.cur.text}"`);
     }
-    const text = L.s.slice(L.i, j);
-    L.i = j;
-    return {kind: 'num', text};
-  }
-  if (/[a-zA-Z_]/.test(c)) {
-    let j = L.i;
-    while (j < L.s.length && /[a-zA-Z_0-9]/.test(L.s[j])) j++;
-    const text = L.s.slice(L.i, j);
-    L.i = j;
-    return {kind: 'ident', text};
-  }
-  console.warn(`[expr.lex] unexpected character '${c}' at position ${L.i} in ${JSON.stringify(L.s)}.`);
-  throw new Error(`unexpected char '${c}' at position ${L.i}`);
-}
-
-interface Parser {
-  L: Lexer;
-  cur: Token;
-}
-
-function advance(P: Parser): Token { const t = P.cur; P.cur = nextToken(P.L); return t; }
-function expect(P: Parser, kind: Token['kind'], text?: string): Token {
-  if (P.cur.kind !== kind || (text !== undefined && P.cur.text !== text)) {
-    console.warn(`[expr.parse] syntax error: expected ${kind}${text ? ' "' + text + '"' : ''} but got ${P.cur.kind} "${P.cur.text}" at position ${P.L.i}.`);
-    throw new Error(`expected ${kind}${text ? ' "' + text + '"' : ''}, got ${P.cur.kind} "${P.cur.text}"`);
-  }
-  return advance(P);
-}
-
-function parseExpression(P: Parser): Expr {
-  let left = parseTerm(P);
-  while (P.cur.kind === 'op' && (P.cur.text === '+' || P.cur.text === '-')) {
-    const op = advance(P).text as '+' | '-';
-    const right = parseTerm(P);
-    left = {kind: 'bin', op, left, right};
-  }
-  return left;
-}
-function parseTerm(P: Parser): Expr {
-  let left = parseFactor(P);
-  while (P.cur.kind === 'op' && (P.cur.text === '*' || P.cur.text === '/')) {
-    const op = advance(P).text as '*' | '/';
-    const right = parseFactor(P);
-    left = {kind: 'bin', op, left, right};
-  }
-  return left;
-}
-function parseFactor(P: Parser): Expr {
-  const left = parseUnary(P);
-  if (P.cur.kind === 'op' && P.cur.text === '^') {
-    advance(P);
-    const right = parseFactor(P);   // right-associative
-    return {kind: 'bin', op: '^', left, right};
-  }
-  return left;
-}
-function parseUnary(P: Parser): Expr {
-  if (P.cur.kind === 'op' && P.cur.text === '-') {
-    advance(P);
-    return {kind: 'neg', arg: parseUnary(P)};
-  }
-  if (P.cur.kind === 'op' && P.cur.text === '+') {
-    advance(P);
-    return parseUnary(P);
-  }
-  return parseAtom(P);
-}
-function parseAtom(P: Parser): Expr {
-  if (P.cur.kind === 'num') {
-    const t = advance(P);
-    return {kind: 'num', value: parseFloat(t.text)};
-  }
-  if (P.cur.kind === 'lparen') {
-    advance(P);
-    const e = parseExpression(P);
-    expect(P, 'rparen');
     return e;
   }
-  if (P.cur.kind === 'ident') {
-    const t = advance(P);
-    if ((P.cur as Token).kind === 'lparen' && FUNCS.has(t.text)) {
-      advance(P);
-      const arg = parseExpression(P);
-      expect(P, 'rparen');
-      const fname: FuncName = (t.text === 'ln' ? 'log' : t.text) as FuncName;
-      return {kind: 'func', name: fname, arg};
-    }
-    return {kind: 'var', name: t.text};
-  }
-  console.warn(`[expr.parse] unexpected token ${P.cur.kind} "${P.cur.text}" while parsing an atom (position ${P.L.i}).`);
-  throw new Error(`unexpected token ${P.cur.kind} "${P.cur.text}"`);
-}
 
-export function parse(src: string): Expr {
-  const L: Lexer = {s: src, i: 0};
-  const P: Parser = {L, cur: nextToken(L)};
-  const e = parseExpression(P);
-  if (P.cur.kind !== 'eof') {
-    console.warn(`[expr.parse] trailing token "${P.cur.text}" after a complete expression in ${JSON.stringify(src)} — likely a missing operator or extra characters.`);
-    throw new Error(`unexpected trailing token "${P.cur.text}"`);
+  private skipWS(): void {
+    while (this.i < this.s.length && /\s/.test(this.s[this.i])) this.i++;
   }
-  return e;
+
+  private nextToken(): Token {
+    this.skipWS();
+    if (this.i >= this.s.length) return {kind: 'eof', text: ''};
+    const c = this.s[this.i];
+    if (c === '(') { this.i++; return {kind: 'lparen', text: '('}; }
+    if (c === ')') { this.i++; return {kind: 'rparen', text: ')'}; }
+    if (c === ',') { this.i++; return {kind: 'comma',  text: ','}; }
+    if ('+-*/^'.includes(c)) { this.i++; return {kind: 'op', text: c}; }
+    if (/[0-9.]/.test(c)) {
+      let j = this.i;
+      while (j < this.s.length && /[0-9.]/.test(this.s[j])) j++;
+      if (j < this.s.length && (this.s[j] === 'e' || this.s[j] === 'E')) {
+        j++;
+        if (j < this.s.length && (this.s[j] === '+' || this.s[j] === '-')) j++;
+        while (j < this.s.length && /[0-9]/.test(this.s[j])) j++;
+      }
+      const text = this.s.slice(this.i, j);
+      this.i = j;
+      return {kind: 'num', text};
+    }
+    if (/[a-zA-Z_]/.test(c)) {
+      let j = this.i;
+      while (j < this.s.length && /[a-zA-Z_0-9]/.test(this.s[j])) j++;
+      const text = this.s.slice(this.i, j);
+      this.i = j;
+      return {kind: 'ident', text};
+    }
+    console.warn(`[expr.lex] unexpected character '${c}' at position ${this.i} in ${JSON.stringify(this.s)}.`);
+    throw new Error(`unexpected char '${c}' at position ${this.i}`);
+  }
+
+  private advance(): Token { const t = this.cur; this.cur = this.nextToken(); return t; }
+
+  private expect(kind: Token['kind'], text?: string): Token {
+    if (this.cur.kind !== kind || (text !== undefined && this.cur.text !== text)) {
+      console.warn(`[expr.parse] syntax error: expected ${kind}${text ? ' "' + text + '"' : ''} but got ${this.cur.kind} "${this.cur.text}" at position ${this.i}.`);
+      throw new Error(`expected ${kind}${text ? ' "' + text + '"' : ''}, got ${this.cur.kind} "${this.cur.text}"`);
+    }
+    return this.advance();
+  }
+
+  private parseExpression(): Expr {
+    let left = this.parseTerm();
+    while (this.cur.kind === 'op' && (this.cur.text === '+' || this.cur.text === '-')) {
+      const op = this.advance().text as '+' | '-';
+      const right = this.parseTerm();
+      left = {kind: 'bin', op, left, right};
+    }
+    return left;
+  }
+
+  private parseTerm(): Expr {
+    let left = this.parseFactor();
+    while (this.cur.kind === 'op' && (this.cur.text === '*' || this.cur.text === '/')) {
+      const op = this.advance().text as '*' | '/';
+      const right = this.parseFactor();
+      left = {kind: 'bin', op, left, right};
+    }
+    return left;
+  }
+
+  private parseFactor(): Expr {
+    const left = this.parseUnary();
+    if (this.cur.kind === 'op' && this.cur.text === '^') {
+      this.advance();
+      const right = this.parseFactor();   // right-associative
+      return {kind: 'bin', op: '^', left, right};
+    }
+    return left;
+  }
+
+  private parseUnary(): Expr {
+    if (this.cur.kind === 'op' && this.cur.text === '-') {
+      this.advance();
+      return {kind: 'neg', arg: this.parseUnary()};
+    }
+    if (this.cur.kind === 'op' && this.cur.text === '+') {
+      this.advance();
+      return this.parseUnary();
+    }
+    return this.parseAtom();
+  }
+
+  private parseAtom(): Expr {
+    if (this.cur.kind === 'num') {
+      const t = this.advance();
+      return {kind: 'num', value: parseFloat(t.text)};
+    }
+    if (this.cur.kind === 'lparen') {
+      this.advance();
+      const e = this.parseExpression();
+      this.expect('rparen');
+      return e;
+    }
+    if (this.cur.kind === 'ident') {
+      const t = this.advance();
+      if ((this.cur as Token).kind === 'lparen' && FUNCS.has(t.text)) {
+        this.advance();
+        const arg = this.parseExpression();
+        this.expect('rparen');
+        const fname: FuncName = (t.text === 'ln' ? 'log' : t.text) as FuncName;
+        return {kind: 'func', name: fname, arg};
+      }
+      return {kind: 'var', name: t.text};
+    }
+    console.warn(`[expr.parse] unexpected token ${this.cur.kind} "${this.cur.text}" while parsing an atom (position ${this.i}).`);
+    throw new Error(`unexpected token ${this.cur.kind} "${this.cur.text}"`);
+  }
 }
 
 // -----------------------------------------------------------------------------
@@ -239,51 +275,62 @@ export function parse(src: string): Expr {
 
 export type Env = Record<string, number>;
 
-const FUNC_IMPL: Record<FuncName, (x: number) => number> = {
-  sin: Math.sin, cos: Math.cos, tan: Math.tan,
-  asin: Math.asin, acos: Math.acos, atan: Math.atan,
-  sinh: Math.sinh, cosh: Math.cosh, tanh: Math.tanh,
-  exp: Math.exp, log: Math.log, sqrt: Math.sqrt, abs: Math.abs,
-};
+export interface EvalInput {
+  expr: Expr;
+  env: Env;
+}
 
-export function evaluate(e: Expr, env: Env): number {
-  switch (e.kind) {
-    case 'num': return e.value;
-    case 'var': {
-      const v = env[e.name];
-      if (v === undefined) {
-        console.warn(`[expr.evaluate] undefined variable '${e.name}' (env has: ${Object.keys(env).join(', ') || '(empty)'}) — variable not bound in the evaluation environment.`);
-        throw new Error(`undefined variable '${e.name}'`);
+/** Evaluate an AST over a variable environment. */
+export class ExprEvaluator extends PureTransform<EvalInput, number> {
+  transform(input: EvalInput): number {
+    return this.eval(input.expr, input.env);
+  }
+
+  eval(e: Expr, env: Env): number {
+    switch (e.kind) {
+      case 'num': return e.value;
+      case 'var': {
+        const value = env[e.name];
+        if (value === undefined) {
+          console.warn(`[expr.evaluate] undefined variable '${e.name}' (env has: ${Object.keys(env).join(', ') || '(empty)'}) — variable not bound in the evaluation environment.`);
+          throw new Error(`undefined variable '${e.name}'`);
+        }
+        return value;
       }
-      return v;
-    }
-    case 'neg': return -evaluate(e.arg, env);
-    case 'func': return FUNC_IMPL[e.name](evaluate(e.arg, env));
-    case 'bin': {
-      const a = evaluate(e.left, env);
-      const b = evaluate(e.right, env);
-      switch (e.op) {
-        case '+': return a + b;
-        case '-': return a - b;
-        case '*': return a * b;
-        case '/': return a / b;
-        case '^': return Math.pow(a, b);
+      case 'neg': return -this.eval(e.arg, env);
+      case 'func': return MathFn.apply(e.name, this.eval(e.arg, env));
+      case 'bin': {
+        const a = this.eval(e.left, env);
+        const b = this.eval(e.right, env);
+        switch (e.op) {
+          case '+': return a + b;
+          case '-': return a - b;
+          case '*': return a * b;
+          case '/': return a / b;
+          case '^': return Math.pow(a, b);
+        }
       }
     }
   }
 }
 
 /**
- * Compile an expression to a JS function over a fixed argument list.
- * Faster than re-walking the AST repeatedly. Generated function does
- * NOT use eval — it walks the AST under closure capture.
+ * Compile an expression to a JS function over a fixed argument list. Faster
+ * than re-walking the AST repeatedly; the generated function does NOT use eval
+ * — it walks the AST under closure capture.
  */
-export function toFunction(e: Expr, args: string[]): (...vals: number[]) => number {
-  return (...vals: number[]) => {
-    const env: Env = {};
-    for (let i = 0; i < args.length; i++) env[args[i]] = vals[i];
-    return evaluate(e, env);
-  };
+export class ExprCompiler extends PureTransform<{expr: Expr; args: string[]}, (...vals: number[]) => number> {
+  private readonly evaluator = new ExprEvaluator();
+
+  transform(input: {expr: Expr; args: string[]}): (...vals: number[]) => number {
+    const {expr, args} = input;
+    const evaluator = this.evaluator;
+    return (...vals: number[]) => {
+      const env: Env = {};
+      for (let i = 0; i < args.length; i++) env[args[i]] = vals[i];
+      return evaluator.eval(expr, env);
+    };
+  }
 }
 
 // -----------------------------------------------------------------------------
@@ -292,25 +339,32 @@ export function toFunction(e: Expr, args: string[]): (...vals: number[]) => numb
 
 const PREC: Record<string, number> = {'+': 1, '-': 1, '*': 2, '/': 2, '^': 3, 'neg': 4};
 
-export function stringify(e: Expr, parentPrec = 0): string {
-  switch (e.kind) {
-    case 'num': {
-      const v = e.value;
-      if (v < 0) return `(${v})`;
-      return Number.isInteger(v) ? v.toFixed(0) : v.toString();
-    }
-    case 'var': return e.name;
-    case 'neg': {
-      const inner = stringify(e.arg, PREC['neg']);
-      return PREC['neg'] < parentPrec ? `(-${inner})` : `-${inner}`;
-    }
-    case 'func': return `${e.name}(${stringify(e.arg, 0)})`;
-    case 'bin': {
-      const p = PREC[e.op];
-      const l = stringify(e.left, p);
-      const r = stringify(e.right, e.op === '^' ? p - 1 : p + 1);
-      const s = `${l} ${e.op} ${r}`;
-      return p < parentPrec ? `(${s})` : s;
+/** Render an AST back to an infix string with minimal parenthesization. */
+export class ExprPrinter extends PureTransform<Expr, string> {
+  transform(e: Expr): string {
+    return this.print(e, 0);
+  }
+
+  print(e: Expr, parentPrec: number): string {
+    switch (e.kind) {
+      case 'num': {
+        const value = e.value;
+        if (value < 0) return `(${value})`;
+        return Number.isInteger(value) ? value.toFixed(0) : value.toString();
+      }
+      case 'var': return e.name;
+      case 'neg': {
+        const inner = this.print(e.arg, PREC['neg']);
+        return PREC['neg'] < parentPrec ? `(-${inner})` : `-${inner}`;
+      }
+      case 'func': return `${e.name}(${this.print(e.arg, 0)})`;
+      case 'bin': {
+        const p = PREC[e.op];
+        const l = this.print(e.left, p);
+        const r = this.print(e.right, e.op === '^' ? p - 1 : p + 1);
+        const s = `${l} ${e.op} ${r}`;
+        return p < parentPrec ? `(${s})` : s;
+      }
     }
   }
 }
@@ -320,53 +374,57 @@ export function stringify(e: Expr, parentPrec = 0): string {
 // -----------------------------------------------------------------------------
 
 /**
- * d/dvar of expression e. Returns a new AST. The result is simplified
- * (constant folding + identity rules) so derivatives stay readable.
+ * d/dvar of an expression. Returns a new AST, simplified (constant folding +
+ * identity rules) so derivatives stay readable.
  */
-export function diff(e: Expr, varName: string): Expr {
-  return simplify(diffRaw(e, varName));
-}
+export class ExprDifferentiator extends PureTransform<{expr: Expr; varName: string}, Expr> {
+  private readonly simplifier = new ExprSimplifier();
 
-function diffRaw(e: Expr, x: string): Expr {
-  switch (e.kind) {
-    case 'num': return ZERO;
-    case 'var': return e.name === x ? ONE : ZERO;
-    case 'neg': return neg(diffRaw(e.arg, x));
-    case 'bin': {
-      const u = e.left, v = e.right;
-      const du = diffRaw(u, x), dv = diffRaw(v, x);
-      switch (e.op) {
-        case '+': return add(du, dv);
-        case '-': return sub(du, dv);
-        case '*': return add(mul(du, v), mul(u, dv));   // (uv)' = u'v + uv'
-        case '/': return div(sub(mul(du, v), mul(u, dv)), pow(v, num(2)));   // (u/v)' = (u'v − uv')/v²
-        case '^': {
-          // d/dx [u^v]: if v is a constant, easy:  v · u^(v-1) · u'
-          // general:  u^v · (v' · ln u + v · u'/u)
-          if (v.kind === 'num') {
-            return mul(mul(num(v.value), pow(u, num(v.value - 1))), du);
+  transform(input: {expr: Expr; varName: string}): Expr {
+    return this.simplifier.transform(this.diffRaw(input.expr, input.varName));
+  }
+
+  private diffRaw(e: Expr, x: string): Expr {
+    switch (e.kind) {
+      case 'num': return ZERO;
+      case 'var': return e.name === x ? ONE : ZERO;
+      case 'neg': return neg(this.diffRaw(e.arg, x));
+      case 'bin': {
+        const u = e.left, w = e.right;
+        const du = this.diffRaw(u, x), dw = this.diffRaw(w, x);
+        switch (e.op) {
+          case '+': return add(du, dw);
+          case '-': return sub(du, dw);
+          case '*': return add(mul(du, w), mul(u, dw));   // (uv)' = u'v + uv'
+          case '/': return div(sub(mul(du, w), mul(u, dw)), pow(w, num(2)));   // (u/v)' = (u'v − uv')/v²
+          case '^': {
+            // d/dx [u^v]: if v is a constant, easy:  v · u^(v-1) · u'
+            // general:  u^v · (v' · ln u + v · u'/u)
+            if (w.kind === 'num') {
+              return mul(mul(num(w.value), pow(u, num(w.value - 1))), du);
+            }
+            return mul(pow(u, w), add(mul(dw, fn('log', u)), mul(w, div(du, u))));
           }
-          return mul(pow(u, v), add(mul(dv, fn('log', u)), mul(v, div(du, u))));
         }
       }
-    }
-    case 'func': {
-      const u = e.arg;
-      const du = diffRaw(u, x);
-      switch (e.name) {
-        case 'sin':  return mul(fn('cos', u), du);
-        case 'cos':  return mul(neg(fn('sin', u)), du);
-        case 'tan':  return mul(div(ONE, pow(fn('cos', u), num(2))), du);
-        case 'asin': return mul(div(ONE, fn('sqrt', sub(ONE, pow(u, num(2))))), du);
-        case 'acos': return mul(neg(div(ONE, fn('sqrt', sub(ONE, pow(u, num(2)))))), du);
-        case 'atan': return mul(div(ONE, add(ONE, pow(u, num(2)))), du);
-        case 'sinh': return mul(fn('cosh', u), du);
-        case 'cosh': return mul(fn('sinh', u), du);
-        case 'tanh': return mul(sub(ONE, pow(fn('tanh', u), num(2))), du);
-        case 'exp':  return mul(fn('exp', u), du);
-        case 'log':  return mul(div(ONE, u), du);
-        case 'sqrt': return mul(div(ONE, mul(num(2), fn('sqrt', u))), du);
-        case 'abs':  return mul(div(u, fn('abs', u)), du);   // weak: undefined at 0
+      case 'func': {
+        const u = e.arg;
+        const du = this.diffRaw(u, x);
+        switch (e.name) {
+          case 'sin':  return mul(fn('cos', u), du);
+          case 'cos':  return mul(neg(fn('sin', u)), du);
+          case 'tan':  return mul(div(ONE, pow(fn('cos', u), num(2))), du);
+          case 'asin': return mul(div(ONE, fn('sqrt', sub(ONE, pow(u, num(2))))), du);
+          case 'acos': return mul(neg(div(ONE, fn('sqrt', sub(ONE, pow(u, num(2)))))), du);
+          case 'atan': return mul(div(ONE, add(ONE, pow(u, num(2)))), du);
+          case 'sinh': return mul(fn('cosh', u), du);
+          case 'cosh': return mul(fn('sinh', u), du);
+          case 'tanh': return mul(sub(ONE, pow(fn('tanh', u), num(2))), du);
+          case 'exp':  return mul(fn('exp', u), du);
+          case 'log':  return mul(div(ONE, u), du);
+          case 'sqrt': return mul(div(ONE, mul(num(2), fn('sqrt', u))), du);
+          case 'abs':  return mul(div(u, fn('abs', u)), du);   // weak: undefined at 0
+        }
       }
     }
   }
@@ -376,109 +434,164 @@ function diffRaw(e: Expr, x: string): Expr {
 // Simplification: one bottom-up pass with constant folding and identity rules.
 // -----------------------------------------------------------------------------
 
-export function simplify(e: Expr): Expr {
-  switch (e.kind) {
-    case 'num': case 'var': return e;
-    case 'neg': {
-      const a = simplify(e.arg);
-      if (a.kind === 'num') return num(-a.value);
-      if (a.kind === 'neg') return a.arg;            // --x = x
-      return neg(a);
-    }
-    case 'func': {
-      const a = simplify(e.arg);
-      if (a.kind === 'num') {
-        return num(FUNC_IMPL[e.name](a.value));
+export class ExprSimplifier extends PureTransform<Expr, Expr> {
+  transform(e: Expr): Expr {
+    switch (e.kind) {
+      case 'num': case 'var': return e;
+      case 'neg': {
+        const a = this.transform(e.arg);
+        if (a.kind === 'num') return num(-a.value);
+        if (a.kind === 'neg') return a.arg;            // --x = x
+        return neg(a);
       }
-      return fn(e.name, a);
-    }
-    case 'bin': {
-      const a = simplify(e.left);
-      const b = simplify(e.right);
-      // Constant folding.
-      if (a.kind === 'num' && b.kind === 'num') {
-        switch (e.op) {
-          case '+': return num(a.value + b.value);
-          case '-': return num(a.value - b.value);
-          case '*': return num(a.value * b.value);
-          case '/': if (b.value !== 0) return num(a.value / b.value); break;
-          case '^': return num(Math.pow(a.value, b.value));
+      case 'func': {
+        const a = this.transform(e.arg);
+        if (a.kind === 'num') {
+          return num(MathFn.apply(e.name, a.value));
         }
+        return fn(e.name, a);
       }
-      // Identity rules.
-      switch (e.op) {
-        case '+':
-          if (a.kind === 'num' && a.value === 0) return b;
-          if (b.kind === 'num' && b.value === 0) return a;
-          break;
-        case '-':
-          if (b.kind === 'num' && b.value === 0) return a;
-          if (a.kind === 'num' && a.value === 0) return neg(b);
-          break;
-        case '*':
-          if (a.kind === 'num' && a.value === 0) return ZERO;
-          if (b.kind === 'num' && b.value === 0) return ZERO;
-          if (a.kind === 'num' && a.value === 1) return b;
-          if (b.kind === 'num' && b.value === 1) return a;
-          if (a.kind === 'num' && a.value === -1) return simplify(neg(b));
-          if (b.kind === 'num' && b.value === -1) return simplify(neg(a));
-          break;
-        case '/':
-          if (b.kind === 'num' && b.value === 1) return a;
-          if (a.kind === 'num' && a.value === 0) return ZERO;
-          break;
-        case '^':
-          if (b.kind === 'num' && b.value === 0) return ONE;
-          if (b.kind === 'num' && b.value === 1) return a;
-          if (a.kind === 'num' && a.value === 1) return ONE;
-          if (a.kind === 'num' && a.value === 0 && b.kind === 'num' && b.value > 0) return ZERO;
-          break;
+      case 'bin': {
+        const a = this.transform(e.left);
+        const b = this.transform(e.right);
+        // Constant folding.
+        if (a.kind === 'num' && b.kind === 'num') {
+          switch (e.op) {
+            case '+': return num(a.value + b.value);
+            case '-': return num(a.value - b.value);
+            case '*': return num(a.value * b.value);
+            case '/': if (b.value !== 0) return num(a.value / b.value); break;
+            case '^': return num(Math.pow(a.value, b.value));
+          }
+        }
+        // Identity rules.
+        switch (e.op) {
+          case '+':
+            if (a.kind === 'num' && a.value === 0) return b;
+            if (b.kind === 'num' && b.value === 0) return a;
+            break;
+          case '-':
+            if (b.kind === 'num' && b.value === 0) return a;
+            if (a.kind === 'num' && a.value === 0) return neg(b);
+            break;
+          case '*':
+            if (a.kind === 'num' && a.value === 0) return ZERO;
+            if (b.kind === 'num' && b.value === 0) return ZERO;
+            if (a.kind === 'num' && a.value === 1) return b;
+            if (b.kind === 'num' && b.value === 1) return a;
+            if (a.kind === 'num' && a.value === -1) return this.transform(neg(b));
+            if (b.kind === 'num' && b.value === -1) return this.transform(neg(a));
+            break;
+          case '/':
+            if (b.kind === 'num' && b.value === 1) return a;
+            if (a.kind === 'num' && a.value === 0) return ZERO;
+            break;
+          case '^':
+            if (b.kind === 'num' && b.value === 0) return ONE;
+            if (b.kind === 'num' && b.value === 1) return a;
+            if (a.kind === 'num' && a.value === 1) return ONE;
+            if (a.kind === 'num' && a.value === 0 && b.kind === 'num' && b.value > 0) return ZERO;
+            break;
+        }
+        return {kind: 'bin', op: e.op, left: a, right: b};
       }
-      return {kind: 'bin', op: e.op, left: a, right: b};
     }
   }
 }
 
 // -----------------------------------------------------------------------------
-// Convenience: numerical derivative (central difference). Useful for
-// black-box JS functions where the analytical derivative isn't
-// available. Order O(h²); choose h ≈ 1e-6 for f64 problems.
+// Numerical derivatives for black-box JS functions.
 // -----------------------------------------------------------------------------
 
-export function numericalDerivative(
-  f: (x: number) => number,
-  x: number,
-  h: number = 1e-6,
-): number {
-  return (f(x + h) - f(x - h)) / (2 * h);
+/** Central-difference derivative; O(h²). Choose h ≈ 1e-6 for f64 problems. */
+export class NumericalDerivative extends PureTransform<{f: (x: number) => number; x: number}, number> {
+  constructor(private readonly h = 1e-6) { super(); }
+
+  transform(input: {f: (x: number) => number; x: number}): number {
+    const {f, x} = input;
+    return (f(x + this.h) - f(x - this.h)) / (2 * this.h);
+  }
 }
 
 /** Richardson-extrapolated derivative; O(h⁴). */
-export function richardsonDerivative(
-  f: (x: number) => number,
-  x: number,
-  h: number = 1e-3,
-): number {
-  const d1 = (f(x + h) - f(x - h)) / (2 * h);
-  const d2 = (f(x + h / 2) - f(x - h / 2)) / h;
-  return (4 * d2 - d1) / 3;
+export class RichardsonDerivative extends PureTransform<{f: (x: number) => number; x: number}, number> {
+  constructor(private readonly h = 1e-3) { super(); }
+
+  transform(input: {f: (x: number) => number; x: number}): number {
+    const {f, x} = input;
+    const h = this.h;
+    const d1 = (f(x + h) - f(x - h)) / (2 * h);
+    const d2 = (f(x + h / 2) - f(x - h / 2)) / h;
+    return (4 * d2 - d1) / 3;
+  }
 }
 
-/** Central-difference gradient for f: R^n → R. */
-export function numericalGradient(
-  f: (x: number[]) => number,
-  x: number[],
-  h: number = 1e-6,
-): number[] {
-  const n = x.length;
-  const grad = new Array<number>(n);
-  const xc = x.slice();
-  for (let i = 0; i < n; i++) {
-    const orig = xc[i];
-    xc[i] = orig + h; const fp = f(xc);
-    xc[i] = orig - h; const fm = f(xc);
-    xc[i] = orig;
-    grad[i] = (fp - fm) / (2 * h);
+/** Central-difference gradient for f: Rⁿ → R. */
+export class NumericalGradient extends PureTransform<{f: (x: number[]) => number; x: number[]}, number[]> {
+  constructor(private readonly h = 1e-6) { super(); }
+
+  transform(input: {f: (x: number[]) => number; x: number[]}): number[] {
+    const {f, x} = input;
+    const h = this.h;
+    const n = x.length;
+    const grad = new Array<number>(n);
+    const xc = x.slice();
+    for (let i = 0; i < n; i++) {
+      const orig = xc[i];
+      xc[i] = orig + h; const fp = f(xc);
+      xc[i] = orig - h; const fm = f(xc);
+      xc[i] = orig;
+      grad[i] = (fp - fm) / (2 * h);
+    }
+    return grad;
   }
-  return grad;
+}
+
+// -----------------------------------------------------------------------------
+// Backward-compatible function shims (kept thin; prefer the classes above).
+// -----------------------------------------------------------------------------
+
+/** @deprecated Use `new ExprParser().transform(src)`. */
+export function parse(src: string): Expr {
+  return new ExprParser().transform(src);
+}
+
+/** @deprecated Use `new ExprEvaluator().transform({expr, env})`. */
+export function evaluate(e: Expr, env: Env): number {
+  return new ExprEvaluator().eval(e, env);
+}
+
+/** @deprecated Use `new ExprCompiler().transform({expr, args})`. */
+export function toFunction(e: Expr, args: string[]): (...vals: number[]) => number {
+  return new ExprCompiler().transform({expr: e, args});
+}
+
+/** @deprecated Use `new ExprPrinter().transform(e)`. */
+export function stringify(e: Expr, parentPrec = 0): string {
+  return new ExprPrinter().print(e, parentPrec);
+}
+
+/** @deprecated Use `new ExprDifferentiator().transform({expr, varName})`. */
+export function diff(e: Expr, varName: string): Expr {
+  return new ExprDifferentiator().transform({expr: e, varName});
+}
+
+/** @deprecated Use `new ExprSimplifier().transform(e)`. */
+export function simplify(e: Expr): Expr {
+  return new ExprSimplifier().transform(e);
+}
+
+/** @deprecated Use `new NumericalDerivative(h).transform({f, x})`. */
+export function numericalDerivative(f: (x: number) => number, x: number, h = 1e-6): number {
+  return new NumericalDerivative(h).transform({f, x});
+}
+
+/** @deprecated Use `new RichardsonDerivative(h).transform({f, x})`. */
+export function richardsonDerivative(f: (x: number) => number, x: number, h = 1e-3): number {
+  return new RichardsonDerivative(h).transform({f, x});
+}
+
+/** @deprecated Use `new NumericalGradient(h).transform({f, x})`. */
+export function numericalGradient(f: (x: number[]) => number, x: number[], h = 1e-6): number[] {
+  return new NumericalGradient(h).transform({f, x});
 }

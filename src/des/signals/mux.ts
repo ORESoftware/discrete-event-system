@@ -1,15 +1,20 @@
 'use strict';
 
-// RUST MIGRATION:
-// - Target: src/des/signals/mux.rs
-// - MultiplexerTimeStepOpts becomes a struct; Multiplexer<E,V> becomes a signal
-//   routing/transform node with composed multidirectional signal state.
-// - Multiplexing should be modeled as a PureTransform once selection semantics
-//   are known: queued inputs -> selected SignalValue output(s).
-// - Current selection/runTimeStep behavior is intentionally open; port the
-//   method as a typed Result/todo! if mux semantics are still unspecified.
-// - Queue intake mirrors other signal transforms; Rust should use
-//   VecDeque<SignalValue<E,V>> and explicit event/notification traits.
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/signals/mux.rs  (module des::signals::mux)
+// 1:1 file move. A signal multiplexer node (currently an unimplemented stub).
+//
+// Declarations → Rust:
+//   interface MultiplexerTimeStepOpts -> struct (currently empty)
+//   class Multiplexer<E,V>            -> struct + impl (+ impl MultiDirectionalSignalEntity)
+//
+// Conversion notes (file-specific):
+//   - `runTimeStep` is empty, `acceptItem` returns false, `takeItem` is a no-op ->
+//     a not-yet-implemented node; port the shape and leave `todo!()` bodies.
+//   - `getValue()` returns `<unknown>undefined as V` -> `Option<V>::None`.
+//   - `notifySources()/notifyTargets()/runFinish()` `throw` -> `unimplemented!()`.
+//   - `runningTotal: BigNumber` is unused here -> decimal/f64 if kept.
+// =============================================================================
 
 import {SignalEntity} from "./abstract";
 import {EntityConnection, TimeStepOpts} from "../abstract/abstract";

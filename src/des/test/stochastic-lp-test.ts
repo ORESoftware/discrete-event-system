@@ -4,6 +4,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: #[cfg(test)] mod tests in src/des/general/stochastic_lp.rs
+// 1:1 file move. Unit tests one module (stochastic-lp: duals, SAA, Benders,
+// closed-form oracle), so prefer that module's `#[cfg(test)] mod tests`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - close(a,b,tol) relative float comparison -> approx::assert_relative_eq!.
+// =============================================================================
+
+// =============================================================================
 // Unit tests for the stochastic LP solver: subproblem dual extraction,
 // SAA monolithic solver, Benders decomposition, and the closed-form oracle.
 // Run with: node dist/des/test/stochastic-lp-test.js

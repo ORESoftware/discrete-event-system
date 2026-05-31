@@ -5,6 +5,24 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/grid-localization-pomdp.rs  (module des::general::grid_localization_pomdp)
+// 1:1 file move. POMDP over a hidden (x,y) target: scan-row/column/inspect with noisy obs.
+//
+// Declarations → Rust:
+//   type GridLocalizationActionKind = 'scan-row'|'scan-column'|'inspect' -> enum (+#[serde(rename_all)])
+//   type GridLocalizationObservation = 'no'|'yes'  -> enum { No, Yes }
+//   interface GridLocalizationParams/Action/TraceRow/Result/Model -> structs
+//   fn buildGridLocalizationPOMDP / runGridLocalizationPOMDP -> free fns (or transforms)
+//   fn buildActions / validateParams / normaliseParams / sampleIndex -> assoc fns
+//
+// Conversion notes (file-specific):
+//   - String-literal unions -> enums matched with `match`.
+//   - `sampleIndex(probabilities, rng)` closure RNG (mulberry32) -> inject `RandomSource`.
+//   - Builds on DiscreteBelief + CartesianStateSpace (see those modules' headers).
+//   - `validateParams` throw on bad input -> `Result`/`panic!` per recoverability.
+// =============================================================================
+
+// =============================================================================
 // grid-localization-pomdp
 //
 // A multi-dimensional POMDP over a hidden target location (x, y). The agent can

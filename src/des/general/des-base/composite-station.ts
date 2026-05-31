@@ -1,16 +1,27 @@
 'use strict';
 
-// RUST MIGRATION:
-// - Target: src/des/general/des_base/composite_station.rs
-// - Keep file-for-file. CompositeInputPort, CompositeOutputPort, and
-//   CompositeStationSnapshot become data structs; CompositePortBridgeStation is
-//   a private bridge struct inside this module.
-// - CompositeDESStation becomes a state-owning struct implementing DESStation
-//   plus a composite-station trait for substation registration and port binding.
-// - Keep bridge/port helpers private unless needed by mod.rs re-exports; graph
-//   projection helpers should become PureTransform/PureTransformEntity only if
-//   they are made runnable DES nodes.
-// - Convert duplicate-port and invalid-connection failures to Result.
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/composite_station.rs  (module des::general::des_base::composite_station)
+// 1:1 file move. A DESStation that owns an internal station sub-graph and
+// exposes it through explicit input/output ports.
+//
+// Declarations → Rust:
+//   class CompositePortBridgeStation (private) -> struct + impl DESStation (egress buffer)
+//   interface CompositeInputPort / CompositeOutputPort -> structs
+//   interface CompositeStationSnapshot   -> struct (#[derive(Clone)])
+//   class CompositeDESStation            -> struct + impl DESStation (composes children)
+//
+// Conversion notes (file-specific):
+//   - COMPOSITION over inheritance already: `children: DESStation[]` ->
+//     `Vec<Rc<RefCell<dyn DESStation>>>` (or an arena); `addSubstation` returns the
+//     handle. `pipe`/`take`/`emit` route via those handles.
+//   - `override hasWork/onFinalize/numValidators/runValidation` recurse into
+//     children + `super.*` -> in Rust call the default-method body explicitly
+//     (no `super`); aggregate child results.
+//   - `Record<string, number>` / nested `Record<..>` (snapshot) -> `HashMap`.
+//   - Borrow checker: ticking children while the parent holds them needs
+//     `RefCell` borrows scoped per child, or index-based iteration over an arena.
+// =============================================================================
 
 import {ChannelName, DEFAULT_CHANNEL, DESStation, Token} from './station';
 import {ValidationCheck} from './validation';

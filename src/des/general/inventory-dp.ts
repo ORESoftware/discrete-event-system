@@ -6,6 +6,22 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/inventory-dp.rs  (module des::general::inventory_dp)
+// 1:1 file move. Stochastic inventory control via finite-horizon DP (backward induction).
+//
+// Declarations → Rust:
+//   interface InventoryProblem / InventoryDPResult -> structs (#[derive(Clone)])
+//   class InventoryDPStation extends FiniteHorizonDPStation -> struct + impl (base -> trait)
+//   fn solveInventoryDP / simulateInventory -> free fns (or PureTransform / StatefulTransform)
+//   fn sampleFromPmf              -> assoc fn taking `&mut impl Rng`
+//
+// Conversion notes (file-specific):
+//   - `mulberry32(seed)` closure RNG in simulateInventory/sampleFromPmf -> inject `RandomSource`.
+//   - `FiniteHorizonDPStation` is a template-method base -> trait with default fns + struct state.
+//   - demand PMF is `readonly number[]` -> `&[f64]`; value/policy tables -> `Vec<f64>`/`Vec<usize>`.
+// =============================================================================
+
+// =============================================================================
 // general/inventory-dp.ts — multi-period STOCHASTIC INVENTORY MANAGEMENT
 // solved by FINITE-HORIZON DYNAMIC PROGRAMMING (backward induction).
 //

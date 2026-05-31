@@ -5,6 +5,23 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/actor-critic-gridworld.rs  (module des::general::actor_critic_gridworld)
+// 1:1 file move. Runnable driver: actor-critic agent on a GridWorld + greedy eval.
+//
+// Declarations → Rust:
+//   interface ActorCriticTrainOpts  -> struct ActorCriticTrainOpts (Default; optionals -> Option<T>)
+//   interface ActorCriticResult     -> struct ActorCriticResult (#[derive(Clone)])
+//   fn runActorCriticGridworld      -> free fn or a PureTransform<ActorCriticTrainOpts, ActorCriticResult>
+//
+// Conversion notes (file-specific):
+//   - `mulberry32(seed)` returns a `() => number` closure RNG; in Rust pass a
+//     `RandomSource`/`rand::Rng` (seeded) into TabularActorCritic instead of a closure.
+//   - TabularActorCritic / EnvironmentStation / GridWorld are stateful stations
+//     wired with `.pipe(...)`; model as structs + the station trait, not inheritance.
+//   - `readonly number[]` history fields -> `Vec<f64>` returned by value (slice()=clone).
+// =============================================================================
+
+// =============================================================================
 // general/actor-critic-gridworld.ts — ONE-STEP TABULAR ACTOR-CRITIC
 // (Sutton & Barto §13.5) on a small GridWorld.
 //

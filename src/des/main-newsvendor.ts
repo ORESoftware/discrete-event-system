@@ -6,6 +6,18 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-newsvendor.rs   (fn main)
+// 1:1 file move. The newsvendor problem: finds q* analytically, by brute
+// search over the demand PMF, and by 1-step MDP value iteration.
+//
+// Conversion notes (file-specific):
+//   - day-by-day demand sampling -> inject RandomSource/SeededRandom
+//     (shared::capabilities).
+//   - closed-form critical-fractile + MDP value iteration -> pure fns.
+//   - top-level run -> fn main.
+// =============================================================================
+
+// =============================================================================
 // THE NEWSVENDOR PROBLEM
 //
 // The classic single-period stochastic inventory problem (also known as

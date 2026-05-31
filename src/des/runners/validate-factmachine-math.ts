@@ -6,6 +6,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-factmachine-math.rs  (a `fn main`
+//                    binary; an `examples/…rs` also works)
+// 1:1 file move. Audits/hardens the FactMachine pricing math (invariants, buy/
+// sell round-trips) used inside the DES POMDP.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - env + `child_process` (scipy/numpy reference) -> `std::env::var` /
+//     `std::process::Command`.
+//   - `as any` on results -> concrete typed structs.
+//   - any `Date.now()`/RNG -> `Clock`/`SeededRandom`.
+//   - `console.log` PASS/FAIL + `process.exit` -> `println!` / `std::process::exit`.
+// =============================================================================
+
+// =============================================================================
 // runners/validate-factmachine-math.ts — audit + harden the FactMachine
 // math layer used inside the DES POMDP simulation.
 //

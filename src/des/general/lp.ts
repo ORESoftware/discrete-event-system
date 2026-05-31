@@ -6,6 +6,25 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/lp.rs  (module des::general::lp)
+// 1:1 file move. Foundational LP layer: types, in-process two-phase simplex, external-solver bridge.
+//
+// Declarations → Rust:
+//   interface LPProblem / LPSolution / InternalSimplexOptions / ExternalSolverOptions -> structs (serde)
+//   type LPStatus = 'optimal'|...  -> enum LPStatus (models success/failure; no throw)
+//   type SimplexResult             -> struct
+//   fn solveLPInternal / solveLPExternal / solveLP -> FallibleTransform<LPProblem, LPSolution> or fns
+//   fn simplexCore / pivot / lpToString -> assoc fns (vanilla algorithm)
+//
+// Conversion notes (file-specific):
+//   - `spawnSync('python3', ...)` shelling out to scipy.linprog -> `std::process::Command`
+//     (or a native LP crate); env vars LP_SOLVER/PYTHON -> `std::env::var`.
+//   - `(number | null)[]` bounds lb/ub -> `Vec<Option<f64>>`; `number[][]` A_ub/A_eq -> matrix/Vec<Vec<f64>>.
+//   - LPProblem is JSON-serialisable -> `#[derive(Serialize, Deserialize)]`.
+//   - simplex pivots mutate a tableau in place -> `&mut self`/`&mut [..]`; failures via LPStatus, not panic.
+// =============================================================================
+
+// =============================================================================
 // Linear-programming bridge for the DES framework.
 //
 // HISTORICAL NOTE on the framing here: this module was written when DES
@@ -60,6 +79,7 @@
 
 import {spawnSync} from 'child_process';
 import * as path from 'path';
+import {PureTransform} from '../shared/transform';
 
 // -----------------------------------------------------------------------------
 // LP problem types.
@@ -146,8 +166,9 @@ export interface InternalSimplexOptions {
   tol?: number;
 }
 
-/** Solve via the in-process simplex. Always returns a fully-populated LPSolution. */
-export function solveLPInternal(p: LPProblem, opts: InternalSimplexOptions = {}): LPSolution {
+// The vanilla two-phase simplex algorithm. Kept as a module-private function;
+// the public entry point is the `InternalSimplexSolver` transform below.
+function runInternalSimplex(p: LPProblem, opts: InternalSimplexOptions): LPSolution {
   const t0 = Date.now();
   const tol = opts.tol ?? 1e-9;
   const maxIter = opts.maxIter ?? 5000;
@@ -355,6 +376,26 @@ export function solveLPInternal(p: LPProblem, opts: InternalSimplexOptions = {})
           message: `internal simplex: phase1+phase2, ${iters} iters`};
 }
 
+/**
+ * In-process two-phase revised simplex as a transform. CONFIG (iteration cap,
+ * pivot tolerance) lives on the constructor; the LP is the `transform` input.
+ * Always returns a fully-populated LPSolution (failure via `status`, not throw).
+ */
+export class InternalSimplexSolver extends PureTransform<LPProblem, LPSolution> {
+  constructor(private readonly opts: InternalSimplexOptions = {}) {
+    super();
+  }
+
+  transform(p: LPProblem): LPSolution {
+    return runInternalSimplex(p, this.opts);
+  }
+}
+
+/** @deprecated Use `new InternalSimplexSolver(opts).transform(p)`. */
+export function solveLPInternal(p: LPProblem, opts: InternalSimplexOptions = {}): LPSolution {
+  return new InternalSimplexSolver(opts).transform(p);
+}
+
 // Pivoting machinery for the simplex tableau.
 // Bland's rule for entering and leaving variables to guarantee termination.
 type SimplexResult = {status: LPStatus, iters: number};
@@ -424,47 +465,62 @@ export interface ExternalSolverOptions {
 }
 
 /**
- * Solve via an external scipy.optimize.linprog process. Throws if scipy
- * (or python) is unavailable. Use `solveLP` (below) for graceful fallback
- * to the internal solver.
+ * External scipy.optimize.linprog dispatcher as a transform. CONFIG (method,
+ * python executable, script path, buffer) lives on the constructor; the LP is
+ * the `transform` input. Returns status `numerical-error` if scipy/python is
+ * unavailable — use `LPSolver` (below) for graceful fallback to the internal solver.
+ */
+export class ExternalSolver extends PureTransform<LPProblem, LPSolution> {
+  constructor(private readonly opts: ExternalSolverOptions = {}) {
+    super();
+  }
+
+  transform(p: LPProblem): LPSolution {
+    const t0 = Date.now();
+    const method = this.opts.method ?? 'highs';
+    const python = this.opts.python ?? process.env.PYTHON ?? 'python3';
+    const script = this.opts.script ?? path.join(__dirname, '..', '..', '..',
+                                            'external-references', 'lp', 'lp_solve.py');
+    const maxBuffer = this.opts.maxBuffer ?? 32 * 1024 * 1024;
+    const payload = JSON.stringify({lp: p, method});
+    const res = spawnSync(python, [script, '--method', method], {
+      input: payload, encoding: 'utf8', maxBuffer,
+    });
+    if (res.status !== 0) {
+      console.warn(`[lp.external] scipy:${method} process exited with code ${res.status}: ${res.stderr ?? '(no stderr)'}`);
+      return {status: 'numerical-error', x: [], objective: NaN,
+              solver: `scipy:${method}`, elapsedMs: Date.now() - t0,
+              message: `external solver exited with ${res.status}: ${res.stderr ?? '(no stderr)'}`};
+    }
+    let out: any;
+    try { out = JSON.parse(res.stdout); }
+    catch (e) {
+      console.warn(`[lp.external] could not parse scipy:${method} stdout as JSON: ${(e as Error).message}; stdout head="${String(res.stdout).slice(0, 120)}"`);
+      return {status: 'numerical-error', x: [], objective: NaN,
+              solver: `scipy:${method}`, elapsedMs: Date.now() - t0,
+              message: `failed to parse external solver stdout as JSON: ${(e as Error).message}`};
+    }
+    return {
+      status: out.status as LPStatus,
+      x: out.x ?? [],
+      objective: typeof out.objective === 'number' ? out.objective : NaN,
+      dualUB: out.dualUB,
+      dualEQ: out.dualEQ,
+      reducedCosts: out.reducedCosts,
+      iters: out.iters,
+      solver: `scipy:${method}`,
+      elapsedMs: Date.now() - t0,
+      message: out.message,
+    };
+  }
+}
+
+/**
+ * Solve via an external scipy.optimize.linprog process.
+ * @deprecated Use `new ExternalSolver(opts).transform(p)`.
  */
 export function solveLPExternal(p: LPProblem, opts: ExternalSolverOptions = {}): LPSolution {
-  const t0 = Date.now();
-  const method = opts.method ?? 'highs';
-  const python = opts.python ?? process.env.PYTHON ?? 'python3';
-  const script = opts.script ?? path.join(__dirname, '..', '..', '..',
-                                          'external-references', 'lp', 'lp_solve.py');
-  const maxBuffer = opts.maxBuffer ?? 32 * 1024 * 1024;
-  const payload = JSON.stringify({lp: p, method});
-  const res = spawnSync(python, [script, '--method', method], {
-    input: payload, encoding: 'utf8', maxBuffer,
-  });
-  if (res.status !== 0) {
-    console.warn(`[lp.external] scipy:${method} process exited with code ${res.status}: ${res.stderr ?? '(no stderr)'}`);
-    return {status: 'numerical-error', x: [], objective: NaN,
-            solver: `scipy:${method}`, elapsedMs: Date.now() - t0,
-            message: `external solver exited with ${res.status}: ${res.stderr ?? '(no stderr)'}`};
-  }
-  let out: any;
-  try { out = JSON.parse(res.stdout); }
-  catch (e) {
-    console.warn(`[lp.external] could not parse scipy:${method} stdout as JSON: ${(e as Error).message}; stdout head="${String(res.stdout).slice(0, 120)}"`);
-    return {status: 'numerical-error', x: [], objective: NaN,
-            solver: `scipy:${method}`, elapsedMs: Date.now() - t0,
-            message: `failed to parse external solver stdout as JSON: ${(e as Error).message}`};
-  }
-  return {
-    status: out.status as LPStatus,
-    x: out.x ?? [],
-    objective: typeof out.objective === 'number' ? out.objective : NaN,
-    dualUB: out.dualUB,
-    dualEQ: out.dualEQ,
-    reducedCosts: out.reducedCosts,
-    iters: out.iters,
-    solver: `scipy:${method}`,
-    elapsedMs: Date.now() - t0,
-    message: out.message,
-  };
+  return new ExternalSolver(opts).transform(p);
 }
 
 /**
@@ -478,59 +534,78 @@ export function solveLPExternal(p: LPProblem, opts: ExternalSolverOptions = {}):
  *   LP_SOLVER=scipy:simplex      legacy scipy simplex
  *   LP_SOLVER=scipy:interior-point  legacy scipy interior-point
  */
-export function solveLP(p: LPProblem, opts: ExternalSolverOptions & InternalSimplexOptions = {}): LPSolution {
-  const choice = (process.env.LP_SOLVER ?? 'scipy:highs').trim();
-  if (choice === 'internal') return solveLPInternal(p, opts);
-  if (choice.startsWith('scipy:')) {
-    const method = choice.slice('scipy:'.length) as ExternalSolverOptions['method'];
-    const ext = solveLPExternal(p, {...opts, method});
-    if (ext.status !== 'numerical-error') return ext;
-    // Fall back to internal if the external bridge failed (no scipy, no python, etc).
-    console.warn(`[lp.solveLP] external solver '${choice}' unavailable/failed (${ext.message ?? 'unknown'}); falling back to internal simplex.`);
-    const fallback = solveLPInternal(p, opts);
-    fallback.message = (fallback.message ? fallback.message + ' | ' : '')
-      + 'external solver unavailable, fell back to internal: ' + (ext.message ?? '');
-    return fallback;
+export class LPSolver extends PureTransform<LPProblem, LPSolution> {
+  constructor(private readonly opts: ExternalSolverOptions & InternalSimplexOptions = {}) {
+    super();
   }
-  throw new Error(`unknown LP_SOLVER value: ${choice}`);
+
+  transform(p: LPProblem): LPSolution {
+    const choice = (process.env.LP_SOLVER ?? 'scipy:highs').trim();
+    if (choice === 'internal') return new InternalSimplexSolver(this.opts).transform(p);
+    if (choice.startsWith('scipy:')) {
+      const method = choice.slice('scipy:'.length) as ExternalSolverOptions['method'];
+      const ext = new ExternalSolver({...this.opts, method}).transform(p);
+      if (ext.status !== 'numerical-error') return ext;
+      // Fall back to internal if the external bridge failed (no scipy, no python, etc).
+      console.warn(`[lp.solveLP] external solver '${choice}' unavailable/failed (${ext.message ?? 'unknown'}); falling back to internal simplex.`);
+      const fallback = new InternalSimplexSolver(this.opts).transform(p);
+      fallback.message = (fallback.message ? fallback.message + ' | ' : '')
+        + 'external solver unavailable, fell back to internal: ' + (ext.message ?? '');
+      return fallback;
+    }
+    throw new Error(`unknown LP_SOLVER value: ${choice}`);
+  }
+}
+
+/** @deprecated Use `new LPSolver(opts).transform(p)`. */
+export function solveLP(p: LPProblem, opts: ExternalSolverOptions & InternalSimplexOptions = {}): LPSolution {
+  return new LPSolver(opts).transform(p);
 }
 
 // -----------------------------------------------------------------------------
 // Convenience pretty-printer.
 // -----------------------------------------------------------------------------
 
+/** Render an LP in human-readable form. No config; the LP is the transform input. */
+export class LpPrinter extends PureTransform<LPProblem, string> {
+  transform(p: LPProblem): string {
+    const lines: string[] = [];
+    const names = p.varNames ?? p.c.map((_, i) => `x${i}`);
+    const term = (a: number, name: string) => {
+      if (a === 0) return '';
+      const sign = a >= 0 ? ' + ' : ' − ';
+      const mag = Math.abs(a);
+      return `${sign}${mag === 1 ? '' : mag.toString()}${name}`;
+    };
+    const objLine = p.c.map((a, i) => term(a, names[i])).join('').replace(/^ \+ /, '');
+    lines.push(`${p.sense}  ${objLine}`);
+    if (p.A_ub && p.A_ub.length) {
+      lines.push('s.t.');
+      for (let r = 0; r < p.A_ub.length; r++) {
+        const lhs = p.A_ub[r].map((a, i) => term(a, names[i])).join('').replace(/^ \+ /, '');
+        lines.push(`     ${lhs} ≤ ${p.b_ub![r]}`);
+      }
+    }
+    if (p.A_eq && p.A_eq.length) {
+      for (let r = 0; r < p.A_eq.length; r++) {
+        const lhs = p.A_eq[r].map((a, i) => term(a, names[i])).join('').replace(/^ \+ /, '');
+        lines.push(`     ${lhs} = ${p.b_eq![r]}`);
+      }
+    }
+    if (p.lb || p.ub) {
+      const n = p.c.length;
+      for (let i = 0; i < n; i++) {
+        const l = p.lb ? p.lb[i] : 0;
+        const u = p.ub ? p.ub[i] : null;
+        if (l === 0 && u === null) continue;
+        lines.push(`     ${l === null ? '−∞' : l} ≤ ${names[i]} ≤ ${u === null ? '+∞' : u}`);
+      }
+    }
+    return lines.join('\n');
+  }
+}
+
+/** @deprecated Use `new LpPrinter().transform(p)`. */
 export function lpToString(p: LPProblem): string {
-  const lines: string[] = [];
-  const names = p.varNames ?? p.c.map((_, i) => `x${i}`);
-  const term = (a: number, name: string) => {
-    if (a === 0) return '';
-    const sign = a >= 0 ? ' + ' : ' − ';
-    const mag = Math.abs(a);
-    return `${sign}${mag === 1 ? '' : mag.toString()}${name}`;
-  };
-  const objLine = p.c.map((a, i) => term(a, names[i])).join('').replace(/^ \+ /, '');
-  lines.push(`${p.sense}  ${objLine}`);
-  if (p.A_ub && p.A_ub.length) {
-    lines.push('s.t.');
-    for (let r = 0; r < p.A_ub.length; r++) {
-      const lhs = p.A_ub[r].map((a, i) => term(a, names[i])).join('').replace(/^ \+ /, '');
-      lines.push(`     ${lhs} ≤ ${p.b_ub![r]}`);
-    }
-  }
-  if (p.A_eq && p.A_eq.length) {
-    for (let r = 0; r < p.A_eq.length; r++) {
-      const lhs = p.A_eq[r].map((a, i) => term(a, names[i])).join('').replace(/^ \+ /, '');
-      lines.push(`     ${lhs} = ${p.b_eq![r]}`);
-    }
-  }
-  if (p.lb || p.ub) {
-    const n = p.c.length;
-    for (let i = 0; i < n; i++) {
-      const l = p.lb ? p.lb[i] : 0;
-      const u = p.ub ? p.ub[i] : null;
-      if (l === 0 && u === null) continue;
-      lines.push(`     ${l === null ? '−∞' : l} ≤ ${names[i]} ≤ ${u === null ? '+∞' : u}`);
-    }
-  }
-  return lines.join('\n');
+  return new LpPrinter().transform(p);
 }

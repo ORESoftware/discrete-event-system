@@ -7,6 +7,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-smart-traffic-external.rs  (a `fn
+//                    main` binary; an `examples/…rs` also works)
+// 1:1 file move. Cross-checks the smart-traffic DES against an optional external
+// SUMO simulator via the sanctioned external-module registry.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level code becomes `fn main()`.
+//   - `fs`/`path` + `child_process` (SUMO/netconvert) -> `std::fs` /
+//     `std::process::Command`.
+//   - `JSON.parse`/`stringify` of demand rows + payloads -> serde structs
+//     (TrafficDemandRow, CheckRow); no `as any`.
+//   - `process.exit(code)` -> `std::process::exit(code)`.
+// =============================================================================
+
+// =============================================================================
 // validate-smart-traffic-external.ts
 //
 // Cross-checks the smart traffic DES against an optional SUMO black-box

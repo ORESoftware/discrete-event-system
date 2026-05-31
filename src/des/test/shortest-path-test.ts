@@ -4,6 +4,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: #[cfg(test)] mod tests in src/des/general/shortest_path_des.rs
+// 1:1 file move. Unit tests one module (shortest-path-DES: BF, Dijkstra,
+// reconstruct), so prefer that module's `#[cfg(test)] mod tests`.
+//
+// Test harness → Rust:
+//   ad-hoc expect()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - close(a,b,1e-12) tight float comparison -> approx::assert_relative_eq!.
+// =============================================================================
+
+// =============================================================================
 // test/shortest-path-test.ts — unit tests for the shortest-path-DES module.
 // =============================================================================
 

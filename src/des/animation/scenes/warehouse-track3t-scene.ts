@@ -1,11 +1,28 @@
 'use strict';
 
-// RUST MIGRATION:
-// - Target: src/des/animation/scenes/warehouse_track3t_scene.rs
-// - Keep buildWarehouseComparisonFrame/frameCount/frameTime/buildWarehouseComparisonCharts as module helpers.
-// - PanelGeom, MotionFrame, ReserveRow, and route/layout records become private Rust structs; Shape/ChartSpec are serde data from animation::types.
-// - TS arrays/maps of traces and stations should become Vec plus HashMap/BTreeMap only where lookup or deterministic order is required.
-// - If frame generation becomes DES graph-visible, wrap it as a WarehouseComparisonSceneTransform with transform(...).
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/animation/scenes/warehouse-track3t-scene.rs   (module des::animation::scenes::warehouse_track3t_scene)
+// 1:1 file move. Builds frames + charts for the warehouse Track-3T forklift-routing
+// comparison animation (two side-by-side panels).
+//
+// Declarations → Rust:
+//   const WAREHOUSE_TRACK3T_STAGE_W/H        -> `pub const`
+//   interface PanelGeom / MotionFrame / ReserveRow -> struct
+//   function buildWarehouseComparisonFrame / warehouseComparisonFrameCount /
+//            warehouseComparisonFrameTime / buildWarehouseComparisonCharts -> pub fns
+//   many private geometry helpers (drawPanel/drawMotionPath/drawForklift/drawPallet/
+//            routePathPoints/rowCorridorPath/pointOnPolyline/...)            -> fns
+//
+// Conversion notes (file-specific):
+//   - Frame data (Shape[]/ChartSpec) is serialized for JSON -> serde structs (see types.rs).
+//   - draw/append helpers mutate `shapes: Shape[]` / point arrays -> `&mut Vec<..>`.
+//   - `stationById(..)` returns `StationDefinition | undefined` -> `Option<&StationDefinition>`.
+//   - `reserveRowKey(..)` returns `string | undefined` -> `Option<String>`.
+//   - all coords are `number` -> `f64`.
+//   - imports StationDefinition/WarehouseLayout/WarehouseComparisonResult/
+//     WarehouseScenarioResult/WarehouseStepTrace from ../../general/factory-floor-track3t ->
+//     `use crate::des::general::factory_floor_track3t::*`.
+// =============================================================================
 
 import {ChartSpec, Shape} from '../types';
 import {

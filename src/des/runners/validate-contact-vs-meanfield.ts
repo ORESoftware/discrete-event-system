@@ -7,6 +7,18 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-contact-vs-meanfield.rs  (a `fn
+//                    main` binary; an `examples/…rs` also works)
+// 1:1 file move. Validates the contact-SEIR kernels against the mass-action
+// mean-field (N→∞ convergence, heterogeneity/CV² scaling, triplet threshold).
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - kernel RNG + Welch-t studies -> inject `SeededRandom`.
+//   - `console.log` PASS/FAIL + `process.exit` -> `println!` / `std::process::exit`.
+// =============================================================================
+
+// =============================================================================
 // Validate the contact-SEIR kernels against each other and against the
 // mass-action mean-field. Three studies in one file:
 //

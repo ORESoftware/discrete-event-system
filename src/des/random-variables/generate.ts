@@ -1,15 +1,22 @@
 #!/usr/bin/env ts-node
 'use strict';
 
-// RUST MIGRATION:
-// - Target: src/des/random_variables/generate.rs
-// - This is a sampling CLI/dev helper. Keep pure sampling in structs such as
-//   RunUniform/RunExponential implementing a PureTransform-like trait, with a
-//   thin `src/bin/random_generate.rs` wrapper for stdout.
-// - Replace CommonJS require, math.random, dynamic arrays, and console printing
-//   with rand crate injection, Vec<f64>/Decimal, and Result-returning IO.
-// - The inline map/reduce helpers should become named transforms or iterator
-//   chains with explicit numeric types.
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/random-variables/generate.rs  (module des::random_variables::generate)
+// 1:1 file move. Demo/CLI script: sample uniform/exponential draws and print moments.
+//
+// Declarations → Rust:
+//   const runUniform (fn)     -> free fn
+//   const runExponential (fn) -> free fn
+//
+// Conversion notes (file-specific):
+//   - DEMO SCRIPT: the `if (require.main === module) runExponential()` guard +
+//     `console.log` output -> a `[[bin]]`/examples main, not library code.
+//   - `const math = require('mathjs')` (CommonJS) mixed with `import {bignumber}`
+//     -> a single `use`; the require disappears.
+//   - `math.random()` / `Math.random()` -> injected RandomSource (no ambient rng).
+//   - moment estimators on `bignumber`/`number` -> decimal/f64; `math.pow/log/sum` -> ops.
+// =============================================================================
 
 import {bignumber} from "mathjs";
 

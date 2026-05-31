@@ -11,6 +11,33 @@
 // - Convert agent-count and missing-action errors to Result.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/multi_agent.rs  (module des::general::des_base::multi_agent)
+// 1:1 file move. Independent multi-agent RL on a shared joint environment
+// (JointEnvStation + a MultiAgentSystem orchestrator).
+//
+// Declarations → Rust:
+//   interface JointEnvironment<S,A> -> trait (step returns struct JointStepResult,
+//                                       not an inline {nextStates, rewards, dones})
+//   class JointEnvStation<S,A>      -> struct + impl DESStation
+//   interface MultiAgentSystemOpts  -> struct (#[derive(Default)])
+//   class MultiAgentSystem<S,A>     -> struct (owns env + Vec<agents>)
+//
+// Conversion notes (file-specific):
+//   - Per-agent channels use STRING PREFIX + index (`agent-action-<i>`) -> build
+//     `format!("agent-action-{i}")`; the static *Channel(i) helpers -> assoc fns.
+//   - `pendingActions: Map<number, A>` -> `HashMap<usize, A>` (or `Vec<Option<A>>`).
+//   - `agents: RLAgentStation<S,A>[]` held + wired -> `Vec<Rc<RefCell<dyn RLAgentStation>>>`;
+//     `pipe` builds the graph edges (Rc handles).
+//   - `env['env'].numAgents` (bracket access to a protected field) -> a public
+//     accessor on JointEnvStation; no field-name string access in Rust.
+//   - getter/setter pairs + `rewardHistory`/`lengthHistory` aliases of the inner
+//     VectorEpisodeAccounting -> accessor methods borrowing it (no owned alias).
+//   - `rewards: number[]` per step (vector reward) -> `Vec<f64>`; `dones: boolean[]`
+//     -> `Vec<bool>`. `runIterativeDES([env, ...agents])` -> pass a `Vec` of handles.
+//   - `throw new Error` on agent-count mismatch -> `Result`/`panic!`.
+// =============================================================================
+
+// =============================================================================
 // general/des-base/multi-agent.ts — base class for SIMULTANEOUS-MOVE
 // MULTI-AGENT REINFORCEMENT LEARNING ON A SHARED ENVIRONMENT.
 //

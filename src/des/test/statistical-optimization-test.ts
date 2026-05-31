@@ -4,6 +4,22 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/statistical_optimization_test.rs   (integration test crate)
+// 1:1 file move. Tests distribution fitting, adaptive sim-opt, and SDDP capacity
+// expansion, so it is an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - close(a,b,tol) relative float comparison -> approx::assert_relative_eq!.
+//   - sampleFittedDistribution / sim-opt are stochastic -> a seeded rand::Rng.
+//   - async checkThrows()/await -> assert on Result::Err / #[should_panic].
+//   - fs usage -> the `tempfile` crate.
+// =============================================================================
+
+// =============================================================================
 // Tests for statistical + stochastic optimisation extensions.
 // =============================================================================
 

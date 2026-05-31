@@ -1,15 +1,20 @@
 'use strict';
 
-// RUST MIGRATION:
-// - Target: src/des/general/des_base/episode_accounting.rs
-// - Keep file-for-file. EpisodeSummary and VectorEpisodeSummary become data
-//   structs; EpisodeAccounting and VectorEpisodeAccounting become concrete
-//   mutable structs with inherent methods.
-// - Reward histories should use Vec<f64> and vector rewards Vec<Vec<f64>>;
-//   expose read-only snapshots by cloning or borrowing slices.
-// - These are not DES graph nodes today; if reward aggregation becomes a graph
-//   transform, wrap the accounting step in PureTransform/PureTransformEntity.
-// - Convert reward-dimension mismatches from thrown errors to Result.
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/episode_accounting.rs  (module des::general::des_base::episode_accounting)
+// 1:1 file move. Reward/length bookkeeping for RL episodes (scalar + vector).
+//
+// Declarations → Rust:
+//   interface EpisodeSummary / VectorEpisodeSummary -> struct (#[derive(Clone, Copy/Debug)])
+//   class EpisodeAccounting        -> struct EpisodeAccounting { histories: Vec<f64>, .. }
+//   class VectorEpisodeAccounting  -> struct (dimension: usize; currentRewards: Vec<f64>)
+//
+// Conversion notes (file-specific):
+//   - Pure scalar bookkeeping; methods mutate self -> `&mut self`. No I/O, no RNG.
+//   - `new Array(dim).fill(0)` -> `vec![0.0; dim]`; `slice()` copies -> `.clone()`.
+//   - `throw new Error` on dimension mismatch -> `Result`/`panic!` (programmer error).
+//   - `rewardHistory: number[][]` -> `Vec<Vec<f64>>`.
+// =============================================================================
 
 export interface EpisodeSummary {
   reward: number;

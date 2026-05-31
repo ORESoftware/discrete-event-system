@@ -6,6 +6,27 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/signal-transforms.rs  (module des::general::signal_transforms)
+// 1:1 file move. Z / Laplace / Fourier transforms expressed as DES station graphs.
+//
+// Declarations → Rust:
+//   type TransformKind = 'z'|'laplace'|'fourier' / QuadratureRule = 'rectangular'|'trapezoid' -> enums
+//   interface ComplexValue/ComplexPoint/ComplexPointInput/Transform*Record/OutputPoint/RunResult/
+//             *Params (Z/Laplace/Fourier)         -> structs
+//   class Transform*Token implements Token         -> structs + impl Token
+//   class Transform{SampleSource,Kernel,Accumulator,ResultSink}Station extends DESStation
+//                                                  -> structs + impl DESStation trait
+//   fn runZTransform/runLaplaceTransform/runFourierTransform/formatComplex + private kernels -> fns
+//
+// Conversion notes (file-specific):
+//   - ComplexValue {re, im} + complexAdd/Scale/Exp/... -> the `num_complex::Complex<f64>` crate;
+//     `ComplexPoint extends ComplexValue` is just a complex with extra fields -> compose.
+//   - depends on expr.ts (`parse`/`evaluate`) for the expression-driven sample sequences ->
+//     use crate::des::general::expr::{parse, evaluate}.
+//   - constants `Record<string, number>` -> `HashMap<String, f64>`.
+//   - finiteComplex/validateZPoints throw on non-finite/empty -> `panic!` (invariant) or `Result`.
+//   - deterministic (no RNG/clock).
+// =============================================================================
 // Z, Laplace, and Fourier transforms as DES station graphs.
 //
 // Transform runs are intentionally not monolithic numerical helpers. They are

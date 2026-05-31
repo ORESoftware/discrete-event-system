@@ -1,14 +1,21 @@
 'use strict';
 
-// RUST MIGRATION:
-// - Target: src/des/signals/multi_directional_signal_entity.rs
-// - MultiDirectionalSignalEntity<E,V> becomes reusable signal connection state
-//   plus trait impls for SignalEntity, HasManyInput, HasManyOutput, and
-//   HasInternalQueue with associated SignalValue item type.
-// - `maxQueueSize = null as number` should become Option<usize> or a bounded
-//   queue policy; LinkedQueue maps to VecDeque unless key removal is required.
-// - Abstract accept/take hooks should return Result or explicit acceptance
-//   enums when Rust callers need backpressure details.
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/signals/multi-directional-signal-entity.rs  (module des::signals::multi_directional_signal_entity)
+// 1:1 file move. Signal node base: MANY inputs, MANY outputs (parent of Adder/Mux/…).
+//
+// Declarations → Rust:
+//   abstract class MultiDirectionalSignalEntity<E,V> -> trait + base struct
+//                 (+ impl HasInternalQueue, HasManyInputConnections, HasManyOutputConnections)
+//
+// Conversion notes (file-specific):
+//   - This is the BASE that Adder / Multiplexer / Integrator / Differentiator /
+//     SignalIncrementor `extend` -> a trait with defaults + composed field-bag struct.
+//   - `maxQueueSize = <unknown>null as number` placeholder-null -> `Option<usize>`.
+//   - `connectionsIn/Out: Set<EntityConnection>` -> `Vec`/`HashSet` of `Rc<RefCell<..>>` edges;
+//     `queue: LinkedQueue<SignalValue>` -> `VecDeque<_>`.
+//   - structural interfaces -> explicit trait `impl`s on each concrete signal node.
+// =============================================================================
 
 import {SignalEntity} from "./abstract";
 import {HasManyInputConnections, HasInternalQueue, HasManyOutputConnections} from "../abstract/interfaces";

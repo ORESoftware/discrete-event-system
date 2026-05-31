@@ -6,6 +6,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-shortest-path.rs  (a `fn main`
+//                    binary; an `examples/…rs` also works)
+// 1:1 file move. Verifies the DES-driven Bellman-Ford ≡ Dijkstra on positive-
+// weight graphs and against textbook references.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - `Graph` adjacency -> a typed struct (`HashMap`-of-edges or `Vec<Edge>`).
+//   - random-graph generation -> inject `SeededRandom`.
+//   - `console.log` PASS/FAIL + `process.exit` -> `println!` / `std::process::exit`.
+// =============================================================================
+
+// =============================================================================
 // runners/validate-shortest-path.ts — verify the DES-driven Bellman-Ford
 // and Dijkstra agree with each other on positive-weight graphs and with
 // classic textbook references.

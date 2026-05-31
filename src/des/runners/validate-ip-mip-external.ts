@@ -7,6 +7,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-ip-mip-external.rs  (a `fn main`
+//                    binary; an `examples/…rs` also works)
+// 1:1 file move. Cross-checks the DES IP/MIP station graph against an external
+// source-only Python reference.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level code becomes `fn main()`.
+//   - `fs`/`path` -> `std::fs` / `std::path`.
+//   - external invocation (external-program) -> `std::process::Command`.
+//   - `JSON.parse` of ExternalPayload (`x?: number[]`) -> a serde struct with
+//     `Option<Vec<f64>>`; no `as any`.
+//   - `process.exit(code)` -> `std::process::exit(code)`.
+// =============================================================================
+
+// =============================================================================
 // validate-ip-mip-external.ts
 //
 // Cross-checks the DES IP/MIP station graph against a sanctioned external

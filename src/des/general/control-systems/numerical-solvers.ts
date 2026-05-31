@@ -5,6 +5,28 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/control-systems/numerical-solvers.rs
+//   (module des::general::control_systems::numerical_solvers)
+// 1:1 file move. Object-oriented fixed-step ODE integrators (Euler, RK4).
+//
+// Declarations → Rust:
+//   interface OdeSystem                  -> trait OdeSystem (dimension/derivative)
+//   abstract class FixedStepIntegrator   -> trait FixedStepIntegrator with a
+//                                           required `step` + default `integrate`/`axpy`
+//   class ForwardEulerIntegrator / RungeKutta4Integrator extends FixedStepIntegrator
+//                                        -> unit struct + impl FixedStepIntegrator
+//
+// Conversion notes (file-specific):
+//   - `step(system: OdeSystem, ...)` takes the system by trait object/generic ->
+//     `fn step<S: OdeSystem>(&self, system: &S, ..)` (or `&dyn OdeSystem`).
+//   - `derivative` may read MUTABLE conditions on the system object (set between
+//     ticks), so callers integrate a `&mut` system one step per DES tick.
+//   - `throw new Error` for bad dt/steps are invariant checks -> panic! (or
+//     debug_assert!); not recoverable Result paths.
+//   - `state: readonly number[]` -> `&[f64]`; returns fresh `Vec<f64>` (no mutate).
+// =============================================================================
+
+// =============================================================================
 // control-systems/numerical-solvers.ts — class-only fixed-step ODE integrators
 // for the control-systems family.
 //

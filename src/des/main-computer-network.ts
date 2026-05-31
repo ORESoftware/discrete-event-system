@@ -6,6 +6,17 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-computer-network.rs   (fn main)
+// 1:1 file move. Thin runner: packet-switched computer-network DES, prints a
+// flow summary for a chosen scenario.
+//
+// Conversion notes (file-specific):
+//   - top-level main() -> fn main(); process.env.SCENARIO -> std::env::var.
+//   - delegates to general/computer-network -> use crate::des::general::
+//     computer_network.
+// =============================================================================
+
+// =============================================================================
 // main-computer-network.ts -- runnable packet-switched computer network DES.
 // =============================================================================
 

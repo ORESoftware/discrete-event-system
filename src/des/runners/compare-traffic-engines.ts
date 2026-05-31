@@ -5,6 +5,22 @@
 // - Replace spawnSync with std::process::Command or tokio::process and put SUMO/UXsim adapters behind explicit external-engine traits.
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/bin/compare-traffic-engines.rs  (a `fn main`
+//                    binary; an `examples/…rs` also works)
+// 1:1 file move. Compares the smart-traffic DES engines and an optional external
+// SUMO engine, emitting a table and a JSON dump.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level code becomes `fn main()`.
+//   - `fs`/`path` + `spawnSync` (child_process) -> `std::fs` /
+//     `std::process::Command`.
+//   - `JSON.parse`/`stringify` of trips + per-engine stats -> serde structs
+//     (SharedTrip, EngineStats); optional `?` fields -> `Option<T>`; no `as any`.
+//   - env config + `mulberry32`/`Date.now()` -> `std::env::var` +
+//     `SeededRandom`/`Clock`.
+// =============================================================================
+
 import * as fs from 'fs';
 import * as path from 'path';
 import {spawnSync} from 'child_process';

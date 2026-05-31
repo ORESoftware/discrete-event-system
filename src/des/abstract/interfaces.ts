@@ -1,22 +1,30 @@
 'use strict';
 
-// RUST MIGRATION:
-// - Target: src/des/abstract/interfaces.rs
-// - Keep this as the trait-contract companion to abstract.rs. TypeScript
-//   structural interfaces must become nominal Rust traits or concrete data
-//   structs; name the trait after behavior, not after incidental fields.
-// - EntityGraphData should become a serializable struct or enum once graph
-//   variants are known. EmptyObject is a TS workaround and should disappear.
-// - IsObservable maps to an Observable trait backed by explicit subscriber
-//   storage in EntityState. Avoid unconstrained generic observers at public
-//   boundaries; use associated event payload types where practical.
-// - HasInput/HasOutput and single/many variants map to endpoint traits. In Rust,
-//   connection cardinality should be encoded in the owning struct fields rather
-//   than by structural interface extension.
-// - HasInternalQueue<T> should wrap a VecDeque<T> or custom queue abstraction.
-//   Keep capacity checks explicit with Result-returning enqueue methods.
-// - Replace `AbstractMovingEntity<any>` with a MovingEntity trait object only
-//   where heterogeneity is required; prefer generic `T: MovingEntity` elsewhere.
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/abstract/interfaces.rs  (module des::abstract::interfaces)
+// 1:1 file move. Defines the capability traits + graph-data shapes of the
+// queueing-network entity model.
+//
+// Declarations → Rust:
+//   interface IsObservable / HasOutput / HasInput / HasManyInputConnections /
+//             HasManyOutputConnections / HasSingleInput/OutputConnection /
+//             HasEntityValidation / HasInternalQueue / HasId
+//                                  -> traits (these are BEHAVIORAL contracts)
+//   interface EntityGraphData      -> struct EntityGraphData (empty marker; `()` or unit struct)
+//   enum EventNames                -> enum EventNames
+//
+// Conversion notes (file-specific):
+//   - These interfaces are heavily structural; in Rust every entity struct must
+//     carry an EXPLICIT `impl HasOutput for X { .. }` etc. Group related traits
+//     so a blanket impl is possible where behaviour is identical.
+//   - `HasInput`/`HasOutput` reference EntityConnection<S,T> and
+//     AbstractMovingEntity — model the graph edges with `Rc<RefCell<..>>` or an
+//     arena/index (Vec + indices) to satisfy the borrow checker; raw mutual
+//     references won't compile.
+//   - `LinkedQueue<T>` (@oresoftware/linked-queue) -> std `VecDeque<T>`.
+//   - Generic params <S, T> carry over directly as trait/struct generics.
+//   - Methods returning `this` (builder style) -> return `&mut self` or `Self`.
+// =============================================================================
 
 import {AbstractMovingEntity} from "../entity-moving/moving";
 import {number, string} from "mathjs";

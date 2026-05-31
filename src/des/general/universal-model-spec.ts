@@ -6,6 +6,29 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/universal-model-spec.rs  (module des::general::universal_model_spec)
+// 1:1 file move. The portable JSON document shape for the modeling layer + converters.
+//
+// Declarations → Rust:
+//   type UniversalModelKind / UniversalInputFormat (string unions) -> enums (#[serde(rename_all=..)])
+//   interface UniversalDESModelSpec/UniversalOriginalInput/UniversalMath*/UniversalNumericsSpec/
+//             UniversalDESNetworkSpec/UniversalStationaryEntity/UniversalMovingEntity/
+//             UniversalGraphEdge/UniversalPortRef/UniversalEndpointSpec/UniversalSolverSpec
+//                                                  -> structs (#[derive(Serialize, Deserialize)])
+//   fn isUniversalDESModelSpec (type guard)        -> serde deserialize (no runtime `is X` guard)
+//   fn validate/assertUniversalDESModelSpec        -> fns returning Vec<ValidationCheck> / Result
+//   fn universalTo*/universalFrom* + private builders -> conversion fns
+//
+// Conversion notes (file-specific):
+//   - THIS IS A SERDE FILE: every shape -> `#[derive(Serialize, Deserialize)]`; string-literal
+//     unions -> enums with `#[serde(rename_all = "kebab-case")]` (or explicit renames).
+//   - `Record<string, unknown>` payloads -> `serde_json::Value` or `HashMap<String, Value>`.
+//   - the `value is X` type guard exists only because TS is structural; in Rust deserialization
+//     into the typed struct/enum replaces it.
+//   - depends on des-spec.ts / math-equation-input.ts / math-blocks.ts -> use crate::... paths.
+//   - indexed-property access like `UniversalStationaryEntity['role']` -> the field's enum type.
+//   - validate* returns checks (recoverable); assert* throws -> `panic!` or `Result`.
+// =============================================================================
 // Universal DES model spec.
 //
 // This is the portable JSON document shape for the modeling layer. It captures:

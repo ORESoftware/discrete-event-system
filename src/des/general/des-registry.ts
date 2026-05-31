@@ -5,6 +5,25 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des-registry.rs  (module des::general::des_registry)
+// 1:1 file move. Runtime model-id -> adapter registry + the runFromSpec/runFromJsonFile drivers.
+//
+// Declarations → Rust:
+//   fn registerModel / getModel / listModels -> methods on a `Registry` struct
+//   interface RunFromSpecOptions   -> struct (Default; optionals -> Option<T>)
+//   async fn runFromSpec / runFromJsonFile -> `async fn` (or sync if no I/O await needed)
+//   fn validateModelParameters / serialiseResult -> assoc/free fns
+//
+// Conversion notes (file-specific):
+//   - `REGISTRY: Map<string, DESModelRegistration<any,any>>` is a global mutable map ->
+//     own a `Registry { map: HashMap<String, Box<dyn ModelAdapter>> }` (avoid a hidden static;
+//     use `OnceCell<Mutex<..>>` only if a true singleton is required).
+//   - `<any, any>` registrations -> `dyn ModelAdapter` trait objects (erase P/R).
+//   - Node `fs`/`path` -> `std::fs`/`std::path`; JSON in/out -> serde_json.
+//   - `throw` for unknown model id / validation failure -> `Result<_, RegistryError>`.
+// =============================================================================
+
+// =============================================================================
 // general/des-registry.ts — runtime registry that maps model ids to
 // runnable adapters, plus the runFromSpec() driver that JSON files (and
 // the main-from-json.ts CLI) call into.

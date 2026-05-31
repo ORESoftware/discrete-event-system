@@ -5,6 +5,22 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/incremental-lp.rs  (module des::general::incremental_lp)
+// 1:1 file move. Warm-startable (parametric) simplex maintaining a basis across LP modifications.
+//
+// Declarations → Rust:
+//   type LPEvent = ... | ...       -> enum LPEvent { ConstraintAdd(..), ObjectiveChange(..), VarAdd(..), ... } (match on kind)
+//   interface PivotEvent / IncrementalLPInit / LPSnapshot -> structs (#[derive(Clone)])
+//   class IncrementalLP            -> struct IncrementalLP { tableau, basis, ... } + impl (apply/pivot/snapshot)
+//
+// Conversion notes (file-specific):
+//   - `LPEvent` is a discriminated union of modification events -> Rust enum; dispatch with `match`.
+//   - Dense tableau `number[][]` + basis are mutated in place across pivots -> `&mut self` / `Vec<Vec<f64>>`.
+//   - The "station/movable" framing in the doc is conceptual; the real unit is the `IncrementalLP` struct.
+//   - Primal/dual restart after a modification -> methods on the struct; statuses model failure (no throw).
+// =============================================================================
+
+// =============================================================================
 // general/incremental-lp.ts — INCREMENTAL Linear Programming solver
 // expressed as a discrete-event SYSTEM (the "S" in DES taken in its
 // broader sense — this isn't a simulation, it's an iterative algorithm

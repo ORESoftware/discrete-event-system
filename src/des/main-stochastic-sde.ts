@@ -5,6 +5,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-stochastic-sde.rs   (fn main)
+// 1:1 file move. Euler-Maruyama SDE engine plus three ML algorithms
+// (system-id, Ensemble Kalman Filter, denoising-diffusion generative).
+//
+// Conversion notes (file-specific):
+//   - Wiener increments + EnKF resampling + diffusion sampling -> inject
+//     RandomSource/SeededRandom (Mulberry32 used here).
+//   - station classes (SdePlant/SdeEstimateSink) -> struct + impl trait.
+//   - use crate::des::general::control_systems::stochastic_sde; top-level run
+//     -> fn main.
+// =============================================================================
+
+// =============================================================================
 // main-stochastic-sde.ts — model SDEs and run THREE ML algorithms on them.
 //
 //   npm run stochastic-sde

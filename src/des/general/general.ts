@@ -1,9 +1,28 @@
-// RUST MIGRATION: target module src/des/general/general.rs.
-// RUST MIGRATION: DESSet and DESMap become thin newtype wrappers around HashSet/HashMap only if the extra semantics are still needed; otherwise use std collections directly.
-// RUST MIGRATION: HasComputedProperties should become a trait, while any-heavy helpers like sendRaw/deJSON/makeError need typed serde_json::Value and Result boundaries.
-// RUST MIGRATION: getShortUUID maps to the uuid crate, math.BigNumber helpers require a decimal/big-number crate decision, and WebSocket sending belongs behind an IO port trait.
-// RUST MIGRATION: fisherYatesShuffle is a generator today; port as an iterator struct or pure function taking injected rand::Rng.
 'use strict';
+
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/general/general.rs  (module des::general::general)
+// 1:1 file move. Grab-bag utilities: ws send, JSON decode, shuffle, UUID, BigNumber
+// histograms, DESSet/DESMap collection wrappers, error builder.
+//
+// Declarations → Rust:
+//   interface HasComputedProperties  -> trait HasComputedProperties { fn get_with_computed_properties(&self) -> T }
+//   class DESSet<V> extends Set<V>   -> newtype `struct DESSet<V>(HashSet<V>)` (V: Hash+Eq, HasId) + Serialize
+//   class DESMap<K,V> extends Map    -> newtype `struct DESMap<K,V>(HashMap<K,V>)` + Serialize
+//   const sendRaw/deJSON/fisherYatesShuffle/getShortUUID/getReasonableU(/Native)/
+//     getSortedHistogram*/getSortedTimeHistogram/bgn/makeError -> free fns / assoc fns
+//
+// Conversion notes (file-specific):
+//   - HEAVY `mathjs.BigNumber` usage (bgn/getReasonable*/histograms) -> pick ONE decimal
+//     crate (e.g. rust_decimal) or `f64` engine-wide; `math.add/multiply/round` -> ops.
+//   - `Math.random()` (fisherYatesShuffle, getReasonableU/Native) -> inject `RandomSource`.
+//   - `fisherYatesShuffle` is a `function*` generator -> return an `Iterator`/`impl Iterator`.
+//   - `ws` WebSocket `sendRaw` -> tokio-tungstenite; `safe.stringify`/`JSON.parse`/`toJSON` -> serde_json.
+//   - extends `Set`/`Map` (subclassing builtins) has NO Rust analogue -> wrap, don't inherit.
+//   - PROTOTYPE MONKEY-PATCH `(math.bignumber(69) as any).__proto__.toJSON = ...` and the
+//     per-value `toJSON` patch in `bgn` -> NOT portable; implement `Serialize`/rounding explicitly.
+//   - Pervasive `any`/`as any` -> choose concrete types; `makeError` (cli-color + util.inspect) -> a Display error.
+// =============================================================================
 
 import * as math from "mathjs";
 import * as util from "util";
@@ -13,6 +32,7 @@ import * as uuid from 'uuid';
 import * as safe from "@oresoftware/safe-stringify";
 import {WebSocket} from "ws";
 import {HasId} from "../abstract/interfaces";
+import {RandomSource, DEFAULT_RANDOM} from "../shared/capabilities";
 
 export const sendRaw = (c: WebSocket, data: any, options?: any, cb?: () => void) => {
   return c.send(safe.stringify(data), options, cb);
@@ -39,10 +59,10 @@ export const deJSON = (fn: (v: any) => void) => {
   };
 }
 
-export const fisherYatesShuffle = function* <T>(deck: Array<T>, rng: () => number = Math.random) {
+export const fisherYatesShuffle = function* <T>(deck: Array<T>, rng: RandomSource = DEFAULT_RANDOM) {
   // TODO: store previous array
   for (let i = deck.length - 1; i >= 0; i--) {
-    const swapIndex = Math.floor(rng() * (i + 1));
+    const swapIndex = Math.floor(rng.nextFloat() * (i + 1));
     [deck[i], deck[swapIndex]] = [deck[swapIndex], deck[i]];
     yield deck[i];
   }
@@ -110,15 +130,15 @@ export class DESMap<K extends Number, V extends math.BigNumber> extends Map<K, V
 
 }
 
-export const getReasonableU = (rng: () => number = Math.random): math.BigNumber => {
+export const getReasonableU = (rng: RandomSource = DEFAULT_RANDOM): math.BigNumber => {
   // smallest u is 0.001, biggest is 0.999
-  const u = math.max(0.001, rng());
+  const u = math.max(0.001, rng.nextFloat());
   return bgn(math.min(0.999, u));
 }
 
-export const getReasonableUNative = (rng: () => number = Math.random): number => {
+export const getReasonableUNative = (rng: RandomSource = DEFAULT_RANDOM): number => {
   // smallest u is 0.001, biggest is 0.999
-  const u = Math.max(0.001, rng());
+  const u = Math.max(0.001, rng.nextFloat());
   return Math.min(0.999, u);
 }
 

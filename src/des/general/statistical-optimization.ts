@@ -6,6 +6,26 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/statistical-optimization.rs  (module des::general::statistical_optimization)
+// 1:1 file move. Distribution fitting + risk/CVaR + SDDP + adaptive simulation-optimisation DES.
+//
+// Declarations → Rust:
+//   interface OptimizationLogger                    -> trait OptimizationLogger
+//   type DistributionFamily / FitMethod (string unions) -> enums
+//   interface EmpiricalPoint/FittedDistribution/DistributionFit*/Demand*/RiskCapacity*/
+//             SDDP*/Adaptive*/AlternativeStats/...  -> structs
+//   class DistributionFitStation/RiskCapacityStation/CapacityExpansionSDDPStation/
+//         AdaptiveSimulationOptimizerStation extends FixedPointIterationStation<State> -> structs + impl trait
+//   fn fitDistribution/runDistributionFit/sampleDemandVector/buildDemandScenarios/capacityProfit/
+//      runRiskCapacity/runCapacityExpansionSDDP/runAdaptiveSimOpt + many private math/sampler fns -> fns
+//
+// Conversion notes (file-specific):
+//   - INJECT RNG: every `sample*`(rng) (normal/exp/gamma/poisson/demand/fitted) -> take a
+//     `RandomSource`; this file also imports samplers from random-variables.ts (same port).
+//   - `Cut[][]` cut pools and demand matrices -> `Vec<Vec<Cut>>` / `Vec<Vec<f64>>`.
+//   - `logger?: OptimizationLogger` -> `Option<&dyn OptimizationLogger>`.
+//   - special-fn helpers (digamma/trigamma/logGamma) are f64 numerics; validate* throw -> panic/Result.
+// =============================================================================
 // Statistical + stochastic optimisation extensions.
 //
 // This module adds the missing layer above the existing two-stage SLP:
@@ -29,6 +49,7 @@ import {
 import {Preconditions} from './des-base/preconditions';
 import {sampleGamma, samplePoisson} from './random-variables';
 import {mulberry32} from './prng';
+import {PureTransform} from '../shared/transform';
 
 export interface OptimizationLogger {
   log(event: {kind: string; level?: 'trace' | 'debug' | 'info' | 'warn' | 'error'; [key: string]: unknown}): void;
@@ -138,7 +159,27 @@ export interface DistributionFitResult {
   validation: ValidationCheck[];
 }
 
+/** Fit ONE `(family, method)` to a sample. The family and estimation method are
+ *  the configuration; the samples being fitted are the `transform` input. */
+export class DistributionFitter extends PureTransform<readonly number[], FittedDistribution> {
+  constructor(
+    private readonly family: DistributionFamily,
+    private readonly method: FitMethod,
+  ) {
+    super();
+  }
+
+  transform(samples: readonly number[]): FittedDistribution {
+    return fitDistributionImpl(samples, this.family, this.method);
+  }
+}
+
+/** @deprecated Use `new DistributionFitter(family, method).transform(samples)`. */
 export function fitDistribution(samples: readonly number[], family: DistributionFamily, method: FitMethod): FittedDistribution {
+  return new DistributionFitter(family, method).transform(samples);
+}
+
+function fitDistributionImpl(samples: readonly number[], family: DistributionFamily, method: FitMethod): FittedDistribution {
   const cls = 'fitDistribution';
   Preconditions.nonEmpty(cls, 'samples', samples);
   Preconditions.allFinite(cls, 'samples', samples);
@@ -252,9 +293,22 @@ function sampleFittedDistributionUnchecked(fit: FittedDistribution, rng: () => n
   }
 }
 
+/** Draw one sample from a fitted distribution. The distribution is the
+ *  configuration; the `rng` source is the `transform` input. */
+export class FittedDistributionSampler extends PureTransform<() => number, number> {
+  constructor(private readonly fit: FittedDistribution) {
+    super();
+  }
+
+  transform(rng: () => number): number {
+    validateFittedDistribution('sampleFittedDistribution', 'fit', this.fit);
+    return sampleFittedDistributionUnchecked(this.fit, rng);
+  }
+}
+
+/** @deprecated Use `new FittedDistributionSampler(fit).transform(rng)`. */
 export function sampleFittedDistribution(fit: FittedDistribution, rng: () => number): number {
-  validateFittedDistribution('sampleFittedDistribution', 'fit', fit);
-  return sampleFittedDistributionUnchecked(fit, rng);
+  return new FittedDistributionSampler(fit).transform(rng);
 }
 
 export class DistributionFitStation extends FixedPointIterationStation<{idx: number; fits: FittedDistribution[]}> {
@@ -459,24 +513,75 @@ function sampleDemandVectorUnchecked(spec: DemandSpec, nProducts: number, rng: (
   });
 }
 
+/** Sample one demand vector from a demand spec. The spec and product count are
+ *  configuration; the `rng` source is the `transform` input. */
+export class DemandVectorSampler extends PureTransform<() => number, number[]> {
+  constructor(private readonly spec: DemandSpec, private readonly nProducts: number) {
+    super();
+  }
+
+  transform(rng: () => number): number[] {
+    validateDemandSpec('sampleDemandVector', 'spec', this.spec, this.nProducts);
+    return sampleDemandVectorUnchecked(this.spec, this.nProducts, rng);
+  }
+}
+
+/** @deprecated Use `new DemandVectorSampler(spec, nProducts).transform(rng)`. */
 export function sampleDemandVector(spec: DemandSpec, nProducts: number, rng: () => number): number[] {
-  validateDemandSpec('sampleDemandVector', 'spec', spec, nProducts);
-  return sampleDemandVectorUnchecked(spec, nProducts, rng);
+  return new DemandVectorSampler(spec, nProducts).transform(rng);
 }
 
+/** Build `N` equiprobable demand scenarios from a seeded RNG. Product count,
+ *  scenario count, and seed are configuration; the demand spec is the input. */
+export class DemandScenarioBuilder extends PureTransform<DemandSpec, DemandScenario[]> {
+  constructor(
+    private readonly nProducts: number,
+    private readonly N: number,
+    private readonly seed: number,
+  ) {
+    super();
+  }
+
+  transform(spec: DemandSpec): DemandScenario[] {
+    const {nProducts, N, seed} = this;
+    Preconditions.integerInRange('buildDemandScenarios', 'N', N, 1, Number.MAX_SAFE_INTEGER);
+    validateDemandSpec('buildDemandScenarios', 'spec', spec, nProducts);
+    const rng = mulberry32(seed);
+    const out: DemandScenario[] = [];
+    for (let i = 0; i < N; i++) out.push({demand: sampleDemandVectorUnchecked(spec, nProducts, rng), prob: 1 / N});
+    return out;
+  }
+}
+
+/** @deprecated Use `new DemandScenarioBuilder(nProducts, N, seed).transform(spec)`. */
 export function buildDemandScenarios(spec: DemandSpec, nProducts: number, N: number, seed: number): DemandScenario[] {
-  Preconditions.integerInRange('buildDemandScenarios', 'N', N, 1, Number.MAX_SAFE_INTEGER);
-  validateDemandSpec('buildDemandScenarios', 'spec', spec, nProducts);
-  const rng = mulberry32(seed);
-  const out: DemandScenario[] = [];
-  for (let i = 0; i < N; i++) out.push({demand: sampleDemandVectorUnchecked(spec, nProducts, rng), prob: 1 / N});
-  return out;
+  return new DemandScenarioBuilder(nProducts, N, seed).transform(spec);
 }
 
+/** Capacity decision `x` and a realised `demand` vector for {@link CapacityProfit}. */
+export interface CapacityProfitInput {
+  x: readonly number[];
+  demand: readonly number[];
+}
+
+/** Newsvendor-style profit of a capacity decision under one demand realisation.
+ *  Per-product cost/price are configuration; `{x, demand}` is the input. */
+export class CapacityProfit extends PureTransform<CapacityProfitInput, number> {
+  constructor(private readonly cost: readonly number[], private readonly price: readonly number[]) {
+    super();
+  }
+
+  transform({x, demand}: CapacityProfitInput): number {
+    const {cost, price} = this;
+    let z = 0;
+    for (let i = 0; i < x.length; i++) z += -cost[i] * x[i] + price[i] * Math.min(x[i], demand[i]);
+    return z;
+  }
+}
+
+/** @deprecated Use `new CapacityProfit(cost, price).transform({x, demand})`. */
 export function capacityProfit(x: readonly number[], demand: readonly number[], cost: readonly number[], price: readonly number[]): number {
-  let z = 0;
-  for (let i = 0; i < x.length; i++) z += -cost[i] * x[i] + price[i] * Math.min(x[i], demand[i]);
-  return z;
+  return new CapacityProfit(cost, price).transform({x, demand});
 }
 
 function totalShortfall(x: readonly number[], demand: readonly number[]): number {

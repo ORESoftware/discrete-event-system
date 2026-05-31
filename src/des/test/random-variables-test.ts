@@ -5,6 +5,22 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: #[cfg(test)] mod tests in src/des/general/random_variables.rs
+// 1:1 file move. Unit tests one module (PMF algebra + samplers), so prefer that
+// module's `#[cfg(test)] mod tests`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - approx()/arrApprox() float comparisons -> approx::assert_abs_diff_eq!
+//     (element-wise for PMF vectors).
+//   - Monte Carlo cross-checks use mulberry32 -> a seeded rand::Rng so the
+//     sampled mean/variance assertions are deterministic.
+// =============================================================================
+
+// =============================================================================
 // Tests for `general/random-variables.ts`. Each claim made by the module is
 // pinned by either an analytic identity or a Monte Carlo cross-check, often
 // both. Run with:

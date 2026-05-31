@@ -6,6 +6,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/rl-environments.rs  (module des::general::rl_environments)
+// 1:1 file move. Small pure RL environments (GridWorld, Corridor) shared by the RL agents.
+//
+// Declarations → Rust:
+//   interface Environment              -> trait Environment (numStates/numActions/reset/step/render?)
+//   class GridWorld / Corridor implements Environment -> structs + impl Environment trait
+//   fn evalPolicy                      -> free fn / assoc fn
+//
+// Conversion notes (file-specific):
+//   - `step` returns an inline `{nextState, reward, done}` -> a named struct (e.g. `StepOutcome`)
+//     with `next_state: usize, reward: f64, done: bool`.
+//   - `render?(state): string` optional method -> `fn render(&self, s: usize) -> Option<String>`
+//     (or a separate optional trait); states/actions are `usize`.
+//   - environments are PURE/deterministic (no RNG); the DES wrapping lives in the agent files.
+// =============================================================================
 // general/rl-environments.ts — small reinforcement-learning environments
 // shared by qlearning-des.ts and ppo-des.ts.
 //

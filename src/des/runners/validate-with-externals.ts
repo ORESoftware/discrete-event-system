@@ -7,6 +7,22 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-with-externals.rs  (a `fn main`
+//                    binary; an `examples/…rs` also works)
+// 1:1 file move. Side-by-side comparison of every internal kernel plus external
+// JSON drops (SimPy/Ciw/…) with Welch t-tests; does not invoke any interpreter.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - env (`N`, `STEPSIZE`) -> `std::env::var`.
+//   - `fs` walk of `out/external/<tool>/<seed>.json` -> `std::fs::read_dir` +
+//     `serde_json` over a typed `RunResult` struct.
+//   - dynamically-keyed kernel columns (`as any`) -> a typed struct + `HashMap`.
+//   - kernel seeding (`Date.now`/`withSeed`) -> `SeededRandom`/`Clock`.
+//   - `console.log` -> `println!`.
+// =============================================================================
+
+// =============================================================================
 // validate-with-externals: side-by-side comparison of every kernel we have,
 // including JSON results dropped by external Python tools (SimPy, Ciw, ...).
 //

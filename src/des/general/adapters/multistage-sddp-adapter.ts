@@ -5,7 +5,25 @@
 'use strict';
 
 // =============================================================================
-// JSON adapter for multi-stage stochastic inventory/storage SDDP.
+// RUST MIGRATION  —  target: src/des/general/adapters/multistage-sddp-adapter.rs
+//   (module des::general::adapters::multistage_sddp_adapter)
+// 1:1 file move. JSON adapter registering the multistage-SDDP inventory model.
+//
+// Declarations → Rust:
+//   interface MultiStageParams                 -> struct (problem?/options? -> Option)
+//   const demandOutcomeSchema/multiStageProblemSchema/multiStageSchema: ParamSchema
+//                                        -> serde + validator metadata
+//   const multiStageAdapter: DESModelRegistration<P,R> -> struct + impl trait;
+//             registerModel(...) -> explicit registration
+//
+// Conversion notes (file-specific):
+//   - `demands` is `number[][]` of demand/prob outcomes (per-stage scenario lists)
+//     -> Vec<Vec<DemandOutcome>>.
+//   - `params.problem ?? buildDefault…()`, `params.options ?? {}` -> Option::unwrap_or(_else).
+//   - CSV writes `tr.policyValue ?? ''` / `tr.gapToExact ?? ''` -> Option formatting;
+//     `gapToExact?.toExponential(3) ?? 'n/a'` in summary likewise.
+//   - NOTE: this is a near-duplicate of the multistage block in
+//     stochastic-optimization-adapters.ts; both register id 'multistage-sddp'.
 // =============================================================================
 
 import {DESModelRegistration, ParamSchema} from '../des-spec';

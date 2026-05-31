@@ -8,6 +8,25 @@
 // - If this renderer is wired into the DES graph, wrap snapshot-to-frame as a PureTransform implementor.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/animation/scenes/two-disease-scene.rs   (module des::animation::scenes::two_disease_scene)
+// 1:1 file move. Builds frames + charts for the two-disease (co-infection) animation.
+//
+// Declarations → Rust:
+//   interface CompartmentCounts                       -> struct CompartmentCounts
+//   const ORDER: (keyof CompartmentCounts)[]          -> `&[Compartment]` (enum slice)
+//   const COLORS: Record<keyof CompartmentCounts,string> -> `match` on enum Compartment -> &str
+//   const STAGE_W/H + BAR_AREA_*/CHART_* layout consts -> `pub const`/`const`
+//   frame/chart builder fns                            -> pub fns
+//
+// Conversion notes (file-specific):
+//   - Frame data (Shape[]/Frame/ChartSpec) is serialized for JSON -> serde structs (see types.rs).
+//   - the `keyof CompartmentCounts` keys (S/A/B/AB/R/D) are a closed set -> model as
+//     an `enum Compartment`; `ORDER` and `COLORS` become a slice + `match`.
+//   - all coords/counts are `number` -> `f64` (counts may be `usize`).
+//   - imports Animation/ChartSpec/Frame/Shape from ../types -> `use super::super::types::*`.
+// =============================================================================
+
+// =============================================================================
 // Two-disease scene builder.
 //
 // Layout (900×640):

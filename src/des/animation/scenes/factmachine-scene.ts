@@ -8,6 +8,25 @@
 // - Local color/draw helpers stay private; arrays of Shape become Vec<Shape> and optional labels become Option<String>.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/animation/scenes/factmachine-scene.rs   (module des::animation::scenes::factmachine_scene)
+// 1:1 file move. Builds frames + charts for the fact-machine entity-architecture animation.
+//
+// Declarations → Rust:
+//   const STAGE_W/H + ARCH_*/HIST_*/PRICE_*/FLOW_*/ENT_*/NOISE_*/... layout consts -> `pub const`/`const`
+//   function viridis (colormap)        -> fn -> String
+//   function drawStation / drawEdge    -> fn(&mut Vec<Shape>, ..)
+//   interface ArchitectureFrameArgs    -> struct
+//   function buildFactMachineFrame / buildFactMachineCharts -> pub fns
+//
+// Conversion notes (file-specific):
+//   - Frame data (Shape[]/Frame/ChartSpec) is serialized for JSON -> serde structs (see types.rs).
+//   - `viridis(t)` builds `rgb(..)` -> `format!`.
+//   - `drawStation`/`drawEdge(shapes: Shape[], ..)` -> `&mut Vec<Shape>`.
+//   - unused param `_r: FactMachineResult` -> leading-underscore binding.
+//   - all coords are `number` -> `f64`.
+// =============================================================================
+
+// =============================================================================
 // FactMachine animation scene — REWRITTEN to put the DES ARCHITECTURE
 // front-and-centre.
 //

@@ -6,6 +6,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-genetic-tsp.rs  (a `fn main` binary;
+//                    an `examples/…rs` also works)
+// 1:1 file move. Verifies the GA-TSP solver against known-optimal instances and
+// its constraint-handling policies.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - GA RNG (population init/mutation/crossover) -> inject `SeededRandom`.
+//   - any `JSON` dump -> `serde_json`.
+//   - `console.log` PASS/FAIL + `process.exit` -> `println!` / `std::process::exit`.
+// =============================================================================
+
+// =============================================================================
 // runners/validate-genetic-tsp.ts — verify the GA-TSP solver against
 // known-optimal instances and the constraint-handling policies.
 // =============================================================================

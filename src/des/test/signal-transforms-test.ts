@@ -4,6 +4,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/signal_transforms_test.rs   (integration test crate)
+// 1:1 file move. Tests Z / Laplace / Fourier transform station graphs, so it is
+// an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - close()/complexClose({re,im}) comparisons -> approx::assert_relative_eq!;
+//     {re,im} -> num_complex::Complex<f64>.
+//   - async checkThrows()/await -> #[test] asserting Result::Err / #[should_panic].
+// =============================================================================
+
+// =============================================================================
 // Tests for Z, Laplace, and Fourier transform DES station graphs.
 // =============================================================================
 

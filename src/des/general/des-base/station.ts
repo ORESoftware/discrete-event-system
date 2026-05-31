@@ -12,6 +12,38 @@
 //   in transform_entity.rs. Convert thrown validation/connection errors to Result.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/station.rs  (module des::general::des_base::station)
+// 1:1 file move. DESStation — the foundation trait for the iterative-algorithm
+// hierarchy (typed inboxes, an explicit edge graph, a `runTimeStep` tick hook).
+//
+// Declarations → Rust:
+//   interface Token              -> marker trait Token {} (blanket-impl or `dyn Token`)
+//   interface HasRunTimeStep     -> trait HasRunTimeStep { fn run_time_step(&mut self); }
+//   type ChannelName = string    -> type ChannelName = String; (or a newtype)
+//   const DEFAULT_CHANNEL        -> const DEFAULT_CHANNEL: &str = "default";
+//   interface DESRunLoopEntity   -> trait DESRunLoopEntity (optional methods -> provided defaults)
+//   interface OutEdge (private)  -> struct OutEdge { target, target_channel }
+//   abstract class DESStation    -> trait DESStation w/ provided methods over a
+//                                    `StationCore { id, inboxes, outs, validators }` field
+//
+// Conversion notes (file-specific):
+//   - TEMPLATE METHOD: `runTimeStep` is the only abstract hook; family bases
+//     (SingleStateOptimizer, …) provide it as a template method and concrete
+//     leaves implement finer hooks. In Rust: `fn run_time_step(&mut self)` is a
+//     required trait method.
+//   - `inboxes: Map<ChannelName, Token[]>` / `outs: Map<.., OutEdge[]>`
+//     -> `HashMap<String, Vec<Box<dyn Token>>>` / `HashMap<String, Vec<OutEdge>>`.
+//   - `OutEdge.target: DESStation` is a back-reference into the graph — use
+//     `Rc<RefCell<dyn DESStation>>` or an arena (Vec + index) to satisfy the
+//     borrow checker; `emit` then routes via that handle.
+//   - Generic `drain<T>` / `peek<T>` downcasts via `as T` — in Rust downcast
+//     `dyn Token` (Any) or make channels typed; no free coercion.
+//   - `inboxSizes(): Record<ChannelName, number>` -> `HashMap<String, usize>`.
+//   - Optional methods on DESRunLoopEntity (assertPreconditions?, hasWork?, …)
+//     -> provided trait defaults (no `Option<fn>`).
+// =============================================================================
+
+// =============================================================================
 // general/des-base/station.ts — DESStation, the foundation for the
 // "iterative algorithm as DES" hierarchy in des-base/.
 //

@@ -5,6 +5,18 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-stochastic-sde-report.rs   (fn main)
+// 1:1 file move. Report tool: runs main-stochastic-sde and writes a styled
+// HTML report into out/.
+//
+// Conversion notes (file-specific):
+//   - execFileSync(ts-node, [main-stochastic-sde.ts]) -> std::process::Command
+//     invoking that sibling binary.
+//   - class StochasticSdeReport -> struct + impl; fs write -> std::fs.
+//   - RunReportPage -> use crate::des::animation::run_report.
+// =============================================================================
+
+// =============================================================================
 // main-stochastic-sde-report.ts — run the stochastic-SDE + 3-ML-algorithm demo
 // and write a styled HTML report into out/.
 //

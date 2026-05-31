@@ -1,15 +1,25 @@
 'use strict'
 
-// RUST MIGRATION:
-// - Target: src/des/entity_routing/entity_splitter.rs
-// - DecisionEntityGraph becomes a graph-data struct; EntitySplitter<S,T>
-//   becomes a broadcast-routing station with queue state and bidirectional
-//   endpoint trait impls.
-// - Broadcast fan-out is a PureTransform-style operation over one queued item
-//   and all out-connections; model partial acceptance as Result or an enum so
-//   Rust callers can choose rollback/retry behavior.
-// - Replace LinkedQueue<AbstractMovingEntity<any>>, `any` targets, and
-//   makeError throws with VecDeque plus typed MovingEntity/Endpoint traits.
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/entity-routing/entity-splitter.rs  (module des::entity_routing::entity_splitter)
+// 1:1 file move. A node that BROADCASTS each queued item to every out-connection.
+//
+// Declarations → Rust:
+//   interface DecisionEntityGraph (empty)  -> marker struct / `()`
+//   class EntitySplitter<S,T>              -> struct + impl (+ impl AbstractBidirectionalEntity,
+//                                             HasComputedProperties, HasInternalQueue)
+//
+// Conversion notes (file-specific):
+//   - `queue: LinkedQueue` drained via `dequeueIterator()` yielding `[k,v]` ->
+//     `VecDeque<_>` with `drain(..)`; no void sentinel.
+//   - Broadcast semantics: EVERY out-connection must accept; a refusal does
+//     `throw makeError(..)` -> `Result`/`panic!` (invariant). `(x as any)?.id` -> typed.
+//   - `opts.replayItemsIfNotFirstAccepted?: false` is typed as the literal `false`
+//     (quirk) -> a plain `bool` field in Rust.
+//   - `getGraphData()` returns a hardcoded `{processedCount: 3}` stub -> placeholder.
+//   - `math.BigNumber` stepSize -> decimal/f64; `getSerializableData(): Partial<this>` -> serde DTO.
+//   - `getOutConnections(): Set<EntityConnection>` -> Vec/HashSet of `Rc<RefCell<..>>` edges.
+// =============================================================================
 
 import {AbstractBidirectionalEntity, TimeStepOpts} from "../abstract/abstract";
 import { HasInternalQueue} from "../abstract/interfaces";

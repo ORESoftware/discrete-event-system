@@ -6,6 +6,24 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/time-stepped-station.rs  (module des::general::time_stepped_station)
+// 1:1 file move. Lightweight base classes for fixed-step (tick-driven) DES stations.
+//
+// Declarations → Rust:
+//   abstract class TimeSteppedStation                         -> trait TimeSteppedStation { fn run_time_step(..) }
+//   abstract class BufferedTimeSteppedStation<T>              -> trait + a base struct holding the inbox
+//   abstract class RoutedTimeSteppedStation<T>                -> trait extending Buffered (see note)
+//   abstract class BidirectionalTimeSteppedStation<F,B>       -> trait (fwd/back channels)
+//   abstract class SynchronousDataflowStation<V>              -> trait (SDF firing)
+//   interface SynchronousDataflowConnection<V>                -> struct
+//
+// Conversion notes (file-specific):
+//   - INHERITANCE CHAIN: Routed -> Buffered -> TimeSteppedStation. Rust has no class inheritance:
+//     express as a `trait TimeSteppedStation` with default fns + concrete structs that COMPOSE a
+//     shared base (e.g. an `inbox: VecDeque<T>` field) and `impl` the traits. Do not mirror `extends`.
+//   - `inbox: T[]` FIFO -> `VecDeque<T>`; `id: string` -> `String`; generics <T,F,B,V> carry over.
+//   - pure scheduling primitives: no RNG/clock/Map here.
+// =============================================================================
 // Shared station primitives for fixed-step DES models.
 //
 // The full queueing framework (`abstract/`, entity-source/processor/sink, and

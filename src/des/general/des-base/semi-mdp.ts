@@ -11,6 +11,32 @@
 // - Convert missing legal-option and invalid option-duration throws to Result.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/semi_mdp.rs  (module des::general::des_base::semi_mdp)
+// 1:1 file move. Options-framework Semi-MDP + intra-option SMDP Q-learning;
+// extends RLAgentStation.
+//
+// Declarations → Rust:
+//   interface Option<S,A>           -> trait Opt<S, A> { fn init; fn policy; fn terminate; }
+//                                      (NOTE: `Option` collides with std::option::Option —
+//                                       rename, e.g. `SmdpOption`/`Opt`)
+//   interface SemiMDPOptions        -> struct (#[derive(Default)] bar `rng`)
+//   abstract class SemiMDPAgentStation<S,A> -> trait/struct: RLAgentStation<S, A>
+//
+// Conversion notes (file-specific):
+//   - NAME CLASH: the `Option<S,A>` interface MUST be renamed in Rust to avoid the
+//     prelude `Option`.
+//   - INHERITANCE: implements RLAgentStation's pickAction/update/endOfEpisode and
+//     adds abstract options()/stateKey() hooks -> required trait fns.
+//   - `Q: number[][]` sparse-ish keyed by stateKey -> `Vec<Vec<f64>>` or
+//     `HashMap<usize, Vec<f64>>` (stateKey returns the index).
+//   - `optionStartState!: S` definite-assignment -> `Option<S>`.
+//   - `rng: () => number` -> inject `RandomSource`; tie-break via argmax.rs.
+//   - `Required<SemiMDPOptions>` resolved opts -> concrete config struct.
+//   - non-ASCII `ω`, `γ` -> `omega`, `gamma`. `Math.pow(γ, tau)` -> `gamma.powi(tau)`.
+//   - `throw new Error` (no legal option) -> `Result`/`panic!`.
+// =============================================================================
+
+// =============================================================================
 // general/des-base/semi-mdp.ts — base classes for SEMI-MARKOV DECISION
 // PROCESSES under the OPTIONS FRAMEWORK (Sutton, Precup, Singh 1999).
 //

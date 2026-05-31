@@ -5,6 +5,33 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/control-systems/stochastic-sde.rs
+//   (module des::general::control_systems::stochastic_sde)
+// 1:1 file move. Itô-SDE contract, Euler–Maruyama solver, concrete systems + plant.
+//
+// Declarations → Rust:
+//   interface SdeSystem                  -> trait SdeSystem (dimension/noiseDimension/
+//                                           drift/diffusion)
+//   class EulerMaruyamaIntegrator        -> struct + impl
+//   class GeometricBrownianMotion / OrnsteinUhlenbeck /
+//         StochasticDcMotor (implements SdeSystem) -> struct + impl SdeSystem
+//   interface StochasticDcMotorSpec / SdePlantOptions -> struct (Default for opts)
+//   class SdeChannels (static consts)    -> associated consts
+//   class SdeStateToken / SdeObservationToken / SdeEstimateToken (implements Token)
+//                                        -> struct + impl Token
+//   class SdePlantStation / SdeEstimateSinkStation extends DESStation -> struct + impl trait
+//
+// Conversion notes (file-specific):
+//   - Vec/Mat are shared::linalg aliases (Vec<f64> / Vec<Vec<f64>>), NOT std Vec.
+//   - Brownian increments use Mulberry32 (rng.normal) -> inject seeded RNG; keep
+//     seeds (default 20260529) for reproducibility.
+//   - `loadTorque ?? 0`, `observationMatrix ?? identity`, `observationNoiseStd ??
+//     zeros` -> Option::unwrap_or / unwrap_or_else.
+//   - SdeEstimateSinkStation.rmseByDimension builds `Map<number, SdeStateToken>`
+//     keyed by step index -> HashMap<usize, SdeStateToken> (usize: Hash+Eq).
+// =============================================================================
+
+// =============================================================================
 // control-systems/stochastic-sde.ts — stochastic differential equations.
 //
 //   dX_t = f(X_t, t) dt + g(X_t, t) dW_t          (Itô SDE)

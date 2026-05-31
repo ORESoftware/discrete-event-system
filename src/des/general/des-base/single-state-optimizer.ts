@@ -13,6 +13,34 @@
 //   to Result.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/single_state_optimizer.rs  (module des::general::des_base::single_state_optimizer)
+// 1:1 file move. Template-method base for single-walker iterative optimisation
+// (SA / hill-climb / tabu / threshold-accepting) over a generic state `S`.
+//
+// Declarations → Rust:
+//   const SINGLE_STATE_INITIAL/RESULT_CHANNEL -> const &str
+//   class SingleStateInitialToken<S>   -> struct + impl Token
+//   interface SingleStateResultSnapshot<S> -> struct (#[derive(Clone)])
+//   class SingleStateResultToken<S>    -> struct + impl Token
+//   class SingleStateSourceStation<S>  -> struct + impl DESStation (emits initial state once)
+//   class SingleStateSinkStation<S>    -> struct + impl DESStation (captures latest result)
+//   abstract class SingleStateOptimizer<S> -> trait SingleStateOptimizer<S>: DESStation
+//                                             (template-method runTimeStep + hooks)
+//
+// Conversion notes (file-specific):
+//   - TEMPLATE METHOD: `runTimeStep` is final; required hooks
+//     initialState/cost/propose/accept/clone/shouldStop -> required trait fns;
+//     onAccept/onReject/onBootstrap/onFinish -> provided defaults.
+//   - `rng: () => number` -> inject `RandomSource` (shared/capabilities); hooks
+//     take `&mut dyn RandomSource` instead of `() => number`.
+//   - Definite-assignment fields (`current!: S`, `best!`, …) -> `Option<S>` or a
+//     two-phase `Uninit/Ready` enum; Rust has no `!` non-null assertion.
+//   - `clone(state)` hook = explicit deep copy -> require `S: Clone` or keep the hook.
+//   - `throw new Error` (double-init, bad cost, >1 seed token) -> `Result`/`panic!`.
+//   - static class consts (CH_INITIAL_STATE) -> associated consts on the impl/struct.
+// =============================================================================
+
+// =============================================================================
 // general/des-base/single-state-optimizer.ts — base class for SINGLE-WALKER
 // iterative optimisation: simulated annealing, hill climbing, tabu search,
 // gradient descent (in state-space), Newton, threshold accepting, …

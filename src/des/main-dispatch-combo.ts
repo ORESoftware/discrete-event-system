@@ -5,6 +5,18 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-dispatch-combo.rs   (fn main)
+// 1:1 file move. One dispatch problem solved by DES + MDP + LP + MCTS plus
+// heuristics, layered (engines / decision abstraction / DES).
+//
+// Conversion notes (file-specific):
+//   - engines (simplex/value-iteration/MCTS/heuristics) -> use crate::des::
+//     general::...
+//   - MCTS rollouts + stochastic arrivals -> inject RandomSource/SeededRandom.
+//   - heuristic set string union -> enum; top-level run -> fn main.
+// =============================================================================
+
+// =============================================================================
 // main-dispatch-combo.ts — DES + MDP + LP + MCTS on a single combinatorial
 // optimisation problem (multi-class parallel-server dispatch).
 //

@@ -5,6 +5,23 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/elevator_invariants_test.rs   (integration test crate)
+// 1:1 file move. Runs the elevator/floor/person model and checks invariants
+// after every tick. Keep the rich doc-block below; this header sits above it.
+//
+// Test harness → Rust:
+//   ad-hoc per-tick invariant checks + console.log  ->  #[test] fns using
+//   assert!/assert_eq! (assert the invariant inside the tick loop).
+//
+// Conversion notes (file-specific):
+//   - continuous currentFloor bounds (I3) and timestamp monotonicity (I5) are
+//     float comparisons -> approx::assert_relative_eq!.
+//   - conservation-of-people (I1) counts across floor queues / elevators / sink
+//     -> assert_eq! on summed counts; floor queues mutated from inside
+//     elevator.runTimeStep need shared ownership (Rc<RefCell<..>>) in Rust.
+// =============================================================================
+
+// =============================================================================
 // Elevator system invariants test.
 //
 // Validates that the elevator + floor + person model is correct, by running

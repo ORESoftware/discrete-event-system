@@ -6,6 +6,20 @@
 // - File I/O belongs at the boundary via std::fs/std::path; numerical helpers stay private pure functions.
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-convolution.rs  (a `fn main` binary;
+//                    an `examples/…rs` also works)
+// 1:1 file move. Compares the framework convolution output against numpy.convolve
+// (max-abs error + RMSE).
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - `__dirname`-relative `path.join` -> `std::path` (`CARGO_MANIFEST_DIR` / cwd).
+//   - `fs`/`JSON.parse` -> `std::fs` + serde structs.
+//   - `as any` on parsed arrays -> typed `Vec<f64>`.
+//   - `process.exit(code)` -> `std::process::exit(code)`.
+// =============================================================================
+
 // Compares the framework's convolution output (out/convolution-framework.json)
 // against numpy.convolve (out/external/convolution/numpy.json).
 //

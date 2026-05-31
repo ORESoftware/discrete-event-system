@@ -1,16 +1,29 @@
 'use strict';
 
-// RUST MIGRATION:
-// - Target: src/des/entity_queue/queue.rs
-// - QueueEntityGraphData becomes a serde-friendly struct; QueueEntity<S,T>
-//   becomes a queue-station struct composing BidirectionalEntityState and
-//   VecDeque/queue storage.
-// - `HasInternalQueue<AbstractMovingEntity<any>>` should become a nominal trait
-//   with an associated Item type, avoiding broad trait objects unless mixed
-//   moving-entity queues are required.
-// - Base getSerializableData now returns a minimal snapshot; Rust should derive
-//   Serialize on a QueueEntitySnapshot rather than serializing graph pointers.
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/entity-queue/queue.rs  (module des::entity_queue::queue)
+// 1:1 file move. The base buffering queue entity (parent of processors).
+//
+// Declarations → Rust:
+//   interface QueueEntityGraphData -> struct QueueEntityGraphData { processed_count }
+//                                     (composes EntityGraphData)
+//   class QueueEntity<S,T>         -> struct + impl (+ impl AbstractBidirectionalEntity,
+//                                     HasInternalQueue); this is a base others `extend`.
+//
+// Conversion notes (file-specific):
+//   - INHERITANCE: EntityProcessor / EntityNumericProcessor `extend` QueueEntity ->
+//     model as a `QueueEntity` trait (default fns) + shared field-bag struct that
+//     processors compose; not `extends`.
+//   - `queue: LinkedQueue<AbstractMovingEntity>` -> `VecDeque<_>` (entities behind
+//     `Rc<RefCell>`/index).
+//   - `getSerializableData()` logs then `throw makeError(..)` BEFORE its return
+//     (dead unreachable return) -> `panic!`/`unimplemented!`; the spread DTO is unreachable.
+//   - `opts: { xx?: boolean }` is a near-empty marker -> trim or a small config struct.
+//   - `math.BigNumber` stepSize -> decimal/f64.
+//   - `getGraphData()` returns hardcoded `processedCount: 3` stub -> placeholder.
+// =============================================================================
 
+import {number} from "mathjs";
 import * as math from "mathjs";
 import {AbstractMovingEntity} from "../entity-moving/moving";
 import {AbstractBidirectionalEntity} from "../abstract/abstract";

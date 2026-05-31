@@ -5,6 +5,37 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/adapters/statistical-optimization-adapter.rs
+//   (module des::general::adapters::statistical_optimization_adapter)
+// 1:1 file move. Registers stochastic-LP / distribution-fit / risk-capacity /
+// sddp-capacity / adaptive-simopt JSON adapters (5 models), all with animations.
+//
+// Declarations → Rust:
+//   const rangeSchema/fittedDistributionSchema/empiricalPointSchema/demandSchema/
+//         fitParamsSchema/riskParamsSchema/sddpParamsSchema/altSchema/
+//         adaptiveParamsSchema/stochasticLPSchema: ParamSchema -> serde+validator consts
+//             (demand `oneOf` uniform|fitted|empirical -> #[serde(tag="kind")] enum;
+//              family/method/support/risk.kind literal unions -> enums)
+//   interface StochasticLPParams / NormalizedStochasticLPParams /
+//             StochasticLPAdapterResult -> struct (Option fields)
+//   fn normalizeStochasticLPParams / assertStochasticLPParams / addBar /
+//      lineChartSeries -> plain `fn` helpers
+//   registerModel(...) x5 -> one struct + impl ModelAdapter trait each
+//
+// Conversion notes (file-specific):
+//   - GotChA: dual param spelling (cost/price vs c/p, numScenarios vs N) is
+//     reconciled in normalizeStochasticLPParams with `?? ` fallbacks and length
+//     guards that `throw` — model as Option fields + a normalise fn returning
+//     Result; the throws are validation (recoverable -> Result, not panic).
+//   - `fitted.params` is an open string→number map -> HashMap<String, f64>.
+//   - The `evalX` closure captures `actual`/`oos` slices -> closure/local fn.
+//   - `r.benders.bendersTrace ?? []`, `actual.oosN!` non-null assertion -> Option
+//     unwrap_or / expect; `JSON.stringify` in CSV -> serde_json.
+//   - Shapes (animation/types union) -> Vec<Shape>/enum; animations derive from
+//     results only (no RNG).
+// =============================================================================
+
+// =============================================================================
 // JSON adapters for statistical + stochastic optimisation models.
 // =============================================================================
 

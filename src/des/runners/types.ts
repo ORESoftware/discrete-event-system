@@ -6,6 +6,22 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/runners/types.rs   (module des::runners::types)
+// 1:1 file move. Shared config/result types for the SEIR kernel runners.
+//
+// Declarations → Rust:
+//   type Kernel = 'framework' | 'fel' | ...  -> enum Kernel { Framework, Fel, .. }
+//                                               (#[serde(rename_all="kebab-case")])
+//   interface SimConfig / RunOpts / RunResult -> struct (#[derive(Clone, Serialize, Deserialize)])
+//
+// Conversion notes (file-specific):
+//   - `[number, number]` interarrival/residence tuples -> `(f64, f64)`.
+//   - `Record<string, number>` population maps -> `HashMap<String, f64>` (or a
+//     fixed-size array indexed by COMPARTMENT_ORDER for speed).
+//   - This is a pure data module: no I/O, no RNG — translate first.
+// =============================================================================
+
+// =============================================================================
 // Shared types used by all three kernel runners (framework, FEL reference,
 // per-individual-clock framework variant). Keeping these in one place makes
 // it easy to swap kernels in the replication / stepsize-sweep drivers.

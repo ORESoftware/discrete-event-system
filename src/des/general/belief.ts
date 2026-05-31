@@ -5,6 +5,24 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/belief.rs  (module des::general::belief)
+// 1:1 file move. DiscreteBelief: a distribution over finite hidden states + Bayesian update.
+//
+// Declarations → Rust:
+//   class DiscreteBelief<S>   -> struct DiscreteBelief<S> { states: Vec<S>, weights: Vec<f64> } + impl
+//   fn brierScore             -> assoc fn / free fn
+//   fn klDivergence           -> assoc fn / free fn (returns f64; Infinity -> f64::INFINITY)
+//
+// Conversion notes (file-specific):
+//   - `update`/`propagate`/`expectation` take closures (likelihood/transition/f);
+//     map to generic `F: Fn(&S, usize) -> _` params.
+//   - `sample(rng: () => number)` -> take a `RandomSource`/`rand::Rng`, not a closure.
+//   - `mean()`/`variance()` use `Number(state as unknown as number)` — they are only
+//     valid when S is numeric; in Rust bound them with `where S: Into<f64> + Copy`.
+//   - `throw new Error(...)` here are invariant violations -> `panic!` (or `Result` if recoverable).
+// =============================================================================
+
+// =============================================================================
 // DiscreteBelief — a probability distribution over a finite set of hidden
 // states, with Bayesian update.
 //

@@ -6,6 +6,27 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/runners/external_program.rs
+//                    (module des::runners::external_program — hyphen → underscore)
+// 1:1 file move. Sanctioned external-program invocation helpers + module registry.
+//
+// Declarations → Rust:
+//   interface ExternalProgramResult / ExternalInterpreterSpec / ExternalModule*
+//                                  -> structs (#[derive(Clone, Debug)])
+//   type ExternalModuleKind = 'reference'|'solver'|'validator' -> enum
+//   type ExternalParamValue = string|number|boolean|undefined  -> enum ParamValue
+//
+// Conversion notes (file-specific):
+//   - `spawnSync(cmd, args, {..})` (shell-free, argv array, captured stdout/stderr)
+//     -> `std::process::Command::new(cmd).args(args).output()`.
+//   - interpreter env-var override -> `std::env::var(spec.env_var)`.
+//   - `fs.existsSync` / `path.join` source-path checks -> `std::path::Path::exists`
+//     / `PathBuf`.
+//   - `status: number | null` -> `Option<i32>` (`output.status.code()`).
+//   - module registry mutated via a module-level guard -> `OnceLock`/`Once`.
+// =============================================================================
+
+// =============================================================================
 // Sanctioned external-program invocation helpers and module registry for
 // validators / reference solvers.
 //

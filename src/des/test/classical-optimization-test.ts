@@ -4,6 +4,20 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/classical_optimization_test.rs   (integration test crate)
+// 1:1 file move. Tests classic optimization station-graph models (assignment,
+// VRP, flow/job shop, QP) via the des-registry, so it is an integration test.
+//
+// Test harness → Rust:
+//   ad-hoc check()/CheckRow + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual rows and PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - close(a,b,tol) relative float comparison -> approx::assert_relative_eq!.
+//   - throws(fn) -> assert on Result::Err / #[should_panic].
+// =============================================================================
+
+// =============================================================================
 // Tests for classic optimization station-graph models.
 // =============================================================================
 

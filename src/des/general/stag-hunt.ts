@@ -6,6 +6,22 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/stag-hunt.rs  (module des::general::stag_hunt)
+// 1:1 file move. Stag-hunt coordination game with independent tabular Q-learners (multi-agent DES).
+//
+// Declarations → Rust:
+//   interface StagHuntOpts / StagHuntResult        -> structs (Default where sensible)
+//   class StagHuntEnv implements JointEnvironment<number, number> -> struct + impl trait (private)
+//   class StagHuntQLearner extends RLAgentStation<number, number> -> struct + impl agent trait (private)
+//   fn runStagHunt                                  -> free fn / assoc fn
+//
+// Conversion notes (file-specific):
+//   - INJECT RNG: ε-greedy action choice + payoff matrix sampling -> `RandomSource`; share one
+//     source across agents/env for reproducible coordination outcomes.
+//   - JointEnvironment / RLAgentStation are base contracts -> traits with default fns; each agent's
+//     Q-table is a tiny `Vec<Vec<f64>>` (1 state × 2 actions) struct field (`&mut self`).
+//   - payoff matrix is a fixed `[[(f64,f64);2];2]` constant; states/actions are `usize`.
+// =============================================================================
 // general/stag-hunt.ts — the canonical STAG HUNT coordination game with
 // INDEPENDENT Q-LEARNING (Tan 1993) on top of the multi-agent base.
 //

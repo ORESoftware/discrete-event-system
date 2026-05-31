@@ -5,6 +5,18 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-empirical-control-report.rs   (fn main)
+// 1:1 file move. Report tool: runs main-empirical-control and writes a styled
+// HTML report into out/.
+//
+// Conversion notes (file-specific):
+//   - execFileSync(ts-node, [main-empirical-control.ts]) -> std::process::
+//     Command invoking that sibling binary.
+//   - class EmpiricalControlReport -> struct + impl; fs write -> std::fs.
+//   - RunReportPage -> use crate::des::animation::run_report.
+// =============================================================================
+
+// =============================================================================
 // main-empirical-control-report.ts — run the empirical controllability /
 // observability demo and write a styled HTML report into out/.
 //

@@ -6,6 +6,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-contact-seir.rs   (fn main)
+// 1:1 file move. Contact-based SEIR: explicit pairwise/triplet interactions
+// vs mass-action mean field. Defines the model AND runs it.
+//
+// Conversion notes (file-specific):
+//   - Contact-kernel selector 'mass-action'|'pairwise'|'triplet' -> enum
+//     ContactKernel (match on kind).
+//   - Heavy sampling (Poisson contacts, Gamma per-person c_i, Bernoulli
+//     transmission) -> inject RandomSource/SeededRandom (shared::capabilities);
+//     Gamma/Poisson draws -> a rand_distr crate.
+//   - Top-level run -> fn main(); the Population station + kernels are reusable
+//     model types that could also live in a des::... module.
+// =============================================================================
+
+// =============================================================================
 // CONTACT-BASED SEIR — explicit pairwise (and triplet) interactions.
 //
 // THE QUESTION

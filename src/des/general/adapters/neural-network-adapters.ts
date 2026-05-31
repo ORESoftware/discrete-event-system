@@ -5,7 +5,34 @@
 'use strict';
 
 // =============================================================================
-// JSON adapters for neural-network DES models.
+// RUST MIGRATION  —  target: src/des/general/adapters/neural-network-adapters.rs
+//   (module des::general::adapters::neural_network_adapters)
+// 1:1 file move. Registers 3 neural-network JSON adapters: neural-xor,
+// neural-qlearning-corridor, neural-ode-decay (each lazily imports its scene).
+//
+// Declarations → Rust:
+//   interface NeuralXorParams / NeuralQCorridorParams / NeuralODEDecayParams /
+//             NeuralODEDecayResult                 -> struct (#[derive(Deserialize)];
+//             all-optional params -> Option fields + serde default)
+//   type NeuralQCorridorResult = ReturnType<typeof runNeuralQLearningDES> & {eval}
+//                                        -> a NAMED struct (base result + `eval` field)
+//   const hiddenLayersSchema/neuralXorSchema/neuralQSchema/neuralOdeDecaySchema
+//                                        -> serde + validator metadata
+//   registerModel(...) x3                       -> one struct + impl ModelAdapter trait each
+//   fn meanLast                          -> plain `fn` (slice tail mean)
+//
+// Conversion notes (file-specific):
+//   - GotChA: `NeuralQCorridorResult` is `ReturnType<...> & {eval: {...}}` — name the
+//     struct explicitly in Rust; `run` builds it via `{...r, eval: ...}` spread ->
+//     construct the struct from the base run result plus an evalPolicy() call.
+//   - `s => r.policy[s]` (greedy-policy closure passed to evalPolicy) -> a closure /
+//     fn capturing the learned policy Vec.
+//   - `solver: 'euler'|'heun'|'rk4'|'rk45'` literal union -> enum (NeuralODESolverName).
+//   - All `?? default` chains -> Option::unwrap_or; `hiddenLayers && len>0 ? .. : [4]`
+//     -> Option filter on non-empty then unwrap_or(vec![4]).
+//   - GotChA: every `animate` uses dynamic `await import(...)` of FrameRecorder + the
+//     neural-network-scene -> ordinary `use` imports (no lazy import in Rust).
+//   - `network.parameterCount()` and FeedForwardNetwork construction are ported types.
 // =============================================================================
 
 import {ParamSchema} from '../des-spec';

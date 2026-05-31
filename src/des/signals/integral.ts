@@ -1,14 +1,23 @@
 'use strict';
 
-// RUST MIGRATION:
-// - Target: src/des/signals/integral.rs
-// - IntegratorTimeStepOpts becomes a struct; Integrator<E,V> becomes a signal
-//   transform node with MultiDirectionalSignalState and explicit numeric bounds.
-// - The integration step is a PureTransform-style accumulation from queued
-//   SignalValue inputs to a new SignalValue output.
-// - Replace LinkedQueue, Symbol marker, broad AbstractMovingEntity<any> inputs,
-//   and dynamic mathjs values with VecDeque, Option/Result, and typed signal
-//   item/numeric traits.
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/signals/integral.rs  (module des::signals::integral)
+// 1:1 file move. A signal integrator node (accumulates incoming values).
+//
+// Declarations → Rust:
+//   interface IntegratorTimeStepOpts -> struct (currently empty)
+//   const marker (Symbol)            -> n/a (unused leftover)
+//   class Integrator<E,V>            -> struct + impl (+ impl MultiDirectionalSignalEntity)
+//
+// Conversion notes (file-specific):
+//   - DUPLICATE of `Adder` (adder.rs): same dequeue-and-sum body -> share one impl in Rust.
+//   - It is a RUNNING SUM, NOT a true integral: `stepSize` is unused (a real integral
+//     would multiply by dt). Preserve current behaviour; flag if dt-scaling is wanted.
+//   - `runningTotal: BigNumber` -> decimal/f64; `math.add` -> ops.
+//   - `queue.dequeueIterator()` -> `VecDeque::drain`; `getValue()` returns
+//     `<unknown>undefined as any` -> `Option`/`None`.
+//   - `runFinish()` `throw` -> `unimplemented!()`.
+// =============================================================================
 
 import {SignalEntity} from "./abstract";
 import {EntityConnection, TimeStepOpts} from "../abstract/abstract";

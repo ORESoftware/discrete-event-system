@@ -5,6 +5,35 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/control-systems/wind-mppt.rs
+//   (module des::general::control_systems::wind_mppt)
+// 1:1 file move. Wind-turbine (PMSG/WECS) MPPT plant + controllers on the DES graph.
+//
+// Declarations → Rust:
+//   class WindMpptChannels (static consts) -> consts / associated consts
+//   class TurbineStateToken / GenTorqueToken (implements Token) -> struct + impl Token
+//   interface WindTurbineAeroOpts / WindProfileSegment / WindTurbinePlantOpts /
+//             SpeedPiMpptOpts                 -> struct (Default for optional fields)
+//   class WindTurbineAerodynamics            -> struct + impl
+//   class WindProfile                        -> struct + impl
+//   class RotorDynamics (implements OdeSystem)-> struct + impl OdeSystem
+//   class WindTurbinePlantStation extends DESStation -> struct + impl DESStation trait
+//   class OptimalTorqueMpptController extends PureTransformEntity<In,Out> -> struct + impl
+//   class SpeedPiMpptController extends MemoryTransformEntity<In,Out,f64> -> struct + impl
+//   class WindMpptSinkStation extends DESStation -> struct + impl DESStation trait
+//
+// Conversion notes (file-specific):
+//   - optLambda/optCp are `number | null` lazy caches mutated by `computeOptimum`
+//     from &self-style getters -> use `Cell<Option<f64>>` (or compute eagerly in
+//     the constructor) so the optimum scan stays callable through shared refs.
+//   - `maxTorque ?? Infinity` / `bMax` defaults -> f64::INFINITY and Option::unwrap_or.
+//   - `throw new Error` in WindProfile ctor (empty segments) is an invariant ->
+//     `panic!` (or validate via Result at the edge).
+//   - Token subtypes flow on channels as trait objects; SpeedPiMpptController's
+//     `previous` (integral accumulator) is the MemoryTransform state field (&mut self).
+// =============================================================================
+
+// =============================================================================
 // control-systems/wind-mppt.ts — Maximum Power Point Tracking (MPPT) for a
 // variable-speed wind-energy conversion system (WECS) with a permanent-magnet
 // synchronous generator (PMSG).

@@ -4,6 +4,25 @@
 // RUST MIGRATION: validate/validateInner/typeOf stay free functions returning Result/ValidationResult, with Record<string, unknown> mapped to serde_json::Map or HashMap<String, Value>.
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des-spec.rs  (module des::general::des_spec)
+// 1:1 file move. JSON spec envelope + tiny declarative param validator for runnable models.
+//
+// Declarations → Rust:
+//   interface DESModelSpec/DESRuntimeConfig/DESModelMetadata/ValidationResult/
+//             DESRunSummary           -> structs (#[derive(Serialize, Deserialize)])
+//   type ParamSchema = {kind:...}|... -> enum ParamSchema { Number{..}, String{..}, ... } (match on kind)
+//   interface DESModelRegistration<P,R> -> trait (run/summarize/animate/writeCsv methods)
+//   fn validate / validateInner / typeOf -> assoc fns; validateInner matches ParamSchema
+//
+// Conversion notes (file-specific):
+//   - `ParamSchema` is a discriminated union (`kind`) -> Rust enum + `match`.
+//   - `unknown` / `Record<string, unknown>` values -> `serde_json::Value`.
+//   - `zod` (`ZodType<P>`) + `$schema` literal -> serde/validator; literal type -> const/enum.
+//   - `run: (params, runtime) => R | Promise<R>` -> sync fn or async (return a Future);
+//     registration callbacks (run/summarize/animate/writeCsv) -> trait methods, not field closures.
+// =============================================================================
+
 import type {ZodType} from 'zod';
 
 // =============================================================================

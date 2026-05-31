@@ -6,6 +6,25 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/stochastic-lp.rs  (module des::general::stochastic_lp)
+// 1:1 file move. Two-stage stochastic LP via SAA + Benders/L-shaped cuts as a DES.
+//
+// Declarations → Rust:
+//   interface SLPProblem/Scenario/BendersIteration/SLPSolveResult/BendersOpts/UniformDemandSpec -> structs
+//   interface BendersIterState (private)               -> struct
+//   class BendersStation extends FixedPointIterationStation<BendersIterState> -> struct + impl trait
+//   fn solveSubproblemWithDuals/solveSLPMonolithic/solveSLPBenders/buildProductionScenarios/
+//      buildProductionSLP/solveProductionClosedForm   -> free fns / assoc fns
+//   fn mulberry32(seed)                                -> see note (duplicate of prng.ts)
+//
+// Conversion notes (file-specific):
+//   - INJECT RNG: this file RE-DECLARES its own `mulberry32` for scenario sampling. In Rust use the
+//     single `SeededRandom` from shared/capabilities — do NOT port two copies.
+//   - master LP is a long-lived `IncrementalLP` (warm-started) -> struct field; cuts arrive as
+//     movable tokens, accumulated in a `Vec` cut pool.
+//   - constraint matrices `number[][]` -> `Vec<Vec<f64>>` (or shared/linalg); duals are `Vec<f64>`.
+//   - infeasible/unbounded subproblem outcomes -> `Result`/status enum, not bare throws.
+// =============================================================================
 // general/stochastic-lp.ts — TWO-STAGE STOCHASTIC LINEAR PROGRAMMING
 // expressed as a discrete-event SYSTEM that BLENDS the simulation half
 // of DES (scenario sampling — Monte-Carlo over ω) with the algorithmic
@@ -66,6 +85,7 @@ import {
   FixedPointIterationStation, runIterativeDES,
   intrinsicCheck, externalReferenceValidator, ValidationCheck,
 } from './des-base';
+import {PureTransform} from '../shared/transform';
 
 // -----------------------------------------------------------------------------
 // PROBLEM TYPES
@@ -153,39 +173,70 @@ export interface SLPSolveResult {
 // of slack i in the optimal tableau).
 // -----------------------------------------------------------------------------
 
+/** A recourse subproblem `max q·y s.t. W y ≤ rhs, y ≥ 0`. */
+export interface SubproblemDualsInput {
+  q: number[];
+  W: number[][];
+  rhs: number[];
+}
+
+export interface SubproblemDualsResult {
+  status: 'optimal' | 'unbounded' | 'infeasible';
+  y: number[];
+  obj: number;
+  duals: number[];
+}
+
+/** Solve a recourse subproblem and recover its dual prices from the slack
+ *  reduced costs at the optimum. */
+export class SubproblemWithDualsSolver extends PureTransform<SubproblemDualsInput, SubproblemDualsResult> {
+  transform({q, W, rhs}: SubproblemDualsInput): SubproblemDualsResult {
+    // Validate the warm-start precondition.
+    for (let i = 0; i < rhs.length; i++) {
+      if (rhs[i] < -1e-9) {
+        // Negative RHS would require Phase-1 simplex in IncrementalLP. Fall back
+        // to the general two-phase solver in lp.ts (it doesn't expose duals
+        // directly, but we can recompute them manually by re-solving with the
+        // optimal basis). For our test problems we never hit this case.
+        throw new Error(`solveSubproblemWithDuals: rhs[${i}] = ${rhs[i]} < 0; would require Phase-1 simplex`);
+      }
+    }
+    const lp = new IncrementalLP({sense: 'max', c: q, A: W, b: rhs});
+    lp.solveToOptimum();
+    if (lp.status === 'unbounded')   return {status: 'unbounded',   y: [], obj: NaN, duals: []};
+    if (lp.status === 'infeasible')  return {status: 'infeasible',  y: [], obj: NaN, duals: []};
+    const y     = lp.getX();
+    const obj   = lp.getZ();
+    // Duals = reduced costs of slack columns at the optimum.
+    // For max LP, slack reduced cost ≥ 0 corresponds to dual π_i ≥ 0.
+    const rc    = lp.getReducedCosts();
+    const duals = rc.slice(q.length, q.length + W.length);
+    return {status: 'optimal', y, obj, duals};
+  }
+}
+
+/** @deprecated Use `new SubproblemWithDualsSolver().transform({q, W, rhs})`. */
 export function solveSubproblemWithDuals(
   q: number[], W: number[][], rhs: number[],
 ): {status: 'optimal' | 'unbounded' | 'infeasible'; y: number[]; obj: number; duals: number[]} {
-  // Validate the warm-start precondition.
-  for (let i = 0; i < rhs.length; i++) {
-    if (rhs[i] < -1e-9) {
-      // Negative RHS would require Phase-1 simplex in IncrementalLP. Fall back
-      // to the general two-phase solver in lp.ts (it doesn't expose duals
-      // directly, but we can recompute them manually by re-solving with the
-      // optimal basis). For our test problems we never hit this case.
-      throw new Error(`solveSubproblemWithDuals: rhs[${i}] = ${rhs[i]} < 0; would require Phase-1 simplex`);
-    }
-  }
-  const lp = new IncrementalLP({sense: 'max', c: q, A: W, b: rhs});
-  lp.solveToOptimum();
-  if (lp.status === 'unbounded')   return {status: 'unbounded',   y: [], obj: NaN, duals: []};
-  if (lp.status === 'infeasible')  return {status: 'infeasible',  y: [], obj: NaN, duals: []};
-  const y     = lp.getX();
-  const obj   = lp.getZ();
-  // Duals = reduced costs of slack columns at the optimum.
-  // For max LP, slack reduced cost ≥ 0 corresponds to dual π_i ≥ 0.
-  const rc    = lp.getReducedCosts();
-  const duals = rc.slice(q.length, q.length + W.length);
-  return {status: 'optimal', y, obj, duals};
+  return new SubproblemWithDualsSolver().transform({q, W, rhs});
 }
 
 // -----------------------------------------------------------------------------
 // METHOD 1: Sample Average Approximation — monolithic LP via solveLPInternal
 // -----------------------------------------------------------------------------
 
-export function solveSLPMonolithic(p: SLPProblem, scenarios: Scenario[]): SLPSolveResult {
-  const t0 = Date.now();
-  const N = scenarios.length;
+/** Sample Average Approximation: build and solve ONE monolithic LP over all
+ *  scenarios. The problem is configuration; the scenario set is the input. */
+export class SLPMonolithicSolver extends PureTransform<Scenario[], SLPSolveResult> {
+  constructor(private readonly p: SLPProblem) {
+    super();
+  }
+
+  transform(scenarios: Scenario[]): SLPSolveResult {
+    const p = this.p;
+    const t0 = Date.now();
+    const N = scenarios.length;
   const nFirst  = p.cFirst.length;
   const nSecond = p.qSecond.length;
   const mFirst  = p.AFirst.length;
@@ -240,6 +291,12 @@ export function solveSLPMonolithic(p: SLPProblem, scenarios: Scenario[]): SLPSol
     method: 'monolithic',
     elapsedMs: Date.now() - t0,
   };
+  }
+}
+
+/** @deprecated Use `new SLPMonolithicSolver(p).transform(scenarios)`. */
+export function solveSLPMonolithic(p: SLPProblem, scenarios: Scenario[]): SLPSolveResult {
+  return new SLPMonolithicSolver(p).transform(scenarios);
 }
 
 // -----------------------------------------------------------------------------
@@ -614,36 +671,57 @@ export function mulberry32(seed: number): () => number {
 }
 
 /** Sample N uniform-demand scenarios for the production-planning template:
- *  W = [I; I], T = [-I; 0], h = [0...0, D_1, ..., D_n_second]. */
-export function buildProductionScenarios(spec: UniformDemandSpec, N: number): Scenario[] {
-  const r = mulberry32(spec.seed);
-  const n = spec.ranges.length;
-  const scenarios: Scenario[] = [];
-  for (let s = 0; s < N; s++) {
-    const D = new Array(n);
-    for (let i = 0; i < n; i++) {
-      const [a, b] = spec.ranges[i];
-      D[i] = a + r() * (b - a);
-    }
-    // T = [-I; 0]  (capacity rows put -x; demand rows are scenario-independent of x)
-    const T: number[][] = [];
-    for (let i = 0; i < n; i++) {
-      const row = new Array(n).fill(0); row[i] = -1; T.push(row);
-    }
-    for (let i = 0; i < n; i++) {
-      T.push(new Array(n).fill(0));
-    }
-    // h = [0...0, D_1, ..., D_n]
-    const h = [...new Array(n).fill(0), ...D];
-    scenarios.push({T, h, prob: 1 / N, meta: {D}});
+ *  W = [I; I], T = [-I; 0], h = [0...0, D_1, ..., D_n_second]. The scenario
+ *  count `N` is configuration; the demand spec is the `transform` input. */
+export class ProductionScenarioBuilder extends PureTransform<UniformDemandSpec, Scenario[]> {
+  constructor(private readonly N: number) {
+    super();
   }
-  return scenarios;
+
+  transform(spec: UniformDemandSpec): Scenario[] {
+    const N = this.N;
+    const r = mulberry32(spec.seed);
+    const n = spec.ranges.length;
+    const scenarios: Scenario[] = [];
+    for (let s = 0; s < N; s++) {
+      const D = new Array(n);
+      for (let i = 0; i < n; i++) {
+        const [a, b] = spec.ranges[i];
+        D[i] = a + r() * (b - a);
+      }
+      // T = [-I; 0]  (capacity rows put -x; demand rows are scenario-independent of x)
+      const T: number[][] = [];
+      for (let i = 0; i < n; i++) {
+        const row = new Array(n).fill(0); row[i] = -1; T.push(row);
+      }
+      for (let i = 0; i < n; i++) {
+        T.push(new Array(n).fill(0));
+      }
+      // h = [0...0, D_1, ..., D_n]
+      const h = [...new Array(n).fill(0), ...D];
+      scenarios.push({T, h, prob: 1 / N, meta: {D}});
+    }
+    return scenarios;
+  }
+}
+
+/** @deprecated Use `new ProductionScenarioBuilder(N).transform(spec)`. */
+export function buildProductionScenarios(spec: UniformDemandSpec, N: number): Scenario[] {
+  return new ProductionScenarioBuilder(N).transform(spec);
+}
+
+/** Cost/revenue (and optional budget) for the production-planning template. */
+export interface ProductionSLPInput {
+  c: number[];
+  p: number[];
+  budget?: number;
 }
 
 /** Build the production-planning SLPProblem template with cost c and revenue p. */
-export function buildProductionSLP(c: number[], p: number[], budget?: number): SLPProblem {
-  const n = c.length;
-  if (p.length !== n) throw new Error('cost and revenue must have same length');
+export class ProductionSLPBuilder extends PureTransform<ProductionSLPInput, SLPProblem> {
+  transform({c, p, budget}: ProductionSLPInput): SLPProblem {
+    const n = c.length;
+    if (p.length !== n) throw new Error('cost and revenue must have same length');
   // First-stage objective is -c · x (cost minimisation in max-form).
   const cFirst = c.map(ci => -ci);
   // First-stage constraints: optional budget x_1 + ... + x_n ≤ B.
@@ -663,6 +741,12 @@ export function buildProductionSLP(c: number[], p: number[], budget?: number): S
     thetaLowerBound: thetaLB, thetaUpperBound: thetaUB,
     varNames: c.map((_, i) => `x${i + 1}`),
   };
+  }
+}
+
+/** @deprecated Use `new ProductionSLPBuilder().transform({c, p, budget})`. */
+export function buildProductionSLP(c: number[], p: number[], budget?: number): SLPProblem {
+  return new ProductionSLPBuilder().transform({c, p, budget});
 }
 
 // -----------------------------------------------------------------------------
@@ -673,11 +757,18 @@ export function buildProductionSLP(c: number[], p: number[], budget?: number): S
  *  constraint, with uniform demand: x_i* = a_i + (b_i − a_i) · (p_i − c_i)/p_i.
  *  Returns the optimum first-stage decision and the analytical expected
  *  objective (using the formula E[min(x, D)] = x − (x−a)²/(2(b−a)) for x ∈ [a,b]). */
-export function solveProductionClosedForm(
-  c: number[], p: number[], ranges: Array<[number, number]>,
-): SLPSolveResult {
-  const t0 = Date.now();
-  const n = c.length;
+/** Cost, revenue, and per-product uniform demand ranges for the closed-form oracle. */
+export interface ProductionClosedFormInput {
+  c: number[];
+  p: number[];
+  ranges: Array<[number, number]>;
+}
+
+/** Analytical newsvendor-style oracle for the production-planning case. */
+export class ProductionClosedFormSolver extends PureTransform<ProductionClosedFormInput, SLPSolveResult> {
+  transform({c, p, ranges}: ProductionClosedFormInput): SLPSolveResult {
+    const t0 = Date.now();
+    const n = c.length;
   const x = new Array(n);
   let zVal = 0;
   for (let i = 0; i < n; i++) {
@@ -703,4 +794,12 @@ export function solveProductionClosedForm(
     iterations: 0, method: 'closed-form',
     elapsedMs: Date.now() - t0,
   };
+  }
+}
+
+/** @deprecated Use `new ProductionClosedFormSolver().transform({c, p, ranges})`. */
+export function solveProductionClosedForm(
+  c: number[], p: number[], ranges: Array<[number, number]>,
+): SLPSolveResult {
+  return new ProductionClosedFormSolver().transform({c, p, ranges});
 }

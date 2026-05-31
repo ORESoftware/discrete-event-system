@@ -6,6 +6,23 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/mpc-double-integrator.rs  (module des::general::mpc_double_integrator)
+// 1:1 file move. Constrained MPC for the double integrator (projected-gradient QP per tick).
+//
+// Declarations → Rust:
+//   interface MPCDoubleIntOpts                          -> struct (Default-derivable)
+//   interface MPCDoubleIntResult extends ClosedLoopResult -> struct embedding/flattening ClosedLoopResult
+//   class DoubleIntegratorPlant extends PlantBlock       -> struct + impl Plant trait (private)
+//   class MPCDoubleIntegratorController extends ControllerBlock -> struct + impl Controller trait (private)
+//   fn runMPCDoubleIntegrator                            -> free fn / assoc fn
+//
+// Conversion notes (file-specific):
+//   - PlantBlock/ControllerBlock are template-method bases -> traits with default fns; the
+//     controller's QP state (horizon buffers) are struct fields, solved with f64 vectors.
+//   - `extends ClosedLoopResult`: Rust has no interface inheritance — compose by embedding the
+//     base struct or copy its fields explicitly.
+//   - all numerics are `f64`; no RNG/clock/Map here (deterministic projected-gradient inner loop).
+// =============================================================================
 // general/mpc-double-integrator.ts — MODEL PREDICTIVE CONTROL (Mayne et
 // al. 2000) with input box constraints, applied to the double
 // integrator. Solves a small QP every tick by projected gradient (no

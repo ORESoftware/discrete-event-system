@@ -5,6 +5,22 @@
 // RUST MIGRATION: Keep JSON examples/config as serde-deserialized structs instead of ad-hoc JS objects.
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/bin/main.rs   (fn main)
+// 1:1 file move. Top-level wiring of the queueing-network DES (sources,
+// processors, sinks, ws server) — the primary runnable entry point.
+//
+// Conversion notes (file-specific):
+//   - Top-level executable code (stepSize + model build + run) -> fn main().
+//   - Imports many des modules -> use crate::des::{entity_source, entity_processing,
+//     entity_sink, abstract_, observers, random_variables, visual, ws_server, ...}.
+//   - mathjs BigNumber (bgn / des.getStepSize) -> pick ONE engine-wide numeric
+//     (f64 or a decimal crate).
+//   - uuid.v4() -> uuid::Uuid::new_v4(); safe-stringify -> serde_json.
+//   - ws server (`ws`) -> tokio-tungstenite (needs an async runtime).
+//   - pervasive `any` / `<any>` generics -> concrete entity enums/traits.
+// =============================================================================
+
 
 import * as safe from '@oresoftware/safe-stringify';
 import * as math from 'mathjs';

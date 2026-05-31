@@ -4,6 +4,22 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/optimization_as_des_test.rs   (integration test crate)
+// 1:1 file move. Tests the des-base optimizer/RL hierarchy and the four leaves
+// (SA, GA, Q-learning, PPO). Keep the doc-block below; this header sits above it.
+//
+// Test harness → Rust:
+//   ad-hoc check()/CheckRow + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual rows and PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - SA/GA/Q-learning/PPO all use mulberry32 -> a seeded rand::Rng so the
+//     learned policies / tours are reproducible across runs.
+//   - throws(fn) -> assert on Result::Err / #[should_panic].
+//   - objective/value comparisons -> approx::assert_relative_eq!.
+// =============================================================================
+
+// =============================================================================
 // test/optimization-as-des-test.ts — unit tests for the des-base hierarchy
 // (DESStation, runner, SingleStateOptimizer, PopulationOptimizer,
 // RLAgentStation, PolicyGradientAgent, EnvironmentStation) AND the four

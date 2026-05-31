@@ -5,6 +5,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-temp-control-anim.rs   (fn main)
+// 1:1 file move. Generates an HTML animation of the temperature-control DES
+// for a chosen controller.
+//
+// Conversion notes (file-specific):
+//   - process.argv flag parsing (--controller/--out) -> std::env::args / clap;
+//     process.exit -> std::process::exit.
+//   - controller union 'bang-bang'|'pid'|'fuzzy'|'mdp-mpc' -> enum.
+//   - imports general/temp-control + animation scene -> use crate::des::...
+//   - async main -> fn main.
+// =============================================================================
+
+// =============================================================================
 // main-temp-control-anim.ts — Generate an HTML animation of the
 // temperature-control DES with a chosen controller.
 // =============================================================================

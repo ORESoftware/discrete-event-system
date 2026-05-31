@@ -1,17 +1,30 @@
 'use strict';
 
-// RUST MIGRATION:
-// - Target: src/des/general/des_base/stateful_token.rs
-// - Keep file-for-file. TokenStateMode becomes an enum; lineage, transition,
-//   stats, and stateful-token interfaces become data structs/traits.
-// - Factory functions can become constructors or associated functions on token
-//   structs; PayloadStatefulToken and StatefulTokenRegistry become concrete
-//   structs.
-// - Map usage in the registry maps to HashMap/BTreeMap keyed by token id; type
-//   guards become trait/object checks or enum matching.
-// - Pure lineage/transition helpers can remain module functions, or become
-//   PureTransform/PureTransformEntity if they are graph nodes. Use Result for
-//   invalid state transitions.
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/stateful_token.rs  (module des::general::des_base::stateful_token)
+// 1:1 file move. Lineage-tracked tokens with optional state machine + a registry.
+//
+// Declarations → Rust:
+//   type TokenStateMode = 'stateless' | 'stateful'  -> enum TokenStateMode { Stateless, Stateful }
+//   interface TokenLineage              -> struct TokenLineage (#[derive(Clone)]; Option fields)
+//   interface TokenStateTransition<S>   -> struct (generic S: state label)
+//   interface StatefulToken<S> : Token  -> trait StatefulToken: Token  (or a struct)
+//   interface StatefulTokenRegistryStats -> struct (byKind -> HashMap<String, u64>)
+//   fn makeStatefulToken/makeStatelessToken/transitionToken/spawnStatefulChildToken/
+//      childLineage/isStatefulToken      -> free fns (or assoc constructors)
+//   class PayloadStatefulToken<S,P>     -> struct + impl StatefulToken
+//   class StatefulTokenRegistry          -> struct (tokens: HashMap<String, ..>)
+//
+// Conversion notes (file-specific):
+//   - `S extends string` is a string-literal label param -> a generic `S: ..` or
+//     an `enum` of states; `StateOf<T>` conditional type has no Rust analogue.
+//   - `isStatefulToken` is a TS type guard (`t is StatefulToken`) -> downcast via
+//     `dyn Any`/enum match; there is no structural narrowing in Rust.
+//   - `transitionToken` mutates the token in place (`token.currentState = ..`,
+//     push history) -> `&mut self`; returns the same handle.
+//   - Registry `Map<string, StatefulToken<any>>` -> `HashMap<String, Box<dyn StatefulToken>>`.
+//   - `StatefulToken<any>` / `as S | undefined` casts -> concrete generics; avoid `dyn Any`.
+// =============================================================================
 
 import {Token} from './station';
 

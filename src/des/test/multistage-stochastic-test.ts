@@ -4,6 +4,22 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/multistage_stochastic_test.rs   (integration test crate)
+// 1:1 file move. Exercises multistage-stochastic plus the shared AffineCutPool /
+// PreconditionError from des-base, so it is an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - close(a,b,tol) relative float comparison -> approx::assert_relative_eq!.
+//   - expectPrecondition() asserts a thrown PreconditionError naming a param ->
+//     map to `Result::Err` matching, or `#[should_panic(expected = "...")]`.
+//   - SDDP scenario sampling -> a seeded rand::Rng for reproducible cuts.
+// =============================================================================
+
+// =============================================================================
 // Unit tests for multi-stage stochastic programming / SDDP and the shared
 // affine cut-pool base class.
 // =============================================================================

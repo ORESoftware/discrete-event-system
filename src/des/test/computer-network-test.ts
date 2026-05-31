@@ -4,6 +4,20 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/computer_network_test.rs   (integration test crate)
+// 1:1 file move. Tests the packet-switched network DES + its registry spec,
+// so it is an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc expect()/close()/pass-fail counters + console.log  ->  #[test] fns
+//   using assert!/assert_eq!; drop the manual tally and PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - close(a,b,tol) float comparison -> approx::assert_relative_eq!.
+//   - packet-count conservation (generated == delivered + dropped) -> assert_eq!.
+// =============================================================================
+
+// =============================================================================
 // test/computer-network-test.ts -- packet-switched network DES tests.
 // =============================================================================
 

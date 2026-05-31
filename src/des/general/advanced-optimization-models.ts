@@ -6,7 +6,24 @@
 'use strict';
 
 // =============================================================================
-// Concrete advanced-optimization models built on shared DES station bases.
+// RUST MIGRATION  —  target: src/des/general/advanced-optimization-models.rs  (module des::general::advanced_optimization_models)
+// 1:1 file move. Concrete metaheuristics on shared DES bases: PSO, ACO-TSP, CSP coloring, MaxSAT, SDP MaxCut, Pareto portfolio.
+//
+// Declarations → Rust:
+//   type ContinuousObjectiveName = 'sphere'|'rastrigin'|'rosenbrock' -> enum (objective table -> match)
+//   interface *Params/*Result / Point2 / WeightedEdge / PortfolioAsset / ParetoPortfolioPoint -> structs
+//   class *Token (impl Token), generic OptimizationStartToken<P>/ParetoCandidateSourceStation<T> -> generic structs `impl Token`
+//   class ParticleSwarm/AntColonyTSP/MapColoringCSP/MaxSATLocalSearch/MaxCutSDP Station
+//     (extend NumericSwarm/PheromoneGraph/...Search / SingleStateOptimizer / UnitVectorRelaxation bases)
+//                                    -> structs `impl` those station traits (bases -> traits)
+//   fn runParticleSwarm/runAntColonyTSP/runMapColoringCSP/runMaxSATLocalSearch/runSDPMaxCutRelaxation/
+//      runParetoPortfolio/paretoFrontIsNondominated -> fns
+//
+// Conversion notes (file-specific):
+//   - `mulberry32(seed)` RNG across PSO/ACO/SA/SDP -> inject `RandomSource` (seeded, deterministic).
+//   - `ContinuousObjectiveName` union + objective dispatch -> enum + `match` (associated fn table).
+//   - `vectorDot`/`dominates` from des-base/advanced-optimization -> shared/linalg or that module's trait.
+//   - generic tokens/stations carry over as Rust generics; bases -> traits with default methods.
 // =============================================================================
 
 import {

@@ -5,7 +5,28 @@
 'use strict';
 
 // =============================================================================
-// JSON adapters for math block diagrams: ODE systems and a 1D heat PDE grid.
+// RUST MIGRATION  —  target: src/des/general/adapters/math-blocks-adapter.rs
+//   (module des::general::adapters::math_blocks_adapter)
+// 1:1 file move. Registers math-ODE-blocks / heat1d-blocks / math-equation JSON
+// adapters (block-diagram numerics), all with animations.
+//
+// Declarations → Rust:
+//   const numericMapSchema/odeStateSchema/odeSchema/heatSchema/equationSchema:
+//         ParamSchema                          -> serde + validator metadata
+//   fn palette / finiteRange / heatColor       -> plain `fn` helpers
+//   registerModel(...) x3                       -> one struct + impl ModelAdapter trait each
+//
+// Conversion notes (file-specific):
+//   - GotChA: `state`/`derivatives` keyed by variable name and `constants`/`initial`
+//     are open `{kind:'object', fields:{}}` numeric maps -> HashMap<String, f64>;
+//     state derivatives are expression STRINGS evaluated at runtime (the math
+//     expression engine) -> port the expr evaluator, not a literal closure.
+//   - `format: 'json'|'latex'|'xml'`, `kind: 'ode'|'heat1d'`, `method:
+//     'euler'|'trapezoid'` literal unions -> enums; math-equation result is a tagged
+//     union over ode/heat1d -> enum matched in summarize/writeCsv/animate.
+//   - `r.ode!`/`r.heat1d?` non-null/optional chaining -> Option match.
+//   - Shapes pushed into `Shape[]` (animation/types) -> Vec<Shape>; heatColor builds
+//     `rgb(r,g,b)` strings -> a colour helper; animations derive from result traces.
 // =============================================================================
 
 import {FrameRecorder} from '../../animation/frame-recorder';

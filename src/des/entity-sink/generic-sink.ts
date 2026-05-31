@@ -1,16 +1,24 @@
 'use strict';
 
-// RUST MIGRATION:
-// - Target: src/des/entity_sink/generic_sink.rs
-// - EntitySinkGraphData becomes a struct; GenericEntitySink<S,T> becomes a sink
-//   station struct composing input-connection state and implementing SinkLike,
-//   EntityLike, and Observable traits.
-// - `StationaryEntity<GenericEntitySink<...>>` is currently used as a structural
-//   class/interface mix; port it as trait impls over owned state, not
-//   inheritance.
-// - Replace Symbol marker fields, BasicMovingEntity-only takeItem typing,
-//   util.inspect, console logging, and `any` serialization with typed enums,
-//   Debug impls, log facade calls, and serde structs.
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/entity-sink/generic-sink.rs  (module des::entity_sink::generic_sink)
+// 1:1 file move. A sink that logs each absorbed entity's value before destroying it.
+//
+// Declarations → Rust:
+//   type EntitySinkGraphData          -> struct { destroyed_count }
+//   const entityType (Symbol)         -> n/a (enum/trait tag)
+//   class GenericEntitySink<S,T>      -> struct + impl (+ impl AbstractSinkEntity, StationaryEntity)
+//
+// Conversion notes (file-specific):
+//   - NOTE: `EntitySinkGraphData` and the `entityType` Symbol are duplicated from
+//     sink.ts — define them ONCE in Rust (shared sink module) and reuse.
+//   - `[entityType]='Sink'` + `['entity.type']='Sink'` brand -> enum/trait tag.
+//   - `opts: {}` empty -> `()` / drop; `Object.assign({}, opts)` is a no-op clone.
+//   - `console.log('generic sink value:', m.getValue())` is the only behavioural
+//     difference from EntitySink -> `tracing`/`println!`.
+//   - `math.BigNumber` stepSize -> decimal/f64; `getSerializableData/getWithComputedProperties: any` -> serde DTO.
+//   - `[util.inspect.custom]` -> `impl fmt::Debug`; `connectionsIn: Set<..>` -> Vec/HashSet of edges.
+// =============================================================================
 
 import * as math from "mathjs";
 import {number} from "mathjs";

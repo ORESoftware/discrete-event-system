@@ -5,7 +5,25 @@
 'use strict';
 
 // =============================================================================
-// JSON adapters for Newton/quasi-Newton and nonlinear least-squares DES models.
+// RUST MIGRATION  —  target: src/des/general/adapters/nonlinear-optimization-adapter.rs
+//   (module des::general::adapters::nonlinear_optimization_adapter)
+// 1:1 file move. Registers Newton / BFGS / Gauss-Newton / Levenberg-Marquardt
+// JSON adapters (4 models) over nonlinear-optimization station graphs.
+//
+// Declarations → Rust:
+//   const vectorSchema/unconstrainedSchema/curvePointSchema/nlsSchema: ParamSchema
+//                                        -> serde + validator metadata
+//   registerModel(...) x4                       -> one struct + impl ModelAdapter trait each
+//   fn unconstrainedSummary / nlsSummary / writeUnconstrainedCsv / writeNLSCsv ->
+//      plain `fn` helpers
+//
+// Conversion notes (file-specific):
+//   - Thin adapters: `run` just calls the model fn; *Params shapes need
+//     #[derive(Deserialize)], defaults live in the schema.
+//   - `x0`/`initial` are vectors -> Vec<f64>; `JSON.stringify(row.x)` /
+//     `JSON.stringify(row.params)` in CSV -> serde_json::to_string.
+//   - summarize/CSV helpers are shared by title — pass the title as a struct field
+//     on the adapter rather than free helper fns if convenient.
 // =============================================================================
 
 import {ParamSchema} from '../des-spec';

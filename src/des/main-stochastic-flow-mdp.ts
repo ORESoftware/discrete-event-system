@@ -6,6 +6,17 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-stochastic-flow-mdp.rs   (fn main)
+// 1:1 file move. Thin runner: MDP interpretation of stochastic max-flow,
+// prints policy path + simulated trajectory.
+//
+// Conversion notes (file-specific):
+//   - top-level main() -> fn main(); process.env.SEED -> std::env + SeededRandom.
+//   - delegates to general/stochastic-flow-mdp -> use crate::des::general::
+//     stochastic_flow_mdp.
+// =============================================================================
+
+// =============================================================================
 // main-stochastic-flow-mdp.ts -- MDP interpretation of stochastic max-flow.
 // =============================================================================
 

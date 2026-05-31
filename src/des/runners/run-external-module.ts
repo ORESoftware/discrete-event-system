@@ -7,6 +7,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/run-external-module.rs  (a `fn main` binary)
+// 1:1 file move. CLI front-end for invoking sanctioned external modules.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level code becomes `fn main()`.
+//   - `process.argv` parsing (`--list`, `<module-id>`, `--key=value`) ->
+//     `std::env::args()` (or a `clap` parser).
+//   - param value union `string | number | boolean` -> `enum ParamValue { Str,
+//     Num, Bool }`.
+//   - `throw new Error(..)` on bad args -> return `Result`/exit non-zero (user
+//     error, not a panic).
+//   - `JSON` output + `console.log` -> `serde_json` + `println!`.
+// =============================================================================
+
+// =============================================================================
 // CLI for sanctioned external modules.
 //
 // Usage:

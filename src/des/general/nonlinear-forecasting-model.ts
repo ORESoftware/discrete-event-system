@@ -6,6 +6,28 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/nonlinear-forecasting-model.rs  (module des::general::nonlinear_forecasting_model)
+// 1:1 file move. Nonlinear forecasting pipeline: POMDP regime belief -> MDP variable
+// discovery -> ridge equation tuning -> projection, as a DES station graph.
+//
+// Declarations → Rust:
+//   type RegimeId/RegimeObservation/VariableSource (string unions) -> enums
+//   interface NonlinearMDPPOMDPForecastParams/Result + Latent*/MDPDiscoveryStep/
+//             VariableDiscoveryResult/FineTune*/TunedEquation/ForecastProjectionPoint/... -> structs
+//   class *Token implements Token (Forecast/LatentBelief/Discovered/FineTuned/Projection) -> structs + impl Token
+//   class *Station extends DESStation (DataSource/POMDPLatent/MDPDiscovery/Tuning/
+//             Projection/ResultSink)                       -> structs + impl DESStation trait
+//   fn runNonlinearMDPPOMDPForecast + many private helpers (ridgeFit/projectForecast/...) -> fns
+//
+// Conversion notes (file-specific):
+//   - depends on belief.ts (DiscreteBelief) and pomdp.ts (POMDPSpec/beliefUpdate/mdpValueIteration)
+//     -> use crate::des::general::{belief, pomdp}::...
+//   - FEATURE MASKS are packed in a `number` bitset (maskToIndices/countBits) -> use `u32`/`u64`
+//     with `count_ones()` / bit iteration, not float math.
+//   - `evalCache: Map<number, FitEvaluation>` (mask -> fit) -> `HashMap<u32, FitEvaluation>`.
+//   - ridge/linear-system math on `number[][]` -> `Vec<Vec<f64>>` (or shared/linalg).
+//   - deterministic synthetic series (no RNG injection needed unless a seed is later added).
+// =============================================================================
 // nonlinear-forecasting-model.ts
 //
 // Nonlinear prediction/forecasting as an explicit DES station graph:

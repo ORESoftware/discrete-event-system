@@ -6,6 +6,20 @@
 // - File I/O stays at the boundary with std::fs/std::path; comparison helpers remain private module functions.
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-court-mdp.rs  (a `fn main` binary;
+//                    an `examples/…rs` also works)
+// 1:1 file move. Compares the framework USACC MDP value iteration against the
+// Python reference (max-abs V* error + policy-disagreement count).
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - `fs`/`path` reading the two JSON files -> `std::fs` + serde structs.
+//   - `JSON.parse` -> serde; `as any` on V*/policy arrays -> typed `Vec<f64>` /
+//     `Vec<usize>`.
+//   - `process.exit(code)` -> `std::process::exit(code)`.
+// =============================================================================
+
 // Compares the framework's USACC MDP value iteration (out/court-mdp-framework.json)
 // against the Python reference (out/external/court-mdp/python.json).
 //

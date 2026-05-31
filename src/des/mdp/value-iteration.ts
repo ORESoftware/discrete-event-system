@@ -11,6 +11,26 @@
 //   non-convergence should return metadata or Result instead of only logging.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/mdp/value-iteration.rs  (module des::mdp::value_iteration)
+// 1:1 file move. Generic Bellman value iteration for finite MDPs.
+//
+// Declarations → Rust:
+//   interface VIOptions          -> struct VIOptions { gamma, tol, max_iter } (#[derive(Default)])
+//   interface VIResult           -> struct VIResult { v, policy, iterations, final_delta, gamma }
+//   function buildTransitionTable -> fn -> Vec<Vec<Vec<Outcome>>>
+//   function valueIteration       -> fn (or, per conventions, a `ValueIteration` PureTransform
+//                                    with config fields + a `transform()`); free fn is fine too.
+//
+// Conversion notes (file-specific):
+//   - `Float64Array` / `Int32Array` -> `Vec<f64>` / `Vec<i32>` (policy -1 = absorbing).
+//   - `Infinity` / `-Infinity` -> `f64::INFINITY` / `f64::NEG_INFINITY`.
+//   - `Outcome[][][]` (state × action × outcomes) -> `Vec<Vec<Vec<Outcome>>>`.
+//   - optional `gamma/tol/maxIter` with `??` defaults -> `VIOptions::default()` (0.95 / 1e-9 / 5000).
+//   - console.warn/debug on (non)convergence -> `tracing`.
+//   - pulls ACCEPTED/CLOSED/EXHAUSTED/N_STATES/N_ACTIONS/outcomes/etc from usacc-mdp.rs.
+// =============================================================================
+
+// =============================================================================
 // Generic value iteration for finite-state, finite-action MDPs.
 //
 // Bellman optimality:

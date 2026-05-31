@@ -7,6 +7,20 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-calculus.rs  (a `fn main` binary; an
+//                    `examples/…rs` also works)
+// 1:1 file move. Validates the station-network calculus solvers (symbolic vs
+// numerical derivative, quadrature, ODE network vs RK4/scipy, 1-D heat).
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - env + `child_process` (scipy) -> `std::env::var` / `std::process::Command`.
+//   - `JSON.parse` of scipy output -> serde struct.
+//   - `as any` on results -> concrete typed structs.
+//   - `process.exit(code)` -> `std::process::exit(code)`.
+// =============================================================================
+
+// =============================================================================
 // Validate the station-network calculus solvers (main-calculus.ts).
 //
 //   STUDY 1: Symbolic ≡ numerical derivative

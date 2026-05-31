@@ -1,15 +1,23 @@
 'use strict'
 
-// RUST MIGRATION:
-// - Target: src/des/entity_decision/binary_decision.rs
-// - DecisionEntityGraph becomes a graph-data struct; BinaryDecisionEntity<S,T>
-//   becomes a struct owning queue state plus impls for EntityLike,
-//   BidirectionalEntityLike, HasInternalQueue, and validation traits.
-// - LinkedQueue<AbstractMovingEntity<any>> should become VecDeque<Box<dyn
-//   MovingEntity>> only if heterogeneous moving entities are required; otherwise
-//   keep the station generic over T.
-// - Convert throws/warnings in validation to Result<(), DecisionError>, and keep
-//   `math.BigNumber` time-step inputs behind the shared decimal/time alias.
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/entity-decision/binary-decision.rs  (module des::entity_decision::binary_decision)
+// 1:1 file move. A two-way decision node (routing logic currently a stub).
+//
+// Declarations → Rust:
+//   interface DecisionEntityGraph (empty, dup) -> shared marker struct (define once)
+//   class BinaryDecisionEntity<S,T>            -> struct + impl (+ impl AbstractBidirectionalEntity,
+//                                                 HasComputedProperties, HasInternalQueue)
+//
+// Conversion notes (file-specific):
+//   - ctor takes `rv: RandomVariable` but never stores/uses it -> drop the parameter.
+//   - `doValidationBeforeRun()` wraps `doValidation()` in try/catch and inspects
+//     `(err as Error)?.message` -> Rust uses `Result`, not exceptions: have
+//     `validate() -> Result<(), E>` and map to bool.
+//   - `doValidation()` enforces exactly 2 out-connections, else `throw` -> `Result`/`panic!`.
+//   - `getWithComputedProperties()` is `throw new Error("Method not implemented.")` -> `unimplemented!()`.
+//   - `runTimeStep` is a no-op stub; `queue: LinkedQueue` -> `VecDeque`; BigNumber stepSize -> decimal/f64.
+// =============================================================================
 
 import {AbstractBidirectionalEntity, TimeStepOpts} from "../abstract/abstract";
 import {HasInternalQueue} from "../abstract/interfaces";

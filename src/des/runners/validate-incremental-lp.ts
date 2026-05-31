@@ -6,6 +6,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-incremental-lp.rs  (a `fn main`
+//                    binary; an `examples/…rs` also works)
+// 1:1 file move. Validates the warm-startable incremental LP against the static
+// `solveLPInternal` after every modification step.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - `LPEvent` modification union (add/remove constraint, change c, add/remove
+//     var) -> `enum LPEvent { .. }`, matched.
+//   - `console.log` PASS/FAIL + `process.exit` -> `println!` / `std::process::exit`.
+// =============================================================================
+
+// =============================================================================
 // runners/validate-incremental-lp.ts — validate the warm-startable
 // incremental LP solver against the static `solveLPInternal` solver
 // after every modification step.

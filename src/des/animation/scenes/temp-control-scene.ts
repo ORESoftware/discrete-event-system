@@ -8,6 +8,23 @@
 // - If temperature-control frames become graph-visible, use a TempControlSceneTransform implementing PureTransform::transform.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/animation/scenes/temp-control-scene.rs   (module des::animation::scenes::temp_control_scene)
+// 1:1 file move. Builds frames + charts for the temperature-control DES animation.
+//
+// Declarations → Rust:
+//   const STAGE_W/H, COL_* consts   -> `pub const`/`const`
+//   interface SceneData             -> struct SceneData
+//   function buildTempControlFrame  -> pub fn -> FrameParts
+//   function buildTempControlAnimation -> pub fn
+//
+// Conversion notes (file-specific):
+//   - Frame data (Shape[]/Frame/ChartSpec) is serialized for JSON -> serde structs (see types.rs).
+//   - multi-line station labels via `s.label.split('\n')` -> `str::split('\n')`.
+//   - all coords/temperatures are `number` -> `f64`.
+//   - imports RunResult/TickRecord from ../../general/temp-control -> `use crate::des::general::temp_control::*`.
+// =============================================================================
+
+// =============================================================================
 // Temperature-control scene builder.
 //
 // Layout (1000×640):

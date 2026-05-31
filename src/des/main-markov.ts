@@ -5,6 +5,19 @@
 // RUST MIGRATION: Keep JSON examples/config as serde-deserialized structs instead of ad-hoc JS objects.
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-markov.rs   (fn main)
+// 1:1 file move. Wires a Markov-chain-style entity network of processors and
+// observes its steady-state behaviour.
+//
+// Conversion notes (file-specific):
+//   - imports many des entity modules -> use crate::des::...
+//   - Set<EntityProcessor> (allProcessors) -> HashSet (needs Hash+Eq) or Vec.
+//   - uuid.v4 -> uuid::Uuid::new_v4; safe-stringify -> serde_json; mathjs bgn
+//     -> f64 / decimal.
+//   - `any` generics -> concrete entity types; top-level run -> fn main.
+// =============================================================================
+
 
 import * as safe from '@oresoftware/safe-stringify';
 import * as math from 'mathjs';

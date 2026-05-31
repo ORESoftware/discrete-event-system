@@ -13,6 +13,34 @@
 //   Result-returning APIs.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/runner.rs  (module des::general::des_base::runner)
+// 1:1 file move. The iterative DES runner driving every participant's
+// `runTimeStep()` until quiescent / stop predicate / maxTicks.
+//
+// Declarations → Rust:
+//   type IterativeDESParticipant = DESRunLoopEntity -> type alias for the trait obj
+//   interface IterativeRunOptions  -> struct IterativeRunOptions (Default-derivable;
+//                                      callback fields are boxed `Fn`)
+//   interface IterativeRunSummary  -> struct IterativeRunSummary { ticks, reason, .. }
+//   type DESResultStation<R>       -> trait alias: DESStation + a `result(..) -> R` method
+//   fn shuffleInPlace (private)    -> fn shuffle_in_place<T>(&mut [T], &mut impl Rng)
+//   fn runIterativeDES             -> fn run_iterative_des(...) -> IterativeRunSummary
+//   fn runResultStation<R>         -> fn run_result_station<R>(...) -> R
+//   fn failedValidationChecks / validationFailureNames / assertNoValidationFailures
+//
+// Conversion notes (file-specific):
+//   - `reason: 'done' | 'maxticks' | 'stop-when'` -> enum RunReason { Done, MaxTicks, StopWhen }.
+//   - `rng: () => number` defaulting to `Math.random` -> inject a `RandomSource`
+//     / `rand::Rng` (shared/capabilities); do NOT call a global RNG.
+//   - `seen = new Set<participant>()` keyed by identity -> identity is tricky in
+//     Rust: key by station id (`HashSet<String>`) or by index in an arena.
+//   - Participants are held as `&mut dyn DESRunLoopEntity` / `Rc<RefCell<..>>`;
+//     `runTimeStep` needs `&mut self`, so the roster must hand out mut access.
+//   - `getRunLoopEntities?` dynamic roster -> `Option<Box<dyn FnMut() -> Vec<..>>>`.
+//   - `throw new Error` in assertNoValidationFailures -> return `Result`/`panic!`.
+// =============================================================================
+
+// =============================================================================
 // general/des-base/runner.ts — the iterative DES runner.
 //
 // Calls every run-loop participant's runTimeStep() in shuffled order each tick

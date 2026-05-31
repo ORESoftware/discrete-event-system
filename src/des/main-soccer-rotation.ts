@@ -5,6 +5,18 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-soccer-rotation.rs   (fn main)
+// 1:1 file move. 7v7 player rotation solved many ways (random, Hungarian,
+// multi-period LP, IP/MIP, exact MDP) with the match simulated as a DES.
+//
+// Conversion notes (file-specific):
+//   - layered solvers (Hungarian/LP/MIP/MDP) -> use crate::des::general::...
+//   - Poisson goal sampling in the match DES -> inject RandomSource/SeededRandom.
+//   - bench-set / lineup states used as keys -> HashSet or a bitset (Hash+Eq).
+//   - top-level run -> fn main.
+// =============================================================================
+
+// =============================================================================
 // main-soccer-rotation.ts — 7v7 player rotation: assignment + scheduling
 // solved every which way (random, per-period Hungarian, multi-period LP
 // relaxation, time-boxed IP/MIP, exact MDP backward induction), match

@@ -7,6 +7,20 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-neural-network.rs  (a `fn main`
+//                    binary; an `examples/…rs` also works)
+// 1:1 file move. Runs the Python neural-network reference and cross-checks the
+// framework's XOR training, neural Q-learning policy, and neural ODE decay.
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level code becomes `fn main()`.
+//   - `fs`/`path` (reference.json) -> `std::fs` / `std::path`.
+//   - external module invocation -> `std::process::Command`.
+//   - `JSON.parse` of the reference -> a serde struct; no `as any`.
+//   - `process.exit(code)` -> `std::process::exit(code)`.
+// =============================================================================
+
+// =============================================================================
 // validate-neural-network.ts
 //
 // Runs the dependency-free Python neural-network reference through the sanctioned

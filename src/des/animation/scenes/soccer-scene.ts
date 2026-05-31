@@ -8,6 +8,23 @@
 // - If frame generation is made DES graph-visible, wrap it in a SoccerSceneTransform implementing PureTransform::transform.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/animation/scenes/soccer-scene.rs   (module des::animation::scenes::soccer_scene)
+// 1:1 file move. Builds frames + charts for the 7v7 soccer pitch animation.
+//
+// Declarations → Rust:
+//   const STAGE_W/H, PITCH_*/BENCH_*/META_*/COLOR_* consts  -> `pub const`/`const`
+//   const POSITION_RELATIVE: Array<{x,y}>                   -> `&[(f64,f64)]` / `&[Point]`
+//   interface SoccerFrameInput                              -> struct SoccerFrameInput
+//   function buildSoccerFrame / buildSoccerCharts           -> pub fns
+//
+// Conversion notes (file-specific):
+//   - Frame data (Shape[]/Frame/ChartSpec) is serialized for JSON -> serde structs (see types.rs).
+//   - `POSITION_RELATIVE` is a fixed table -> a `const`/`static` slice.
+//   - all coords are `number` -> `f64`.
+//   - imports the soccer model types from ../../general/... -> `use crate::des::general::...`.
+// =============================================================================
+
+// =============================================================================
 // Soccer pitch + bench animation scene.
 //
 // Layout (1000 × 640):

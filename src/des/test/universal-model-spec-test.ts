@@ -4,6 +4,23 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: tests/universal_model_spec_test.rs   (integration test crate)
+// 1:1 file move. Tests the universal DES JSON document shape + conversions, so
+// it is an integration test under `tests/`.
+//
+// Test harness → Rust:
+//   ad-hoc check()/pass-fail counters + console.log  ->  #[test] fns using
+//   assert!/assert_eq!; drop the manual tally and the PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - JSON spec + runFromJsonFile -> serde + serde_json (#[derive(Serialize,
+//     Deserialize)] on UniversalDESModelSpec).
+//   - close(a,b,tol) relative float comparison -> approx::assert_relative_eq!.
+//   - the `as const` literal-union fields ('latex'|'ode'|...) -> Rust enums.
+//   - async main()/await -> a plain sync #[test].
+// =============================================================================
+
+// =============================================================================
 // Tests for the universal DES JSON document shape.
 // =============================================================================
 

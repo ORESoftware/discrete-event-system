@@ -8,6 +8,21 @@
 // - If a PDE field renderer becomes DES graph-visible, wrap it in a PureTransform struct with transform(field_state) -> Frame fragment.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/animation/scenes/calculus-scene.rs   (module des::animation::scenes::calculus_scene)
+// 1:1 file move. Builds frames + charts for the calculus (1-D field / Poisson) animation.
+//
+// Declarations → Rust:
+//   const STAGE_W/H, STRIP_*/METRIC_*/CHART_* consts, POISSON_W/H -> `pub const`/`const` (f64)
+//   function valueToColor                  -> fn -> String
+//   function buildField1DFrame / buildField1DChart / buildPoissonFrame -> pub fns
+//
+// Conversion notes (file-specific):
+//   - Frame data (Shape[]/Frame/ChartSpec) is serialized for JSON -> serde structs (see types.rs).
+//   - `valueToColor(v, vMax)` builds `rgb(..)` -> `format!`.
+//   - all coords/values are `number` -> `f64`.
+// =============================================================================
+
+// =============================================================================
 // Field-evolution scene: render a 1-D PDE field u(x, t) as a coloured
 // strip (each cell = one station, colour encodes value, vertical bars
 // show value height) plus a time-series chart of the peak/center value.

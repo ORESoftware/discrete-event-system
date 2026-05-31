@@ -1,7 +1,17 @@
-// RUST MIGRATION: Port file-for-file to `tests/ts_test.rs` only for behavior that still matters after TypeScript-only type experiments become Rust traits/generics.
-// Test-port notes: convert compile/runtime expectations into `#[test]` functions returning `Result<()>`; replace manual checks with `assert!` and `assert_eq!`; prefer trait-bound examples over structural typing assumptions.
-
-
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/test/ts_test.rs  (or a doc-test / examples/)
+// 1:1 file move. A tiny TypeScript inheritance/override demo (no assertions),
+// not a real test — keep it only as an illustrative example or drop it.
+//
+// Test harness → Rust:
+//   none — there is no PASS/FAIL harness here; nothing to map to #[test].
+//
+// Conversion notes (file-specific):
+//   - `abstract class HasMethod -> SuperClass -> SubClass` is an inheritance
+//     chain: in Rust use `trait HasMethod { fn implement_me(&self) -> T }` with
+//     structs implementing it; there is no method-override-via-extends.
+//   - `T = any` / `: any` return -> pick a concrete type or a generic; avoid Any.
+// =============================================================================
 
 abstract class HasMethod<T =any> {
   abstract implementMe():T

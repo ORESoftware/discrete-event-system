@@ -7,6 +7,23 @@
 // - readAnimation/buildHTML become frame_recorder::read_animation and html_player::build_html returning Results.
 'use strict';
 
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/animation/render.rs   (a `fn main()` binary)
+// 1:1 file move. CLI entry point: read a `.frames.jsonl` file and emit standalone HTML.
+//
+// Declarations → Rust:
+//   function main()  -> `fn main()` (this file is a binary; consider src/bin/render.rs)
+//
+// Conversion notes (file-specific):
+//   - `#!/usr/bin/env ts-node` shebang + `require.main === module` guard -> just `fn main()`.
+//   - `process.argv.slice(2)` -> `std::env::args().skip(1)`; `process.exit(n)` -> `std::process::exit(n)`.
+//   - `fs.existsSync` / `fs.writeFileSync` -> `std::path::Path::exists` / `std::fs::write`.
+//   - `inputPath.replace(/\.frames\.jsonl$/, ...)` regex path munging -> use
+//     `std::path` (`with_extension`/`file_stem`) or the `regex` crate.
+//   - calls `readAnimation` / `buildHTML` from sibling modules -> `use` from
+//     `crate::des::animation::{frame_recorder, html_player}`.
+// =============================================================================
+
 // Post-hoc renderer: read a `.frames.jsonl` file produced by FrameRecorder
 // and emit a self-contained HTML animation. Useful when you ran the
 // simulation earlier with ANIMATE=1 (or piped frames out of a different

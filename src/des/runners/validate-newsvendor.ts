@@ -7,6 +7,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/validate-newsvendor.rs  (a `fn main` binary;
+//                    an `examples/…rs` also works)
+// 1:1 file move. Validates the newsvendor and multi-period inventory MDP
+// (critical-fractile vs brute search vs value iteration; (s,S) policy structure).
+//
+// Conversion notes (file-specific):
+//   - CLI entry point: top-level driver code becomes `fn main()`.
+//   - env + `child_process` (reference) -> `std::env::var` / `std::process::Command`.
+//   - `JSON` -> `serde_json`.
+//   - `as any` on results -> concrete typed structs.
+//   - demand sampling (Poisson/Uniform) -> inject `SeededRandom`.
+//   - `process.exit(code)` -> `std::process::exit(code)`.
+// =============================================================================
+
+// =============================================================================
 // Validate the newsvendor and multi-period inventory MDP.
 //
 //   STUDY 1: Single-period newsvendor — three solution methods agree

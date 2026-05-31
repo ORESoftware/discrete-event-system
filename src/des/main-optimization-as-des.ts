@@ -5,6 +5,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-optimization-as-des.rs   (fn main)
+// 1:1 file move. Runs SA / hill-climb / GA / Q-learning / PPO as DES on shared
+// problems and prints one comparison table.
+//
+// Conversion notes (file-specific):
+//   - imports many general/* algorithm-as-DES modules -> use crate::des::
+//     general::{sa_des, ga_des, qlearning_des, ppo_des, genetic_tsp,
+//     rl_environments}.
+//   - all algorithms randomise -> route through SeededRandom for reproducibility.
+//   - top-level studies -> fn main.
+// =============================================================================
+
+// =============================================================================
 // main-optimization-as-des.ts — runs all four "algorithm-as-DES"
 // implementations on small, comparable problems and reports a single
 // comparison table.

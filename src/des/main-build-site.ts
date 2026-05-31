@@ -5,6 +5,19 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-build-site.rs   (fn main)
+// 1:1 file move. Build tool: regenerates every simulation HTML page into out/
+// and writes the curated landing index.
+//
+// Conversion notes (file-specific):
+//   - execFileSync(ts-node, [script]) for each sibling script -> std::process::
+//     Command invoking the sibling .rs binaries.
+//   - process.env.INDEX_ONLY -> std::env::var.
+//   - fs read/write HTML -> std::fs.
+//   - class SimulationSiteBuilder -> struct + impl.
+// =============================================================================
+
+// =============================================================================
 // main-build-site.ts — regenerate every simulation HTML page into out/ and
 // write the curated landing index (out/index.html).
 //

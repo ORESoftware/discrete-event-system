@@ -6,6 +6,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-factmachine.rs   (fn main)
+// 1:1 file move. POMDP model of an LMSR opinion market (market maker, noise
+// traders, Bayesian bettor, voter resolution).
+//
+// Conversion notes (file-specific):
+//   - LARGE file: each station (Market/NoiseTrader/Bettor/Voter) -> struct +
+//     impl trait.
+//   - Math.random (order flow, votes, belief sampling) -> inject RandomSource/
+//     SeededRandom (shared::capabilities).
+//   - the 5-policy set -> enum (match on policy); belief over a 21-bin grid ->
+//     Vec<f64>.
+//   - top-level run -> fn main.
+// =============================================================================
+
+// =============================================================================
 // MAIN-FACTMACHINE: a POMDP model of factmachine.com.
 //
 // FactMachine is an *opinion market*: bettors trade YES/NO shares on the

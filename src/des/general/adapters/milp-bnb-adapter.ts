@@ -5,6 +5,31 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/adapters/milp-bnb-adapter.rs
+//   (module des::general::adapters::milp_bnb_adapter)
+// 1:1 file move. Registers MILP branch-and-bound + explicit IP/MIP-DES JSON adapters.
+//
+// Declarations → Rust:
+//   interface MILPParams / IPMIPDESParams      -> struct (#[derive(Deserialize)];
+//             nested raw?/knapsack?/options? -> Option<struct>)
+//   const milpSchema / ipMipDESSchema: ParamSchema -> serde + validator metadata
+//   const adapter / ipMipDESAdapter: DESModelRegistration<P,R> -> struct + impl trait;
+//             registerModel(...) -> explicit registration calls
+//
+// Conversion notes (file-specific):
+//   - `sense: 'max'|'min'`, `branchRule`, `nodeSelection`, and the long
+//     `lpAlgorithm` literal union (LPRelaxationAlgorithm) -> #[serde] enums.
+//   - GotChA: `lpAlgorithm: 'auto' as LPRelaxationAlgorithm` cast in the example —
+//     in Rust this is just the enum variant, no cast.
+//   - Empty optional arrays coerced to undefined (`ub.length > 0 ? ub : undefined`)
+//     so the LP solver sees absent (not length-0) vectors -> Option + is_empty guard.
+//   - `Object.entries(result.lpAlgorithmUsage)` (string-keyed map) -> HashMap iterate.
+//   - `throw new Error` for missing {raw, knapsack} -> Result/validation.
+//   - CSV writes optional trace fields with `?? ''` and `children?.join('|')` ->
+//     Option formatting + iterator join.
+// =============================================================================
+
+// =============================================================================
 // general/adapters/milp-bnb-adapter.ts — JSON adapter for the MILP-via-
 // branch-and-bound solver. Demonstrates registry support for OPTIMISATION
 // models with structured outputs.

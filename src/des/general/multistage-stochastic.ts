@@ -6,6 +6,25 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/multistage-stochastic.rs  (module des::general::multistage_stochastic)
+// 1:1 file move. SDDP-style multi-stage stochastic programming over an inventory model.
+//
+// Declarations → Rust:
+//   interface DemandOutcome/MultiStageInventoryProblem/StageDecision/SDDPIterationTrace/
+//             ExactTreeNodeResult/SDDPOptions/SDDPResult/MultiStageRunResult -> structs
+//   interface SDDPFilledOptions/SDDPState/TreeNode                           -> structs (private)
+//   class SDDPStation extends FixedPointIterationStation<SDDPState>          -> struct + impl trait
+//   fn build*/validate*/solveStageDecision/expectedStageValue/generateValueCut/
+//      solveMultiStageSDDP/runMultiStageInventoryDemo/solveExactScenarioTree/
+//      buildScenarioTree/evaluatePolicyExact/sampleDemand/clamp                -> free/private fns
+//
+// Conversion notes (file-specific):
+//   - INJECT RNG: forward trajectories use `mulberry32` from prng.ts + `sampleDemand(rng)` ->
+//     route through `RandomSource` (shared/capabilities); SeededRandom is the mulberry32 analogue.
+//   - stage LPs reuse `LPProblem`/`solveLPInternal` from lp.ts (see that module's header).
+//   - AffineCut/AffineCutPool come from des-base; cut pools are `Vec<AffineCut>` struct fields.
+//   - validate* throws -> `panic!` (invariant) or `Result`; numerics `f64`, stage/scenario idx `usize`.
+// =============================================================================
 // general/multistage-stochastic.ts -- MULTI-STAGE STOCHASTIC PROGRAMMING
 // via an SDDP-style discrete-event system.
 //
@@ -40,6 +59,7 @@ import {
   runIterativeDES, intrinsicCheck,
 } from './des-base';
 import {Preconditions} from './des-base/preconditions';
+import {PureTransform} from '../shared/transform';
 
 export interface DemandOutcome {
   demand: number;
@@ -183,15 +203,27 @@ export function validateMultiStageProblem(p: MultiStageInventoryProblem): void {
 // Stage LP
 // -----------------------------------------------------------------------------
 
-export function solveStageDecision(
-  p: MultiStageInventoryProblem,
-  stage: number,
-  state: number,
-  demand: number,
-  nextCuts: AffineCutPool,
-): StageDecision {
-  validateStageInputs(p, stage, state, demand, nextCuts);
-  const c = [
+/** Query for one stage LP solve: the stage index, incoming state, observed
+ *  demand, and the next stage's cut pool. */
+export interface StageDecisionInput {
+  stage: number;
+  state: number;
+  demand: number;
+  nextCuts: AffineCutPool;
+}
+
+/** Solve a single stage LP for the multi-stage inventory model. The problem
+ *  definition is configuration; the per-call query is the `transform` input. */
+export class StageDecisionSolver extends PureTransform<StageDecisionInput, StageDecision> {
+  constructor(private readonly p: MultiStageInventoryProblem) {
+    super();
+  }
+
+  transform(input: StageDecisionInput): StageDecision {
+    const p = this.p;
+    const {stage, state, demand, nextCuts} = input;
+    validateStageInputs(p, stage, state, demand, nextCuts);
+    const c = [
     -p.orderCost[stage],
     p.price[stage],
     -p.stockoutCost[stage],
@@ -249,6 +281,18 @@ export function solveStageDecision(
     nextInventory,
     theta,
   };
+  }
+}
+
+/** @deprecated Use `new StageDecisionSolver(p).transform({stage, state, demand, nextCuts})`. */
+export function solveStageDecision(
+  p: MultiStageInventoryProblem,
+  stage: number,
+  state: number,
+  demand: number,
+  nextCuts: AffineCutPool,
+): StageDecision {
+  return new StageDecisionSolver(p).transform({stage, state, demand, nextCuts});
 }
 
 function validateStageInputs(
@@ -265,19 +309,41 @@ function validateStageInputs(
   Preconditions.check(MODEL, 'nextCuts.size()', 'be >= 1', nextCuts.size() >= 1, nextCuts.size());
 }
 
+/** Query for the expected stage value: stage index, incoming state, and the
+ *  next stage's cut pool. */
+export interface ExpectedStageValueInput {
+  stage: number;
+  state: number;
+  nextCuts: AffineCutPool;
+}
+
+/** Expectation of the stage LP value over the stage's demand outcomes. The
+ *  problem is configuration; the per-call query is the `transform` input. */
+export class ExpectedStageValue extends PureTransform<ExpectedStageValueInput, number> {
+  constructor(private readonly p: MultiStageInventoryProblem) {
+    super();
+  }
+
+  transform({stage, state, nextCuts}: ExpectedStageValueInput): number {
+    const p = this.p;
+    let z = 0;
+    for (const d of p.demands[stage]) {
+      const dec = solveStageDecision(p, stage, state, d.demand, nextCuts);
+      if (dec.status !== 'optimal') throw new Error(`${MODEL}: stage LP failed with status ${dec.status}`);
+      z += d.prob * dec.value;
+    }
+    return z;
+  }
+}
+
+/** @deprecated Use `new ExpectedStageValue(p).transform({stage, state, nextCuts})`. */
 export function expectedStageValue(
   p: MultiStageInventoryProblem,
   stage: number,
   state: number,
   nextCuts: AffineCutPool,
 ): number {
-  let z = 0;
-  for (const d of p.demands[stage]) {
-    const dec = solveStageDecision(p, stage, state, d.demand, nextCuts);
-    if (dec.status !== 'optimal') throw new Error(`${MODEL}: stage LP failed with status ${dec.status}`);
-    z += d.prob * dec.value;
-  }
-  return z;
+  return new ExpectedStageValue(p).transform({stage, state, nextCuts});
 }
 
 function generateValueCut(
@@ -524,7 +590,19 @@ interface TreeNode {
   parentId: number | null;
 }
 
+/** Solve the exact extensive-form scenario-tree LP. Single input: the problem. */
+export class ExactScenarioTreeSolver extends PureTransform<MultiStageInventoryProblem, ExactTreeNodeResult> {
+  transform(p: MultiStageInventoryProblem): ExactTreeNodeResult {
+    return solveExactScenarioTreeImpl(p);
+  }
+}
+
+/** @deprecated Use `new ExactScenarioTreeSolver().transform(p)`. */
 export function solveExactScenarioTree(p: MultiStageInventoryProblem): ExactTreeNodeResult {
+  return new ExactScenarioTreeSolver().transform(p);
+}
+
+function solveExactScenarioTreeImpl(p: MultiStageInventoryProblem): ExactTreeNodeResult {
   validateMultiStageProblem(p);
   const nodes = buildScenarioTree(p);
   const varCount = nodes.length * 4; // order, sell, stockout, nextInventory per node
@@ -607,23 +685,37 @@ function buildScenarioTree(p: MultiStageInventoryProblem): TreeNode[] {
 // Policy evaluation
 // -----------------------------------------------------------------------------
 
+/** Evaluate a cut-pool policy exactly by recursion over the scenario tree. The
+ *  problem is configuration; the per-stage cut pools are the `transform` input. */
+export class ExactPolicyEvaluator extends PureTransform<ReadonlyArray<AffineCutPool>, number> {
+  constructor(private readonly p: MultiStageInventoryProblem) {
+    super();
+  }
+
+  transform(cutPools: ReadonlyArray<AffineCutPool>): number {
+    const p = this.p;
+    validateMultiStageProblem(p);
+    Preconditions.lengthEq(MODEL, 'cutPools', cutPools, p.horizon + 1);
+    const rec = (stage: number, state: number): number => {
+      if (stage >= p.horizon) return p.salvageValue * state;
+      let z = 0;
+      for (const d of p.demands[stage]) {
+        const dec = solveStageDecision(p, stage, state, d.demand, cutPools[stage + 1]);
+        if (dec.status !== 'optimal') throw new Error(`${MODEL}: policy eval LP failed at stage ${stage}: ${dec.status}`);
+        z += d.prob * (dec.immediateReward + rec(stage + 1, clamp(dec.nextInventory, 0, p.capacity)));
+      }
+      return z;
+    };
+    return rec(0, p.initialInventory);
+  }
+}
+
+/** @deprecated Use `new ExactPolicyEvaluator(p).transform(cutPools)`. */
 export function evaluatePolicyExact(
   p: MultiStageInventoryProblem,
   cutPools: ReadonlyArray<AffineCutPool>,
 ): number {
-  validateMultiStageProblem(p);
-  Preconditions.lengthEq(MODEL, 'cutPools', cutPools, p.horizon + 1);
-  const rec = (stage: number, state: number): number => {
-    if (stage >= p.horizon) return p.salvageValue * state;
-    let z = 0;
-    for (const d of p.demands[stage]) {
-      const dec = solveStageDecision(p, stage, state, d.demand, cutPools[stage + 1]);
-      if (dec.status !== 'optimal') throw new Error(`${MODEL}: policy eval LP failed at stage ${stage}: ${dec.status}`);
-      z += d.prob * (dec.immediateReward + rec(stage + 1, clamp(dec.nextInventory, 0, p.capacity)));
-    }
-    return z;
-  };
-  return rec(0, p.initialInventory);
+  return new ExactPolicyEvaluator(p).transform(cutPools);
 }
 
 function sampleDemand(outcomes: ReadonlyArray<DemandOutcome>, rng: () => number): number {

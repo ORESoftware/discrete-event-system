@@ -11,6 +11,19 @@
 //   migration. Consolidation can happen only after behavioral parity tests pass.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/mod.rs  (module des::general::des_base)
+// 1:1 file move. Barrel for the "iterative algorithm as DES" base hierarchy.
+//
+// Declarations → Rust:
+//   export * from './x'  ->  `pub mod x;`  +  `pub use x::*;`  (one per line below)
+//
+// Conversion notes (file-specific):
+//   - `des-base` (kebab) is not a legal Rust ident — name the module `des_base`.
+//   - This file only re-exports; no logic. Order is irrelevant in Rust (no
+//     load-order hazards) but keep it for diff parity.
+// =============================================================================
+
+// =============================================================================
 // general/des-base/index.ts — public API of the DES base hierarchy.
 //
 // Hierarchy:

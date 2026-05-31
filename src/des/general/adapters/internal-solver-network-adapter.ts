@@ -5,6 +5,33 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/adapters/internal-solver-network-adapter.rs
+//   (module des::general::adapters::internal_solver_network_adapter)
+// 1:1 file move. JSON adapter exposing GA/SA/DP/shortest-path/TSP solvers as DES
+// networks, with an animated solver→checker→sink frame builder.
+//
+// Declarations → Rust:
+//   const coolingSchema/graphEdgeSchema/graphSchema/shortestPathSchema/knapsackSchema/
+//         tspSASchema/tspGASchema/tspSchema/internalSolverSchema: ParamSchema
+//                                        -> reusable serde + validator schema consts
+//             (cooling `oneOf` -> #[serde(tag="kind")] enum; `kind` union -> enum)
+//   fn formatNumber / summarizeBestState / drawSolverNetwork -> plain `fn` helpers
+//   const adapter: DESModelRegistration<P,R> -> struct + impl ModelAdapter trait;
+//             registerModel(adapter) -> explicit registration
+//
+// Conversion notes (file-specific):
+//   - GotChA: summarizeBestState does heavy `row.bestState as Record<string,unknown>`
+//     + `state.distance as unknown[]` + typeof probing — bestState is an erased
+//     per-solver union. In Rust model SolverProgress.bestState as an `enum`
+//     (ShortestPath { distance } / Knapsack { value, weight, capacity } / Tsp {
+//     tour, length }) and `match` instead of duck-typing `unknown`.
+//   - Shapes pushed into `Shape[]` (animation/types union) -> Vec<Shape>; Shape -> enum.
+//   - `JSON.stringify(row.bestState)` fallback -> serde_json::to_string.
+//   - async run/animate via withLogger + FrameRecorder -> async fns; `?? default`
+//     defaults (timeLimitMs ?? 180000, metadata ?? {}) -> Option::unwrap_or.
+// =============================================================================
+
+// =============================================================================
 // JSON adapter for internal solver networks.
 //
 // This adapter exposes GA, simulated annealing, dynamic-programming knapsack,

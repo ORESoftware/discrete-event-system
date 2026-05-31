@@ -1,11 +1,10 @@
 #!/usr/bin/env ts-node
 'use strict';
 
-// RUST MIGRATION:
-// - Target: src/des/abstract/test.rs
-// - This file is currently only a ts-node stub. In Rust, keep the 1:1 module if
-//   callers expect it, or move executable smoke coverage to `tests/`/`src/bin`
-//   after confirming no import depends on this path.
-// - No declarations to port yet; treat future free test helpers as PureTransform
-//   structs or plain `#[test]` functions depending on whether production code
-//   needs the abstraction.
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/abstract/test.rs  (module des::abstract_::test)
+// 1:1 file move. Currently an empty ad-hoc scratch/entry script (no declarations).
+// (`abstract` is a Rust keyword — name the parent module `abstract_` or `core`.)
+// Nothing to port yet; if this becomes a test harness it maps to a `#[cfg(test)]`
+// module or an examples/ binary rather than library code.
+// =============================================================================

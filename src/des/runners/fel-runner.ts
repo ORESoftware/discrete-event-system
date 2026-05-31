@@ -6,6 +6,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/runners/fel_runner.rs
+//                    (module des::runners::fel_runner — hyphen → underscore)
+// 1:1 file move. FEL (Future-Event-List) reference kernel as a callable fn.
+//
+// Conversion notes (file-specific):
+//   - Helper module imported by the binaries, not a `fn main()`.
+//   - `opts.service: 'fifo' | 'individual'` -> `enum ServiceDiscipline { Fifo,
+//     Individual }`, matched (not string compares).
+//   - `Math.random()` (drawUniform) + `withSeed` -> inject a `RandomSource` /
+//     `SeededRandom` (shared::capabilities); no ambient RNG.
+//   - `Record<string, Array<{prob, to}>>` successors -> `HashMap<String,
+//     Vec<Successor>>` with a small `struct Successor { prob: f64, to: String }`.
+// =============================================================================
+
+// =============================================================================
 // FEL (Future-Event-List) reference kernel as a callable function. Supports
 // two service disciplines, switched via opts.service:
 //
@@ -23,6 +38,7 @@
 
 import {JsonlLogger} from '../observability/logger';
 import {withSeed} from '../general/prng';
+import {RandomSource, DEFAULT_RANDOM} from '../shared/capabilities';
 import {
   SimConfig, RunOpts, RunResult,
   COMPARTMENT_ORDER, EDGES, buildSuccessors,
@@ -35,15 +51,16 @@ import {
   zeroCompartmentRecord,
 } from './shared';
 
-const drawUniform = (a: number, b: number) => a + Math.random() * (b - a);
+const drawUniform = (a: number, b: number, rng: RandomSource = DEFAULT_RANDOM) => a + rng.nextFloat() * (b - a);
 
 const drawSuccessor = (
   successors: Record<string, Array<{prob: number, to: string}>>,
   from: string,
+  rng: RandomSource = DEFAULT_RANDOM,
 ): string => {
   const succs = successors[from];
   if (succs.length === 1) return succs[0].to;
-  const r = Math.random();
+  const r = rng.nextFloat();
   let cum = 0;
   for (const s of succs) {
     cum += s.prob;

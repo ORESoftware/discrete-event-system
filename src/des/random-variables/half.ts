@@ -1,14 +1,21 @@
 #!/usr/bin/env ts-node
 'use strict';
 
-// RUST MIGRATION:
-// - Target: src/des/random_variables/half.rs
-// - This helper should become a named PureTransform struct, e.g.
-//   DownsampleByHalving { target_len }, with `transform(Vec<f64>) -> Vec<f64>`.
-// - Fix the implicit JS sort before porting: Rust needs an explicit numeric
-//   comparator/ordering, especially for floats.
-// - Replace `any[]`, tuple accumulator tricks, and console-driven execution
-//   with typed Vec operations and a separate bin/test harness.
+// =============================================================================
+// RUST MIGRATION  —  target: src/des/random-variables/half.rs  (module des::random_variables::half)
+// 1:1 file move. Throwaway CLI script that down-samples an array by pairwise averaging.
+//
+// Declarations → Rust:
+//   const goFrom_131072_to_1024 (arrow fn) -> free fn
+//
+// Conversion notes (file-specific):
+//   - This is a SCRIPT (top-level `console.log`) -> a `[[bin]]`/examples main, not library.
+//   - `number[]` -> `Vec<f64>`; `reduceByHalf` uses `any[]` + a `[array, number|null]`
+//     tuple accumulator -> a typed fold (e.g. fold into `(Vec<f64>, Option<f64>)`).
+//   - LATENT BUG to preserve verbatim: the `while` loop reduces the ORIGINAL `v`
+//     (not `ret`), so it never converges on the intended input — translate as-is
+//     and flag, don't silently "fix".
+// =============================================================================
 
 const goFrom_131072_to_1024 = (v: number[]) => {
 

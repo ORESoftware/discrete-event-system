@@ -13,6 +13,29 @@
 //   PureTransform/PureTransformEntity implementation.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/preconditions.rs  (module des::general::des_base::preconditions)
+// 1:1 file move. Uniform fail-fast guards for model parameters / initial state.
+//
+// Declarations → Rust:
+//   class PreconditionError extends Error   -> struct PreconditionError + impl std::error::Error
+//                                              (or a variant of a crate-wide Error enum)
+//   namespace Preconditions { fn ... }      -> a module of free fns (or assoc fns on a
+//                                              zero-sized `Preconditions` type)
+//
+// Conversion notes (file-specific):
+//   - These guards `throw` on bad params; per the migration rules these are
+//     recoverable construction-time failures -> return `Result<(), PreconditionError>`
+//     (preferred) rather than `panic!`, since callers fail-fast at the edge.
+//   - `observed?: unknown` (printed value) -> `Option<String>` (pre-format) or a
+//     generic `T: Debug`; avoid `dyn Any`.
+//   - Matrix guards take `ReadonlyArray<readonly number[]>` -> `&[Vec<f64>]` / `&[&[f64]]`.
+//   - `positiveDefiniteCholesky` builds an L matrix -> reuse `shared/linalg.rs`.
+//   - `console.warn` in the ctor -> `log::warn!`; constructing the error shouldn't
+//     log in Rust — log at the `Err` handling site instead.
+//   - TS `namespace` export -> plain Rust module; no runtime object.
+// =============================================================================
+
+// =============================================================================
 // general/des-base/preconditions.ts — uniform PRE-RUN guards for every
 // model's initial conditions and parameters.
 //

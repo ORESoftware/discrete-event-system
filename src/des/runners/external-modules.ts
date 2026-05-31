@@ -6,6 +6,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/runners/external_modules.rs
+//                    (module des::runners::external_modules — hyphen → underscore)
+// 1:1 file move. Metadata registry of the built-in external reference modules.
+//
+// Conversion notes (file-specific):
+//   - Pure metadata + `registerBuiltInExternalModules()` mutating a global
+//     registry; the `let registered = false` idempotency guard -> `std::sync::Once`
+//     (or a `OnceLock<()>`), or build the table eagerly as a `static`.
+//   - module-id string consts -> `const NEURAL_NETWORK_REFERENCE_ID: &str = ..`
+//     (or an `enum ModuleId`).
+//   - `path.join` -> `std::path::Path`/`PathBuf`.
+//   - env-var interpreter lookups (`PYTHON_BIN`, …) -> `std::env::var`.
+// =============================================================================
+
+// =============================================================================
 // Built-in external solver/validator modules.
 //
 // This file contains metadata only. It registers source scripts that live under

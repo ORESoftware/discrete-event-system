@@ -5,6 +5,17 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/bin/main-mdp-lp.rs   (fn main)
+// 1:1 file move. Solves a small MDP via its LP formulation, cross-checked
+// against value iteration and (optionally) scipy:highs.
+//
+// Conversion notes (file-specific):
+//   - optional external scipy:highs solve -> std::process::Command (feature-
+//     gated); in-process simplex -> use crate::des::general::...
+//   - value-iteration vs LP cross-check -> pure fns; top-level run -> fn main.
+// =============================================================================
+
+// =============================================================================
 // main-mdp-lp.ts — solve an MDP via its LP formulation.
 //
 // THE DEEP CONNECTION

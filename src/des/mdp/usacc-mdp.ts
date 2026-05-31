@@ -13,6 +13,38 @@
 // - Inject RNG for sampleInitialState instead of accepting an untyped closure.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/mdp/usacc-mdp.rs  (module des::mdp::usacc_mdp)
+// 1:1 file move. The USACC court-case MDP: states, actions, transitions, rewards.
+//
+// Declarations → Rust:
+//   const STAGES/EVIDENCE/CORROBORATION/MANIPULATION/CONFLICT/FUNDING (`as const`)
+//     + type Stage/Evidence/... = typeof X[number]   -> string-literal unions -> enums
+//   interface CaseState                              -> struct CaseState { stage, evidence, ... } (all u8)
+//   const N_STATES/ACCEPTED/CLOSED/EXHAUSTED/N_ACTIONS/FUND_*  -> consts
+//   const ACTIONS (`as const`) + type Action          -> enum Action (+ VARIANTS array)
+//   interface Outcome                                 -> struct Outcome { next_state, prob, reward }
+//   const ACTION_COST / drawPctPerAction: Record<Action,number> -> match on Action / array[Action as usize]
+//   fn encode/decode/isTerminal/quality/terminalReward/rewardOfAccept/rewardOfClose/outcomes -> free fns
+//   fn sampleInitialState(rng)                         -> fn taking an injected RandomSource
+//
+// Conversion notes (file-specific):
+//   - The factor unions (Stage/Evidence/…) and the `... as const` arrays -> Rust
+//     enums; CaseState stores them as small ints (0..N) exactly as here.
+//   - `decode(id)!` non-null -> `Option<CaseState>` + `expect`.
+//   - `Record<Action, number>` cost/draw tables -> `match` on the Action enum (or an
+//     array indexed by `action as usize`), not a HashMap.
+//   - Local `type Edge` built via `{...stay, ...e}` spread + `Partial<Edge>`/`Omit` ->
+//     a struct with `#[derive(Default,Clone)]` + struct-update syntax (`Edge { ..stay }`).
+//   - `Map<number, Outcome>` coalescing -> `HashMap<u32, Outcome>` (sum probs).
+//   - Integer-percent probs divided by 10000 at the end (kept so TS/py/Rust round
+//     identically) -> do the integer math in `u32`, divide into `f64` once.
+//   - `throw new Error('probability sum != 1')` -> `panic!`/`debug_assert!` (invariant).
+//   - `sampleInitialState(rng: () => number)` -> inject `RandomSource`; PRESERVE the
+//     exact number/order of `rng()` draws (each call advances RNG state — sequencing matters).
+//   - `switch (a)` on the action string -> `match` on the Action enum.
+// =============================================================================
+
+// =============================================================================
 // MDP for the USACC (US Anti-Corruption Court) project.
 //
 // Source spec: https://oresoftware.github.io/us-anti-corruption-court-project/mdp

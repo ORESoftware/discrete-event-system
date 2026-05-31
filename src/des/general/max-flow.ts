@@ -6,6 +6,23 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/max-flow.rs  (module des::general::max_flow)
+// 1:1 file move. Edmonds-Karp max-flow expressed as a fixed-point DES iteration.
+//
+// Declarations → Rust:
+//   interface MaxFlowEdge/MaxFlowProblem/MaxFlowResult/MaxFlowTraceEntry -> structs (#[derive(Clone)])
+//   interface ResidualEdge/ForwardRef/AugmentingPath/MaxFlowState        -> structs (private)
+//   class MaxFlowStation extends FixedPointIterationStation<MaxFlowState> -> struct + impl of the
+//                                                                            fixed-point-iteration trait
+//   fn validateMaxFlowProblem / solveMaxFlow / buildTextbookMaxFlowProblem -> free fns or assoc fns
+//
+// Conversion notes (file-specific):
+//   - `new Set(sourceSide)` for the min-cut side -> `HashSet<usize>`.
+//   - node/edge indices are `usize`; capacities/flow are `f64` (or `i64` if integral).
+//   - `validateMaxFlowProblem` throws on bad input -> `panic!` (invariant) or return `Result`.
+//   - FixedPointIterationStation is a template-method base: model as a trait with default
+//     fns; MaxFlowStation provides the per-tick augmentation hook.
+// =============================================================================
 // general/max-flow.ts -- maximum flow as a discrete-event optimisation.
 //
 // Nodes are stationary optimisation state; an augmenting path is the movable

@@ -8,6 +8,25 @@
 // - If contact rendering becomes DES graph-visible, expose a PureTransform that maps epidemic snapshot -> Frame fragment.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/animation/scenes/contact-seir-scene.rs   (module des::animation::scenes::contact_seir_scene)
+// 1:1 file move. Builds frames + charts for the contact-network SEIR animation.
+//
+// Declarations → Rust:
+//   const STAGE_W/H, GRID_*/METRIC_*/CHART_* consts  -> `pub const`/`const` (f64)
+//   const COLORS (palette object)                    -> struct/module of `&str` consts
+//   interface PersonView                             -> struct PersonView
+//   function layoutGrid                              -> fn -> { x: Vec<f64>, y: Vec<f64> } struct
+//   function buildContactFrame / buildContactChart   -> pub fns
+//
+// Conversion notes (file-specific):
+//   - Frame data (Shape[]/Frame/ChartSpec) is serialized for JSON -> serde structs (see types.rs).
+//   - `layoutGrid(N)` returns parallel `{x: number[], y: number[]}` -> a struct with two
+//     `Vec<f64>` (or a single `Vec<(f64, f64)>`).
+//   - `COLORS` object literal -> `const &str`s.
+//   - all coords are `number` -> `f64`.
+// =============================================================================
+
+// =============================================================================
 // Contact-SEIR scene builder. Each person is a small dot in a 2-D
 // phyllotaxis grid (golden-angle spiral); state is encoded in fill
 // color. Optionally, transmission events from the most recent tick

@@ -4,6 +4,21 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: #[cfg(test)] mod tests in src/des/general/genetic_tsp.rs
+// 1:1 file move. Unit tests one module (GA-TSP operators + exact/bounds), so
+// prefer that module's `#[cfg(test)] mod tests`.
+//
+// Test harness → Rust:
+//   ad-hoc expect()/close()/pass-fail counters + console.log  ->  #[test] fns
+//   using assert!/assert_eq!; drop the manual tally and PASS/FAIL printing.
+//
+// Conversion notes (file-specific):
+//   - close(a,b,tol) float comparison -> approx::assert_relative_eq!.
+//   - crossover/mutation/selection use mulberry32 -> a seeded rand::Rng
+//     (StdRng::seed_from_u64) so the GA results stay reproducible.
+// =============================================================================
+
+// =============================================================================
 // test/genetic-tsp-test.ts — unit tests for the GA-TSP module.
 // =============================================================================
 

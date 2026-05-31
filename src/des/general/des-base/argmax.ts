@@ -11,6 +11,26 @@
 // - Prefer Result/Option for empty inputs or invalid scores instead of throws.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/argmax.rs  (module des::general::des_base::argmax)
+// 1:1 file move. Random-tie-breaking argmax helpers for greedy value selection.
+//
+// Declarations → Rust:
+//   const ARGMAX_EPS_DEFAULT      -> const ARGMAX_EPS_DEFAULT: f64 = 1e-12;
+//   fn argMaxWithTieBreak         -> fn arg_max_with_tie_break(&[f64], &mut dyn RandomSource, eps) -> isize
+//   fn scanArgMaxTieBreak         -> fn scan_arg_max_tie_break(n, impl Fn(usize)->f64, rng, eps) -> isize
+//   fn chooseRandomTied<T>        -> fn choose_random_tied<T>(&[T], rng) -> Option<&T>
+//   fn allArgMaxTies              -> fn all_arg_max_ties(&[f64], eps) -> Vec<usize>
+//
+// Conversion notes (file-specific):
+//   - `rng: () => number` -> inject `RandomSource`/`rand::Rng` (shared/capabilities);
+//     reservoir tie-break must use the SAME seeded source for reproducibility.
+//   - Sentinel `-1` for "no winner" -> return `Option<usize>` (preferred) rather
+//     than `isize` with -1.
+//   - `values: ArrayLike<number>` -> `&[f64]`.
+//   - Pure deterministic given the rng; no I/O.
+// =============================================================================
+
+// =============================================================================
 // general/des-base/argmax.ts
 //
 // Random-tie-breaking argmax for value-based decision making.

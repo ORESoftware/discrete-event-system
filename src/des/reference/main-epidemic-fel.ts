@@ -7,6 +7,36 @@
 'use strict';
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/reference/main-epidemic-fel.rs  (module des::reference::main_epidemic_fel)
+// 1:1 file move. CLI BINARY: classical Future-Event-List reference SEIR simulation.
+//
+// Declarations → Rust:
+//   const RESIDENCE / ARRIVALS_INTERARRIVAL / PROBS / T_PHASE_1 / T_MAX /
+//         COMPARTMENT_GROUPS / COMPARTMENT_ORDER / SUCCESSORS  -> module consts/statics
+//   type FelEvent                                              -> struct FelEvent { time: f64, station }
+//   const fel + insertEvent/popEvent                           -> a `BinaryHeap`/owned Vec PQ
+//   const drawUniform / drawSuccessor (fns)                    -> free fns
+//   const run (fn)                                             -> `fn main()` (writes artifacts)
+//
+// Conversion notes (file-specific):
+//   - ENTRY SCRIPT (`run()` at EOF; writes CSV/JSON/JSONL files) -> a Rust binary.
+//   - DETERMINISM: `Math.random()` in drawUniform/drawSuccessor -> injected
+//     `RandomSource` (shared/capabilities) so it matches the framework's seeded runs.
+//   - The FEL is a sorted-array PQ maintained by `splice` -> `BinaryHeap<Reverse<FelEvent>>`
+//     (min-heap by `time`); `FelEvent` needs `Ord`/`PartialOrd` on `time`.
+//   - MODULE-LEVEL MUTABLE `fel` + closures that mutate it -> own the PQ inside the
+//     run fn/struct; Rust has no mutable module globals (no `let fel = []` at top level).
+//   - `Record<string,[number,number]>` (RESIDENCE) / `Record<string, Array<{prob,to}>>`
+//     (SUCCESSORS) -> `HashMap<&str,(f64,f64)>` / `HashMap<&str, Vec<Branch>>` or `match`.
+//   - `Map<string, Map<string, number>>` transitionCount -> nested `HashMap`.
+//   - `Date.now()` wall timing -> `std::time::Instant`/`Clock`.
+//   - `fs.mkdirSync`/`writeFileSync` + `JSON.stringify`/`logger.log({...})` ->
+//     `std::fs` + `serde_json` (typed events or `serde_json::Value`).
+//   - `Object.fromEntries/entries/keys` + `+(x).toFixed(6)` -> map iteration + f64 rounding.
+//   - `succs.length===1` fast path and cumulative-prob sampling -> straight port.
+// =============================================================================
+
+// =============================================================================
 // FEL (Future-Event-List) reference implementation of the same epidemic model.
 //
 // Why this exists
@@ -41,6 +71,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import {JsonlLogger} from '../observability/logger';
+import {RandomSource, DEFAULT_RANDOM} from '../shared/capabilities';
 
 // --- Config (intentionally identical to main-epidemic-improved.ts) ----------
 const RESIDENCE: Record<string, [number, number]> = {
@@ -100,12 +131,12 @@ const SUCCESSORS: Record<string, Array<{prob: number, to: string}>> = {
 };
 
 // --- Random helpers ---------------------------------------------------------
-const drawUniform = (a: number, b: number) => a + Math.random() * (b - a);
+const drawUniform = (a: number, b: number, rng: RandomSource = DEFAULT_RANDOM) => a + rng.nextFloat() * (b - a);
 
-const drawSuccessor = (from: string): string => {
+const drawSuccessor = (from: string, rng: RandomSource = DEFAULT_RANDOM): string => {
   const succs = SUCCESSORS[from];
   if (succs.length === 1) return succs[0].to;
-  const r = Math.random();
+  const r = rng.nextFloat();
   let cum = 0;
   for (const s of succs) {
     cum += s.prob;

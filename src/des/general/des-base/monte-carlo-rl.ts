@@ -11,6 +11,26 @@
 // - Convert invalid options and impossible state/action errors to Result.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/general/des_base/monte_carlo_rl.rs  (module des::general::des_base::monte_carlo_rl)
+// 1:1 file move. On-policy Monte Carlo control (first/every-visit, ε-greedy);
+// extends RLAgentStation.
+//
+// Declarations → Rust:
+//   interface MonteCarloOptions     -> struct (#[derive(Default)] bar `rng`)
+//   class MonteCarloAgent           -> struct: RLAgentStation<usize, usize>
+//
+// Conversion notes (file-specific):
+//   - Implements RLAgentStation's pickAction/update/endOfEpisode -> required trait fns;
+//     `update` only buffers the trajectory and applies returns on `done`.
+//   - `Q: Float64Array` / `visitCount: Int32Array` (flat N×A) -> `Vec<f64>` / `Vec<i32>`
+//     indexed `s*A+a`.
+//   - `seen: Set<number>` (first-visit dedup keyed by `s*A+a`) -> `HashSet<usize>`.
+//   - `trajS/trajA/trajR` parallel arrays -> `Vec<usize>`/`Vec<usize>`/`Vec<f64>`
+//     (or a `Vec<Step>`).
+//   - `rng: () => number` -> inject `RandomSource`.
+// =============================================================================
+
+// =============================================================================
 // general/des-base/monte-carlo-rl.ts — base class for ON-POLICY MONTE CARLO
 // CONTROL (Sutton & Barto §5.4): every-visit and first-visit Monte Carlo
 // estimation of Q*, ε-greedy policy improvement.

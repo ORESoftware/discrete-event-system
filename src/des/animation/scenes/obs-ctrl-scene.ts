@@ -8,6 +8,24 @@
 // - If this storyboard becomes graph-visible, expose a PureTransform implementation that maps control-system state to StoryStep.
 
 // =============================================================================
+// RUST MIGRATION  —  target: src/des/animation/scenes/obs-ctrl-scene.rs   (module des::animation::scenes::obs_ctrl_scene)
+// 1:1 file move. Class-based storyboard builder for the observability/controllability scene.
+//
+// Declarations → Rust:
+//   const OC_STAGE_W/H, COL_* consts        -> `pub const`/`const`
+//   type StoryStep = Omit<Frame,'t'|'tick'> -> a dedicated struct (Rust has no `Omit`); e.g. `FrameParts`
+//   class ObsCtrlScene                      -> struct + impl (`steps()` -> Vec<StoryStep>)
+//
+// Conversion notes (file-specific):
+//   - Frame data (Shape[]/Frame/ChartSpec) is serialized for JSON -> serde structs (see types.rs).
+//   - builds Kalman 𝒞 = [B AB …] / 𝒪 = [C; CA; …] column-/row-by-row -> use `LinAlg`
+//     (or `nalgebra`) for the matrix algebra.
+//   - imports LinAlg/Mat + MarkovDecisionProcess/PartiallyObservableProcess/StateSpaceModel
+//     from ../../general/control-systems/* -> `use crate::des::general::control_systems::*`.
+//   - all coords are `number` -> `f64`.
+// =============================================================================
+
+// =============================================================================
 // Observability / Controllability scene builder (class-based storyboard).
 //
 // Unlike the dynamical-system scenes, this is a narrated sequence of static
