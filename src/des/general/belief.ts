@@ -4,6 +4,8 @@
 // RUST MIGRATION: brierScore and klDivergence are pure numeric helpers and can remain free functions.
 'use strict';
 
+import {Preconditions} from './des-base/preconditions';
+
 // =============================================================================
 // RUST MIGRATION  —  target: src/des/general/belief.rs  (module des::general::belief)
 // 1:1 file move. DiscreteBelief: a distribution over finite hidden states + Bayesian update.
@@ -45,12 +47,11 @@ export class DiscreteBelief<S = number> {
   readonly weights: number[];
 
   constructor(states: ReadonlyArray<S>, prior?: ReadonlyArray<number>) {
-    if (states.length === 0) throw new Error('DiscreteBelief: empty state set');
+    Preconditions.nonEmpty('DiscreteBelief', 'states', states);
     this.states = states;
     if (prior) {
-      if (prior.length !== states.length) {
-        throw new Error(`prior length ${prior.length} ≠ states length ${states.length}`);
-      }
+      Preconditions.lengthEq('DiscreteBelief', 'prior', prior, states.length);
+      Preconditions.arrNonNegative('DiscreteBelief', 'prior', prior);
       const total = prior.reduce((s, w) => s + w, 0);
       if (total <= 0 || !Number.isFinite(total)) {
         throw new Error(`prior is degenerate (sum=${total})`);
@@ -69,7 +70,9 @@ export class DiscreteBelief<S = number> {
     const next = new Array<number>(this.weights.length);
     for (let i = 0; i < this.weights.length; i++) {
       const l = likelihood(this.states[i], i);
-      if (l < 0) throw new Error(`likelihood(${i}) returned negative value ${l}`);
+      if (!Number.isFinite(l) || l < 0) {
+        throw new Error(`likelihood(${i}) must be finite and nonnegative; got ${l}`);
+      }
       next[i] = this.weights[i] * l;
       total += next[i];
     }
@@ -96,6 +99,7 @@ export class DiscreteBelief<S = number> {
       if (tRow.length !== this.weights.length) {
         throw new Error(`transition row length ${tRow.length} ≠ K = ${this.weights.length}`);
       }
+      Preconditions.probabilityVector('DiscreteBelief', `transition(${i})`, tRow);
       const w = this.weights[i];
       for (let j = 0; j < tRow.length; j++) next[j] += w * tRow[j];
     }
@@ -157,6 +161,9 @@ export class DiscreteBelief<S = number> {
   /** Sample one hidden state from the belief. */
   sample(rng: () => number): S {
     const u = rng();
+    if (!Number.isFinite(u) || u < 0 || u > 1) {
+      throw new Error(`DiscreteBelief.sample: rng() must return a number in [0, 1]; got ${u}`);
+    }
     let acc = 0;
     for (let i = 0; i < this.weights.length; i++) {
       acc += this.weights[i];

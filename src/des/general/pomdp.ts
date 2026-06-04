@@ -59,6 +59,7 @@
 // =============================================================================
 
 import {DiscreteBelief} from './belief';
+import {Preconditions} from './des-base/preconditions';
 
 export interface POMDPSpec<S = number, A = number, O = number> {
   states: ReadonlyArray<S>;
@@ -77,6 +78,67 @@ export interface POMDPSpec<S = number, A = number, O = number> {
   isTerminal?: (sIdx: number) => boolean;
 }
 
+const POMDP_PROB_TOL = 1e-6;
+
+function validatePOMDPSpec<S, A, O>(spec: POMDPSpec<S, A, O>, model = 'POMDP'): void {
+  Preconditions.nonEmpty(model, 'states', spec.states);
+  Preconditions.nonEmpty(model, 'actions', spec.actions);
+  Preconditions.nonEmpty(model, 'observations', spec.observations);
+  Preconditions.inRange(model, 'discount', spec.discount, 0, 1);
+  if (spec.initialBelief !== undefined) {
+    Preconditions.lengthEq(model, 'initialBelief', spec.initialBelief, spec.states.length);
+    Preconditions.probabilityVector(model, 'initialBelief', spec.initialBelief, POMDP_PROB_TOL);
+  }
+  for (let s = 0; s < spec.states.length; s++) {
+    for (let a = 0; a < spec.actions.length; a++) {
+      validateTransitionRow(spec, s, a, model);
+      validateObservationRow(spec, s, a, model);
+      Preconditions.finite(model, `reward(${s}, ${a})`, spec.reward(s, a));
+    }
+  }
+}
+
+function validateBeliefForSpec<S, A, O>(
+  spec: POMDPSpec<S, A, O>,
+  b: DiscreteBelief<S>,
+  model: string,
+): void {
+  Preconditions.lengthEq(model, 'belief.weights', b.weights, spec.states.length);
+  Preconditions.probabilityVector(model, 'belief.weights', b.weights, POMDP_PROB_TOL);
+}
+
+function validateActionIndex<S, A, O>(spec: POMDPSpec<S, A, O>, aIdx: number, model: string): void {
+  Preconditions.integerInRange(model, 'action index', aIdx, 0, spec.actions.length - 1);
+}
+
+function validateObservationIndex<S, A, O>(spec: POMDPSpec<S, A, O>, oIdx: number, model: string): void {
+  Preconditions.integerInRange(model, 'observation index', oIdx, 0, spec.observations.length - 1);
+}
+
+function validateTransitionRow<S, A, O>(
+  spec: POMDPSpec<S, A, O>,
+  sIdx: number,
+  aIdx: number,
+  model: string,
+): ReadonlyArray<number> {
+  const row = spec.transition(sIdx, aIdx);
+  Preconditions.lengthEq(model, `transition(${sIdx}, ${aIdx})`, row, spec.states.length);
+  Preconditions.probabilityVector(model, `transition(${sIdx}, ${aIdx})`, row, POMDP_PROB_TOL);
+  return row;
+}
+
+function validateObservationRow<S, A, O>(
+  spec: POMDPSpec<S, A, O>,
+  sNextIdx: number,
+  aIdx: number,
+  model: string,
+): ReadonlyArray<number> {
+  const row = spec.observation(sNextIdx, aIdx);
+  Preconditions.lengthEq(model, `observation(${sNextIdx}, ${aIdx})`, row, spec.observations.length);
+  Preconditions.probabilityVector(model, `observation(${sNextIdx}, ${aIdx})`, row, POMDP_PROB_TOL);
+  return row;
+}
+
 // -----------------------------------------------------------------------------
 // Belief update (Bayesian filter): b'(s') ∝ O(s', a, o) · Σ_s T(s, a, s') · b(s)
 // -----------------------------------------------------------------------------
@@ -86,18 +148,25 @@ export function beliefUpdate<S, A, O>(
   aIdx: number,
   oIdx: number,
 ): DiscreteBelief<S> {
+  const model = 'beliefUpdate';
   const K = spec.states.length;
+  Preconditions.nonEmpty(model, 'states', spec.states);
+  Preconditions.nonEmpty(model, 'actions', spec.actions);
+  Preconditions.nonEmpty(model, 'observations', spec.observations);
+  validateBeliefForSpec(spec, b, model);
+  validateActionIndex(spec, aIdx, model);
+  validateObservationIndex(spec, oIdx, model);
   // Predict: bp(s') = Σ_s T(s, a, s') · b(s).
   const bp = new Array<number>(K).fill(0);
   for (let i = 0; i < K; i++) {
-    const tRow = spec.transition(i, aIdx);
+    const tRow = validateTransitionRow(spec, i, aIdx, model);
     const w = b.weights[i];
     for (let j = 0; j < K; j++) bp[j] += w * tRow[j];
   }
   // Correct: weight by P(o | s', a).
   let total = 0;
   for (let j = 0; j < K; j++) {
-    const oRow = spec.observation(j, aIdx);
+    const oRow = validateObservationRow(spec, j, aIdx, model);
     bp[j] *= oRow[oIdx];
     total += bp[j];
   }
@@ -129,8 +198,11 @@ export function mdpValueIteration<S, A, O>(
   spec: POMDPSpec<S, A, O>,
   opts: MDPVIOptions = {},
 ): MDPVIResult {
+  validatePOMDPSpec(spec, 'mdpValueIteration');
   const tol = opts.tol ?? 1e-8;
   const maxIter = opts.maxIter ?? 5000;
+  Preconditions.positive('mdpValueIteration', 'tol', tol);
+  Preconditions.integerInRange('mdpValueIteration', 'maxIter', maxIter, 1, 1_000_000_000);
   const K = spec.states.length;
   const numA = spec.actions.length;
   const γ = spec.discount;
@@ -178,12 +250,15 @@ export function mdpValueIteration<S, A, O>(
 export class QMDPSolver<S, A, O> {
   readonly Q: number[][];
   constructor(public spec: POMDPSpec<S, A, O>, opts: MDPVIOptions = {}) {
+    validatePOMDPSpec(spec, 'QMDPSolver');
     const r = mdpValueIteration(spec, opts);
     this.Q = r.Q;
   }
 
   /** a* = argmax_a Σ_s b(s) Q(s, a) with optional ε-greedy exploration. */
   act(b: DiscreteBelief<S>, rng?: () => number, epsilon = 0): number {
+    validateBeliefForSpec(this.spec, b, 'QMDPSolver.act');
+    Preconditions.inRange('QMDPSolver.act', 'epsilon', epsilon, 0, 1);
     if (rng && epsilon > 0 && rng() < epsilon) {
       return Math.floor((rng()) * this.spec.actions.length);
     }
@@ -199,6 +274,8 @@ export class QMDPSolver<S, A, O> {
 
   /** Expected QMDP value E_b[Q(s, a)] — useful for ranking actions. */
   qBelief(b: DiscreteBelief<S>, aIdx: number): number {
+    validateBeliefForSpec(this.spec, b, 'QMDPSolver.qBelief');
+    validateActionIndex(this.spec, aIdx, 'QMDPSolver.qBelief');
     let q = 0;
     for (let s = 0; s < this.Q.length; s++) q += b.weights[s] * this.Q[s][aIdx];
     return q;
@@ -238,8 +315,15 @@ export function expectedBeliefReward<S, A, O>(
   b: DiscreteBelief<S>,
   aIdx: number,
 ): number {
+  validateBeliefForSpec(spec, b, 'expectedBeliefReward');
+  validateActionIndex(spec, aIdx, 'expectedBeliefReward');
   let r = 0;
-  for (let s = 0; s < spec.states.length; s++) r += b.weights[s] * spec.reward(s, aIdx);
+  for (let s = 0; s < spec.states.length; s++) {
+    const reward = spec.reward(s, aIdx);
+    Preconditions.finite('expectedBeliefReward', `reward(${s}, ${aIdx})`, reward);
+    r += b.weights[s] * reward;
+  }
+  Preconditions.finite('expectedBeliefReward', 'reward expectation', r);
   return r;
 }
 
@@ -248,17 +332,22 @@ export function observationDistribution<S, A, O>(
   b: DiscreteBelief<S>,
   aIdx: number,
 ): number[] {
+  const model = 'observationDistribution';
+  Preconditions.nonEmpty(model, 'observations', spec.observations);
+  validateBeliefForSpec(spec, b, model);
+  validateActionIndex(spec, aIdx, model);
   const numO = spec.observations.length;
   const out = new Array<number>(numO).fill(0);
   for (let s = 0; s < spec.states.length; s++) {
-    const tRow = spec.transition(s, aIdx);
+    const tRow = validateTransitionRow(spec, s, aIdx, model);
     for (let sp = 0; sp < spec.states.length; sp++) {
       const pNext = b.weights[s] * tRow[sp];
       if (pNext === 0) continue;
-      const oRow = spec.observation(sp, aIdx);
+      const oRow = validateObservationRow(spec, sp, aIdx, model);
       for (let o = 0; o < numO; o++) out[o] += pNext * oRow[o];
     }
   }
+  Preconditions.probabilityVector(model, 'distribution', out, POMDP_PROB_TOL);
   return out;
 }
 
@@ -273,6 +362,7 @@ export class BeliefLookaheadSolver<S, A, O> {
   private nodesVisited = 0;
 
   constructor(readonly spec: POMDPSpec<S, A, O>, opts: BeliefLookaheadOptions = {}) {
+    validatePOMDPSpec(spec, 'BeliefLookaheadSolver');
     this.horizon = opts.horizon ?? 2;
     this.leaf = opts.leaf ?? 'qmdp';
     this.memoize = opts.memoize ?? true;
@@ -284,10 +374,14 @@ export class BeliefLookaheadSolver<S, A, O> {
     if (this.precision <= 0 || !Number.isFinite(this.precision)) {
       throw new Error(`BeliefLookaheadSolver: beliefPrecision must be positive; got ${this.precision}`);
     }
+    Preconditions.integerInRange('BeliefLookaheadSolver', 'maxNodes', this.maxNodes, 1, 1_000_000_000);
+    Preconditions.check('BeliefLookaheadSolver', 'leaf', "be 'zero' or 'qmdp'", this.leaf === 'zero' || this.leaf === 'qmdp', this.leaf);
     this.qmdp = new QMDPSolver(spec);
   }
 
   act(b: DiscreteBelief<S>, rng?: () => number, epsilon = 0): number {
+    validateBeliefForSpec(this.spec, b, 'BeliefLookaheadSolver.act');
+    Preconditions.inRange('BeliefLookaheadSolver.act', 'epsilon', epsilon, 0, 1);
     if (rng && epsilon > 0 && rng() < epsilon) {
       return Math.floor(rng() * this.spec.actions.length);
     }
@@ -298,11 +392,15 @@ export class BeliefLookaheadSolver<S, A, O> {
   }
 
   actionValues(b: DiscreteBelief<S>, depth = this.horizon): BeliefActionValue[] {
+    validateBeliefForSpec(this.spec, b, 'BeliefLookaheadSolver.actionValues');
+    Preconditions.integerInRange('BeliefLookaheadSolver.actionValues', 'depth', depth, 0, 100);
     this.nodesVisited = 0;
     return this.actionValuesInner(b, depth);
   }
 
   value(b: DiscreteBelief<S>, depth = this.horizon): number {
+    validateBeliefForSpec(this.spec, b, 'BeliefLookaheadSolver.value');
+    Preconditions.integerInRange('BeliefLookaheadSolver.value', 'depth', depth, 0, 100);
     this.nodesVisited = 0;
     return this.valueInner(b, depth);
   }
@@ -358,8 +456,11 @@ export class BeliefLookaheadSolver<S, A, O> {
 // Most-likely-state heuristic: act as if the modal hidden state is the truth.
 // -----------------------------------------------------------------------------
 export class MostLikelyStateSolver<S, A, O> {
-  constructor(public spec: POMDPSpec<S, A, O>, public mdpResult = mdpValueIteration(spec)) {}
+  constructor(public spec: POMDPSpec<S, A, O>, public mdpResult = mdpValueIteration(spec)) {
+    validatePOMDPSpec(spec, 'MostLikelyStateSolver');
+  }
   act(b: DiscreteBelief<S>): number {
+    validateBeliefForSpec(this.spec, b, 'MostLikelyStateSolver.act');
     return this.mdpResult.policy[b.modeIndex()];
   }
 }
@@ -385,9 +486,12 @@ export function pomdpExactFiniteHorizon<S, A, O>(
   spec: POMDPSpec<S, A, O>,
   horizon: number,
 ): POMDPExactResult {
+  validatePOMDPSpec(spec, 'pomdpExactFiniteHorizon');
+  Preconditions.integerInRange('pomdpExactFiniteHorizon', 'horizon', horizon, 1, 6);
   const K = spec.states.length;
   const NA = spec.actions.length;
   const NO = spec.observations.length;
+  Preconditions.integerInRange('pomdpExactFiniteHorizon', '|S|', K, 1, 8);
   // Initialise V_0 to immediate reward (each action gives one α-vector).
   let alphas: Array<{vec: number[]; action: number}> = [];
   for (let a = 0; a < NA; a++) {
