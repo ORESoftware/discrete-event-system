@@ -35,6 +35,7 @@ import {buildHTMLSet, AnimationVariant} from './animation/html-player';
 import {mulberry32, withSeed} from './general/prng';
 import {TimeSteppedStation} from './general/time-stepped-station';
 import {SmartMovable} from './general/des-base/smart-movable';
+import {Preconditions} from './general/des-base/preconditions';
 import {MDPSpec, valueIteration} from './general/value-iteration';
 
 export type HighrisePolicy =
@@ -115,7 +116,7 @@ export interface HighriseAggregates {
   timedOut: number;
 }
 
-interface ScheduledArrival {
+export interface ScheduledArrival {
   t: number;
   fromFloor: number;
   toFloor: number;
@@ -149,7 +150,7 @@ interface MDPActionProfile {
   weights: DispatchScoreWeights;
 }
 
-interface MDPDispatchTuning {
+export interface MDPDispatchTuning {
   observability: MDPObservability;
   numStates: number;
   actions: MDPActionProfile[];
@@ -274,6 +275,16 @@ export class HighriseBuilding extends TimeSteppedStation {
     readonly mdpTuning?: MDPDispatchTuning,
   ) {
     super(`highrise-${policy}-${authority}`);
+    validateHighriseConfig(config);
+    validateHighriseSchedule(schedule, config);
+    validateHighrisePolicy(policy);
+    validateDecisionAuthority(authority);
+    if (isMDPPolicy(policy)) {
+      if (!mdpTuning) {
+        throw new Error(`HighriseBuilding: policy ${policy} requires matching MDP tuning`);
+      }
+      validateMDPDispatchTuning(mdpTuning, observabilityForPolicy(policy));
+    }
     this.floors = Array.from({length: config.nFloors}, () => ({up: [], down: []}));
     this.elevators = Array.from({length: config.nElevators}, (_, i) => {
       const start = Math.round((config.nFloors - 1) * (i + 1) / (config.nElevators + 1));
@@ -612,7 +623,7 @@ export class HighriseBuilding extends TimeSteppedStation {
   private mdpDecisionFor(features: PickupFeatures): {stateId: number; actionIdx: number; action: string} | null {
     if (!isMDPPolicy(this.policy) || !this.mdpTuning) return null;
     const stateId = encodeMDPDispatchState(features, this.mdpTuning.observability);
-    const actionIdx = Math.max(0, this.mdpTuning.policy[stateId]);
+    const actionIdx = actionIndexForMDPDecision(this.mdpTuning, stateId);
     return {
       stateId,
       actionIdx,
@@ -661,7 +672,60 @@ export class HighriseBuilding extends TimeSteppedStation {
   }
 }
 
+function validateHighriseConfig(cfg: HighriseElevatorConfig): void {
+  const model = 'HighriseElevatorConfig';
+  Preconditions.integerInRange(model, 'nFloors', cfg.nFloors, 2, 500);
+  Preconditions.integerInRange(model, 'nElevators', cfg.nElevators, 1, 100);
+  Preconditions.integerInRange(model, 'capacity', cfg.capacity, 1, 10_000);
+  Preconditions.positive(model, 'floorTravelTime', cfg.floorTravelTime);
+  Preconditions.nonNegative(model, 'serviceTime', cfg.serviceTime);
+  Preconditions.positive(model, 'arrivalRate', cfg.arrivalRate);
+  Preconditions.positive(model, 'simT', cfg.simT);
+  Preconditions.nonNegative(model, 'drainT', cfg.drainT);
+  Preconditions.positive(model, 'stepSize', cfg.stepSize);
+  Preconditions.integer(model, 'seed', cfg.seed);
+  Preconditions.nonNegative(model, 'localSensorRadius', cfg.localSensorRadius);
+  Preconditions.nonNegative(model, 'urgentWaitThreshold', cfg.urgentWaitThreshold);
+}
+
+function validateHighriseSchedule(schedule: readonly ScheduledArrival[], cfg: HighriseElevatorConfig): void {
+  const model = 'HighriseSchedule';
+  Preconditions.check(model, 'schedule', 'be an array', Array.isArray(schedule), schedule);
+  let prevT = -Infinity;
+  for (let i = 0; i < schedule.length; i++) {
+    const row = schedule[i];
+    Preconditions.finite(model, `schedule[${i}].t`, row.t);
+    Preconditions.nonNegative(model, `schedule[${i}].t`, row.t);
+    Preconditions.check(model, `schedule[${i}].t`, 'be nondecreasing', row.t + 1e-9 >= prevT, {previous: prevT, current: row.t});
+    Preconditions.integerInRange(model, `schedule[${i}].fromFloor`, row.fromFloor, 0, cfg.nFloors - 1);
+    Preconditions.integerInRange(model, `schedule[${i}].toFloor`, row.toFloor, 0, cfg.nFloors - 1);
+    Preconditions.check(model, `schedule[${i}]`, 'have different fromFloor and toFloor', row.fromFloor !== row.toFloor, row);
+    prevT = row.t;
+  }
+}
+
+function validateHighrisePolicy(policy: HighrisePolicy): void {
+  Preconditions.check(
+    'HighriseElevator',
+    'policy',
+    `be one of ${HIGHRISE_POLICIES.join(', ')}`,
+    HIGHRISE_POLICIES.includes(policy),
+    policy,
+  );
+}
+
+function validateDecisionAuthority(authority: DecisionAuthority): void {
+  Preconditions.check(
+    'HighriseElevator',
+    'authority',
+    `be one of ${DECISION_AUTHORITIES.join(', ')}`,
+    DECISION_AUTHORITIES.includes(authority),
+    authority,
+  );
+}
+
 export function buildHighriseSchedule(cfg: HighriseElevatorConfig): ScheduledArrival[] {
+  validateHighriseConfig(cfg);
   return withSeed(cfg.seed, () => {
     const rng = mulberry32(cfg.seed);
     const out: ScheduledArrival[] = [];
@@ -696,6 +760,10 @@ export function runHighriseElevators(
   schedule: readonly ScheduledArrival[],
   opts: HighriseRunOptions = {},
 ): {result: HighriseElevatorResult; animation: Animation} {
+  validateHighriseConfig(cfg);
+  validateHighrisePolicy(policy);
+  validateDecisionAuthority(opts.authority ?? 'central');
+  validateHighriseSchedule(schedule, cfg);
   const authority = opts.authority ?? 'central';
   const building = new HighriseBuilding(cfg, policy, schedule, authority, opts.mdpTuning);
   const recordEvery = opts.recordEveryTicks ?? Math.max(1, Math.round(1 / cfg.stepSize));
@@ -1061,7 +1129,58 @@ function mdpNumStates(observability: MDPObservability): number {
   return n;
 }
 
-function optimizeHighriseDispatchMDP(observability: MDPObservability): MDPDispatchTuning {
+function validateMDPObservability(observability: MDPObservability): void {
+  Preconditions.check(
+    'HighriseDispatchMDP',
+    'observability',
+    "be 'call-only' or 'destination-dispatch'",
+    observability === 'call-only' || observability === 'destination-dispatch',
+    observability,
+  );
+}
+
+function validateDispatchWeights(weights: DispatchScoreWeights, label: string): void {
+  const model = 'HighriseDispatchMDP';
+  for (const key of Object.keys(weights) as Array<keyof DispatchScoreWeights>) {
+    Preconditions.nonNegative(model, `${label}.${key}`, weights[key]);
+  }
+}
+
+function validateMDPDispatchTuning(tuning: MDPDispatchTuning, expectedObservability?: MDPObservability): void {
+  const model = 'HighriseDispatchMDP';
+  validateMDPObservability(tuning.observability);
+  if (expectedObservability !== undefined) {
+    Preconditions.equal(model, 'observability', tuning.observability, expectedObservability);
+  }
+  const expectedStates = mdpNumStates(tuning.observability);
+  Preconditions.equal(model, 'numStates', tuning.numStates, expectedStates);
+  Preconditions.lengthEq(model, 'actions', tuning.actions, MDP_ACTION_PROFILES.length);
+  Preconditions.lengthEq(model, 'policy', Array.from(tuning.policy), expectedStates);
+  Preconditions.lengthEq(model, 'V', Array.from(tuning.V), expectedStates);
+  Preconditions.allFinite(model, 'V', Array.from(tuning.V));
+  Preconditions.inRange(model, 'gamma', tuning.gamma, 0, 1);
+  Preconditions.integerInRange(model, 'iterations', tuning.iterations, 0, 1_000_000_000);
+  Preconditions.nonNegative(model, 'finalDelta', tuning.finalDelta);
+  Preconditions.lengthEq(model, 'stateLabels', tuning.stateLabels, expectedStates);
+  Preconditions.lengthEq(model, 'actionLabels', tuning.actionLabels, MDP_ACTION_PROFILES.length);
+  validateDispatchWeights(tuning.learnedWeights, 'learnedWeights');
+  for (let a = 0; a < tuning.actions.length; a++) {
+    Preconditions.check(model, `actions[${a}].label`, 'be non-empty', tuning.actions[a].label.length > 0, tuning.actions[a].label);
+    validateDispatchWeights(tuning.actions[a].weights, `actions[${a}].weights`);
+  }
+  for (let s = 0; s < tuning.policy.length; s++) actionIndexForMDPDecision(tuning, s);
+}
+
+function actionIndexForMDPDecision(tuning: MDPDispatchTuning, stateId: number): number {
+  const model = 'HighriseDispatchMDP';
+  Preconditions.integerInRange(model, 'stateId', stateId, 0, tuning.policy.length - 1);
+  const actionIdx = tuning.policy[stateId];
+  Preconditions.integerInRange(model, `policy[${stateId}]`, actionIdx, 0, tuning.actions.length - 1);
+  return actionIdx;
+}
+
+export function optimizeHighriseDispatchMDP(observability: MDPObservability): MDPDispatchTuning {
+  validateMDPObservability(observability);
   const {spec, stateLabels, actionLabels} = highriseDispatchMDPSpec(observability);
   const gamma = Number(process.env.MDP_GAMMA ?? 0.92);
   const vi = valueIteration(spec, {
@@ -1071,7 +1190,7 @@ function optimizeHighriseDispatchMDP(observability: MDPObservability): MDPDispat
     randomTieBreak: false,
   });
   const learnedWeights = averageMDPWeights(vi.policy, observability);
-  return {
+  const tuning = {
     observability,
     numStates: spec.numStates,
     actions: MDP_ACTION_PROFILES,
@@ -1084,6 +1203,8 @@ function optimizeHighriseDispatchMDP(observability: MDPObservability): MDPDispat
     stateLabels,
     actionLabels,
   };
+  validateMDPDispatchTuning(tuning, observability);
+  return tuning;
 }
 
 function highriseDispatchMDPSpec(observability: MDPObservability): {spec: MDPSpec; stateLabels: string[]; actionLabels: string[]} {
@@ -1105,6 +1226,8 @@ function abstractDispatchOutcomes(
   actionIdx: number,
   observability: MDPObservability,
 ): Array<{prob: number; reward: number; nextState: number}> {
+  validateMDPObservability(observability);
+  Preconditions.integerInRange('HighriseDispatchMDP', 'actionIdx', actionIdx, 0, MDP_ACTION_PROFILES.length - 1);
   const st = decodeMDPDispatchState(s, observability);
   const action = MDP_ACTION_PROFILES[actionIdx];
   const d = [1, 5, 13, 28][st.distanceBin];
@@ -1168,7 +1291,24 @@ function abstractDispatchOutcomes(
   ];
 }
 
+function validatePickupFeatures(features: PickupFeatures): void {
+  const model = 'HighriseDispatchMDP';
+  Preconditions.nonNegative(model, 'features.distance', features.distance);
+  Preconditions.nonNegative(model, 'features.oldestWait', features.oldestWait);
+  Preconditions.integerInRange(model, 'features.queueLen', features.queueLen, 1, 1_000_000);
+  Preconditions.nonNegative(model, 'features.trip', features.trip);
+  Preconditions.integerInRange(model, 'features.sameSide', features.sameSide, 0, 1);
+  Preconditions.integerInRange(model, 'features.maxGroup', features.maxGroup, 1, 1_000_000);
+}
+
+function requireBin(name: string, value: number | undefined, count: number): number {
+  Preconditions.check('HighriseDispatchMDP', name, 'be present', value !== undefined, value);
+  Preconditions.integerInRange('HighriseDispatchMDP', name, value!, 0, count - 1);
+  return value!;
+}
+
 function encodeMDPDispatchState(features: PickupFeatures, observability: MDPObservability): number {
+  validatePickupFeatures(features);
   if (observability === 'call-only') {
     return encodeMDPDispatchBins({
       distanceBin: binIndex(features.distance, MDP_DISTANCE_BINS),
@@ -1187,18 +1327,24 @@ function encodeMDPDispatchState(features: PickupFeatures, observability: MDPObse
 }
 
 function encodeMDPDispatchBins(st: MDPDispatchStateBins, observability: MDPObservability): number {
-  let idx = st.distanceBin;
-  if (observability === 'destination-dispatch') idx = idx * MDP_QUEUE_BINS.length + (st.queueBin ?? 0);
-  idx = idx * MDP_WAIT_BINS.length + st.waitBin;
+  validateMDPObservability(observability);
+  const distanceBin = requireBin('distanceBin', st.distanceBin, MDP_DISTANCE_BINS.length);
+  const waitBin = requireBin('waitBin', st.waitBin, MDP_WAIT_BINS.length);
+  const sameSide = requireBin('sameSide', st.sameSide, 2);
+  let idx = distanceBin;
+  if (observability === 'destination-dispatch') idx = idx * MDP_QUEUE_BINS.length + requireBin('queueBin', st.queueBin, MDP_QUEUE_BINS.length);
+  idx = idx * MDP_WAIT_BINS.length + waitBin;
   if (observability === 'destination-dispatch') {
-    idx = idx * MDP_TRIP_BINS.length + (st.tripBin ?? 0);
-    idx = idx * MDP_BATCH_BINS.length + (st.batchBin ?? 0);
+    idx = idx * MDP_TRIP_BINS.length + requireBin('tripBin', st.tripBin, MDP_TRIP_BINS.length);
+    idx = idx * MDP_BATCH_BINS.length + requireBin('batchBin', st.batchBin, MDP_BATCH_BINS.length);
   }
-  idx = idx * 2 + st.sameSide;
+  idx = idx * 2 + sameSide;
   return idx;
 }
 
 function decodeMDPDispatchState(s: number, observability: MDPObservability): MDPDispatchStateBins {
+  validateMDPObservability(observability);
+  Preconditions.integerInRange('HighriseDispatchMDP', 'state', s, 0, mdpNumStates(observability) - 1);
   const sameSide = s % 2; s = Math.floor(s / 2);
   let batchBin: number | undefined;
   let tripBin: number | undefined;
@@ -1238,6 +1384,7 @@ function mdpBinLabels(st: MDPDispatchStateBins): Record<string, string> {
 }
 
 function binIndex(x: number, thresholds: number[]): number {
+  Preconditions.finite('HighriseDispatchMDP', 'feature value', x);
   for (let i = 0; i < thresholds.length; i++) if (x <= thresholds[i]) return i;
   return thresholds.length - 1;
 }
@@ -1248,7 +1395,8 @@ function averageMDPWeights(policy: Int32Array, observability: MDPObservability):
   for (let s = 0; s < policy.length; s++) {
     const st = decodeMDPDispatchState(s, observability);
     const importance = 1 + (st.queueBin ?? 0) + st.waitBin + (st.batchBin ?? 0) * 0.7 + (st.tripBin ?? 0) * 0.35;
-    const weights = MDP_ACTION_PROFILES[Math.max(0, policy[s])].weights;
+    Preconditions.integerInRange('HighriseDispatchMDP', `policy[${s}]`, policy[s], 0, MDP_ACTION_PROFILES.length - 1);
+    const weights = MDP_ACTION_PROFILES[policy[s]].weights;
     out.distance += weights.distance * importance;
     out.trip += weights.trip * importance;
     out.queue += weights.queue * importance;
@@ -1262,6 +1410,7 @@ function averageMDPWeights(policy: Int32Array, observability: MDPObservability):
 }
 
 function summarizeMDPTuning(tuning: MDPDispatchTuning): MDPDispatchTuningSummary {
+  validateMDPDispatchTuning(tuning);
   const interesting = [0, 1, 5, 17, 43, 87, 129, 173, tuning.numStates - 1]
     .filter((s, idx, arr) => s >= 0 && s < tuning.numStates && arr.indexOf(s) === idx);
   return {
@@ -1273,7 +1422,7 @@ function summarizeMDPTuning(tuning: MDPDispatchTuning): MDPDispatchTuningSummary
     learnedWeights: tuning.learnedWeights,
     statePolicy: interesting.map(s => ({
       state: tuning.stateLabels[s],
-      action: tuning.actionLabels[Math.max(0, tuning.policy[s])],
+      action: tuning.actionLabels[actionIndexForMDPDecision(tuning, s)],
     })),
   };
 }

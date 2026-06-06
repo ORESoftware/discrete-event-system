@@ -102,6 +102,7 @@
     "test-external-modules": "ts-node src/des/test/external-module-test.ts",
     "test-validation": "ts-node src/des/test/validation-test.ts",
     "test-mdp-adjacent": "ts-node src/des/test/mdp-adjacent-test.ts",
+    "test-mdp-pomdp-hardening": "ts-node src/des/test/mdp-pomdp-hardening-test.ts",
     "test-optimal-control": "ts-node src/des/test/optimal-control-test.ts",
     "test-preconditions": "ts-node src/des/test/preconditions-test.ts",
     "test-argmax-tiebreak": "ts-node src/des/test/argmax-tiebreak-test.ts",
