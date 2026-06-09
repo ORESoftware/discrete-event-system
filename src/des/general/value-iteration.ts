@@ -53,6 +53,7 @@ import {
   FixedPointIterationStation, runIterativeDES,
   intrinsicCheck, externalReferenceValidator, ValidationCheck,
   scanArgMaxTieBreak,
+  Preconditions,
 } from './des-base';
 
 export interface Outcome {
@@ -124,6 +125,65 @@ export interface VIResult {
   gamma: number;
 }
 
+const VI_MODEL = 'ValueIteration';
+const MAX_REASONABLE_STATES = 1_000_000;
+const MAX_REASONABLE_ACTIONS = 100_000;
+
+function validateSolverInputs(
+  spec: MDPSpec,
+  gamma: number,
+  tol: number,
+  maxIter: number,
+  probTol: number,
+  tieBreakEps: number,
+): void {
+  Preconditions.integerInRange(VI_MODEL, 'spec.numStates', spec.numStates, 1, MAX_REASONABLE_STATES);
+  Preconditions.inRange(VI_MODEL, 'gamma', gamma, 0, 1);
+  Preconditions.positive(VI_MODEL, 'tol', tol);
+  Preconditions.integerInRange(VI_MODEL, 'maxIter', maxIter, 1, 1_000_000_000);
+  Preconditions.positive(VI_MODEL, 'probTol', probTol);
+  Preconditions.nonNegative(VI_MODEL, 'tieBreakEps', tieBreakEps);
+}
+
+function validateActionCount(A: number, s: number): number {
+  Preconditions.integerInRange(VI_MODEL, `numActions(${s})`, A, 1, MAX_REASONABLE_ACTIONS);
+  return A;
+}
+
+function validateOutcomes(
+  outcomes: Outcome[],
+  numStates: number,
+  s: number,
+  a: number,
+  validateProbs: boolean,
+  probTol: number,
+): Outcome[] {
+  Preconditions.check(VI_MODEL, `outcomes(${s}, ${a})`, 'return an array', Array.isArray(outcomes), outcomes);
+  let total = 0;
+  for (let i = 0; i < outcomes.length; i++) {
+    const o = outcomes[i];
+    Preconditions.check(VI_MODEL, `outcomes(${s}, ${a})[${i}]`, 'be an object', !!o && typeof o === 'object', o);
+    Preconditions.check(VI_MODEL, `outcomes(${s}, ${a})[${i}].prob`, `be in [0, 1] within ${probTol}`, Number.isFinite(o.prob) && o.prob >= 0 && o.prob <= 1 + probTol, o.prob);
+    Preconditions.finite(VI_MODEL, `outcomes(${s}, ${a})[${i}].reward`, o.reward);
+    Preconditions.integerInRange(VI_MODEL, `outcomes(${s}, ${a})[${i}].nextState`, o.nextState, 0, numStates - 1);
+    total += o.prob;
+  }
+  if (validateProbs && outcomes.length > 0) {
+    Preconditions.check(VI_MODEL, `outcomes(${s}, ${a}).prob`, `sum to 1 (within ${probTol})`, Math.abs(total - 1) <= probTol, total);
+  }
+  return outcomes;
+}
+
+function validateValueFunction(spec: MDPSpec, V: Float64Array, gamma: number, s: number, a: number): void {
+  Preconditions.integerInRange(VI_MODEL, 'spec.numStates', spec.numStates, 1, MAX_REASONABLE_STATES);
+  Preconditions.lengthEq(VI_MODEL, 'V', Array.from(V), spec.numStates);
+  Preconditions.allFinite(VI_MODEL, 'V', Array.from(V));
+  Preconditions.inRange(VI_MODEL, 'gamma', gamma, 0, 1);
+  Preconditions.integerInRange(VI_MODEL, 'state', s, 0, spec.numStates - 1);
+  const A = validateActionCount(spec.numActions(s), s);
+  Preconditions.integerInRange(VI_MODEL, 'action', a, 0, A - 1);
+}
+
 /**
  * ValueIterationStation — leaf of FixedPointIterationStation<Float64Array>.
  *
@@ -143,9 +203,11 @@ export class ValueIterationStation extends FixedPointIterationStation<Float64Arr
   private readonly rng: () => number;
 
   constructor(spec: MDPSpec, opts: VIOptions = {}) {
+    const tol = opts.tol ?? 1e-9;
+    const maxIter = opts.maxIter ?? 5000;
     super('value-iteration', {
-      tol: opts.tol ?? 1e-9,
-      maxIter: opts.maxIter ?? 5000,
+      tol,
+      maxIter,
     });
     this.spec = spec;
     this.gamma = opts.gamma ?? 0.95;
@@ -156,28 +218,29 @@ export class ValueIterationStation extends FixedPointIterationStation<Float64Arr
     this.rng = opts.rng ?? Math.random;
     const validateProbs = opts.validateProbs ?? true;
     const probTol = opts.probTol ?? 1e-9;
+    validateSolverInputs(spec, this.gamma, tol, maxIter, probTol, this.tieBreakEps);
 
     // Pre-build the transition table once (50× speedup on iterates).
     this.T = new Array(spec.numStates);
     this.aCount = new Array(spec.numStates);
     for (let s = 0; s < spec.numStates; s++) {
-      if (this.isTerminal(s)) { this.T[s] = []; this.aCount[s] = 0; continue; }
-      const A = spec.numActions(s);
+      if (this.isTerminal(s)) {
+        const tr = this.terminalReward(s);
+        Preconditions.finite(VI_MODEL, `terminalReward(${s})`, tr);
+        this.T[s] = [];
+        this.aCount[s] = 0;
+        continue;
+      }
+      const A = validateActionCount(spec.numActions(s), s);
       this.aCount[s] = A;
       const perAction: Outcome[][] = new Array(A);
+      let hasLegalAction = false;
       for (let a = 0; a < A; a++) {
-        const ol = spec.outcomes(s, a);
-        if (validateProbs && ol.length > 0) {
-          let total = 0;
-          for (const o of ol) total += o.prob;
-          if (Math.abs(total - 1) > probTol) {
-            console.warn(`[value-iteration] outcomes(${s}, ${a}) probabilities sum to ${total} (expected 1 ± ${probTol}) — transition model is not a valid distribution.`);
-            throw new Error(
-              `outcomes(${s}, ${a}) probabilities sum to ${total}, expected 1 (tol=${probTol})`);
-          }
-        }
+        const ol = validateOutcomes(spec.outcomes(s, a), spec.numStates, s, a, validateProbs, probTol);
+        if (ol.length > 0) hasLegalAction = true;
         perAction[a] = ol;
       }
+      Preconditions.check(VI_MODEL, `outcomes(${s}, *)`, 'include at least one legal non-empty action for every nonterminal state', hasLegalAction, A);
       this.T[s] = perAction;
     }
     this.bootstrap();
@@ -368,7 +431,8 @@ export function valueIteration(spec: MDPSpec, opts: VIOptions = {}): VIResult {
  * close the second-best action is to the optimum (policy fragility).
  */
 export function qValue(spec: MDPSpec, V: Float64Array, s: number, a: number, gamma: number): number {
-  const ol = spec.outcomes(s, a);
+  validateValueFunction(spec, V, gamma, s, a);
+  const ol = validateOutcomes(spec.outcomes(s, a), spec.numStates, s, a, true, 1e-9);
   let q = 0;
   for (const o of ol) q += o.prob * (o.reward + gamma * V[o.nextState]);
   return q;
@@ -379,7 +443,8 @@ export function qValue(spec: MDPSpec, V: Float64Array, s: number, a: number, gam
  * for diagnosing how distinguishable the optimal action is.
  */
 export function qValuesAll(spec: MDPSpec, V: Float64Array, s: number, gamma: number): Array<{action: number; q: number}> {
-  const A = spec.numActions(s);
+  Preconditions.integerInRange(VI_MODEL, 'state', s, 0, spec.numStates - 1);
+  const A = validateActionCount(spec.numActions(s), s);
   const out: Array<{action: number; q: number}> = [];
   for (let a = 0; a < A; a++) {
     out.push({action: a, q: qValue(spec, V, s, a, gamma)});
