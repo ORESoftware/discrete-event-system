@@ -103,6 +103,9 @@ export class LinAlg {
   static add(A: Mat, B: Mat): Mat {
     const r = LinAlg.rows(A);
     const c = LinAlg.cols(A);
+    if (LinAlg.rows(B) !== r || LinAlg.cols(B) !== c) {
+      throw new Error(`LinAlg.add: shape mismatch ${r}x${c} vs ${LinAlg.rows(B)}x${LinAlg.cols(B)}`);
+    }
     const out = LinAlg.zeros(r, c);
     for (let i = 0; i < r; i++) for (let j = 0; j < c; j++) out[i][j] = A[i][j] + B[i][j];
     return out;
@@ -112,6 +115,9 @@ export class LinAlg {
   static sub(A: Mat, B: Mat): Mat {
     const r = LinAlg.rows(A);
     const c = LinAlg.cols(A);
+    if (LinAlg.rows(B) !== r || LinAlg.cols(B) !== c) {
+      throw new Error(`LinAlg.sub: shape mismatch ${r}x${c} vs ${LinAlg.rows(B)}x${LinAlg.cols(B)}`);
+    }
     const out = LinAlg.zeros(r, c);
     for (let i = 0; i < r; i++) for (let j = 0; j < c; j++) out[i][j] = A[i][j] - B[i][j];
     return out;
@@ -178,6 +184,7 @@ export class LinAlg {
 export class VecOps {
   /** Dot product aᵀb. */
   static dot(a: Vec, b: Vec): number {
+    if (a.length !== b.length) throw new Error(`VecOps.dot: length mismatch ${a.length} vs ${b.length}`);
     let s = 0;
     for (let i = 0; i < a.length; i++) s += a[i] * b[i];
     return s;
@@ -190,11 +197,13 @@ export class VecOps {
 
   /** a + b. */
   static add(a: Vec, b: Vec): Vec {
+    if (a.length !== b.length) throw new Error(`VecOps.add: length mismatch ${a.length} vs ${b.length}`);
     return a.map((x, i) => x + b[i]);
   }
 
   /** a − b. */
   static sub(a: Vec, b: Vec): Vec {
+    if (a.length !== b.length) throw new Error(`VecOps.sub: length mismatch ${a.length} vs ${b.length}`);
     return a.map((x, i) => x - b[i]);
   }
 
@@ -271,6 +280,14 @@ export class LinearSystem {
 
   constructor(A: Mat, b: Vec, tol = 1e-15) {
     this.n = b.length;
+    if (A.length !== this.n) {
+      throw new Error(`LinearSystem: A has ${A.length} rows but b has length ${this.n}`);
+    }
+    for (let i = 0; i < this.n; i++) {
+      if (A[i].length !== this.n) {
+        throw new Error(`LinearSystem: A row ${i} has length ${A[i].length}, expected ${this.n} (A must be square and match b)`);
+      }
+    }
     this.A = A.map(row => row.slice());
     this.b = b.slice();
     this.tol = tol;
@@ -278,8 +295,10 @@ export class LinearSystem {
 
   solve(): Vec {
     const n = this.n;
-    const M = this.A;
-    const x = this.b;
+    // Copy the scratch state so a single instance can be solved repeatedly
+    // (forward elimination mutates M and x in place).
+    const M = this.A.map(row => row.slice());
+    const x = this.b.slice();
     for (let i = 0; i < n; i++) {
       let pivot = i;
       for (let k = i + 1; k < n; k++) if (Math.abs(M[k][i]) > Math.abs(M[pivot][i])) pivot = k;

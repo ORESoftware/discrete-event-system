@@ -164,8 +164,15 @@
 (function() {
   'use strict';
   const SVG_NS = 'http://www.w3.org/2000/svg';
-  const PAYLOAD = JSON.parse(document.getElementById('anim-data').textContent);
-  const VARIANTS = Array.isArray(PAYLOAD.variants) ? PAYLOAD.variants : null;
+  let PAYLOAD;
+  try {
+    PAYLOAD = JSON.parse(document.getElementById('anim-data').textContent);
+  } catch (err) {
+    document.body.innerHTML = '<p style="color:#b00020;padding:2rem;font-family:sans-serif">'
+      + 'Failed to parse animation data: ' + (err && err.message ? err.message : String(err)) + '</p>';
+    return;
+  }
+  const VARIANTS = Array.isArray(PAYLOAD.variants) && PAYLOAD.variants.length ? PAYLOAD.variants : null;
   let ANIM = VARIANTS ? VARIANTS[0].animation : PAYLOAD;
   const stage = document.getElementById('stage');
   const caption = document.getElementById('caption');
@@ -349,6 +356,7 @@
       readout.textContent = 'frame 0 / 0';
       return;
     }
+    if (idx < 0 || idx >= N) return;
     const f = ANIM.frames[idx];
     clearStage();
     for (const s of f.shapes) renderShape(s);

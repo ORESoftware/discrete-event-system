@@ -88,7 +88,9 @@ export class DcMotorScene {
 
   frameAt(i: number): Omit<Frame, 't' | 'tick'> {
     const s = this.opts.samples[i];
-    const ref = this.opts.reference ? this.opts.reference[i] : null;
+    // Tolerate a reference array shorter than samples (else `ref.toFixed` below
+    // throws on undefined); a genuine 0 reference is preserved.
+    const ref = this.opts.reference?.[i] ?? null;
     const shapes: Shape[] = [];
     shapes.push({kind: 'rect', x: 0, y: 0, w: MOTOR_STAGE_W, h: MOTOR_STAGE_H, fill: COL_BG});
     shapes.push({kind: 'text', x: MOTOR_STAGE_W / 2, y: 34, anchor: 'middle', fontSize: 22, fontWeight: 'bold',

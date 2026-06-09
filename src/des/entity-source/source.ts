@@ -41,6 +41,7 @@ import * as util from "util";
 import {IsVoid, LinkedQueue, LinkedQueueValue} from "@oresoftware/linked-queue";
 import * as uuid from "uuid";
 import {reg} from "../general/entity-registration";
+import {debugLog} from "../shared/debug-log";
 
 
 export abstract class AbstractSourceEntity<S, T>
@@ -208,7 +209,7 @@ export class EntitySource<S, T>  // S = Source, T= Target
       }
 
       if (!accepted) {
-        console.debug(`[source:${this.id}] no downstream accepted new entity (backpressure); buffering in source queue (size now ${this.queue.length + 1}).`);
+        debugLog(() => `[source:${this.id}] no downstream accepted new entity (backpressure); buffering in source queue (size now ${this.queue.length + 1}).`);
         this.queue.push(next);
       }
 
@@ -401,7 +402,7 @@ export class DefiniteFiniteSource<V extends HasNumericValue, S, T>  // S = Sourc
     }
 
     if (!accepted) {
-      console.debug(`[finite-source:${this.id}] no downstream accepted emitted value (backpressure); buffering in outQueue (size now ${this.outQueue.size + 1}).`);
+      debugLog(() => `[finite-source:${this.id}] no downstream accepted emitted value (backpressure); buffering in outQueue (size now ${this.outQueue.size + 1}).`);
       this.outQueue.enqueue(next);
     }
 

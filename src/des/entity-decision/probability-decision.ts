@@ -35,6 +35,7 @@ import {TimeDelayEntityGraphData} from "../entity-travel/time-delay";
 import {IsVoid, LinkedQueue} from "@oresoftware/linked-queue";
 import {RandomVariable} from "../random-variables/rv";
 import {AbstractMovingEntity, BasicMovingEntity} from "../entity-moving/moving";
+import {debugLog} from "../shared/debug-log";
 import {reg} from "../general/entity-registration";
 import {RandomSource, DEFAULT_RANDOM} from "../shared/capabilities";
 
@@ -87,7 +88,7 @@ export class ProbabilityDecisionEntity<S, T>
 
     if (math.smaller(checkSum, bgn(0.9999))) {
       console.warn(`[decision:${id}] branch probabilities sum to ${checkSum.toString()} (< 1) across ${this.opts.probabilities.length} branches — they must sum to 1.`);
-      throw new Error('probability sum too high')
+      throw new Error('probability sum too low')
     }
 
   }
@@ -180,7 +181,7 @@ export class ProbabilityDecisionEntity<S, T>
       if (outConn.target.acceptItem(v)) {
         outConn.target.takeItem(v);
       } else {
-        console.debug(`[decision:${this.id}] branch ${index} target "${(outConn.target as any)?.id}" rejected item; re-queueing (backpressure).`);
+        debugLog(() => `[decision:${this.id}] branch ${index} target "${(outConn.target as any)?.id}" rejected item; re-queueing (backpressure).`);
         rejected.push(v);
       }
     }

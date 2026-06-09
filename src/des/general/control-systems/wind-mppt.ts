@@ -168,7 +168,6 @@ export class WindTurbineAerodynamics {
     if (lambda <= 0) return 0;
     const beta = pitchDeg;
     const invLi = 1 / (lambda + 0.08 * beta) - 0.035 / (beta * beta * beta + 1);
-    const li = 1 / invLi;
     const cp = 0.5176 * (116 * invLi - 0.4 * beta - 5) * Math.exp(-21 * invLi) + 0.0068 * lambda;
     return cp > 0 ? cp : 0;
   }

@@ -47,10 +47,24 @@ export const getWebsocketServer = (): WebSocketServer => {
         wss.connections.delete(c);
       });
 
+      // ws emits 'error' on a socket; an unhandled 'error' event throws and
+      // would take down the whole process. Log it and drop the connection.
+      c.on('error', (err) => {
+        console.warn(`[ws-server] connection error: ${(err as Error)?.message}`);
+        wss.connections.delete(c);
+      });
+
+    });
+
+    server.on('error', (err) => {
+      console.error(`[ws-server] server error: ${(err as Error)?.message}`);
     });
 
     server.on('close', () => {
        console.log('websocket server closed.')
+       // Drop stale socket references and allow a clean re-create on next call.
+       wss.connections.clear();
+       server = null;
     });
   }
 

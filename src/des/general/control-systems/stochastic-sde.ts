@@ -76,6 +76,17 @@ export class EulerMaruyamaIntegrator {
   step(sys: SdeSystem, t: number, x: Vec, dt: number, dW: Vec): Vec {
     const f = sys.drift(t, x);
     const g = sys.diffusion(t, x);
+    // Guard malformed SdeSystem implementations (wrong drift/diffusion/noise
+    // shapes) that would otherwise inject NaN into the path.
+    if (f.length !== x.length) {
+      throw new Error(`EulerMaruyamaIntegrator.step: drift length ${f.length} != state length ${x.length}`);
+    }
+    if (g.length !== x.length) {
+      throw new Error(`EulerMaruyamaIntegrator.step: diffusion has ${g.length} rows, expected ${x.length}`);
+    }
+    if (g.length > 0 && g[0].length !== dW.length) {
+      throw new Error(`EulerMaruyamaIntegrator.step: diffusion has ${g[0].length} cols but dW length is ${dW.length}`);
+    }
     const gdW = LinAlg.matVec(g, dW);
     const out = new Array<number>(x.length);
     for (let i = 0; i < x.length; i++) out[i] = x[i] + f[i] * dt + gdW[i];
@@ -232,8 +243,14 @@ export class SdePlantStation extends DESStation {
     Preconditions.integerInRange('SdePlantStation', 'steps', opts.steps, 1, 10_000_000);
     this.rng = new Mulberry32(opts.seed ?? 20260529);
     const n = opts.system.dimension();
+    Preconditions.lengthEq('SdePlantStation', 'x0', opts.x0, n);
     this.H = opts.observationMatrix ?? LinAlg.identity(n);
-    this.obsNoise = opts.observationNoiseStd ?? new Array<number>(LinAlg.rows(this.H)).fill(0);
+    Preconditions.check('SdePlantStation', 'observationMatrix.cols',
+      `equal the system dimension ${n}`, LinAlg.cols(this.H) === n, LinAlg.cols(this.H));
+    const p = LinAlg.rows(this.H);
+    this.obsNoise = opts.observationNoiseStd ?? new Array<number>(p).fill(0);
+    // One noise std per observation row, else `obsNoise[i]` is undefined → NaN.
+    Preconditions.lengthEq('SdePlantStation', 'observationNoiseStd', this.obsNoise, p);
     this.x = opts.x0.slice();
   }
 

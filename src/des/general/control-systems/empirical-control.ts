@@ -490,14 +490,18 @@ export class MdpControllabilityDegree {
       let hits = 0;
       for (let e = 0; e < episodes; e++) {
         let s = s0;
+        let reached = false;
         for (let k = 0; k < horizon; k++) {
-          if (s === target) { hits++; break; }
+          if (s === target) { reached = true; break; }
           const a = Math.floor(rng.next() * this.mdp.numActions);
           s = rng.categorical(this.mdp.transition[a][s]);
         }
-        if (s === target) hits++;     // counts terminal landing too
+        // Count each episode at most once: reached during the horizon, or
+        // landed on the target on the final transition (loop checks the head
+        // of each step, so a last-step arrival is only caught here).
+        if (reached || s === target) hits++;
       }
-      rate[s0] = Math.min(1, hits / episodes);
+      rate[s0] = hits / episodes;
     }
     return rate;
   }
@@ -541,8 +545,13 @@ export class BeliefTracker {
     }
     let z = 0;
     for (let t = 0; t < n; t++) { predicted[t] *= this.pomdp.observation[t][observation]; z += predicted[t]; }
-    if (z > 0) for (let t = 0; t < n; t++) predicted[t] /= z;
-    this.belief = predicted;
+    if (z > 0) {
+      for (let t = 0; t < n; t++) predicted[t] /= z;
+      this.belief = predicted;
+    }
+    // else: the (action, observation) pair is impossible under the model, so the
+    // posterior mass is 0. Keep the prior belief rather than collapsing to an
+    // all-zero vector that would poison every subsequent update.
   }
 
   /** Shannon entropy of the current belief (bits). */

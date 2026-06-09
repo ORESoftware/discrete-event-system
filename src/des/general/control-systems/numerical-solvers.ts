@@ -92,6 +92,11 @@ export abstract class FixedStepIntegrator {
 
   /** out = a + s·b. */
   protected axpy(a: readonly number[], b: readonly number[], s: number): number[] {
+    // Catches an `OdeSystem.derivative()` that returns the wrong length, which
+    // would otherwise read `undefined` and silently propagate NaN through RK4.
+    if (a.length !== b.length) {
+      throw new Error(`${this.constructor.name}: derivative length ${b.length} does not match state length ${a.length}`);
+    }
     const out = new Array<number>(a.length);
     for (let i = 0; i < a.length; i++) out[i] = a[i] + s * b[i];
     return out;

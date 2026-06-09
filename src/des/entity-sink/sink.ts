@@ -36,6 +36,7 @@ import {HasComputedProperties, makeError} from "../general/general";
 import {RandomVariable} from "../random-variables/rv";
 import * as util from "util";
 import {reg} from "../general/entity-registration";
+import {debugLog} from "../shared/debug-log";
 
 export abstract class AbstractSinkEntity<S, T>
   extends Entity<AbstractSinkEntity<S, T>>
@@ -140,7 +141,7 @@ export class EntitySink<S, T>
 
   takeItem(m: BasicMovingEntity) {
     this.destroyedCount++;
-    console.debug(`[sink:${this.id}] absorbed entity ${(m as any)?.id}; destroyedCount=${this.destroyedCount}.`);
+    debugLog(() => `[sink:${this.id}] absorbed entity ${(m as any)?.id}; destroyedCount=${this.destroyedCount}.`);
     m.doFinish();
   }
 

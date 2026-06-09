@@ -140,6 +140,19 @@ export class SdeMaximumLikelihoodEstimator {
   /** Fit θ by Adam descent on the transition NLL (central-difference grad). */
   fit(family: ParametricSdeFamily, times: readonly number[], path: readonly Vec[]): MleFitResult {
     Preconditions.nonEmpty('SdeMaximumLikelihoodEstimator', 'path', path);
+    // Validate the observed path once (the NLL is evaluated thousands of times):
+    // times aligned with path, ≥2 samples for a transition likelihood, uniform
+    // state width, and strictly increasing times so every Δt is positive.
+    Preconditions.lengthEq('SdeMaximumLikelihoodEstimator', 'times', times, path.length);
+    Preconditions.check('SdeMaximumLikelihoodEstimator', 'path.length',
+      'have at least 2 observations', path.length >= 2, path.length);
+    const stateDim = path[0].length;
+    for (let k = 0; k < path.length; k++) {
+      Preconditions.lengthEq('SdeMaximumLikelihoodEstimator', `path[${k}]`, path[k], stateDim);
+      if (k > 0 && !(times[k] > times[k - 1])) {
+        throw new Error(`SdeMaximumLikelihoodEstimator: times must be strictly increasing (times[${k}]=${times[k]} <= times[${k - 1}]=${times[k - 1]})`);
+      }
+    }
     const iters = this.opts.iterations ?? 1500;
     const lr = this.opts.learningRate ?? 0.05;
     const eps = this.opts.fdEps ?? 1e-4;
@@ -219,10 +232,23 @@ export class EnsembleKalmanFilter {
   constructor(private readonly sys: SdeSystem, private readonly dt: number, opts: EnkfOptions) {
     Preconditions.positive('EnsembleKalmanFilter', 'dt', dt);
     this.N = opts.ensembleSize ?? 100;
+    // Sample covariance divides by (N - 1), so a single member is degenerate.
+    Preconditions.integerInRange('EnsembleKalmanFilter', 'ensembleSize', this.N, 2, Number.MAX_SAFE_INTEGER);
     this.H = LinAlg.copy(opts.observationMatrix);
     this.R = opts.observationNoiseVar.slice();
     this.rng = new Mulberry32(opts.seed ?? 4242);
     const n = sys.dimension();
+    // Shape contracts: H is p×n, R is length-p (>=0, used under sqrt), and the
+    // initial mean/std match the state dimension. Mismatches otherwise surface
+    // as NaN or out-of-bounds reads deep in the analysis step.
+    Preconditions.rectangularMatrix('EnsembleKalmanFilter', 'observationMatrix', this.H);
+    Preconditions.check('EnsembleKalmanFilter', 'observationMatrix.cols',
+      `equal the system dimension ${n}`, LinAlg.cols(this.H) === n, LinAlg.cols(this.H));
+    Preconditions.lengthEq('EnsembleKalmanFilter', 'observationNoiseVar', this.R, LinAlg.rows(this.H));
+    Preconditions.arrNonNegative('EnsembleKalmanFilter', 'observationNoiseVar', this.R);
+    Preconditions.lengthEq('EnsembleKalmanFilter', 'initialMean', opts.initialMean, n);
+    Preconditions.lengthEq('EnsembleKalmanFilter', 'initialStd', opts.initialStd, n);
+    Preconditions.arrNonNegative('EnsembleKalmanFilter', 'initialStd', opts.initialStd);
     this.ensemble = Array.from({length: this.N}, () =>
       Array.from({length: n}, (_, i) => opts.initialMean[i] + this.rng.normal() * opts.initialStd[i]));
   }
@@ -373,6 +399,8 @@ export class DenoisingDiffusionModel {
 
   constructor(opts: DiffusionOptions = {}) {
     this.T = opts.steps ?? 100;
+    // The β schedule interpolates over (T - 1), so a single step divides by 0.
+    Preconditions.integerInRange('DenoisingDiffusionModel', 'steps', this.T, 2, Number.MAX_SAFE_INTEGER);
     const bMin = opts.betaMin ?? 1e-4;
     // βmax chosen so ᾱ_T → ~0 at this (small) T, i.e. the forward process
     // actually reaches the N(0,1) prior the sampler starts from.

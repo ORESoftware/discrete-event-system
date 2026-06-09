@@ -339,7 +339,10 @@ export class PartiallyObservableProcess {
   }
 
   private quantise(v: readonly number[], tol: number): string {
-    const digits = Math.max(0, Math.round(-Math.log10(tol)));
+    // Guard tol ≤ 0 (log10 → -∞/NaN) and clamp to toFixed's valid [0, 100]
+    // digit range so an extreme tol cannot throw a RangeError.
+    const safeTol = tol > 0 ? tol : 1e-9;
+    const digits = Math.min(100, Math.max(0, Math.round(-Math.log10(safeTol))));
     return v.map(x => x.toFixed(digits)).join(',');
   }
 

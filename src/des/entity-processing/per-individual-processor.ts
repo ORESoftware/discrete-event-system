@@ -66,6 +66,7 @@ import {RandomVariable} from '../random-variables/rv';
 import {LinkedQueue} from '@oresoftware/linked-queue';
 import {reg} from '../general/entity-registration';
 import {OutputConnectionRouter, OutputRoutingPolicy} from '../entity-routing/output-routing-policy';
+import {debugLog} from '../shared/debug-log';
 
 export interface PerIndividualProcessorOpts {
   /**
@@ -198,7 +199,7 @@ export class PerIndividualProcessor<S, T>
       if (!routed) {
         // Nobody accepted - stick the item back at the front of the queue
         // with a tiny remaining time so it'll be retried next step.
-        console.debug(`[per-individual:${this.id}] no downstream accepted finished entity ${(item.entity as any)?.id}; retrying next step (queue size ${this.items.length + 1}).`);
+        debugLog(() => `[per-individual:${this.id}] no downstream accepted finished entity ${(item.entity as any)?.id}; retrying next step (queue size ${this.items.length + 1}).`);
         item.remainingTime = 0;
         this.items.unshift(item);
       }

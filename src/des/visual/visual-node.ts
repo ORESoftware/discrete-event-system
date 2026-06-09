@@ -141,16 +141,27 @@ export class VisualNode<T = any> implements IsObservable {
     const alreadyNotified = new Set<EntityObserver<any>>();
     const eventSubscribers = this.subscribersByEvent.get(type);
 
+    // This runs on every observed entity event. A throwing visualization
+    // subscriber must never crash the simulation it is merely observing, so
+    // each callback is isolated.
+    const notify = (s: EntityObserver<any>) => {
+      try {
+        s.doUpdate(type, v);
+      } catch (err) {
+        console.warn(`[visual-node:${this.label}] subscriber doUpdate("${type}") threw; continuing: ${(err as Error)?.message}`);
+      }
+    };
+
     if (eventSubscribers) {
       eventSubscribers.forEach(s => {
         alreadyNotified.add(s);
-        s.doUpdate(type, v);
+        notify(s);
       });
     }
 
     this.subscribers.forEach(s => {
       if (!alreadyNotified.has(s)) {
-        s.doUpdate(type, v);
+        notify(s);
       }
     });
   }

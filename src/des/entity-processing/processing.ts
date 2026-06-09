@@ -51,6 +51,7 @@ import {number, to} from "mathjs";
 import * as des from '../general/time-accrued'
 import {reg} from "../general/entity-registration";
 import {OutputConnectionRouter, OutputRoutingPolicy} from "../entity-routing/output-routing-policy";
+import {debugLog} from "../shared/debug-log";
 
 const processorSymbol = Symbol('is-processor');
 
@@ -392,7 +393,7 @@ export class EntityProcessor<S, T>
     }
 
     const evq = this.rv.getNextEventQuantity(stepSize);
-    console.debug(`[processor:${this.id}] event quantity (service completions) this step: ${evq}; processingQueue.size=${this.processingQueue.size}`);
+    debugLog(() => `[processor:${this.id}] event quantity (service completions) this step: ${evq}; processingQueue.size=${this.processingQueue.size}`);
 
     for (let i = 0; i < evq; i++) {
 
@@ -403,7 +404,7 @@ export class EntityProcessor<S, T>
           console.warn(`[processor:${this.id}] dequeue returned void but processingQueue.size=${this.processingQueue.size} (>0) — queue invariant violated at completion ${i}/${evq}.`);
           throw makeError('warning, non-empty queue, but zeroth item (peek) was falsy.');
         }
-        console.debug(`[processor:${this.id}] no more items to service this step (drew ${evq} completions, processed ${i}).`);
+        debugLog(() => `[processor:${this.id}] no more items to service this step (drew ${evq} completions, processed ${i}).`);
         break;
       }
 
@@ -433,7 +434,7 @@ export class EntityProcessor<S, T>
         }
 
         // if not takers, we add to out queue
-        console.debug(`[processor:${this.id}] downstream "${(target as any)?.id}" rejected item; buffering in outQueue (size now ${this.outQueue.size + 1}).`);
+        debugLog(() => `[processor:${this.id}] downstream "${(target as any)?.id}" rejected item; buffering in outQueue (size now ${this.outQueue.size + 1}).`);
         next.setStartTimeInOutputQueue(this.id);
         this.outQueue.enqueue(next);
         break;
@@ -498,7 +499,7 @@ export class EntityProcessor<S, T>
     // Overflow path: all servers busy. End-of-runTimeStep input->processing
     // loop will drain the inputQueue when capacity opens up - same behavior
     // as before Option A.
-    console.debug(`[processor:${this.id}] all ${this.concurrency} servers busy; item ${(m as any)?.id} overflows to inputQueue (size now ${this.queue.size + 1}).`);
+    debugLog(() => `[processor:${this.id}] all ${this.concurrency} servers busy; item ${(m as any)?.id} overflows to inputQueue (size now ${this.queue.size + 1}).`);
     this.queue.enqueue(m);
   }
 

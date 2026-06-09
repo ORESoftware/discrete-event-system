@@ -98,6 +98,7 @@ export class FrameRecorder {
   private charts: ChartSpec[] = [];
   private frameCount = 0;
   private lastLiveLine = '';
+  private visualBlockErrorLogged = false;
 
   constructor(opts: FrameRecorderOpts) {
     this.opts = {
@@ -136,9 +137,19 @@ export class FrameRecorder {
   frame(t: number, tick: number, build: () => {shapes: Frame['shapes']; caption?: string}): void {
     if (tick % this.opts.recordEveryTicks !== 0) return;
     const built = build();
-    const visualShapes = this.opts.visualBlocks.length > 0
-      ? renderVisualBlocks(this.opts.visualBlocks, {tick, time: t, stageWidth: this.opts.width, stageHeight: this.opts.height})
-      : [];
+    let visualShapes: Frame['shapes'] = [];
+    if (this.opts.visualBlocks.length > 0) {
+      // Visual-block validation/layout can throw; a viz failure must not abort
+      // the simulation that is producing the frames. Degrade to no overlay.
+      try {
+        visualShapes = renderVisualBlocks(this.opts.visualBlocks, {tick, time: t, stageWidth: this.opts.width, stageHeight: this.opts.height});
+      } catch (err) {
+        if (!this.visualBlockErrorLogged) {
+          console.warn(`[frame-recorder] visual block rendering failed at tick ${tick}; continuing without visual blocks: ${(err as Error)?.message}`);
+          this.visualBlockErrorLogged = true;
+        }
+      }
+    }
     const f: Frame = {t, tick, shapes: built.shapes.concat(visualShapes), ...(built.caption ? {caption: built.caption} : {})};
     this.stream.write(JSON.stringify({kind: 'animation-frame', ...f}) + '\n');
     this.frameCount++;

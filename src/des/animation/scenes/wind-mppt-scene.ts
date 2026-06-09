@@ -114,6 +114,7 @@ export class WindMpptScene {
   charts(): ChartSpec[] {
     const t = this.times;
     const samples = this.opts.samples;
+    if (samples.length === 0 || t.length === 0) return [];
     const end = t[t.length - 1];
     return [
       {
