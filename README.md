@@ -6,7 +6,9 @@
 > `remote/submodules/discrete-event-system` — make changes here, not in that submodule checkout.
 >
 > On disk: source clone `~/codes/ores/des-engine` · submodule checkout `~/codes/ores/k8s-cluster/remote/submodules/discrete-event-system`.
-<!-- END k8s-cluster-submodule-notice --># DES Engine (UTA PhD course project)
+<!-- END k8s-cluster-submodule-notice -->
+
+# DES Engine (UTA PhD course project)
 
 A **discrete-event system** framework — DES not as in "discrete-event
 *simulation*" only, but as the more general *Discrete Event System*: a
