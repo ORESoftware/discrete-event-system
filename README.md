@@ -1,4 +1,12 @@
-# DES Engine (UTA PhD course project)
+<!-- BEGIN k8s-cluster-submodule-notice -->
+> [!NOTE]
+> **Canonical source.** This repository is the source of truth for its code. It
+> is also vendored as a **secondary** git submodule of
+> [ORESoftware/k8s-cluster](https://github.com/ORESoftware/k8s-cluster) at
+> `remote/submodules/discrete-event-system` — make changes here, not in that submodule checkout.
+>
+> On disk: source clone `~/codes/ores/des-engine` · submodule checkout `~/codes/ores/k8s-cluster/remote/submodules/discrete-event-system`.
+<!-- END k8s-cluster-submodule-notice --># DES Engine (UTA PhD course project)
 
 A **discrete-event system** framework — DES not as in "discrete-event
 *simulation*" only, but as the more general *Discrete Event System*: a
