@@ -17,3 +17,7 @@ out/smart-traffic-flow-five-intersection.summary.json
 # OS / editor cruft
 .DS_Store
 *.swp
+tmp
+temp
+tmp/worktrees
+temp/worktrees
