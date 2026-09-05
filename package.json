@@ -122,7 +122,10 @@
     "test-stochastic-sde": "ts-node src/des/test/stochastic-sde-test.ts",
     "empirical-control-report": "ts-node src/des/main-empirical-control-report.ts",
     "stochastic-sde-report": "ts-node src/des/main-stochastic-sde-report.ts",
-    "build-site": "ts-node src/des/main-build-site.ts"
+    "build-site": "ts-node src/des/main-build-site.ts",
+    "lint:ores": "if [ -f .ores-lint/lint.sh ]; then sh .ores-lint/lint.sh; else echo 'ores-lint not installed'; fi",
+    "prepublishOnly": "npm run lint:ores",
+    "prebuild": "npm run lint:ores"
   },
   "dependencies": {
     "@oresoftware/linked-queue": "2.1.128",
@@ -140,5 +143,13 @@
     "@types/ws": "^8.5.3",
     "ts-node": "^10.9.2",
     "typescript": "^4.9.5"
+  },
+  "oresLint": {
+    "note": "Declared, not installed. ores-lint resolves these from a global install - see .ores-lint/README.md",
+    "requires": {
+      "eslint": ">=9",
+      "typescript-eslint": ">=8 (optional; without it .ts files are skipped)"
+    },
+    "install": "npm i -g eslint typescript-eslint"
   }
 }
