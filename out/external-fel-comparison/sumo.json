@@ -1,9 +1,0 @@
-{
-  "message": "SUMO external simulator is not installed or not on PATH; set SUMO_BIN/sumo and SUMO_NETCONVERT_BIN/netconvert to enable this validator.",
-  "module": "traffic-sumo-reference",
-  "simulator": {
-    "netconvert": null,
-    "sumo": null
-  },
-  "status": "unavailable"
-}
